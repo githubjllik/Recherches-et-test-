@@ -1,0 +1,2682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total - Gestion d'Inventaire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #e60000;
+            --primary-dark: #c00000;
+            --secondary: #003366;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+        }
+
+        #app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            width: 280px;
+            background: var(--secondary);
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background: var(--primary);
+            text-align: center;
+        }
+
+        #sidebar .sidebar-header img {
+            max-width: 80%;
+            height: auto;
+        }
+
+        #sidebar ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        #sidebar ul li {
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        #sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        #sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        #sidebar ul li i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        #content {
+            flex: 1;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--light);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            padding: 15px 20px;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-right: 20px;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .products-card {
+            background-color: white;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--gray);
+            border-top: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .modal-header {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .code-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .code-preview {
+            margin-bottom: 10px;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        #notification-center {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 350px;
+        }
+
+        .notification {
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s forwards;
+            background: white;
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .notification-title {
+            font-weight: bold;
+        }
+
+        .notification-close {
+            cursor: pointer;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+        }
+
+        .badge-stock {
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .badge-in-stock {
+            background-color: #e6f7ee;
+            color: #00a36a;
+        }
+
+        .badge-low-stock {
+            background-color: #fff8e6;
+            color: #f7b924;
+        }
+
+        .badge-out-of-stock {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+
+        .product-action {
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .tab-content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(230, 0, 0, 0.25);
+        }
+
+        .print-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .print-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            width: 200px;
+        }
+
+        .print-item img, .print-item svg {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .about-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-member {
+            margin-bottom: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 5px solid var(--light);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-member h5 {
+            margin-bottom: 5px;
+            color: var(--secondary);
+        }
+
+        .team-member p {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            background-color: var(--light);
+            color: var(--secondary);
+            border-radius: 50%;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        #mobile-toggle-btn {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+        }
+
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-left: -280px;
+                position: fixed;
+                height: 100%;
+            }
+            
+            #sidebar.active {
+                margin-left: 0;
+            }
+            
+            #content {
+                width: 100%;
+            }
+            
+            #mobile-toggle-btn {
+                display: block;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media print {
+            #sidebar, #mobile-toggle-btn, .no-print {
+                display: none !important;
+            }
+            
+            #content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .print-item {
+                page-break-inside: avoid;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tooltip-inner {
+            background-color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <button id="mobile-toggle-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgNjAiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik01NS40IDE1LjVoMTI5LjJjNi43IDAgMTIuMiA1LjQgMTIuMiAxMi4xdjQuOGMwIDYuNy01LjQgMTIuMS0xMi4yIDEyLjFINTUuNGMtNi43IDAtMTIuMi01LjQtMTIuMi0xMi4xdi00LjhjMC02LjcgNS41LTEyLjEgMTIuMi0xMi4xem0xNi41IDkuOGMtMy4zIDAtNiAyLjctNiA2cy0yLjcgNi02IDZoLTIuMmMwLTYuNiA1LjQtMTIgMTItMTJoMi4yYzAgMy4zIDIuNyA2IDYgNnMyLjcgNiA2IDZoMmMtLjEgMi44LTIuMiA1LjEtNSA1LjloLS4xYy0uOC4yLTEuNi4zLTIuNS4zaC0xNS41Yy0zLjMgMC02LTIuNy02LTZIMzljMy4zIDAgNi0yLjcgNi02czIuNy02IDYtNmgxNi45YzAtMy4zIDIuNy02IDYtNnY2em0zMC42IDBjMy4zIDAgNi0yLjcgNi02aDEzLjRjMy4zIDAgNiAyLjcgNiA2cy0yLjcgNi02IDZoLTYuN2MwIDMuMy0yLjcgNi02IDZoLTEzLjRWMTkuM2g2Ljd6bTQ1LjggMGMzLjMgMCA2LTIuNyA2LTZoMTMuNGMzLjMgMCA2IDIuNyA2IDZzLTIuNyA2LTYgNmgtNi43YzAgMy4zLTIuNyA2LTYgNmgtMTMuNFYxOS4zaDYuN3ptNDUuOSAwYzMuMyAwIDYtMi43IDYtNmgxMy40YzMuMyAwIDYgMi43IDYgNnMtMi43IDYtNiA2aC02LjdjMCAzLjMtMi43IDYtNiA2aC0xMy40VjE5LjNoNi43eiIvPjwvc3ZnPg==" alt="Total Logo">
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item active" data-section="dashboard">
+                    <a href="#"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
+                </li>
+                <li class="nav-item" data-section="inventory">
+                    <a href="#"><i class="fas fa-box-open"></i> Inventaire</a>
+                </li>
+                <li class="nav-item" data-section="add-product">
+                    <a href="#"><i class="fas fa-plus-circle"></i> Ajouter un produit</a>
+                </li>
+                <li class="nav-item" data-section="scan">
+                    <a href="#"><i class="fas fa-barcode"></i> Scanner un code</a>
+                </li>
+                <li class="nav-item" data-section="print-codes">
+                    <a href="#"><i class="fas fa-print"></i> Imprimer des codes</a>
+                </li>
+                <li class="nav-item" data-section="alerts">
+                    <a href="#"><i class="fas fa-bell"></i> Alertes</a>
+                </li>
+                <li class="nav-item" data-section="about">
+                    <a href="#"><i class="fas fa-info-circle"></i> À propos</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section">
+                <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i> Tableau de bord</h2>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card bg-white">
+                        <i class="fas fa-box-open text-primary"></i>
+                        <div>
+                            <div class="stat-value" id="total-products">0</div>
+                            <div class="stat-label">Produits en stock</div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        <div>
+                            <div class="stat-value" id="low-stock">0</div>
+                            <div class="stat-label">Stock faible</div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white">
+                        <i class="fas fa-times-circle text-danger"></i>
+                        <div>
+                            <div class="stat-value" id="out-of-stock">0</div>
+                            <div class="stat-label">Rupture de stock</div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white">
+                        <i class="fas fa-chart-line text-success"></i>
+                        <div>
+                            <div class="stat-value" id="total-value">0 €</div>
+                            <div class="stat-label">Valeur du stock</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card products-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Produits récents</span>
+                                <button class="btn btn-sm btn-primary" id="view-all-products">Voir tout</button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table" id="recent-products-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom</th>
+                                                <th>Prix</th>
+                                                <th>Qté</th>
+                                                <th>Emplacement</th>
+                                                <th>Statut</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5" class="text-center">Aucun produit trouvé</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                Alertes de stock
+                            </div>
+                            <div class="card-body" id="stock-alerts">
+                                <p class="text-center text-muted">Aucune alerte</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Section -->
+            <div id="inventory" class="content-section" style="display: none;">
+                <h2 class="mb-4"><i class="fas fa-box-open me-2"></i> Inventaire</h2>
+                
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Liste des produits</span>
+                        <div>
+                            <button class="btn btn-sm btn-success" id="export-inventory">
+                                <i class="fas fa-file-excel me-1"></i> Exporter
+                            </button>
+                            <button class="btn btn-sm btn-primary" id="add-product-btn">
+                                <i class="fas fa-plus me-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-bar">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="search-inventory" placeholder="Rechercher un produit...">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code Produit</th>
+                                        <th>Nom</th>
+                                        <th>Prix</th>
+                                        <th>Quantité</th>
+                                        <th>Emplacement</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="text-center">Aucun produit trouvé</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Product Section -->
+            <div id="add-product" class="content-section" style="display: none;">
+                <h2 class="mb-4"><i class="fas fa-plus-circle me-2"></i> Ajouter un produit</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        Informations du produit
+                    </div>
+                    <div class="card-body">
+                        <form id="add-product-form">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="product-name" class="form-label">Nom du produit*</label>
+                                    <input type="text" class="form-control" id="product-name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="product-code-type" class="form-label">Type de code*</label>
+                                    <select class="form-select" id="product-code-type" required>
+                                        <option value="generate">Générer un nouveau code</option>
+                                        <option value="scan">Scanner un code existant</option>
+                                        <option value="manual">Entrer un code manuellement</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3" id="code-scan-container" style="display: none;">
+                                <div class="col-md-12">
+                                    <label class="form-label">Scanner le code</label>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary" id="start-scan">
+                                            <i class="fas fa-camera me-2"></i> Activer la caméra
+                                        </button>
+                                    </div>
+                                    <div id="scanner-container" class="mt-3 d-none">
+                                        <video id="scanner-video" style="width: 100%; max-height: 300px; object-fit: cover;"></video>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3" id="code-manual-container" style="display: none;">
+                                <div class="col-md-12">
+                                    <label for="product-code-manual" class="form-label">Code du produit*</label>
+                                    <input type="text" class="form-control" id="product-code-manual" placeholder="Entrez le code produit">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="product-category" class="form-label">Catégorie</label>
+                                    <select class="form-select" id="product-category">
+                                        <option value="electronique">Électronique</option>
+                                        <option value="outillage">Outillage</option>
+                                        <option value="panneaux-solaires">Panneaux solaires</option>
+                                        <option value="antennes">Antennes TV</option>
+                                        <option value="motos">Pièces moto</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="product-price" class="form-label">Prix (€)*</label>
+                                    <input type="number" class="form-control" id="product-price" min="0" step="0.01" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="product-quantity" class="form-label">Quantité*</label>
+                                    <input type="number" class="form-control" id="product-quantity" min="0" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="product-location" class="form-label">Emplacement*</label>
+                                    <input type="text" class="form-control" id="product-location" placeholder="Ex: Rayon 2, étagère 3" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="product-description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="product-description" rows="3"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="min-stock" class="form-label">Stock minimum avant alerte</label>
+                                    <input type="number" class="form-control" id="min-stock" min="0" value="5">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="supplier" class="form-label">Fournisseur</label>
+                                    <input type="text" class="form-control" id="supplier">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="generate-both-codes" checked>
+                                    <label class="form-check-label" for="generate-both-codes">
+                                        Générer à la fois un QR code et un code-barres
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="code-container" id="code-preview-container" style="display: none;">
+                                <h5>Aperçu des codes générés</h5>
+                                <div class="row">
+                                    <div class="col-md-6 text-center">
+                                        <div class="code-preview">
+                                            <h6>Code-barres</h6>
+                                            <svg id="barcode-preview"></svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-center">
+                                        <div class="code-preview">
+                                            <h6>QR Code</h6>
+                                            <div id="qrcode-preview"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary" id="reset-form">
+                                    <i class="fas fa-undo me-1"></i> Réinitialiser
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="save-product">
+                                    <i class="fas fa-save me-1"></i> Enregistrer le produit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scan Section -->
+            <div id="scan" class="content-section" style="display: none;">
+                <h2 class="mb-4"><i class="fas fa-barcode me-2"></i> Scanner un code</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        Scanner un code-barres ou un QR code
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-12 text-center">
+                                <button class="btn btn-primary" id="activate-scanner">
+                                    <i class="fas fa-camera me-2"></i> Activer la caméra
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="scanner-area" style="display: none;">
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div style="max-width: 500px; margin: 0 auto; position: relative;">
+                                        <video id="scanner" style="width: 100%; border: 2px solid #ddd; border-radius: 10px;"></video>
+                                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid #e60000; border-radius: 10px; pointer-events: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i> Placez le code-barres ou QR code face à la caméra
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="scan-result" style="display: none;">
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i> Code scanné avec succès!
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    Résultat du scan
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>Informations sur le produit</h5>
+                                            <table class="table">
+                                                <tr>
+                                                    <th>Code Produit</th>
+                                                    <td id="scanned-code"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Nom</th>
+                                                    <td id="scanned-name"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Prix</th>
+                                                    <td id="scanned-price"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Quantité en stock</th>
+                                                    <td id="scanned-quantity"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Emplacement</th>
+                                                    <td id="scanned-location"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Actions</h5>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-primary mb-2" id="update-scanned">
+                                                    <i class="fas fa-edit me-1"></i> Modifier
+                                                </button>
+                                                <button class="btn btn-success mb-2" id="sell-scanned">
+                                                    <i class="fas fa-shopping-cart me-1"></i> Vendre
+                                                </button>
+                                                <button class="btn btn-warning mb-2" id="print-scanned-codes">
+                                                    <i class="fas fa-print me-1"></i> Imprimer les codes
+                                                </button>
+                                                <button class="btn btn-danger" id="delete-scanned">
+                                                    <i class="fas fa-trash me-1"></i> Supprimer
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-12 text-center">
+                                    <button class="btn btn-primary" id="scan-another">
+                                        <i class="fas fa-redo me-1"></i> Scanner un autre code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Print Codes Section -->
+            <div id="print-codes" class="content-section" style="display: none;">
+                <h2 class="mb-4"><i class="fas fa-print me-2"></i> Imprimer des codes</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        Sélectionner les produits à imprimer
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <input type="text" class="form-control" id="search-print" placeholder="Rechercher un produit...">
+                        </div>
+                        
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover" id="print-products-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="select-all-print"></th>
+                                        <th>Code Produit</th>
+                                        <th>Nom</th>
+                                        <th>Prix</th>
+                                        <th>Quantité</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" class="text-center">Aucun produit trouvé</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="print-barcode" checked>
+                                    <label class="form-check-label" for="print-barcode">Codes-barres</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="print-qrcode" checked>
+                                    <label class="form-check-label" for="print-qrcode">QR Codes</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <button class="btn btn-primary" id="generate-print">
+                                    <i class="fas fa-magic me-1"></i> Générer l'aperçu
+                                </button>
+                                <button class="btn btn-success" id="print-generated" disabled>
+                                    <i class="fas fa-print me-1"></i> Imprimer
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="print-preview">
+                            <h5 class="mb-3">Aperçu avant impression</h5>
+                            <div class="print-section" id="print-items">
+                                <p class="text-center text-muted w-100">Aucun code à afficher. Veuillez sélectionner des produits et générer l'aperçu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div id="alerts" class="content-section" style="display: none;">
+                <h2 class="mb-4"><i class="fas fa-bell me-2"></i> Alertes</h2>
+                
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Alertes de stock</span>
+                        <div>
+                            <button class="btn btn-sm btn-primary" id="mark-all-read">
+                                <i class="fas fa-check-double me-1"></i> Tout marquer comme lu
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="alerts-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Type d'alerte</th>
+                                        <th>Quantité</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" class="text-center">Aucune alerte trouvée</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        Configuration des alertes
+                    </div>
+                    <div class="card-body">
+                        <form id="alerts-config-form">
+                            <div class="mb-3">
+                                <label for="default-min-stock" class="form-label">Stock minimum par défaut</label>
+                                <input type="number" class="form-control" id="default-min-stock" min="0" value="5">
+                                <div class="form-text">Les produits dont la quantité est inférieure à cette valeur généreront une alerte.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable-email-alerts" checked>
+                                    <label class="form-check-label" for="enable-email-alerts">Recevoir les alertes par email</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="email-alerts-config">
+                                <label for="alert-email" class="form-label">Email pour les alertes</label>
+                                <input type="email" class="form-control" id="alert-email" placeholder="admin@total.com">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Enregistrer les paramètres
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div id="about" class="content-section" style="display: none;">
+                <h2 class="mb-4"><i class="fas fa-info-circle me-2"></i> À propos</h2>
+                
+                <div class="about-section">
+                    <div class="row mb-5">
+                        <div class="col-lg-12 text-center">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgNjAiPjxwYXRoIGZpbGw9IiNlNjAwMDAiIGQ9Ik01NS40IDE1LjVoMTI5LjJjNi43IDAgMTIuMiA1LjQgMTIuMiAxMi4xdjQuOGMwIDYuNy01LjQgMTIuMS0xMi4yIDEyLjFINTUuNGMtNi43IDAtMTIuMi01LjQtMTIuMi0xMi4xdi00LjhjMC02LjcgNS41LTEyLjEgMTIuMi0xMi4xem0xNi41IDkuOGMtMy4zIDAtNiAyLjctNiA2cy0yLjcgNi02IDZoLTIuMmMwLTYuNiA1LjQtMTIgMTItMTJoMi4yYzAgMy4zIDIuNyA2IDYgNnMyLjcgNiA2IDZoMmMtLjEgMi44LTIuMiA1LjEtNSA1LjloLS4xYy0uOC4yLTEuNi4zLTIuNS4zaC0xNS41Yy0zLjMgMC02LTIuNy02LTZIMzljMy4zIDAgNi0yLjcgNi02czIuNy02IDYtNmgxNi45YzAtMy4zIDIuNy02IDYtNnY2em0zMC42IDBjMy4zIDAgNi0yLjcgNi02aDEzLjRjMy4zIDAgNiAyLjcgNiA2cy0yLjcgNi02IDZoLTYuN2MwIDMuMy0yLjcgNi02IDZoLTEzLjRWMTkuM2g2Ljd6bTQ1LjggMGMzLjMgMCA2LTIuNyA2LTZoMTMuNGMzLjMgMCA2IDIuNyA2IDZzLTIuNyA2LTYgNmgtNi43YzAgMy4zLTIuNyA2LTYgNmgtMTMuNFYxOS4zaDYuN3ptNDUuOSAwYzMuMyAwIDYtMi43IDYtNmgxMy40YzMuMyAwIDYgMi43IDYgNnMtMi43IDYtNiA2aC02LjdjMCAzLjMtMi43IDYtNiA2aC0xMy40VjE5LjNoNi43eiIvPjwvc3ZnPg==" alt="Total Logo" style="max-width: 250px; margin-bottom: 20px;">
+                            <h3>Application de Gestion d'Inventaire</h3>
+                            <p class="lead">Version 1.0</p>
+                            <p class="mb-4">Cette application a été développée pour Total afin de faciliter la gestion d'inventaire des produits électroniques et équipements en utilisant les codes-barres et QR codes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-5">
+                        <div class="col-lg-12">
+                            <h4 class="text-center mb-4">Fonctionnalités</h4>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-barcode fa-3x mb-3 text-primary"></i>
+                                            <h5>Génération de codes</h5>
+                                            <p>Génération automatique de codes-barres et QR codes pour chaque produit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-search fa-3x mb-3 text-primary"></i>
+                                            <h5>Scan et Recherche</h5>
+                                            <p>Scannez les codes pour obtenir rapidement les informations sur les produits.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-bell fa-3x mb-3 text-primary"></i>
+                                            <h5>Alertes de stock</h5>
+                                            <p>Recevez des notifications lorsque les produits sont en rupture ou en stock faible.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h4 class="text-center mb-4">Notre équipe</h4>
+                            <div class="row">
+                                <div class="col-md-4 mb-4">
+                                    <div class="team-member">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2U2MDAwMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0xNjAsMTYwYzAsMC01MC02MC0xMjAsMCIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==" alt="Photo de profil">
+                                        <h5>Étudiant 1</h5>
+                                        <p>Développeur Frontend</p>
+                                        <div class="social-links">
+                                            <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="#" title="Téléphone"><i class="fas fa-phone"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="team-member">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwMzM2NiIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0xNjAsMTYwYzAsMC01MC02MC0xMjAsMCIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==" alt="Photo de profil">
+                                        <h5>Étudiant 2</h5>
+                                        <p>Développeur Backend</p>
+                                        <div class="social-links">
+                                            <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="#" title="Téléphone"><i class="fas fa-phone"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="team-member">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzI4YTc0NSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0xNjAsMTYwYzAsMC01MC02MC0xMjAsMCIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==" alt="Photo de profil">
+                                        <h5>Étudiant 3</h5>
+                                        <p>Designer UI/UX</p>
+                                        <div class="social-links">
+                                            <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="#" title="Téléphone"><i class="fas fa-phone"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="team-member">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y3YjkyNCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0xNjAsMTYwYzAsMC01MC02MC0xMjAsMCIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==" alt="Photo de profil">
+                                        <h5>Étudiant 4</h5>
+                                        <p>Testeur QA</p>
+                                        <div class="social-links">
+                                            <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="#" title="Téléphone"><i class="fas fa-phone"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="team-member">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzE3YTJiOCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0xNjAsMTYwYzAsMC01MC02MC0xMjAsMCIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==" alt="Photo de profil">
+                                        <h5>Étudiant 5</h5>
+                                        <p>Chef de Projet</p>
+                                        <div class="social-links">
+                                            <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                            <a href="#" title="Téléphone"><i class="fas fa-phone"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-5">
+                        <div class="col-lg-12 text-center">
+                            <p>© 2025 - Projet d'études - Tous droits réservés</p>
+                            <p>Pour toute assistance, contactez l'équipe de développement via les coordonnées ci-dessus.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Center -->
+    <div id="notification-center"></div>
+
+    <!-- Modals -->
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Détails du produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="edit-product-form">
+                                <input type="hidden" id="edit-product-id">
+                                <div class="mb-3">
+                                    <label for="edit-product-name" class="form-label">Nom du produit</label>
+                                    <input type="text" class="form-control" id="edit-product-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-product-category" class="form-label">Catégorie</label>
+                                    <select class="form-select" id="edit-product-category">
+                                        <option value="electronique">Électronique</option>
+                                        <option value="outillage">Outillage</option>
+                                        <option value="panneaux-solaires">Panneaux solaires</option>
+                                        <option value="antennes">Antennes TV</option>
+                                        <option value="motos">Pièces moto</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-product-price" class="form-label">Prix (€)</label>
+                                    <input type="number" class="form-control" id="edit-product-price" min="0" step="0.01" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-product-quantity" class="form-label">Quantité</label>
+                                    <input type="number" class="form-control" id="edit-product-quantity" min="0" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-product-location" class="form-label">Emplacement</label>
+                                    <input type="text" class="form-control" id="edit-product-location" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-product-description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="edit-product-description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-min-stock" class="form-label">Stock minimum avant alerte</label>
+                                    <input type="number" class="form-control" id="edit-min-stock" min="0">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5>Codes produit</h5>
+                                <div class="code-preview mb-3">
+                                    <h6>Code-barres</h6>
+                                    <svg id="edit-barcode-preview"></svg>
+                                </div>
+                                <div class="code-preview">
+                                    <h6>QR Code</h6>
+                                    <div id="edit-qrcode-preview"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5>Historique des mouvements</h5>
+                                <div id="product-history" style="max-height: 200px; overflow-y: auto;">
+                                    <p class="text-center text-muted">Aucun mouvement enregistré</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="delete-product-btn">Supprimer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="save-edit-product">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sell Product Modal -->
+    <div class="modal fade" id="sellModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vendre un produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="sell-product-form">
+                        <input type="hidden" id="sell-product-id">
+                        <div class="mb-3">
+                            <label class="form-label">Produit</label>
+                            <input type="text" class="form-control" id="sell-product-name" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prix unitaire</label>
+                            <input type="text" class="form-control" id="sell-product-price" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock disponible</label>
+                            <input type="text" class="form-control" id="sell-stock-available" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sell-quantity" class="form-label">Quantité à vendre</label>
+                            <input type="number" class="form-control" id="sell-quantity" min="1" value="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prix total</label>
+                            <input type="text" class="form-control" id="sell-total-price" readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="confirm-sell">Confirmer la vente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer le produit <strong id="delete-product-name"></strong> ?</p>
+                    <p class="text-danger">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
+    <script>
+        // Initialisation des variables globales
+        let products = JSON.parse(localStorage.getItem('totalInventoryProducts')) || [];
+        let alerts = JSON.parse(localStorage.getItem('totalInventoryAlerts')) || [];
+        let currentProductId = null;
+        let scannerInitialized = false;
+        let qrScannerInterval = null;
+
+        // Initialisation Bootstrap
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+        // Modals
+        const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        const sellModal = new bootstrap.Modal(document.getElementById('sellModal'));
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+        // Fonctions utilitaires
+        function generateProductCode() {
+            const timestamp = new Date().getTime().toString().slice(-8);
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `P${timestamp}${random}`;
+        }
+
+        function formatCurrency(value) {
+            return parseFloat(value).toFixed(2) + ' €';
+        }
+
+        function formatDate(date) {
+            const d = new Date(date);
+            return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR');
+        }
+
+        function getStockStatus(quantity, minStock) {
+            if (quantity <= 0) return 'out-of-stock';
+            if (quantity <= minStock) return 'low-stock';
+            return 'in-stock';
+        }
+
+        function getStockBadge(quantity, minStock) {
+            const status = getStockStatus(quantity, minStock);
+            let badge = '';
+            
+            if (status === 'in-stock') {
+                badge = '<span class="badge badge-stock badge-in-stock">En stock</span>';
+            } else if (status === 'low-stock') {
+                badge = '<span class="badge badge-stock badge-low-stock">Stock faible</span>';
+            } else if (status === 'out-of-stock') {
+                badge = '<span class="badge badge-stock badge-out-of-stock">Rupture</span>';
+            }
+            
+            return badge;
+        }
+
+        function generateBarcode(code, selector) {
+            JsBarcode(selector, code, {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 50,
+                displayValue: true,
+                fontSize: 14,
+                margin: 10
+            });
+        }
+
+        function generateQRCode(data, containerId) {
+    // Création du JSON des infos produit
+    if (typeof data !== 'string') {
+        data = JSON.stringify(data);
+    }
+    
+    // Effacer le conteneur existant
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    // Création du QR code
+    const qr = qrcode(0, 'M');
+    qr.addData(data);
+    qr.make();
+    
+    // Insérer le QR code dans le conteneur
+    container.innerHTML = qr.createImgTag(5, 10);
+    
+    // Ajuster la taille
+    const img = container.querySelector('img');
+    if (img) {
+        img.style.width = '150px';
+        img.style.height = '150px';
+    }
+}
+
+
+        function showNotification(title, message, type = 'info') {
+            const notificationCenter = document.getElementById('notification-center');
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            
+            notification.innerHTML = `
+                <div class="notification-header">
+                    <span class="notification-title">${title}</span>
+                    <span class="notification-close">&times;</span>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            
+            notificationCenter.appendChild(notification);
+            
+            // Fermeture auto après 5 secondes
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 5000);
+            
+            // Fermeture manuelle
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            });
+        }
+
+        function updateLocalStorage() {
+            localStorage.setItem('totalInventoryProducts', JSON.stringify(products));
+            localStorage.setItem('totalInventoryAlerts', JSON.stringify(alerts));
+        }
+
+        function checkStockAlerts() {
+            products.forEach(product => {
+                // Vérification si le produit est en stock faible
+                if (product.quantity <= product.minStock && product.quantity > 0) {
+                    // Vérifier si une alerte existe déjà
+                    const existingAlert = alerts.find(a => a.productId === product.id && a.type === 'low-stock' && !a.read);
+                    
+                    if (!existingAlert) {
+                        alerts.push({
+                            id: generateProductCode(),
+                            productId: product.id,
+                            productName: product.name,
+                            type: 'low-stock',
+                            quantity: product.quantity,
+                            date: new Date().toISOString(),
+                            read: false
+                        });
+                        
+                        showNotification('Stock faible', `Le produit "${product.name}" est en stock faible (${product.quantity} restants).`, 'warning');
+                    }
+                }
+                
+                // Vérification si le produit est en rupture de stock
+                if (product.quantity <= 0) {
+                    // Vérifier si une alerte existe déjà
+                    const existingAlert = alerts.find(a => a.productId === product.id && a.type === 'out-of-stock' && !a.read);
+                    
+                    if (!existingAlert) {
+                        alerts.push({
+                            id: generateProductCode(),
+                            productId: product.id,
+                            productName: product.name,
+                            type: 'out-of-stock',
+                            quantity: 0,
+                            date: new Date().toISOString(),
+                            read: false
+                        });
+                        
+                        showNotification('Rupture de stock', `Le produit "${product.name}" est en rupture de stock.`, 'danger');
+                    }
+                }
+            });
+            
+            updateLocalStorage();
+            updateAlertsBadge();
+            updateDashboardStats();
+        }
+
+        function updateAlertsBadge() {
+            const unreadAlerts = alerts.filter(alert => !alert.read).length;
+            const alertMenuItem = document.querySelector('[data-section="alerts"] a');
+            
+            if (unreadAlerts > 0) {
+                if (!alertMenuItem.querySelector('.badge')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge rounded-pill bg-danger ms-auto';
+                    badge.textContent = unreadAlerts;
+                    alertMenuItem.appendChild(badge);
+                } else {
+                    alertMenuItem.querySelector('.badge').textContent = unreadAlerts;
+                }
+            } else {
+                const badge = alertMenuItem.querySelector('.badge');
+                if (badge) badge.remove();
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            updateDashboardStats();
+            loadRecentProducts();
+            loadInventoryTable();
+            updateAlertsBadge();
+            checkStockAlerts();
+            
+            // Navigation
+            document.querySelectorAll('#sidebar .nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+                    
+                    // Si on est sur un écran mobile, fermer le menu
+                    if (window.innerWidth < 992) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                });
+            });
+            
+            // Bouton de toggle mobile
+            document.getElementById('mobile-toggle-btn').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+            
+            // Voir tous les produits
+            document.getElementById('view-all-products').addEventListener('click', function() {
+                showSection('inventory');
+            });
+            
+            // Bouton Ajouter dans l'inventaire
+            document.getElementById('add-product-btn').addEventListener('click', function() {
+                showSection('add-product');
+            });
+            
+            // Formulaire d'ajout de produit
+            document.getElementById('product-code-type').addEventListener('change', function() {
+                const value = this.value;
+                
+                document.getElementById('code-scan-container').style.display = value === 'scan' ? 'block' : 'none';
+                document.getElementById('code-manual-container').style.display = value === 'manual' ? 'block' : 'none';
+            });
+            
+            // Prévisualisation des codes
+            document.getElementById('product-name').addEventListener('input', updateCodePreview);
+            document.getElementById('product-price').addEventListener('input', updateCodePreview);
+            document.getElementById('product-code-manual').addEventListener('input', updateCodePreview);
+            
+            // Activation de la caméra pour le scan
+            document.getElementById('start-scan').addEventListener('click', function() {
+                const scannerContainer = document.getElementById('scanner-container');
+                scannerContainer.classList.remove('d-none');
+                initBarcodeScanner('scanner-video');
+            });
+            
+            // Activation scanner dans la section scan
+            document.getElementById('activate-scanner').addEventListener('click', function() {
+                document.getElementById('scanner-area').style.display = 'block';
+                document.getElementById('scan-result').style.display = 'none';
+                initBarcodeScanner('scanner');
+            });
+            
+            // Scanner un autre code
+            document.getElementById('scan-another').addEventListener('click', function() {
+                document.getElementById('scanner-area').style.display = 'block';
+                document.getElementById('scan-result').style.display = 'none';
+                initBarcodeScanner('scanner');
+            });
+            
+            // Soumission du formulaire d'ajout
+            document.getElementById('add-product-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewProduct();
+            });
+            
+            // Réinitialisation du formulaire
+            document.getElementById('reset-form').addEventListener('click', function() {
+                document.getElementById('add-product-form').reset();
+                document.getElementById('code-preview-container').style.display = 'none';
+            });
+            
+            // Recherche dans l'inventaire
+            document.getElementById('search-inventory').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterInventoryTable(searchTerm);
+            });
+            
+            // Recherche pour impression
+            document.getElementById('search-print').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterPrintTable(searchTerm);
+            });
+            
+            // Sélectionner tous pour impression
+            document.getElementById('select-all-print').addEventListener('change', function() {
+                const isChecked = this.checked;
+                document.querySelectorAll('#print-products-table tbody input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+            });
+            
+            // Générer aperçu impression
+            document.getElementById('generate-print').addEventListener('click', generatePrintPreview);
+            
+            // Imprimer
+            document.getElementById('print-generated').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Enregistrer modifications
+            document.getElementById('save-edit-product').addEventListener('click', saveEditProduct);
+            
+            // Confirmer suppression
+            document.getElementById('confirm-delete').addEventListener('click', deleteProduct);
+            
+            // Confirmer vente
+            document.getElementById('confirm-sell').addEventListener('click', sellProduct);
+            
+            // Quantité à vendre
+            document.getElementById('sell-quantity').addEventListener('input', updateSellTotal);
+            
+            // Marquer toutes les alertes comme lues
+            document.getElementById('mark-all-read').addEventListener('click', markAllAlertsAsRead);
+            
+            // Configuration des alertes
+            document.getElementById('alerts-config-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const defaultMinStock = parseInt(document.getElementById('default-min-stock').value) || 5;
+                localStorage.setItem('totalInventoryDefaultMinStock', defaultMinStock);
+                
+                const enableEmailAlerts = document.getElementById('enable-email-alerts').checked;
+                localStorage.setItem('totalInventoryEnableEmailAlerts', enableEmailAlerts);
+                
+                const alertEmail = document.getElementById('alert-email').value;
+                localStorage.setItem('totalInventoryAlertEmail', alertEmail);
+                
+                showNotification('Configuration', 'Les paramètres d\'alerte ont été enregistrés.', 'success');
+            });
+            
+            // Toggle pour les alertes email
+            document.getElementById('enable-email-alerts').addEventListener('change', function() {
+                document.getElementById('email-alerts-config').style.display = this.checked ? 'block' : 'none';
+            });
+            
+            // Export inventaire
+            document.getElementById('export-inventory').addEventListener('click', exportInventory);
+            
+            // Supprimer produit (bouton modal)
+            document.getElementById('delete-product-btn').addEventListener('click', function() {
+                const productId = document.getElementById('edit-product-id').value;
+                const product = products.find(p => p.id === productId);
+                
+                if (product) {
+                    document.getElementById('delete-product-name').textContent = product.name;
+                    productModal.hide();
+                    deleteModal.show();
+                }
+            });
+        });
+
+        // Initialisation de l'application
+        function initApp() {
+            // Charger les paramètres
+            const defaultMinStock = localStorage.getItem('totalInventoryDefaultMinStock') || 5;
+            document.getElementById('default-min-stock').value = defaultMinStock;
+            
+            const enableEmailAlerts = localStorage.getItem('totalInventoryEnableEmailAlerts') === 'true';
+            document.getElementById('enable-email-alerts').checked = enableEmailAlerts;
+            
+            const alertEmail = localStorage.getItem('totalInventoryAlertEmail') || '';
+            document.getElementById('alert-email').value = alertEmail;
+            
+            document.getElementById('email-alerts-config').style.display = enableEmailAlerts ? 'block' : 'none';
+            
+            // Si c'est la première exécution, ajouter des produits d'exemple
+            if (products.length === 0) {
+                addSampleProducts();
+            }
+        }
+
+        function addSampleProducts() {
+            const sampleProducts = [
+                {
+                    id: generateProductCode(),
+                    name: "Antenne TV extérieure",
+                    code: "ANT-TV-001",
+                    category: "antennes",
+                    price: 49.99,
+                    quantity: 15,
+                    location: "Rayon 1, Étagère A",
+                    description: "Antenne TV puissante pour réception TNT HD",
+                    minStock: 5,
+                    supplier: "AntennaPro",
+                    dateAdded: new Date().toISOString(),
+                    movements: [
+                        {
+                            type: "add",
+                            quantity: 15,
+                            date: new Date().toISOString(),
+                            description: "Stock initial"
+                        }
+                    ]
+                },
+                {
+                    id: generateProductCode(),
+                    name: "Panneau solaire 100W",
+                    code: "SOL-100W",
+                    category: "panneaux-solaires",
+                    price: 129.99,
+                    quantity: 8,
+                    location: "Rayon 2, Étagère C",
+                    description: "Panneau solaire monocristallin 100W",
+                    minStock: 3,
+                    supplier: "SolarTech",
+                    dateAdded: new Date().toISOString(),
+                    movements: [
+                        {
+                            type: "add",
+                            quantity: 8,
+                            date: new Date().toISOString(),
+                            description: "Stock initial"
+                        }
+                    ]
+                },
+                {
+                    id: generateProductCode(),
+                    name: "Perceuse sans fil 18V",
+                    code: "OUT-PER-01",
+                    category: "outillage",
+                    price: 89.90,
+                    quantity: 12,
+                    location: "Rayon 3, Étagère B",
+                    description: "Perceuse-visseuse sans fil avec 2 batteries",
+                    minStock: 4,
+                    supplier: "OutilPro",
+                    dateAdded: new Date().toISOString(),
+                    movements: [
+                        {
+                            type: "add",
+                            quantity: 12,
+                            date: new Date().toISOString(),
+                            description: "Stock initial"
+                        }
+                    ]
+                },
+                {
+                    id: generateProductCode(),
+                    name: "Filtre à huile moto",
+                    code: "MOTO-FH-01",
+                    category: "motos",
+                    price: 12.50,
+                    quantity: 25,
+                    location: "Rayon 4, Étagère D",
+                    description: "Filtre à huile compatible plusieurs modèles",
+                    minStock: 10,
+                    supplier: "MotoTech",
+                    dateAdded: new Date().toISOString(),
+                    movements: [
+                        {
+                            type: "add",
+                            quantity: 25,
+                            date: new Date().toISOString(),
+                            description: "Stock initial"
+                        }
+                    ]
+                },
+                {
+                    id: generateProductCode(),
+                    name: "Multimètre digital",
+                    code: "ELEC-MM-01",
+                    category: "electronique",
+                    price: 34.99,
+                    quantity: 7,
+                    location: "Rayon 5, Étagère A",
+                    description: "Multimètre numérique professionnel",
+                    minStock: 3,
+                    supplier: "ElectroPro",
+                    dateAdded: new Date().toISOString(),
+                    movements: [
+                        {
+                            type: "add",
+                            quantity: 7,
+                            date: new Date().toISOString(),
+                            description: "Stock initial"
+                        }
+                    ]
+                }
+            ];
+            
+            products = sampleProducts;
+            updateLocalStorage();
+        }
+
+        function showSection(sectionId) {
+            // Cacher toutes les sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Afficher la section demandée
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // Mettre à jour la navigation
+            document.querySelectorAll('#sidebar .nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`#sidebar [data-section="${sectionId}"]`).classList.add('active');
+            
+            // Actions spécifiques selon la section
+            if (sectionId === 'inventory') {
+                loadInventoryTable();
+            } else if (sectionId === 'print-codes') {
+                loadPrintTable();
+            } else if (sectionId === 'alerts') {
+                loadAlertsTable();
+            } else if (sectionId === 'add-product') {
+                // Réinitialiser le formulaire
+                document.getElementById('add-product-form').reset();
+                document.getElementById('code-preview-container').style.display = 'none';
+                document.getElementById('code-scan-container').style.display = 'none';
+                document.getElementById('code-manual-container').style.display = 'none';
+            }
+        }
+
+        function updateDashboardStats() {
+            // Compter le total des produits
+            const totalProducts = products.reduce((total, product) => total + product.quantity, 0);
+            document.getElementById('total-products').textContent = totalProducts;
+            
+            // Compter les produits en stock faible
+            const lowStock = products.filter(product => 
+                product.quantity > 0 && product.quantity <= product.minStock
+            ).length;
+            document.getElementById('low-stock').textContent = lowStock;
+            
+            // Compter les produits en rupture
+            const outOfStock = products.filter(product => product.quantity <= 0).length;
+            document.getElementById('out-of-stock').textContent = outOfStock;
+            
+            // Calculer la valeur totale du stock
+            const totalValue = products.reduce((total, product) => 
+                total + (product.price * product.quantity)
+            , 0);
+            document.getElementById('total-value').textContent = formatCurrency(totalValue);
+            
+            // Mettre à jour les alertes sur le dashboard
+            updateDashboardAlerts();
+        }
+
+        function updateDashboardAlerts() {
+            const stockAlertsContainer = document.getElementById('stock-alerts');
+            stockAlertsContainer.innerHTML = '';
+            
+            const unreadAlerts = alerts.filter(alert => !alert.read).slice(0, 5);
+            
+            if (unreadAlerts.length === 0) {
+                stockAlertsContainer.innerHTML = '<p class="text-center text-muted">Aucune alerte</p>';
+                return;
+            }
+            
+            unreadAlerts.forEach(alert => {
+                const alertElement = document.createElement('div');
+                alertElement.className = 'alert ' + (alert.type === 'low-stock' ? 'alert-warning' : 'alert-danger');
+                
+                let message = '';
+                if (alert.type === 'low-stock') {
+                    message = `<i class="fas fa-exclamation-triangle me-2"></i><strong>${alert.productName}</strong> : Stock faible (${alert.quantity} restants)`;
+                } else if (alert.type === 'out-of-stock') {
+                    message = `<i class="fas fa-times-circle me-2"></i><strong>${alert.productName}</strong> : Rupture de stock`;
+                }
+                
+                alertElement.innerHTML = message;
+                stockAlertsContainer.appendChild(alertElement);
+            });
+        }
+
+        function loadRecentProducts() {
+            const recentProductsTable = document.getElementById('recent-products-table').querySelector('tbody');
+            recentProductsTable.innerHTML = '';
+            
+            if (products.length === 0) {
+                recentProductsTable.innerHTML = '<tr><td colspan="5" class="text-center">Aucun produit trouvé</td></tr>';
+                return;
+            }
+            
+            // Trier par date d'ajout (du plus récent au plus ancien)
+            const sortedProducts = [...products].sort((a, b) => 
+                new Date(b.dateAdded) - new Date(a.dateAdded)
+            ).slice(0, 5);
+            
+            sortedProducts.forEach(product => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${formatCurrency(product.price)}</td>
+                    <td>${product.quantity}</td>
+                    <td>${product.location}</td>
+                    <td>${getStockBadge(product.quantity, product.minStock)}</td>
+                `;
+                
+                recentProductsTable.appendChild(row);
+            });
+        }
+
+        function loadInventoryTable() {
+            const inventoryTable = document.getElementById('inventory-table').querySelector('tbody');
+            inventoryTable.innerHTML = '';
+            
+            if (products.length === 0) {
+                inventoryTable.innerHTML = '<tr><td colspan="7" class="text-center">Aucun produit trouvé</td></tr>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${product.code}</td>
+                    <td>${product.name}</td>
+                    <td>${formatCurrency(product.price)}</td>
+                    <td>${product.quantity}</td>
+                    <td>${product.location}</td>
+                    <td>${getStockBadge(product.quantity, product.minStock)}</td>
+                    <td>
+                        <i class="fas fa-edit product-action text-primary" data-action="edit" data-id="${product.id}" title="Modifier"></i>
+                        <i class="fas fa-shopping-cart product-action text-success" data-action="sell" data-id="${product.id}" title="Vendre"></i>
+                        <i class="fas fa-print product-action text-warning" data-action="print" data-id="${product.id}" title="Imprimer"></i>
+                        <i class="fas fa-trash product-action text-danger" data-action="delete" data-id="${product.id}" title="Supprimer"></i>
+                    </td>
+                `;
+                
+                inventoryTable.appendChild(row);
+            });
+            
+            // Ajouter les événements aux boutons d'action
+            document.querySelectorAll('.product-action').forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const productId = this.getAttribute('data-id');
+                    
+                    if (action === 'edit') {
+                        openProductModal(productId);
+                    } else if (action === 'sell') {
+                        openSellModal(productId);
+                    } else if (action === 'print') {
+                        printProductCodes(productId);
+                    } else if (action === 'delete') {
+                        openDeleteModal(productId);
+                    }
+                });
+            });
+        }
+
+        function filterInventoryTable(searchTerm) {
+            const rows = document.querySelectorAll('#inventory-table tbody tr');
+            
+            rows.forEach(row => {
+                const textContent = row.textContent.toLowerCase();
+                if (textContent.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function loadPrintTable() {
+            const printTable = document.getElementById('print-products-table').querySelector('tbody');
+            printTable.innerHTML = '';
+            
+            if (products.length === 0) {
+                printTable.innerHTML = '<tr><td colspan="5" class="text-center">Aucun produit trouvé</td></tr>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td><input type="checkbox" class="print-select" data-id="${product.id}"></td>
+                    <td>${product.code}</td>
+                    <td>${product.name}</td>
+                    <td>${formatCurrency(product.price)}</td>
+                    <td>${product.quantity}</td>
+                `;
+                
+                printTable.appendChild(row);
+            });
+        }
+
+        function filterPrintTable(searchTerm) {
+            const rows = document.querySelectorAll('#print-products-table tbody tr');
+            
+            rows.forEach(row => {
+                const textContent = row.textContent.toLowerCase();
+                if (textContent.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function loadAlertsTable() {
+            const alertsTable = document.getElementById('alerts-table').querySelector('tbody');
+            alertsTable.innerHTML = '';
+            
+            if (alerts.length === 0) {
+                alertsTable.innerHTML = '<tr><td colspan="5" class="text-center">Aucune alerte trouvée</td></tr>';
+                return;
+            }
+            
+            // Trier par date (plus récent en premier)
+            const sortedAlerts = [...alerts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedAlerts.forEach(alert => {
+                const row = document.createElement('tr');
+                row.className = alert.read ? '' : 'table-warning';
+                
+                let alertType = '';
+                if (alert.type === 'low-stock') {
+                    alertType = '<span class="badge badge-stock badge-low-stock">Stock faible</span>';
+                } else if (alert.type === 'out-of-stock') {
+                    alertType = '<span class="badge badge-stock badge-out-of-stock">Rupture de stock</span>';
+                }
+                
+                row.innerHTML = `
+                    <td>${alert.productName}</td>
+                    <td>${alertType}</td>
+                    <td>${alert.quantity}</td>
+                    <td>${formatDate(alert.date)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary mark-read-btn" data-id="${alert.id}" ${alert.read ? 'disabled' : ''}>
+                            ${alert.read ? 'Lu' : 'Marquer comme lu'}
+                        </button>
+                    </td>
+                `;
+                
+                alertsTable.appendChild(row);
+            });
+            
+            // Ajouter les événements aux boutons
+            document.querySelectorAll('.mark-read-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const alertId = this.getAttribute('data-id');
+                    markAlertAsRead(alertId);
+                });
+            });
+        }
+
+        function updateCodePreview() {
+            const codeType = document.getElementById('product-code-type').value;
+            const name = document.getElementById('product-name').value;
+            const price = document.getElementById('product-price').value;
+            
+            if (!name) return;
+            
+            let code = '';
+            if (codeType === 'generate') {
+                code = generateProductCode();
+            } else if (codeType === 'manual') {
+                code = document.getElementById('product-code-manual').value;
+                if (!code) return;
+            } else {
+                return;
+            }
+            
+            document.getElementById('code-preview-container').style.display = 'block';
+            
+            // Générer le code-barres
+            generateBarcode(code, '#barcode-preview');
+            
+            // Générer le QR code avec des informations supplémentaires
+            const qrData = {
+                code: code,
+                name: name,
+                price: price ? parseFloat(price) : 0
+            };
+            
+            generateQRCode(JSON.stringify(qrData), 'qrcode-preview');
+        }
+
+        function initBarcodeScanner(videoElementId) {
+            const videoElement = document.getElementById(videoElementId);
+            
+            if (scannerInitialized) {
+                Quagga.stop();
+                if (qrScannerInterval) {
+                    clearInterval(qrScannerInterval);
+                    qrScannerInterval = null;
+                }
+            }
+            
+            // Demander l'accès à la caméra
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(function(stream) {
+                    videoElement.srcObject = stream;
+                    videoElement.play();
+                    
+                    // Initialiser Quagga pour la détection de code-barres
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: videoElement
+                        },
+                        decoder: {
+                            readers: [
+                                "code_128_reader",
+                                "ean_reader",
+                                "ean_8_reader",
+                                "code_39_reader",
+                                "code_39_vin_reader",
+                                "codabar_reader",
+                                "upc_reader",
+                                "upc_e_reader",
+                                "i2of5_reader"
+                            ]
+                        }
+                    }, function(err) {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+                        scannerInitialized = true;
+                        Quagga.start();
+                    });
+                    
+                    // Écouter les résultats de Quagga
+                    Quagga.onDetected(function(result) {
+                        const code = result.codeResult.code;
+                        console.log("Detected barcode:", code);
+                        processScannedCode(code);
+                    });
+                    
+                    // Initialiser le scanner QR
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    
+                    qrScannerInterval = setInterval(() => {
+                        if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+                            canvas.height = videoElement.videoHeight;
+                            canvas.width = videoElement.videoWidth;
+                            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                            
+                            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                                inversionAttempts: "dontInvert",
+                            });
+                            
+                            if (code) {
+                                console.log("Detected QR code:", code.data);
+                                processScannedCode(code.data);
+                            }
+                        }
+                    }, 500);
+                })
+                .catch(function(err) {
+                    console.error("Error accessing camera:", err);
+                    showNotification("Erreur", "Impossible d'accéder à la caméra.", "error");
+                });
+        }
+
+        function processScannedCode(codeData) {
+            // Arrêter le scanner
+            Quagga.stop();
+            if (qrScannerInterval) {
+                clearInterval(qrScannerInterval);
+                qrScannerInterval = null;
+            }
+            scannerInitialized = false;
+            
+            // Fermer les flux vidéo
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                if (video.srcObject) {
+                    const tracks = video.srcObject.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+            });
+            
+            // Traiter le code en fonction du contexte
+            if (document.getElementById('add-product').style.display !== 'none') {
+                // Si on est dans la section d'ajout de produit
+                document.getElementById('scanner-container').classList.add('d-none');
+                document.getElementById('product-code-manual').value = codeData;
+                updateCodePreview();
+            } else if (document.getElementById('scan').style.display !== 'none') {
+                // Si on est dans la section de scan
+                document.getElementById('scanner-area').style.display = 'none';
+                document.getElementById('scan-result').style.display = 'block';
+                
+                // Essayer de parser le code comme JSON (QR code)
+                try {
+                    const jsonData = JSON.parse(codeData);
+                    const product = products.find(p => p.code === jsonData.code);
+                    
+                    if (product) {
+                        displayScannedProduct(product);
+                    } else {
+                        showNotification("Erreur", "Produit non trouvé dans l'inventaire.", "error");
+                        document.getElementById('scan-another').click();
+                    }
+                } catch (e) {
+                    // Si ce n'est pas du JSON, c'est probablement un code-barres
+                    const product = products.find(p => p.code === codeData);
+                    
+                    if (product) {
+                        displayScannedProduct(product);
+                    } else {
+                        showNotification("Erreur", "Produit non trouvé dans l'inventaire.", "error");
+                        document.getElementById('scan-another').click();
+                    }
+                }
+            }
+        }
+
+        function displayScannedProduct(product) {
+            document.getElementById('scanned-code').textContent = product.code;
+            document.getElementById('scanned-name').textContent = product.name;
+            document.getElementById('scanned-price').textContent = formatCurrency(product.price);
+            document.getElementById('scanned-quantity').textContent = product.quantity;
+            document.getElementById('scanned-location').textContent = product.location;
+            
+            // Configurer les boutons d'action
+            document.getElementById('update-scanned').setAttribute('data-id', product.id);
+            document.getElementById('sell-scanned').setAttribute('data-id', product.id);
+            document.getElementById('print-scanned-codes').setAttribute('data-id', product.id);
+            document.getElementById('delete-scanned').setAttribute('data-id', product.id);
+            
+            // Ajouter les événements
+            document.getElementById('update-scanned').addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                openProductModal(productId);
+            });
+            
+            document.getElementById('sell-scanned').addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                openSellModal(productId);
+            });
+            
+            document.getElementById('print-scanned-codes').addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                printProductCodes(productId);
+            });
+            
+            document.getElementById('delete-scanned').addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                openDeleteModal(productId);
+            });
+        }
+
+        function addNewProduct() {
+            const name = document.getElementById('product-name').value;
+            const codeType = document.getElementById('product-code-type').value;
+            let code = '';
+            
+            if (codeType === 'generate') {
+                code = generateProductCode();
+            } else if (codeType === 'manual') {
+                code = document.getElementById('product-code-manual').value;
+            } else {
+                // Pour le moment, on génère un code car le scan n'est pas implémenté
+                code = generateProductCode();
+            }
+            
+            const category = document.getElementById('product-category').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const quantity = parseInt(document.getElementById('product-quantity').value);
+            const location = document.getElementById('product-location').value;
+            const description = document.getElementById('product-description').value;
+            const minStock = parseInt(document.getElementById('min-stock').value) || 5;
+            const supplier = document.getElementById('supplier').value;
+            
+            const product = {
+                id: generateProductCode(), // ID unique pour le produit
+                name: name,
+                code: code,
+                category: category,
+                price: price,
+                quantity: quantity,
+                location: location,
+                description: description,
+                minStock: minStock,
+                supplier: supplier,
+                dateAdded: new Date().toISOString(),
+                movements: [
+                    {
+                        type: "add",
+                        quantity: quantity,
+                        date: new Date().toISOString(),
+                        description: "Stock initial"
+                    }
+                ]
+            };
+            
+            products.push(product);
+            updateLocalStorage();
+            
+            showNotification("Succès", `Le produit "${name}" a été ajouté avec succès.`, "success");
+            
+            // Réinitialiser le formulaire
+            document.getElementById('add-product-form').reset();
+            document.getElementById('code-preview-container').style.display = 'none';
+            document.getElementById('code-scan-container').style.display = 'none';
+            document.getElementById('code-manual-container').style.display = 'none';
+            
+            // Mettre à jour les statistiques et tables
+            updateDashboardStats();
+            loadRecentProducts();
+            checkStockAlerts();
+        }
+
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            currentProductId = productId;
+            
+            // Remplir le formulaire
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-name').value = product.name;
+            document.getElementById('edit-product-category').value = product.category;
+            document.getElementById('edit-product-price').value = product.price;
+            document.getElementById('edit-product-quantity').value = product.quantity;
+            document.getElementById('edit-product-location').value = product.location;
+            document.getElementById('edit-product-description').value = product.description;
+            document.getElementById('edit-min-stock').value = product.minStock;
+            
+            // Générer les codes
+            generateBarcode(product.code, '#edit-barcode-preview');
+            
+            const qrData = {
+                code: product.code,
+                name: product.name,
+                price: product.price
+            };
+            
+            generateQRCode(JSON.stringify(qrData), 'edit-qrcode-preview');
+            
+            // Afficher l'historique des mouvements
+            const historyContainer = document.getElementById('product-history');
+            historyContainer.innerHTML = '';
+            
+            if (product.movements && product.movements.length > 0) {
+                const historyList = document.createElement('ul');
+                historyList.className = 'list-group';
+                
+                product.movements.forEach(movement => {
+                    const item = document.createElement('li');
+                    item.className = 'list-group-item';
+                    
+                    let badge = '';
+                    if (movement.type === 'add') {
+                        badge = '<span class="badge bg-success">+' + movement.quantity + '</span>';
+                    } else if (movement.type === 'remove') {
+                        badge = '<span class="badge bg-danger">-' + movement.quantity + '</span>';
+                    } else if (movement.type === 'sell') {
+                        badge = '<span class="badge bg-primary">-' + movement.quantity + '</span>';
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>${formatDate(movement.date)}</span>
+                            ${badge}
+                        </div>
+                        <small class="text-muted">${movement.description}</small>
+                    `;
+                    
+                    historyList.appendChild(item);
+                });
+                
+                historyContainer.appendChild(historyList);
+            } else {
+                historyContainer.innerHTML = '<p class="text-center text-muted">Aucun mouvement enregistré</p>';
+            }
+            
+            // Afficher la modal
+            productModal.show();
+        }
+
+        function saveEditProduct() {
+            const productId = document.getElementById('edit-product-id').value;
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            const oldQuantity = product.quantity;
+            const newQuantity = parseInt(document.getElementById('edit-product-quantity').value);
+            
+            // Mettre à jour les informations
+            product.name = document.getElementById('edit-product-name').value;
+            product.category = document.getElementById('edit-product-category').value;
+            product.price = parseFloat(document.getElementById('edit-product-price').value);
+            product.quantity = newQuantity;
+            product.location = document.getElementById('edit-product-location').value;
+            product.description = document.getElementById('edit-product-description').value;
+            product.minStock = parseInt(document.getElementById('edit-min-stock').value);
+            
+            // Ajouter un mouvement si la quantité a changé
+            if (oldQuantity !== newQuantity) {
+                const difference = newQuantity - oldQuantity;
+                
+                if (difference !== 0) {
+                    const movementType = difference > 0 ? 'add' : 'remove';
+                    
+                    product.movements.push({
+                        type: movementType,
+                        quantity: Math.abs(difference),
+                        date: new Date().toISOString(),
+                        description: "Modification manuelle du stock"
+                    });
+                }
+            }
+            
+            updateLocalStorage();
+            
+            showNotification("Succès", `Le produit "${product.name}" a été mis à jour avec succès.`, "success");
+            
+            // Fermer la modal
+            productModal.hide();
+            
+            // Mettre à jour les statistiques et tables
+            updateDashboardStats();
+            loadRecentProducts();
+            loadInventoryTable();
+            checkStockAlerts();
+        }
+
+        function openSellModal(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            currentProductId = productId;
+            
+            // Remplir le formulaire
+            document.getElementById('sell-product-id').value = product.id;
+            document.getElementById('sell-product-name').value = product.name;
+            document.getElementById('sell-product-price').value = formatCurrency(product.price);
+            document.getElementById('sell-stock-available').value = product.quantity;
+            document.getElementById('sell-quantity').value = 1;
+            document.getElementById('sell-quantity').max = product.quantity;
+            
+            // Calculer le prix total
+            updateSellTotal();
+            
+            // Afficher la modal
+            sellModal.show();
+        }
+
+        function updateSellTotal() {
+            const productId = document.getElementById('sell-product-id').value;
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) return;
+            
+            const quantity = parseInt(document.getElementById('sell-quantity').value) || 0;
+            const totalPrice = product.price * quantity;
+            
+            document.getElementById('sell-total-price').value = formatCurrency(totalPrice);
+        }
+
+        function sellProduct() {
+            const productId = document.getElementById('sell-product-id').value;
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('sell-quantity').value);
+            
+            if (quantity <= 0 || quantity > product.quantity) {
+                showNotification("Erreur", "Quantité invalide.", "error");
+                return;
+            }
+            
+            // Mettre à jour la quantité
+            product.quantity -= quantity;
+            
+            // Ajouter un mouvement
+            product.movements.push({
+                type: "sell",
+                quantity: quantity,
+                date: new Date().toISOString(),
+                description: "Vente"
+            });
+            
+            updateLocalStorage();
+            
+            showNotification("Succès", `${quantity} ${product.name} vendu(s) avec succès.`, "success");
+            
+            // Fermer la modal
+            sellModal.hide();
+            
+            // Mettre à jour les statistiques et tables
+            updateDashboardStats();
+            loadRecentProducts();
+            loadInventoryTable();
+            checkStockAlerts();
+        }
+
+        function openDeleteModal(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            currentProductId = productId;
+            
+            document.getElementById('delete-product-name').textContent = product.name;
+            
+            // Afficher la modal
+            deleteModal.show();
+        }
+
+        function deleteProduct() {
+            const productId = currentProductId;
+            const productIndex = products.findIndex(p => p.id === productId);
+            
+            if (productIndex === -1) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            const productName = products[productIndex].name;
+            
+            // Supprimer le produit
+            products.splice(productIndex, 1);
+            
+            // Supprimer les alertes associées
+            alerts = alerts.filter(alert => alert.productId !== productId);
+            
+            updateLocalStorage();
+            
+            showNotification("Succès", `Le produit "${productName}" a été supprimé.`, "success");
+            
+            // Fermer la modal
+            deleteModal.hide();
+            
+            // Mettre à jour les statistiques et tables
+            updateDashboardStats();
+            loadRecentProducts();
+            loadInventoryTable();
+            updateAlertsBadge();
+        }
+
+        function generatePrintPreview() {
+            const selectedCheckboxes = document.querySelectorAll('#print-products-table tbody input[type="checkbox"]:checked');
+            const printBarcode = document.getElementById('print-barcode').checked;
+            const printQrcode = document.getElementById('print-qrcode').checked;
+            
+            if (selectedCheckboxes.length === 0) {
+                showNotification("Attention", "Veuillez sélectionner au moins un produit.", "warning");
+                return;
+            }
+            
+            if (!printBarcode && !printQrcode) {
+                showNotification("Attention", "Veuillez sélectionner au moins un type de code à imprimer.", "warning");
+                return;
+            }
+            
+            const printItemsContainer = document.getElementById('print-items');
+            printItemsContainer.innerHTML = '';
+            
+            selectedCheckboxes.forEach(checkbox => {
+                const productId = checkbox.getAttribute('data-id');
+                const product = products.find(p => p.id === productId);
+                
+                if (product) {
+                    if (printBarcode) {
+                        const barcodeItem = document.createElement('div');
+                        barcodeItem.className = 'print-item';
+                        
+                        barcodeItem.innerHTML = `
+                            <h6>${product.name}</h6>
+                            <svg class="barcode-${product.id}"></svg>
+                            <p>${formatCurrency(product.price)}</p>
+                        `;
+                        
+                        printItemsContainer.appendChild(barcodeItem);
+                        
+                        // Générer le code-barres
+                        generateBarcode(product.code, `.barcode-${product.id}`);
+                    }
+                    
+                    if (printQrcode) {
+                        const qrcodeItem = document.createElement('div');
+                        qrcodeItem.className = 'print-item';
+                        
+                        qrcodeItem.innerHTML = `
+                            <h6>${product.name}</h6>
+                            <div id="qrcode-${product.id}" class="qrcode-container"></div>
+                            <p>${formatCurrency(product.price)}</p>
+                        `;
+                        
+                        printItemsContainer.appendChild(qrcodeItem);
+                        
+                        // Générer le QR code
+                        const qrData = {
+                            code: product.code,
+                            name: product.name,
+                            price: product.price
+                        };
+                        
+                        generateQRCode(JSON.stringify(qrData), `qrcode-${product.id}`);
+                    }
+                }
+            });
+            
+            // Activer le bouton d'impression
+            document.getElementById('print-generated').disabled = false;
+        }
+
+        function printProductCodes(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showNotification("Erreur", "Produit non trouvé.", "error");
+                return;
+            }
+            
+            // Aller à la section impression
+            showSection('print-codes');
+            
+            // Décocher toutes les cases
+            document.querySelectorAll('#print-products-table tbody input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Cocher seulement le produit sélectionné
+            const checkbox = document.querySelector(`#print-products-table tbody input[data-id="${productId}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+            
+            // Générer l'aperçu
+            generatePrintPreview();
+        }
+
+        function markAlertAsRead(alertId) {
+            const alert = alerts.find(a => a.id === alertId);
+            
+            if (!alert) {
+                showNotification("Erreur", "Alerte non trouvée.", "error");
+                return;
+            }
+            
+            alert.read = true;
+            updateLocalStorage();
+            
+            // Rafraîchir la table des alertes
+            loadAlertsTable();
+            updateAlertsBadge();
+            updateDashboardAlerts();
+        }
+
+        function markAllAlertsAsRead() {
+            alerts.forEach(alert => {
+                alert.read = true;
+            });
+            
+            updateLocalStorage();
+            
+            // Rafraîchir la table des alertes
+            loadAlertsTable();
+            updateAlertsBadge();
+            updateDashboardAlerts();
+            
+            showNotification("Succès", "Toutes les alertes ont été marquées comme lues.", "success");
+        }
+
+        function exportInventory() {
+            // Créer les données CSV
+            let csvContent = "Code,Nom,Catégorie,Prix,Quantité,Emplacement,Description,Fournisseur\n";
+            
+            products.forEach(product => {
+                const row = [
+                    product.code,
+                    product.name,
+                    product.category,
+                    product.price,
+                    product.quantity,
+                    product.location,
+                    product.description,
+                    product.supplier
+                ].map(field => {
+                    // Échapper les champs qui contiennent des virgules
+                    if (String(field).includes(',')) {
+                        return `"${String(field).replace(/"/g, '""')}"`;
+                    }
+                    return field;
+                });
+                
+                csvContent += row.join(',') + "\n";
+            });
+            
+            // Créer un lien de téléchargement
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "inventaire_total_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification("Succès", "L'inventaire a été exporté avec succès.", "success");
+        }
+    </script>
+</body>
+</html>
