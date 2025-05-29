@@ -1,0 +1,1428 @@
+J'ai plusieurs façons de transfères des commandes de clients dans mon code 
+
+Et j'ai plusieurs modes 
+
+Ici on va se consacrer sur le mode 2 et 3 
+Car le mode 1 est simpliste n'a pas trop de schéma à faire 
+
+Et je veux que lorsque que je transfère les commandes qui seront ici :
+
+"Interface Mode 2: Vendeur 1 (Réception)"
+
+                    <!-- Zone Client & Transfert -->
+                    <div class="newonInventCheckoutZone">
+                        <div class="newonInventClientInfo">
+                            <div class="mb-3">
+                                <label class="form-label">Nom du client</label>
+                                <input type="text" class="form-control" id="newonInventClientName2" placeholder="Nom du client">
+                            </div>
+                        </div>
+                        
+                        <div class="newonInventCashierSelection">
+                            <h5>Transférer vers un caissier</h5>
+                            <div class="newonInventCashierOptions" id="newonInventCashierOptions">
+                                <!-- Les caissiers disponibles seront ajoutés ici dynamiquement -->
+                                <div class="newonInventCashierCard">
+                                    <div class="newonInventCashierIcon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="newonInventCashierInfo">
+                                        <h6>Caissier 1</h6>
+                                        <span class="newonInventCashierLoad">0 clients en attente</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="newonInventCompleteBtn" id="newonInventTransferOrder" disabled>
+                            <i class="fas fa-paper-plane me-2"></i> Transférer la commande
+                        </button>
+                    </div>
+
+Et/ou ici :
+
+" Interface Mode 3: Vendeur 1 (Réception) "
+
+                    <!-- Zone Client & Transfert -->
+                    <div class="newonInventCheckoutZone">
+                        <div class="newonInventClientInfo">
+                            <div class="mb-3">
+                                <label class="form-label">Nom du client</label>
+                                <input type="text" class="form-control" id="newonInventClientName3" placeholder="Nom du client">
+                            </div>
+                        </div>
+                        
+                        <div class="newonInventCashierSelection">
+                            <h5>Transférer vers un caissier</h5>
+                            <div class="newonInventCashierOptions" id="newonInventCashierOptions3">
+                                <!-- Les caissiers disponibles seront ajoutés ici dynamiquement -->
+                            </div>
+                        </div>
+                        
+                        <button class="newonInventCompleteBtn" id="newonInventTransferOrder3" disabled>
+                            <i class="fas fa-paper-plane me-2"></i> Transférer la commande
+                        </button>
+                    </div>
+
+
+
+Que je passe aux cassiers qui seront ici :
+
+            <!-- Interface Mode 2: Vendeur 2 (Caissier) -->
+            <div id="newonInventTwoSellers_Seller2" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Caisse</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Caissier</span>
+                        <span id="newonInventCurrentCashier">Caissier actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventPendingOrders">
+                    <h5><i class="fas fa-clock me-2"></i> Commandes en attente</h5>
+                    <div id="newonInventOrderQueue">
+                        <!-- Les commandes en attente seront ajoutées ici -->
+                        <div class="newonInventEmptyState">
+                            <i class="fas fa-clipboard-check"></i>
+                            <p>Aucune commande en attente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="newonInventProcessOrder" style="display: none;">
+                    <div class="newonInventProcessHeader">
+                        <h5>Traitement de la commande</h5>
+                        <div class="newonInventClientBadge">
+                            <i class="fas fa-user me-1"></i>
+                            <span id="newonInventProcessClientName">Nom du client</span>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventOrderDetails">
+                        <div class="newonInventCartItems" id="newonInventProcessItems">
+                            <!-- Les articles de la commande s'afficheront ici -->
+                        </div>
+                        
+                        <div class="newonInventCartTotal">
+                            <div class="newonInventTotalLine">
+                                <span>Total:</span>
+                                <span id="newonInventProcessTotal">0.00</span>
+                            </div>
+                            <div class="newonInventTotalLine newonInventTotalCurrency">
+                                <span id="newonInventProcessCurrency">USD</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventPaymentConfirm">
+                        <h5>Paiement</h5>
+                        <div class="newonInventPaymentGrid">
+                            <button class="newonInventPayBtn newonInventPayCash" id="newonInventProcessCash">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Espèces reçues</span>
+                            </button>
+                            <button class="newonInventPayBtn newonInventPayOther" id="newonInventProcessOther">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Autre méthode</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventActionButtons">
+                        <button class="newonInventCancelBtn" id="newonInventCancelProcess">
+                            <i class="fas fa-times-circle me-2"></i> Annuler
+                        </button>
+                        <button class="newonInventCompleteBtn" id="newonInventConfirmPayment" disabled>
+                            <i class="fas fa-check-circle me-2"></i> Confirmer paiement
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+Et/ou ici :
+
+<!-- Interface Mode 3: Vendeur 2 (Caissier) -->
+<div id="newonInventThreeSellers_Seller2" class="newonInventRoleInterface" style="display: none;">
+    <div class="newonInventRoleHeader">
+        <h4>Caisse</h4>
+        <div class="newonInventSellerInfo">
+            <span class="newonInventRoleBadge">Caissier</span>
+            <span id="newonInventCurrentCashier3">Caissier actuel</span>
+        </div>
+    </div>
+
+    <div class="newonInventPendingOrders">
+        <h5><i class="fas fa-clock me-2"></i> Commandes en attente</h5>
+        <div id="newonInventOrderQueue3">
+            <!-- Les commandes en attente seront ajoutées ici -->
+            <div class="newonInventEmptyState">
+                <i class="fas fa-clipboard-check"></i>
+                <p>Aucune commande en attente</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="newonInventProcessOrder3" style="display: none;">
+        <div class="newonInventProcessHeader">
+            <h5>Traitement de la commande</h5>
+            <div class="newonInventClientBadge">
+                <i class="fas fa-user me-1"></i>
+                <span id="newonInventProcessClientName3">Nom du client</span>
+            </div>
+        </div>
+        
+        <div class="newonInventOrderDetails">
+            <div class="newonInventCartItems" id="newonInventProcessItems3">
+                <!-- Les articles de la commande s'afficheront ici -->
+            </div>
+            
+            <div class="newonInventCartTotal">
+                <div class="newonInventTotalLine">
+                    <span>Total:</span>
+                    <span id="newonInventProcessTotal3">0.00</span>
+                </div>
+                <div class="newonInventTotalLine newonInventTotalCurrency">
+                    <span id="newonInventProcessCurrency3">USD</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="newonInventPaymentConfirm">
+            <h5>Paiement</h5>
+            <div class="newonInventPaymentGrid">
+                <button class="newonInventPayBtn newonInventPayCash" id="newonInventProcessCash3">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Espèces reçues</span>
+                </button>
+                <button class="newonInventPayBtn newonInventPayOther" id="newonInventProcessOther3">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Autre méthode</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Nouvelle zone de sélection des livreurs -->
+        <div class="newonInventDeliverySelection">
+            <h5>Transférer vers un livreur</h5>
+            <div class="newonInventDeliveryOptions" id="newonInventDeliveryOptions3">
+                <!-- Les livreurs disponibles seront ajoutés ici dynamiquement -->
+            </div>
+        </div>
+        
+        <div class="newonInventActionButtons">
+            <button class="newonInventCancelBtn" id="newonInventCancelProcess3">
+                <i class="fas fa-times-circle me-2"></i> Annuler
+            </button>
+            <button class="newonInventCompleteBtn" id="newonInventConfirmPayment3" disabled>
+                <i class="fas fa-check-circle me-2"></i> Confirmer paiement et transférer
+            </button>
+        </div>
+    </div>
+</div>
+
+POUR LE CAS DU TRANSFERT DES CASSIERS DU MODE 3 VERS LES LIVREURS , JE VEUX TROUVER LES COMMANDES DES CLIENTS ICI : 
+
+            <!-- Interface Mode 3: Vendeur 3 (Livraison) -->
+            <div id="newonInventThreeSellers_Seller3" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Livraison des produits</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Livreur</span>
+                        <span id="newonInventCurrentDelivery">Livreur actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventPendingOrders">
+                    <h5><i class="fas fa-clock me-2"></i> Commandes à livrer</h5>
+                    <div id="newonInventDeliveryQueue">
+                        <!-- Les commandes à livrer seront ajoutées ici -->
+                        <div class="newonInventEmptyState">
+                            <i class="fas fa-box-open"></i>
+                            <p>Aucune commande à livrer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="newonInventDeliveryProcess" style="display: none;">
+                    <div class="newonInventProcessHeader">
+                        <h5>Livraison de la commande</h5>
+                        <div class="newonInventClientBadge">
+                            <i class="fas fa-user me-1"></i>
+                            <span id="newonInventDeliveryClientName">Nom du client</span>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventDeliveryDetails">
+                        <h6>Articles à livrer</h6>
+                        <div class="newonInventCartItems" id="newonInventDeliveryItems">
+                            <!-- Les articles à livrer s'afficheront ici -->
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventActionButtons">
+                        <button class="newonInventCancelBtn" id="newonInventCancelDelivery">
+                            <i class="fas fa-times-circle me-2"></i> Annuler
+                        </button>
+                        <button class="newonInventCompleteBtn" id="newonInventConfirmDelivery">
+                            <i class="fas fa-check-circle me-2"></i> Confirmer la livraison
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+Voici à quoi ressemble le modal de paiement et les reçus pour eux tous :
+
+            <div class="modal fade" id="newonInventPaymentModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Détails du paiement</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-4">
+                                <h6>Total à payer</h6>
+                                <div class="newonInventModalTotal" id="newonInventModalTotal">0.00 USD</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="newonInventPaymentAmount" class="form-label">Montant reçu</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="newonInventPaymentAmount" min="0" step="0.01">
+                                    <select class="form-select" id="newonInventPaymentCurrency" style="max-width: 100px;">
+                                        <option value="usd">USD</option>
+                                        <option value="cdf">CDF</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="newonInventChangeAmount" id="newonInventChangeContainer" style="display: none;">
+                                <h6>Monnaie à rendre</h6>
+                                <div class="newonInventChangeValue" id="newonInventChangeAmount">0.00 USD</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-primary" id="newonInventConfirmModalPayment">Confirmer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="newonInventReceiptModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reçu de vente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="newonInventReceipt" id="newonInventReceiptContent">
+                                <!-- Le contenu du reçu sera généré ici -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-primary" id="newonInventPrintReceipt">
+                                <i class="fas fa-print me-2"></i> Imprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+VOICI QUELQUES DÉTAILS TROP IMPORTANT :
+DANS LE MODE 2 , IL Y'A PAS LA ZONE DES LIVREURS POUR 2 RAISONS :
+- RAISONS 1 : LES LIVREURS SE TROUVENT JUSTE À CÔTÉ DU CASSIER, DONC ILS TRAVAILLENT CÔTE À CÔTÉ DONC LES COMMANDES DE LIVRAISONS SERONT DIRECTEMENT VISISBLES POUR LE LIVREUR OU DICTER PAR CASSIER, - RAISON 2, LE CASSIER EST LUI-MÊME LIVREUR 
+
+S'IL FAUT ADAPTE CETTE ZONE DE CAISSIER DANS LE MODE 2, N'HÉSITE PAS À L'ADAPTER 
+
+DANS LE MODE 3 LES CASSIERS ET LES LIVREURS CHACUN À SON POSTE DONC, ILS NE SONT PAS CÔTE-À-CÔTE DONC VOILÀ POURQUOI LE TRANSFERT CAISSIERS-LIVREURS EST IMPORTANT 
+
+
+VOICI CERTAINS JAVASCRIPT :
+
+// Ajoute un produit au panier
+function addProductToCart(product, interfaceIndex) {
+    // Vérifie si l'interface est celle du vendeur unique, du vendeur 1 (mode 2), ou du vendeur 1 (mode 3)
+    const cartIndex = interfaceIndex;
+    
+    // Détermine dans quel panier ajouter le produit
+    let cartItems;
+    if (cartIndex === 0) {
+        cartItems = document.getElementById('newonInventCartItems');
+    } else if (cartIndex === 1) {
+        cartItems = document.getElementById('newonInventCartItems2');
+    } else if (cartIndex === 2) {
+        cartItems = document.getElementById('newonInventCartItems3');
+    }
+    
+    if (!cartItems) return;
+    
+    // Vide l'état "panier vide" s'il existe
+    const emptyCart = cartItems.querySelector('.newonInventEmptyCart');
+    if (emptyCart) {
+        emptyCart.style.display = 'none';
+    }
+    
+    // Vérifie si le produit est déjà dans le panier
+    const existingItem = currentCart.find(item => item.id === product.id);
+    
+    if (existingItem) {
+        // Si le produit existe déjà, incrémente sa quantité
+        existingItem.quantity += 1;
+        
+        // Met à jour l'affichage de la quantité
+        const quantityInput = document.querySelector(`[data-product-id="${product.id}"] .product-quantity-input`);
+        if (quantityInput) {
+            quantityInput.value = existingItem.quantity;
+        }
+    } else {
+        // Si le produit n'existe pas encore, ajoute-le au panier
+        const newItem = { ...product, quantity: 1 };
+        currentCart.push(newItem);
+        
+        // Crée un élément de panier
+        const cartItemElement = document.createElement('div');
+        cartItemElement.className = 'newonInventCartItem';
+        cartItemElement.setAttribute('data-product-id', product.id);
+        
+        const displayPrice = product.price.toFixed(2) + (product.currency === 'usd' ? ' $' : ' FC');
+        
+// Modifier cette partie dans la fonction addProductToCart
+cartItemElement.innerHTML = `
+    <div class="product-info">
+        <div class="product-name">${product.name}</div>
+        <button class="remove-item" data-product-id="${product.id}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="product-controls">
+        <div class="product-price">${displayPrice}</div>
+        <div class="product-quantity">
+            <div class="newonInventQuantity">
+                <button class="decrement-quantity" data-product-id="${product.id}">-</button>
+                <input type="number" min="1" class="product-quantity-input" value="1" data-product-id="${product.id}">
+                <button class="increment-quantity" data-product-id="${product.id}">+</button>
+            </div>
+        </div>
+    </div>
+`;
+
+        
+        // Ajoute l'élément au panier
+        cartItems.appendChild(cartItemElement);
+        
+        // Ajoute des écouteurs d'événement pour les boutons d'incrémentation/décrémentation
+        cartItemElement.querySelector('.increment-quantity').addEventListener('click', function() {
+            incrementCartItem(product.id);
+        });
+        
+        cartItemElement.querySelector('.decrement-quantity').addEventListener('click', function() {
+            decrementCartItem(product.id);
+        });
+        
+        cartItemElement.querySelector('.remove-item').addEventListener('click', function() {
+            removeCartItem(product.id);
+        });
+        
+        cartItemElement.querySelector('.product-quantity-input').addEventListener('change', function(e) {
+            updateCartItemQuantity(product.id, parseInt(e.target.value));
+        });
+    }
+    
+    // Met à jour le total du panier
+    updateCartTotal(cartIndex);
+    
+    // Active le bouton de finalisation si le panier n'est pas vide
+    if (cartIndex === 0) {
+        document.getElementById('newonInventCompleteSale').disabled = false;
+    } else if (cartIndex === 1) {
+        document.getElementById('newonInventTransferOrder').disabled = false;
+    } else if (cartIndex === 2) {
+        document.getElementById('newonInventTransferOrder3').disabled = false;
+    }
+    
+    // Affiche une notification de succès similaire à showNotification
+    const notificationCenter = document.getElementById('notification-center');
+    if (!notificationCenter) {
+        // Si notification-center n'existe pas, on le crée
+        const newNotificationCenter = document.createElement('div');
+        newNotificationCenter.id = 'notification-center';
+        document.body.appendChild(newNotificationCenter);
+    }
+    
+    const message = `"${product.name}" ajouté au panier`;
+    const notification = document.createElement('div');
+    notification.className = 'notification notification-success';
+    notification.innerHTML = `
+        <div class="notification-header">
+            <div class="notification-title">Succès</div>
+            <div class="notification-close"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="notification-message">${message}</div>
+    `;
+    
+    document.getElementById('notification-center').appendChild(notification);
+    
+    // Fermeture automatique après 5 secondes
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 5000);
+    
+    // Fermeture manuelle
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    });
+}
+
+    
+    // Incrémente la quantité d'un produit dans le panier
+    function incrementCartItem(productId) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item) {
+            item.quantity += 1;
+            
+            // Met à jour l'affichage
+            const quantityInput = document.querySelector(`[data-product-id="${productId}"] .product-quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = item.quantity;
+            }
+            
+            updateCartTotal();
+        }
+    }
+    
+    // Décrémente la quantité d'un produit dans le panier
+    function decrementCartItem(productId) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item && item.quantity > 1) {
+            item.quantity -= 1;
+            
+            // Met à jour l'affichage
+            const quantityInput = document.querySelector(`[data-product-id="${productId}"] .product-quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = item.quantity;
+            }
+            
+            updateCartTotal();
+        } else if (item && item.quantity === 1) {
+            removeCartItem(productId);
+        }
+    }
+    
+    // Supprime un produit du panier
+    function removeCartItem(productId) {
+        // Supprime le produit du panier
+        currentCart = currentCart.filter(item => item.id !== productId);
+        
+        // Supprime l'élément du DOM
+        const cartItemElement = document.querySelector(`[data-product-id="${productId}"].newonInventCartItem`);
+        if (cartItemElement) {
+            cartItemElement.remove();
+        }
+        
+        // Vérifie si le panier est vide
+        checkEmptyCart();
+        
+        // Met à jour le total
+        updateCartTotal();
+    }
+    
+    // Met à jour la quantité d'un produit dans le panier
+    function updateCartItemQuantity(productId, quantity) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item) {
+            item.quantity = Math.max(1, quantity);
+            
+            updateCartTotal();
+        }
+    }
+    
+    // Vérifie si le panier est vide
+    function checkEmptyCart() {
+        const cartItems = [
+            document.getElementById('newonInventCartItems'),
+            document.getElementById('newonInventCartItems2'),
+            document.getElementById('newonInventCartItems3')
+        ];
+        
+        cartItems.forEach((container, index) => {
+            if (container) {
+                // Si le panier est vide, affiche un message
+                if (!container.querySelector('.newonInventCartItem')) {
+                    // Vérifier si le message existe déjà
+                    let emptyCart = container.querySelector('.newonInventEmptyCart');
+                    
+                    if (!emptyCart) {
+                        // Créer le message s'il n'existe pas
+                        emptyCart = document.createElement('div');
+                        emptyCart.className = 'newonInventEmptyCart';
+                        emptyCart.innerHTML = `
+                            <i class="fas fa-shopping-basket"></i>
+                            <p>Le panier est vide</p>
+                            <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                        `;
+                        container.appendChild(emptyCart);
+                    } else {
+                        emptyCart.style.display = 'flex';
+                    }
+                    
+                    // Désactive le bouton de finalisation
+                    if (index === 0) {
+                        document.getElementById('newonInventCompleteSale').disabled = true;
+                    } else if (index === 1) {
+                        document.getElementById('newonInventTransferOrder').disabled = true;
+                    } else if (index === 2) {
+                        document.getElementById('newonInventTransferOrder3').disabled = true;
+                    }
+                }
+            }
+        });
+    }
+    
+    // Met à jour le total du panier
+    function updateCartTotal(interfaceIndex = 0) {
+        // Calcule le total
+        const total = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Détermine quel élément du total mettre à jour
+        let totalDisplay, currencyDisplay;
+        if (interfaceIndex === 0) {
+            totalDisplay = document.getElementById('newonInventTotalAmount');
+            currencyDisplay = document.getElementById('newonInventTotalCurrency');
+        } else if (interfaceIndex === 1) {
+            totalDisplay = document.getElementById('newonInventTotalAmount2');
+            currencyDisplay = document.getElementById('newonInventTotalCurrency2');
+        } else if (interfaceIndex === 2) {
+            totalDisplay = document.getElementById('newonInventTotalAmount3');
+            currencyDisplay = document.getElementById('newonInventTotalCurrency3');
+        }
+        
+        // Met à jour l'affichage du total
+        if (totalDisplay) {
+            totalDisplay.textContent = total.toFixed(2);
+        }
+        
+        // Met à jour l'affichage de la devise
+        if (currencyDisplay) {
+            const mainCurrency = currentCart.length > 0 ? currentCart[0].currency.toUpperCase() : 'USD';
+            currencyDisplay.textContent = mainCurrency;
+        }
+    }
+    
+// Initialise les écouteurs d'événements pour le point de vente
+function initSalesEventListeners() {
+    // Bouton de changement de rôle
+    const roleToggleBtn = document.getElementById('newonInventRoleToggle');
+    if (roleToggleBtn) {
+        roleToggleBtn.addEventListener('click', function() {
+            if (currentSalesMode) {
+                openRoleSelectionModal(currentSalesMode);
+            }
+        });
+    }
+    
+    // Bouton de réinitialisation du panier
+    const resetButtons = [
+        document.getElementById('newonInventResetCart'),
+        document.getElementById('newonInventResetCart2'),
+        document.getElementById('newonInventResetCart3')
+    ];
+    
+    resetButtons.forEach(button => {
+        if (button) {
+            button.addEventListener('click', function() {
+                resetCart();
+            });
+        }
+    });
+    
+    // Boutons de paiement
+    const paymentButtons = [
+        document.getElementById('newonInventCashPayment'),
+        document.getElementById('newonInventOtherPayment'),
+        document.getElementById('newonInventProcessCash'),
+        document.getElementById('newonInventProcessOther'),
+        document.getElementById('newonInventProcessCash3'),
+        document.getElementById('newonInventProcessOther3')
+    ];
+    
+    paymentButtons.forEach(button => {
+        if (button) {
+            button.addEventListener('click', function() {
+                // Retire la classe active de tous les boutons
+                paymentButtons.forEach(btn => {
+                    if (btn && btn.parentElement === this.parentElement) {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Ajoute la classe active au bouton cliqué
+                this.classList.add('active');
+                
+                // Active le bouton de validation
+                if (this.id === 'newonInventCashPayment' || this.id === 'newonInventOtherPayment') {
+                    document.getElementById('newonInventCompleteSale').disabled = false;
+                } else if (this.id === 'newonInventProcessCash' || this.id === 'newonInventProcessOther') {
+                    document.getElementById('newonInventConfirmPayment').disabled = false;
+                } else if (this.id === 'newonInventProcessCash3' || this.id === 'newonInventProcessOther3') {
+                    document.getElementById('newonInventConfirmPayment3').disabled = false;
+                }
+                
+                // Si c'est un paiement en espèces, ouvre la modale
+                if (this.id.includes('Cash')) {
+                    openPaymentModal();
+                }
+            });
+        }
+    });
+    
+    // Bouton de finalisation de la vente (mode vendeur unique)
+    const completeSaleBtn = document.getElementById('newonInventCompleteSale');
+    if (completeSaleBtn) {
+        completeSaleBtn.addEventListener('click', function() {
+            // Vérifier si un mode de paiement est sélectionné
+            const cashBtn = document.getElementById('newonInventCashPayment');
+            const otherBtn = document.getElementById('newonInventOtherPayment');
+            
+            if ((cashBtn && cashBtn.classList.contains('active')) || 
+                (otherBtn && otherBtn.classList.contains('active'))) {
+                // Finaliser la vente
+                processSale();
+            } else {
+                alert("Veuillez sélectionner un mode de paiement.");
+            }
+        });
+    }
+    
+    // Bouton de transfert de commande (mode 2 et 3, vendeur 1)
+    const transferButtons = [
+        document.getElementById('newonInventTransferOrder'),
+        document.getElementById('newonInventTransferOrder3')
+    ];
+    
+    transferButtons.forEach(button => {
+        if (button) {
+            button.addEventListener('click', function() {
+                // Vérifie si un caissier est sélectionné
+                const selectedCashier = document.querySelector('.newonInventCashierCard.active');
+                
+                if (selectedCashier) {
+                    // Transfère la commande au caissier
+                    transferOrderToCashier(selectedCashier.getAttribute('data-cashier-id'));
+                } else {
+                    alert("Veuillez sélectionner un caissier pour le transfert.");
+                }
+            });
+        }
+    });
+    
+    // Initialisation de la sélection des caissiers
+    initCashierSelection();
+    
+    // Initialisation de la sélection des livreurs
+    initDeliverySelection();
+}
+
+    
+    // Initialise la sélection des caissiers
+    function initCashierSelection() {
+        // Simulation de caissiers disponibles
+        const cashiers = [
+            { id: 'C001', name: 'Caissier 1', pendingOrders: 0 },
+            { id: 'C002', name: 'Caissier 2', pendingOrders: 2 },
+            { id: 'C003', name: 'Caissier 3', pendingOrders: 1 }
+        ];
+        
+        // Trie les caissiers par nombre de commandes en attente
+        cashiers.sort((a, b) => a.pendingOrders - b.pendingOrders);
+        
+        // Crée les éléments pour les caissiers
+        const cashierContainers = [
+            document.getElementById('newonInventCashierOptions'),
+            document.getElementById('newonInventCashierOptions3')
+        ];
+        
+        cashierContainers.forEach(container => {
+            if (container) {
+                container.innerHTML = '';
+                
+                cashiers.forEach(cashier => {
+                    const cashierCard = document.createElement('div');
+                    cashierCard.className = 'newonInventCashierCard';
+                    cashierCard.setAttribute('data-cashier-id', cashier.id);
+                    
+                    cashierCard.innerHTML = `
+                        <div class="newonInventCashierIcon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="newonInventCashierInfo">
+                            <h6>${cashier.name}</h6>
+                            <span class="newonInventCashierLoad">${cashier.pendingOrders} client${cashier.pendingOrders !== 1 ? 's' : ''} en attente</span>
+                        </div>
+                    `;
+                    
+                    container.appendChild(cashierCard);
+                    
+                    // Ajoute un écouteur d'événement pour la sélection du caissier
+                    cashierCard.addEventListener('click', function() {
+                        // Retire la classe active de tous les caissiers
+                        container.querySelectorAll('.newonInventCashierCard').forEach(card => {
+                            card.classList.remove('active');
+                        });
+                        
+                        // Ajoute la classe active au caissier sélectionné
+                        cashierCard.classList.add('active');
+                    });
+                });
+            }
+        });
+    }
+    
+    // Initialise la sélection des livreurs
+function initDeliverySelection() {
+    // Simulation de livreurs disponibles
+    const deliveryStaff = [
+        { id: 'D001', name: 'Livreur 1', pendingOrders: 0 },
+        { id: 'D002', name: 'Livreur 2', pendingOrders: 1 },
+        { id: 'D003', name: 'Livreur 3', pendingOrders: 0 }
+    ];
+    
+    // Trie les livreurs par nombre de commandes en attente
+    deliveryStaff.sort((a, b) => a.pendingOrders - b.pendingOrders);
+    
+    // Crée les éléments pour les livreurs
+    const deliveryContainer = document.getElementById('newonInventDeliveryOptions3');
+    
+    if (deliveryContainer) {
+        deliveryContainer.innerHTML = '';
+        
+        deliveryStaff.forEach(staff => {
+            const deliveryCard = document.createElement('div');
+            deliveryCard.className = 'newonInventCashierCard'; // Réutilisation de la classe existante
+            deliveryCard.setAttribute('data-delivery-id', staff.id);
+            
+            deliveryCard.innerHTML = `
+                <div class="newonInventCashierIcon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="newonInventCashierInfo">
+                    <h6>${staff.name}</h6>
+                    <span class="newonInventCashierLoad">${staff.pendingOrders} commande${staff.pendingOrders !== 1 ? 's' : ''} en attente</span>
+                </div>
+            `;
+            
+            deliveryContainer.appendChild(deliveryCard);
+            
+            // Ajoute un écouteur d'événement pour la sélection du livreur
+            deliveryCard.addEventListener('click', function() {
+                // Retire la classe active de tous les livreurs
+                deliveryContainer.querySelectorAll('.newonInventCashierCard').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Ajoute la classe active au livreur sélectionné
+                deliveryCard.classList.add('active');
+            });
+        });
+    }
+}
+
+    
+    // Ouvre la modale de paiement
+    function openPaymentModal() {
+        // Calcule le total
+        const total = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Met à jour le total dans la modale
+        document.getElementById('newonInventModalTotal').textContent = total.toFixed(2) + ' USD';
+        
+        // Réinitialise le champ du montant reçu
+        document.getElementById('newonInventPaymentAmount').value = '';
+        
+        // Cache la zone de la monnaie à rendre
+        document.getElementById('newonInventChangeContainer').style.display = 'none';
+        
+        // Initialise et ouvre la modale
+        const paymentModal = new bootstrap.Modal(document.getElementById('newonInventPaymentModal'));
+        paymentModal.show();
+        
+        // Ajoute un écouteur d'événement pour calculer la monnaie à rendre
+        document.getElementById('newonInventPaymentAmount').addEventListener('input', function() {
+            const amountReceived = parseFloat(this.value) || 0;
+            
+            if (amountReceived >= total) {
+                const change = amountReceived - total;
+                
+                document.getElementById('newonInventChangeContainer').style.display = 'block';
+                document.getElementById('newonInventChangeAmount').textContent = change.toFixed(2) + ' USD';
+            } else {
+                document.getElementById('newonInventChangeContainer').style.display = 'none';
+            }
+        });
+        
+        // Ajoute un écouteur d'événement pour la confirmation du paiement
+        document.getElementById('newonInventConfirmModalPayment').addEventListener('click', function() {
+            const amountReceived = parseFloat(document.getElementById('newonInventPaymentAmount').value) || 0;
+            
+            if (amountReceived >= total) {
+                // Ferme la modale
+                bootstrap.Modal.getInstance(document.getElementById('newonInventPaymentModal')).hide();
+                
+                // Finalise la vente
+                const paymentInfo = {
+                    amount: amountReceived,
+                    change: amountReceived - total,
+                    currency: document.getElementById('newonInventPaymentCurrency').value
+                };
+                
+                if (currentRole === null || currentRole.role === 'seller1') {
+                    // Mode vendeur unique
+                    processSale(paymentInfo);
+                } else if (currentRole.role === 'seller2') {
+                    // Mode caissier
+                    confirmPayment(paymentInfo);
+                }
+            } else {
+                alert("Le montant reçu doit être supérieur ou égal au montant total.");
+            }
+        });
+    }
+    
+    // Finalise la vente (mode vendeur unique)
+    function processSale(paymentInfo = null) {
+        // Récupère le nom du client
+        const clientName = document.getElementById('newonInventClientName').value || 'Client';
+        
+        // Crée le reçu
+        generateReceipt(clientName, currentCart, paymentInfo);
+        
+        // Ouvre la modale du reçu
+        const receiptModal = new bootstrap.Modal(document.getElementById('newonInventReceiptModal'));
+        receiptModal.show();
+        
+        // Après l'affichage du reçu, réinitialise le panier
+        document.getElementById('newonInventReceiptModal').addEventListener('hidden.bs.modal', function() {
+            resetCart();
+        });
+    }
+    
+    // Transfère la commande au caissier
+    function transferOrderToCashier(cashierId) {
+        // Récupère le nom du client
+        const clientInputId = currentRole.mode === 'twoSellers' ? 'newonInventClientName2' : 'newonInventClientName3';
+        const clientName = document.getElementById(clientInputId).value || 'Client';
+        
+        // Crée un nouvel objet pour la commande
+        const newOrder = {
+            id: 'O' + Date.now(),
+            clientName: clientName,
+            items: [...currentCart],
+            timestamp: new Date(),
+            status: 'pending',
+            cashierId: cashierId
+        };
+        
+        // Ajoute la commande à la liste des commandes en attente
+        pendingOrders.push(newOrder);
+        
+        // Affiche un message de confirmation
+        alert(`Commande de ${clientName} transférée avec succès au caissier.`);
+        
+        // Réinitialise le panier
+        resetCart();
+    }
+    
+// Confirmez le paiement (mode caissier)
+function confirmPayment(paymentInfo = null) {
+    // Récupère l'ID de la commande en cours
+    const orderId = document.querySelector('#newonInventProcessOrder3 .newonInventOrderCard')?.getAttribute('data-order-id');
+    
+    if (orderId) {
+        // Trouve la commande
+        const order = pendingOrders.find(o => o.id === orderId);
+        
+        if (order) {
+            // Met à jour le statut de la commande
+            order.status = 'paid';
+            order.paymentInfo = paymentInfo;
+            
+            // Si mode 2 vendeurs, la commande est terminée
+            if (currentRole.mode === 'twoSellers') {
+                // Génère le reçu
+                generateReceipt(order.clientName, order.items, paymentInfo);
+                
+                // Ouvre la modale du reçu
+                const receiptModal = new bootstrap.Modal(document.getElementById('newonInventReceiptModal'));
+                receiptModal.show();
+                
+                // Supprime la commande des commandes en attente
+                pendingOrders = pendingOrders.filter(o => o.id !== orderId);
+            } 
+            // Si mode 3 vendeurs, transfère la commande au livreur
+            else if (currentRole.mode === 'threeSellers') {
+                // Vérifie si un livreur est sélectionné
+                const selectedDelivery = document.querySelector('#newonInventDeliveryOptions3 .newonInventCashierCard.active');
+                
+                if (selectedDelivery) {
+                    // Ajoute l'ID du livreur à la commande
+                    order.deliveryId = selectedDelivery.getAttribute('data-delivery-id');
+                    order.deliveryName = selectedDelivery.querySelector('h6').textContent;
+                    
+                    // Transfère la commande au livreur
+                    deliveryOrders.push(order);
+                    pendingOrders = pendingOrders.filter(o => o.id !== orderId);
+                    
+                    alert(`Commande payée et transférée au livreur ${order.deliveryName}.`);
+                } else {
+                    alert("Veuillez sélectionner un livreur avant de confirmer le paiement.");
+                    return; // Arrête l'exécution si aucun livreur n'est sélectionné
+                }
+            }
+            
+            // Cache la zone de traitement de commande
+            document.getElementById('newonInventProcessOrder3').style.display = 'none';
+            
+            // Réaffiche la liste des commandes en attente
+            updatePendingOrdersList();
+        }
+    }
+}
+
+    
+    // Réinitialise le panier
+    function resetCart() {
+        // Vide le panier
+        currentCart = [];
+        
+        // Vide les éléments du panier dans le DOM
+        const cartContainers = [
+            document.getElementById('newonInventCartItems'),
+            document.getElementById('newonInventCartItems2'),
+            document.getElementById('newonInventCartItems3')
+        ];
+        
+        cartContainers.forEach(container => {
+            if (container) {
+                container.innerHTML = '';
+                
+                // Ajoute le message de panier vide
+                const emptyCart = document.createElement('div');
+                emptyCart.className = 'newonInventEmptyCart';
+                emptyCart.innerHTML = `
+                    <i class="fas fa-shopping-basket"></i>
+                    <p>Le panier est vide</p>
+                    <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                `;
+                container.appendChild(emptyCart);
+            }
+        });
+        
+        // Réinitialise les totaux
+        const totals = [
+            document.getElementById('newonInventTotalAmount'),
+            document.getElementById('newonInventTotalAmount2'),
+            document.getElementById('newonInventTotalAmount3')
+        ];
+        
+        totals.forEach(total => {
+            if (total) {
+                total.textContent = '0.00';
+            }
+        });
+        
+        // Désactive les boutons de finalisation
+        const completeButtons = [
+            document.getElementById('newonInventCompleteSale'),
+            document.getElementById('newonInventTransferOrder'),
+            document.getElementById('newonInventTransferOrder3')
+        ];
+        
+        completeButtons.forEach(button => {
+            if (button) {
+                button.disabled = true;
+            }
+        });
+        
+        // Réinitialise les boutons de paiement
+        const paymentButtons = document.querySelectorAll('.newonInventPayBtn');
+        paymentButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+    }
+    
+    // Génère un reçu de vente
+    function generateReceipt(clientName, items, paymentInfo = null) {
+        const receiptContent = document.getElementById('newonInventReceiptContent');
+        
+        // Calcule le total
+        const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Crée le contenu du reçu
+        receiptContent.innerHTML = `
+            <div class="newonInventReceiptHeader">
+                <div class="newonInventReceiptLogo">TOTAL</div>
+                <p>Gestion d'Inventaire</p>
+            </div>
+            
+            <div class="newonInventReceiptInfo">
+                <p><strong>Client:</strong> ${clientName}</p>
+                <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>N° de reçu:</strong> R${Date.now()}</p>
+            </div>
+            
+            <div class="newonInventReceiptItems">
+                ${items.map(item => `
+                    <div class="newonInventReceiptItem">
+                        <div class="newonInventReceiptItemName">${item.name}</div>
+                        <div class="newonInventReceiptItemQty">x${item.quantity}</div>
+                        <div class="newonInventReceiptItemPrice">${(item.price * item.quantity).toFixed(2)} ${item.currency.toUpperCase()}</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="newonInventReceiptTotal">
+                <span>TOTAL</span>
+                <span>${total.toFixed(2)} USD</span>
+            </div>
+            
+            ${paymentInfo ? `
+                <div class="newonInventReceiptPayment">
+                    <div class="newonInventReceiptItem">
+                        <div class="newonInventReceiptItemName">Montant reçu</div>
+                        <div class="newonInventReceiptItemQty"></div>
+                        <div class="newonInventReceiptItemPrice">${paymentInfo.amount.toFixed(2)} ${paymentInfo.currency.toUpperCase()}</div>
+                    </div>
+                    <div class="newonInventReceiptItem">
+                        <div class="newonInventReceiptItemName">Monnaie rendue</div>
+                        <div class="newonInventReceiptItemQty"></div>
+                        <div class="newonInventReceiptItemPrice">${paymentInfo.change.toFixed(2)} ${paymentInfo.currency.toUpperCase()}</div>
+                    </div>
+                </div>
+            ` : ''}
+            
+            <div class="newonInventReceiptFooter">
+                <p>Merci pour votre achat!</p>
+                <p>Service client: +243 XXX XXX XXX</p>
+            </div>
+        `;
+    }
+    
+// Met à jour la liste des commandes en attente
+function updatePendingOrdersList() {
+    // Met à jour la liste des commandes pour les caissiers
+    const orderQueueElement = document.getElementById('newonInventOrderQueue3');
+    if (orderQueueElement) {
+        orderQueueElement.innerHTML = '';
+        
+        if (pendingOrders.length === 0) {
+            orderQueueElement.innerHTML = `
+                <div class="newonInventEmptyState">
+                    <i class="fas fa-clipboard-check"></i>
+                    <p>Aucune commande en attente</p>
+                </div>
+            `;
+        } else {
+            pendingOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'newonInventOrderCard';
+                orderCard.setAttribute('data-order-id', order.id);
+                
+                const totalAmount = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const itemCount = order.items.reduce((count, item) => count + item.quantity, 0);
+                
+                orderCard.innerHTML = `
+                    <div class="newonInventOrderInfo">
+                        <div class="newonInventOrderClient">
+                            <i class="fas fa-user-circle"></i>
+                            <span>${order.clientName}</span>
+                        </div>
+                        <div class="newonInventOrderTime">
+                            <i class="fas fa-clock"></i>
+                            <span>${new Date(order.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                    </div>
+                    <div class="newonInventOrderSummary">
+                        <div class="newonInventOrderItems">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>${itemCount} article${itemCount > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="newonInventOrderTotal">
+                            <span>${totalAmount.toFixed(2)} USD</span>
+                        </div>
+                    </div>
+                    <button class="newonInventProcessBtn">
+                        <i class="fas fa-cash-register"></i>
+                        <span>Traiter</span>
+                    </button>
+                `;
+                
+                orderQueueElement.appendChild(orderCard);
+                
+                // Ajoute un écouteur pour le bouton "Traiter"
+                orderCard.querySelector('.newonInventProcessBtn').addEventListener('click', function() {
+                    processOrder(order.id);
+                });
+            });
+        }
+    }
+    
+    // Met à jour la liste des commandes pour les livreurs
+    const deliveryQueueElement = document.getElementById('newonInventDeliveryQueue');
+    if (deliveryQueueElement) {
+        deliveryQueueElement.innerHTML = '';
+        
+        if (deliveryOrders.length === 0) {
+            deliveryQueueElement.innerHTML = `
+                <div class="newonInventEmptyState">
+                    <i class="fas fa-box-open"></i>
+                    <p>Aucune commande à livrer</p>
+                </div>
+            `;
+        } else {
+            deliveryOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'newonInventOrderCard';
+                orderCard.setAttribute('data-order-id', order.id);
+                
+                const itemCount = order.items.reduce((count, item) => count + item.quantity, 0);
+                
+                orderCard.innerHTML = `
+                    <div class="newonInventOrderInfo">
+                        <div class="newonInventOrderClient">
+                            <i class="fas fa-user-circle"></i>
+                            <span>${order.clientName}</span>
+                        </div>
+                        <div class="newonInventOrderTime">
+                            <i class="fas fa-clock"></i>
+                            <span>${new Date(order.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                    </div>
+                    <div class="newonInventOrderSummary">
+                        <div class="newonInventOrderItems">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>${itemCount} article${itemCount > 1 ? 's' : ''}</span>
+                        </div>
+                    </div>
+                    <button class="newonInventProcessBtn">
+                        <i class="fas fa-truck"></i>
+                        <span>Livrer</span>
+                    </button>
+                `;
+                
+                deliveryQueueElement.appendChild(orderCard);
+                
+                // Ajoute un écouteur pour le bouton "Livrer"
+                orderCard.querySelector('.newonInventProcessBtn').addEventListener('click', function() {
+                    processDelivery(order.id);
+                });
+            });
+        }
+    }
+}
+
+// Affiche les détails d'une commande à traiter par le caissier
+function processOrder(orderId) {
+    // Trouve la commande
+    const order = pendingOrders.find(o => o.id === orderId);
+    
+    if (order) {
+        // Récupère les éléments DOM
+        const processOrder = document.getElementById('newonInventProcessOrder3');
+        const processItems = document.getElementById('newonInventProcessItems3');
+        const processTotal = document.getElementById('newonInventProcessTotal3');
+        const processCurrency = document.getElementById('newonInventProcessCurrency3');
+        const processClientName = document.getElementById('newonInventProcessClientName3');
+        
+        // Affiche le nom du client
+        processClientName.textContent = order.clientName;
+        
+        // Affiche les articles
+        processItems.innerHTML = '';
+        order.items.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'newonInventCartItem';
+            
+            const displayPrice = (item.price * item.quantity).toFixed(2) + (item.currency === 'usd' ? ' $' : ' FC');
+            
+            itemElement.innerHTML = `
+                <div class="product-info">
+                    <div class="product-name">${item.name}</div>
+                    <div class="product-quantity">x${item.quantity}</div>
+                </div>
+                <div class="product-price">${displayPrice}</div>
+            `;
+            
+            processItems.appendChild(itemElement);
+        });
+        
+        // Calcule et affiche le total
+        const total = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        processTotal.textContent = total.toFixed(2);
+        
+        // Détermine la devise à partir du premier article
+        const currency = order.items.length > 0 ? order.items[0].currency.toUpperCase() : 'USD';
+        processCurrency.textContent = currency;
+        
+        // Réinitialise la sélection du mode de paiement
+        document.querySelectorAll('.newonInventPayBtn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Désactive le bouton de confirmation
+        document.getElementById('newonInventConfirmPayment3').disabled = true;
+        
+        // Ajoute l'ID de la commande à la zone de traitement
+        const orderCardElement = document.createElement('div');
+        orderCardElement.className = 'newonInventOrderCard';
+        orderCardElement.setAttribute('data-order-id', order.id);
+        orderCardElement.style.display = 'none';
+        processOrder.appendChild(orderCardElement);
+        
+        // Affiche la zone de traitement
+        processOrder.style.display = 'block';
+    }
+}
+
+// Affiche les détails d'une commande à livrer
+function processDelivery(orderId) {
+    // Trouve la commande
+    const order = deliveryOrders.find(o => o.id === orderId);
+    
+    if (order) {
+        // Récupère les éléments DOM
+        const deliveryProcess = document.getElementById('newonInventDeliveryProcess');
+        const deliveryItems = document.getElementById('newonInventDeliveryItems');
+        const deliveryClientName = document.getElementById('newonInventDeliveryClientName');
+        
+        // Affiche le nom du client
+        deliveryClientName.textContent = order.clientName;
+        
+        // Affiche les articles
+        deliveryItems.innerHTML = '';
+        order.items.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'newonInventCartItem';
+            
+            itemElement.innerHTML = `
+                <div class="product-info">
+                    <div class="product-name">${item.name}</div>
+                    <div class="product-quantity">x${item.quantity}</div>
+                </div>
+            `;
+            
+            deliveryItems.appendChild(itemElement);
+        });
+        
+        // Ajoute l'ID de la commande à la zone de livraison
+        const orderCardElement = document.createElement('div');
+        orderCardElement.className = 'newonInventOrderCard';
+        orderCardElement.setAttribute('data-order-id', order.id);
+        orderCardElement.style.display = 'none';
+        deliveryProcess.appendChild(orderCardElement);
+        
+        // Ajoute un écouteur pour le bouton de confirmation de livraison
+        document.getElementById('newonInventConfirmDelivery').addEventListener('click', function() {
+            confirmDelivery(order.id);
+        });
+        
+        // Ajoute un écouteur pour le bouton d'annulation
+        document.getElementById('newonInventCancelDelivery').addEventListener('click', function() {
+            document.getElementById('newonInventDeliveryProcess').style.display = 'none';
+        });
+        
+        // Affiche la zone de livraison
+        deliveryProcess.style.display = 'block';
+    }
+}
+
+// Confirme la livraison d'une commande
+function confirmDelivery(orderId) {
+    // Trouve la commande
+    const order = deliveryOrders.find(o => o.id === orderId);
+    
+    if (order) {
+        // Met à jour le statut de la commande
+        order.status = 'delivered';
+        order.deliveryTime = new Date();
+        
+        // Supprime la commande des commandes à livrer
+        deliveryOrders = deliveryOrders.filter(o => o.id !== orderId);
+        
+        // Génère le reçu
+        generateReceipt(order.clientName, order.items, order.paymentInfo);
+        
+        // Ouvre la modale du reçu
+        const receiptModal = new bootstrap.Modal(document.getElementById('newonInventReceiptModal'));
+        receiptModal.show();
+        
+        // Cache la zone de livraison
+        document.getElementById('newonInventDeliveryProcess').style.display = 'none';
+        
+        // Réaffiche la liste des commandes à livrer
+        updatePendingOrdersList();
+        
+        // Affiche un message de confirmation
+        alert(`Livraison confirmée pour ${order.clientName}.`);
+    }
+}
+
+
+    
+    // Initialise le module de point de vente
+    function initSalesPoint() {
+        // Charge les données d'inventaire
+        loadInventoryData();
+        
+        // Initialise le sélecteur de mode
+        initModeSelectorCard();
+        
+        // Initialise les scanners
+        initScanners();
+        
+        // Initialise la saisie manuelle
+        initManualEntry();
+        
+        // Initialise les écouteurs d'événements
+        initSalesEventListeners();
+    }
+    
+    // Initialise le module quand on clique sur le lien dans la barre latérale
+    document.querySelector('[data-section="newonInventSalesPoint"]').addEventListener('click', function() {
+        // Réinitialise les interfaces
+        resetAllInterfaces();
+        
+        // Affiche le sélecteur de mode
+        document.getElementById('newonInventSelectMode').style.display = 'block';
+        
+        // Initialise le point de vente si ce n'est pas déjà fait
+        if (!window.salesPointInitialized) {
+            initSalesPoint();
+            window.salesPointInitialized = true;
+        }
+    });
+    
+    // Initialise le point de vente quand on navigue directement vers cette section
+    if (window.location.hash === '#newonInventSalesPoint') {
+        document.querySelector('[data-section="newonInventSalesPoint"]').click();
+    }
+
+
+
+NB: ILS ONT DÉJÀ DES STYLES CSS 
+
+Donne-moi les codes à modifier ou à ajouter avec précision, tu dois me dire quoi modifier, quoi ajouter, où le placer, faut être précis 
+
+Si tu modifies une fonction, tu dois écrire la fonction modifié au complet, dans son intégralité, sans laisser des vides à compléter 

@@ -1,0 +1,3802 @@
+<li class="nav-item" data-section="newonInventSalesPoint">
+    <a href="#"><i class="fas fa-cash-register"></i> Point de Vente</a>
+</li>
+
+
+
+<!-- Point de Vente Section -->
+<div id="newonInventSalesPoint" class="content-section" style="display: none;">
+    <h2 class="mb-4"><i class="fas fa-cash-register me-2"></i> Point de Vente</h2>
+    
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Gestion des ventes</span>
+            <div class="d-flex">
+                <div class="role-selector me-2">
+                    <button class="btn btn-outline-primary" id="newonInventRoleToggle">
+                        <i class="fas fa-exchange-alt me-1"></i> Changer de rôle
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Sélection du mode de vente -->
+            <div id="newonInventSelectMode" class="mb-4">
+                <h5 class="mb-3">Sélectionnez votre mode de vente:</h5>
+                <div class="newonInventModeContainer">
+                    <div class="newonInventModeCard" data-mode="oneSeller">
+                        <div class="newonInventModeIcon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h5>Un seul vendeur</h5>
+                        <p>Un vendeur gère tout le processus de vente</p>
+                    </div>
+                    <div class="newonInventModeCard" data-mode="twoSellers">
+                        <div class="newonInventModeIcon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <h5>Deux vendeurs</h5>
+                        <p>Réception client + Caisse</p>
+                    </div>
+                    <div class="newonInventModeCard" data-mode="threeSellers">
+                        <div class="newonInventModeIcon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5>Trois vendeurs</h5>
+                        <p>Réception + Caisse + Livraison</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface de vente (Mode 1: Un seul vendeur) -->
+            <div id="newonInventSingleSellerMode" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Mode Vendeur Unique</h4>
+                    <div class="newonInventSellerInfo">
+                        <i class="fas fa-user-circle"></i> 
+                        <span id="newonInventCurrentSeller">Vendeur actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventSalesProcess">
+                    <!-- Zone Scanner & Panier -->
+                    <div class="newonInventSalesGrid">
+                        <!-- Zone Scanner -->
+<div class="newonInventScanZone">
+    <div class="newonInventScanActions">
+        <button class="newonInventActionBtn" id="newonInventScanBtn">
+            <i class="fas fa-camera"></i>
+            <span>Scanner un produit</span>
+        </button>
+        <button class="newonInventActionBtn" id="newonInventManualEntryBtn">
+            <i class="fas fa-keyboard"></i>
+            <span>Saisie manuelle</span>
+        </button>
+    </div>
+    
+    <div id="newonInventScannerArea" style="display: none;">
+        <!-- Scanner ultra-moderne -->
+        <div class="newonInventVideoContainer ScanProdVentContainer">
+            <video id="newonInventScannerVideo"></video>
+            
+            <!-- Nouvelle interface scanner futuriste -->
+            <div class="ScanProdVentOverlay">
+                <!-- Coin supérieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentTopLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 2 L2 20 L20 20 L20 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin supérieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentTopRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 2 L48 20 L30 20 L30 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentBottomLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 48 L2 30 L20 30 L20 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentBottomRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 48 L48 30 L30 30 L30 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Ligne de scan -->
+                <div class="ScanProdVentScanLine"></div>
+                
+                <!-- Indicateur d'état et mode -->
+                <div class="ScanProdVentStatus">
+                    <div class="ScanProdVentModeIndicator">
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentBarcode">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentQRCode">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                    <div class="ScanProdVentMessage">Positionnez le code dans le cadre</div>
+                </div>
+                
+                <!-- Cadre de scan dynamique -->
+                <div class="ScanProdVentFrame">
+                    <div class="ScanProdVentTargetDot"></div>
+                </div>
+                
+                <!-- Écran d'information technique -->
+                <div class="ScanProdVentTechOverlay">
+                    <div class="ScanProdVentInfoPanel">
+                        <div class="ScanProdVentInfoLine">Scanner v2.5</div>
+                        <div class="ScanProdVentInfoLine">Mode: <span id="ScanProdVentCurrentMode">Auto-détection</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action scanner -->
+        <div class="ScanProdVentControls">
+            <button class="ScanProdVentBtn ScanProdVentModeBtn" id="ScanProdVentToggleMode">
+                <i class="fas fa-sync-alt"></i>
+                <span>Changer de mode</span>
+            </button>
+            <button class="ScanProdVentBtn ScanProdVentLightBtn" id="ScanProdVentToggleLight">
+                <i class="fas fa-lightbulb"></i>
+                <span>Flash</span>
+            </button>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelScan">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+    
+    <div id="newonInventManualEntry" style="display: none;">
+        <!-- Contenu saisie manuelle similaire -->
+        <div class="newonInventManualForm">
+            <div class="mb-3">
+                <label class="form-label">Code produit</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="newonInventManualCode" placeholder="Entrez le code produit">
+                    <button class="btn btn-primary" id="newonInventFindProduct">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelManual">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+                        
+                        <!-- Panier Client -->
+                        <div class="newonInventCart">
+                            <div class="newonInventCartHeader">
+                                <h5><i class="fas fa-shopping-cart me-2"></i> Panier client</h5>
+                                <button class="newonInventActionBtn newonInventSmallBtn" id="newonInventResetCart">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="newonInventCartItems" id="newonInventCartItems">
+                                <div class="newonInventEmptyCart">
+                                    <i class="fas fa-shopping-basket"></i>
+                                    <p>Le panier est vide</p>
+                                    <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                                </div>
+                                <!-- Les produits scannés apparaîtront ici -->
+                            </div>
+                            
+                            <div class="newonInventCartTotal">
+                                <div class="newonInventTotalLine">
+                                    <span>Total:</span>
+                                    <span id="newonInventTotalAmount">0.00</span>
+                                </div>
+                                <div class="newonInventTotalLine newonInventTotalCurrency">
+                                    <span id="newonInventTotalCurrency">USD</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zone Client & Finalisation -->
+                    <div class="newonInventCheckoutZone">
+                        <div class="newonInventClientInfo">
+                            <div class="mb-3">
+                                <label class="form-label">Nom du client (optionnel)</label>
+                                <input type="text" class="form-control" id="newonInventClientName" placeholder="Nom du client">
+                            </div>
+                        </div>
+                        
+                        <div class="newonInventPaymentOptions">
+                            <h5>Paiement</h5>
+                            <div class="newonInventPaymentGrid">
+                                <button class="newonInventPayBtn newonInventPayCash" id="newonInventCashPayment">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>Espèces</span>
+                                </button>
+                                <button class="newonInventPayBtn newonInventPayOther" id="newonInventOtherPayment">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Autre méthode</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button class="newonInventCompleteBtn" id="newonInventCompleteSale" disabled>
+                            <i class="fas fa-check-circle me-2"></i> Finaliser la vente
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface Mode 2: Vendeur 1 (Réception) -->
+            <div id="newonInventTwoSellers_Seller1" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Réception Client</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Vendeur 1</span>
+                        <span id="newonInventCurrentSeller2">Vendeur actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventSalesProcess">
+                    <!-- Zone Scanner & Panier -->
+                    <div class="newonInventSalesGrid">
+                        <!-- Zone Scanner -->
+<div class="newonInventScanZone">
+    <div class="newonInventScanActions">
+        <button class="newonInventActionBtn" id="newonInventScanBtn2">
+            <i class="fas fa-camera"></i>
+            <span>Scanner un produit</span>
+        </button>
+        <button class="newonInventActionBtn" id="newonInventManualEntryBtn2">
+            <i class="fas fa-keyboard"></i>
+            <span>Saisie manuelle</span>
+        </button>
+    </div>
+    
+    <div id="newonInventScannerArea2" style="display: none;">
+        <!-- Scanner ultra-moderne -->
+        <div class="newonInventVideoContainer ScanProdVentContainer">
+            <video id="newonInventScannerVideo2"></video>
+            
+            <!-- Nouvelle interface scanner futuriste -->
+            <div class="ScanProdVentOverlay">
+                <!-- Coin supérieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentTopLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 2 L2 20 L20 20 L20 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin supérieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentTopRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 2 L48 20 L30 20 L30 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentBottomLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 48 L2 30 L20 30 L20 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentBottomRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 48 L48 30 L30 30 L30 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Ligne de scan -->
+                <div class="ScanProdVentScanLine"></div>
+                
+                <!-- Indicateur d'état et mode -->
+                <div class="ScanProdVentStatus">
+                    <div class="ScanProdVentModeIndicator">
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentBarcode2">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentQRCode2">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                    <div class="ScanProdVentMessage">Positionnez le code dans le cadre</div>
+                </div>
+                
+                <!-- Cadre de scan dynamique -->
+                <div class="ScanProdVentFrame">
+                    <div class="ScanProdVentTargetDot"></div>
+                </div>
+                
+                <!-- Écran d'information technique -->
+                <div class="ScanProdVentTechOverlay">
+                    <div class="ScanProdVentInfoPanel">
+                        <div class="ScanProdVentInfoLine">Scanner v2.5</div>
+                        <div class="ScanProdVentInfoLine">Mode: <span id="ScanProdVentCurrentMode2">Auto-détection</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action scanner -->
+        <div class="ScanProdVentControls">
+            <button class="ScanProdVentBtn ScanProdVentModeBtn" id="ScanProdVentToggleMode2">
+                <i class="fas fa-sync-alt"></i>
+                <span>Changer de mode</span>
+            </button>
+            <button class="ScanProdVentBtn ScanProdVentLightBtn" id="ScanProdVentToggleLight2">
+                <i class="fas fa-lightbulb"></i>
+                <span>Flash</span>
+            </button>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelScan2">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+    
+    <div id="newonInventManualEntry2" style="display: none;">
+        <!-- Contenu saisie manuelle similaire -->
+        <div class="newonInventManualForm">
+            <div class="mb-3">
+                <label class="form-label">Code produit</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="newonInventManualCode2" placeholder="Entrez le code produit">
+                    <button class="btn btn-primary" id="newonInventFindProduct2">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelManual2">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+                        
+                        <!-- Panier Client -->
+                        <div class="newonInventCart">
+                            <div class="newonInventCartHeader">
+                                <h5><i class="fas fa-shopping-cart me-2"></i> Panier client</h5>
+                                <button class="newonInventActionBtn newonInventSmallBtn" id="newonInventResetCart2">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="newonInventCartItems" id="newonInventCartItems2">
+                                <div class="newonInventEmptyCart">
+                                    <i class="fas fa-shopping-basket"></i>
+                                    <p>Le panier est vide</p>
+                                    <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                                </div>
+                                <!-- Les produits scannés apparaîtront ici -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zone Client & Transfert -->
+                    <div class="newonInventCheckoutZone">
+                        <div class="newonInventClientInfo">
+                            <div class="mb-3">
+                                <label class="form-label">Nom du client</label>
+                                <input type="text" class="form-control" id="newonInventClientName2" placeholder="Nom du client">
+                            </div>
+                        </div>
+                        
+                        <div class="newonInventCashierSelection">
+                            <h5>Transférer vers un caissier</h5>
+                            <div class="newonInventCashierOptions" id="newonInventCashierOptions">
+                                <!-- Les caissiers disponibles seront ajoutés ici dynamiquement -->
+                                <div class="newonInventCashierCard">
+                                    <div class="newonInventCashierIcon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="newonInventCashierInfo">
+                                        <h6>Caissier 1</h6>
+                                        <span class="newonInventCashierLoad">0 clients en attente</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="newonInventCompleteBtn" id="newonInventTransferOrder" disabled>
+                            <i class="fas fa-paper-plane me-2"></i> Transférer la commande
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface Mode 2: Vendeur 2 (Caissier) -->
+            <div id="newonInventTwoSellers_Seller2" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Caisse</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Caissier</span>
+                        <span id="newonInventCurrentCashier">Caissier actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventPendingOrders">
+                    <h5><i class="fas fa-clock me-2"></i> Commandes en attente</h5>
+                    <div id="newonInventOrderQueue">
+                        <!-- Les commandes en attente seront ajoutées ici -->
+                        <div class="newonInventEmptyState">
+                            <i class="fas fa-clipboard-check"></i>
+                            <p>Aucune commande en attente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="newonInventProcessOrder" style="display: none;">
+                    <div class="newonInventProcessHeader">
+                        <h5>Traitement de la commande</h5>
+                        <div class="newonInventClientBadge">
+                            <i class="fas fa-user me-1"></i>
+                            <span id="newonInventProcessClientName">Nom du client</span>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventOrderDetails">
+                        <div class="newonInventCartItems" id="newonInventProcessItems">
+                            <!-- Les articles de la commande s'afficheront ici -->
+                        </div>
+                        
+                        <div class="newonInventCartTotal">
+                            <div class="newonInventTotalLine">
+                                <span>Total:</span>
+                                <span id="newonInventProcessTotal">0.00</span>
+                            </div>
+                            <div class="newonInventTotalLine newonInventTotalCurrency">
+                                <span id="newonInventProcessCurrency">USD</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventPaymentConfirm">
+                        <h5>Paiement</h5>
+                        <div class="newonInventPaymentGrid">
+                            <button class="newonInventPayBtn newonInventPayCash" id="newonInventProcessCash">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Espèces reçues</span>
+                            </button>
+                            <button class="newonInventPayBtn newonInventPayOther" id="newonInventProcessOther">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Autre méthode</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventActionButtons">
+                        <button class="newonInventCancelBtn" id="newonInventCancelProcess">
+                            <i class="fas fa-times-circle me-2"></i> Annuler
+                        </button>
+                        <button class="newonInventCompleteBtn" id="newonInventConfirmPayment" disabled>
+                            <i class="fas fa-check-circle me-2"></i> Confirmer paiement
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface Mode 3: Vendeur 1 (Réception) -->
+            <div id="newonInventThreeSellers_Seller1" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Réception Client</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Vendeur 1</span>
+                        <span id="newonInventCurrentSeller3">Vendeur actuel</span>
+                    </div>
+                </div>
+
+                <!-- Contenu similaire au mode 2 vendeur 1 -->
+                <div class="newonInventSalesProcess">
+                    <!-- Zone Scanner & Panier -->
+                    <div class="newonInventSalesGrid">
+                        <!-- Zone Scanner -->
+<div class="newonInventScanZone">
+    <div class="newonInventScanActions">
+        <button class="newonInventActionBtn" id="newonInventScanBtn3">
+            <i class="fas fa-camera"></i>
+            <span>Scanner un produit</span>
+        </button>
+        <button class="newonInventActionBtn" id="newonInventManualEntryBtn3">
+            <i class="fas fa-keyboard"></i>
+            <span>Saisie manuelle</span>
+        </button>
+    </div>
+    
+    <div id="newonInventScannerArea3" style="display: none;">
+        <!-- Scanner ultra-moderne -->
+        <div class="newonInventVideoContainer ScanProdVentContainer">
+            <video id="newonInventScannerVideo3"></video>
+            
+            <!-- Nouvelle interface scanner futuriste -->
+            <div class="ScanProdVentOverlay">
+                <!-- Coin supérieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentTopLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 2 L2 20 L20 20 L20 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin supérieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentTopRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 2 L48 20 L30 20 L30 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentBottomLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 48 L2 30 L20 30 L20 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentBottomRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 48 L48 30 L30 30 L30 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Ligne de scan -->
+                <div class="ScanProdVentScanLine"></div>
+                
+                <!-- Indicateur d'état et mode -->
+                <div class="ScanProdVentStatus">
+                    <div class="ScanProdVentModeIndicator">
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentBarcode3">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentQRCode3">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                    <div class="ScanProdVentMessage">Positionnez le code dans le cadre</div>
+                </div>
+                
+                <!-- Cadre de scan dynamique -->
+                <div class="ScanProdVentFrame">
+                    <div class="ScanProdVentTargetDot"></div>
+                </div>
+                
+                <!-- Écran d'information technique -->
+                <div class="ScanProdVentTechOverlay">
+                    <div class="ScanProdVentInfoPanel">
+                        <div class="ScanProdVentInfoLine">Scanner v2.5</div>
+                        <div class="ScanProdVentInfoLine">Mode: <span id="ScanProdVentCurrentMode3">Auto-détection</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action scanner -->
+        <div class="ScanProdVentControls">
+            <button class="ScanProdVentBtn ScanProdVentModeBtn" id="ScanProdVentToggleMode3">
+                <i class="fas fa-sync-alt"></i>
+                <span>Changer de mode</span>
+            </button>
+            <button class="ScanProdVentBtn ScanProdVentLightBtn" id="ScanProdVentToggleLight3">
+                <i class="fas fa-lightbulb"></i>
+                <span>Flash</span>
+            </button>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelScan3">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+    
+    <div id="newonInventManualEntry3" style="display: none;">
+        <!-- Contenu saisie manuelle similaire -->
+        <div class="newonInventManualForm">
+            <div class="mb-3">
+                <label class="form-label">Code produit</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="newonInventManualCode3" placeholder="Entrez le code produit">
+                    <button class="btn btn-primary" id="newonInventFindProduct3">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelManual3">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+                        
+                        <!-- Panier Client -->
+                        <div class="newonInventCart">
+                            <div class="newonInventCartHeader">
+                                <h5><i class="fas fa-shopping-cart me-2"></i> Panier client</h5>
+                                <button class="newonInventActionBtn newonInventSmallBtn" id="newonInventResetCart3">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="newonInventCartItems" id="newonInventCartItems3">
+                                <div class="newonInventEmptyCart">
+                                    <i class="fas fa-shopping-basket"></i>
+                                    <p>Le panier est vide</p>
+                                    <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zone Client & Transfert -->
+                    <div class="newonInventCheckoutZone">
+                        <div class="newonInventClientInfo">
+                            <div class="mb-3">
+                                <label class="form-label">Nom du client</label>
+                                <input type="text" class="form-control" id="newonInventClientName3" placeholder="Nom du client">
+                            </div>
+                        </div>
+                        
+                        <div class="newonInventCashierSelection">
+                            <h5>Transférer vers un caissier</h5>
+                            <div class="newonInventCashierOptions" id="newonInventCashierOptions3">
+                                <!-- Les caissiers disponibles seront ajoutés ici dynamiquement -->
+                            </div>
+                        </div>
+                        
+                        <button class="newonInventCompleteBtn" id="newonInventTransferOrder3" disabled>
+                            <i class="fas fa-paper-plane me-2"></i> Transférer la commande
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface Mode 3: Vendeur 2 (Caissier) -->
+            <div id="newonInventThreeSellers_Seller2" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Caisse</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Caissier</span>
+                        <span id="newonInventCurrentCashier3">Caissier actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventPendingOrders">
+                    <h5><i class="fas fa-clock me-2"></i> Commandes en attente</h5>
+                    <div id="newonInventOrderQueue3">
+                        <!-- Les commandes en attente seront ajoutées ici -->
+                        <div class="newonInventEmptyState">
+                            <i class="fas fa-clipboard-check"></i>
+                            <p>Aucune commande en attente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="newonInventProcessOrder3" style="display: none;">
+                    <div class="newonInventProcessHeader">
+                        <h5>Traitement de la commande</h5>
+                        <div class="newonInventClientBadge">
+                            <i class="fas fa-user me-1"></i>
+                            <span id="newonInventProcessClientName3">Nom du client</span>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventOrderDetails">
+                        <div class="newonInventCartItems" id="newonInventProcessItems3">
+                            <!-- Les articles de la commande s'afficheront ici -->
+                        </div>
+                        
+                        <div class="newonInventCartTotal">
+                            <div class="newonInventTotalLine">
+                                <span>Total:</span>
+                                <span id="newonInventProcessTotal3">0.00</span>
+                            </div>
+                            <div class="newonInventTotalLine newonInventTotalCurrency">
+                                <span id="newonInventProcessCurrency3">USD</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventPaymentConfirm">
+                        <h5>Paiement</h5>
+                        <div class="newonInventPaymentGrid">
+                            <button class="newonInventPayBtn newonInventPayCash" id="newonInventProcessCash3">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Espèces reçues</span>
+                            </button>
+                            <button class="newonInventPayBtn newonInventPayOther" id="newonInventProcessOther3">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Autre méthode</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventActionButtons">
+                        <button class="newonInventCancelBtn" id="newonInventCancelProcess3">
+                            <i class="fas fa-times-circle me-2"></i> Annuler
+                        </button>
+                        <button class="newonInventCompleteBtn" id="newonInventConfirmPayment3" disabled>
+                            <i class="fas fa-check-circle me-2"></i> Confirmer paiement et transférer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface Mode 3: Vendeur 3 (Livraison) -->
+            <div id="newonInventThreeSellers_Seller3" class="newonInventRoleInterface" style="display: none;">
+                <div class="newonInventRoleHeader">
+                    <h4>Livraison des produits</h4>
+                    <div class="newonInventSellerInfo">
+                        <span class="newonInventRoleBadge">Livreur</span>
+                        <span id="newonInventCurrentDelivery">Livreur actuel</span>
+                    </div>
+                </div>
+
+                <div class="newonInventPendingOrders">
+                    <h5><i class="fas fa-clock me-2"></i> Commandes à livrer</h5>
+                    <div id="newonInventDeliveryQueue">
+                        <!-- Les commandes à livrer seront ajoutées ici -->
+                        <div class="newonInventEmptyState">
+                            <i class="fas fa-box-open"></i>
+                            <p>Aucune commande à livrer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="newonInventDeliveryProcess" style="display: none;">
+                    <div class="newonInventProcessHeader">
+                        <h5>Livraison de la commande</h5>
+                        <div class="newonInventClientBadge">
+                            <i class="fas fa-user me-1"></i>
+                            <span id="newonInventDeliveryClientName">Nom du client</span>
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventDeliveryDetails">
+                        <h6>Articles à livrer</h6>
+                        <div class="newonInventCartItems" id="newonInventDeliveryItems">
+                            <!-- Les articles à livrer s'afficheront ici -->
+                        </div>
+                    </div>
+                    
+                    <div class="newonInventActionButtons">
+                        <button class="newonInventCancelBtn" id="newonInventCancelDelivery">
+                            <i class="fas fa-times-circle me-2"></i> Annuler
+                        </button>
+                        <button class="newonInventCompleteBtn" id="newonInventConfirmDelivery">
+                            <i class="fas fa-check-circle me-2"></i> Confirmer la livraison
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modales pour le point de vente -->
+            <div class="modal fade" id="newonInventRoleModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Choisir votre rôle</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="newonInventRoleSelector" id="newonInventRoleSelector">
+                                <!-- Les options de rôle seront ajoutées ici dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="newonInventPaymentModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Détails du paiement</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-4">
+                                <h6>Total à payer</h6>
+                                <div class="newonInventModalTotal" id="newonInventModalTotal">0.00 USD</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="newonInventPaymentAmount" class="form-label">Montant reçu</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="newonInventPaymentAmount" min="0" step="0.01">
+                                    <select class="form-select" id="newonInventPaymentCurrency" style="max-width: 100px;">
+                                        <option value="usd">USD</option>
+                                        <option value="cdf">CDF</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="newonInventChangeAmount" id="newonInventChangeContainer" style="display: none;">
+                                <h6>Monnaie à rendre</h6>
+                                <div class="newonInventChangeValue" id="newonInventChangeAmount">0.00 USD</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-primary" id="newonInventConfirmModalPayment">Confirmer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="newonInventReceiptModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reçu de vente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="newonInventReceipt" id="newonInventReceiptContent">
+                                <!-- Le contenu du reçu sera généré ici -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-primary" id="newonInventPrintReceipt">
+                                <i class="fas fa-print me-2"></i> Imprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+  /*═══════════════════════════*\
+  🔴 Point de Vente / Sales Point
+\*═══════════════════════════*/
+
+/* Sélection de mode */
+.newonInventModeContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.newonInventModeCard {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.newonInventModeCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.newonInventModeCard.active {
+    border-color: var(--primary);
+    background-color: rgba(230, 0, 0, 0.03);
+}
+
+.newonInventModeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 50%;
+}
+
+.newonInventModeIcon i {
+    font-size: 30px;
+    color: var(--primary);
+}
+
+.newonInventModeCard h5 {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.newonInventModeCard p {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+/* Interface des rôles */
+.newonInventRoleInterface {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.newonInventRoleHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.newonInventSellerInfo {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.newonInventSellerInfo i {
+    margin-right: 8px;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.newonInventRoleBadge {
+    background-color: var(--primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+/* Grille de vente */
+.newonInventSalesProcess {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.newonInventSalesGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 992px) {
+    .newonInventSalesGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Zone de scan */
+.newonInventScanZone {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100%;
+    min-height: 300px;
+}
+
+.newonInventScanActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.newonInventActionBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: var(--dark);
+}
+
+.newonInventActionBtn i {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.newonInventActionBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.newonInventCancelBtn {
+    margin-top: 15px;
+    background-color: #f1f1f1;
+}
+
+.newonInventCancelBtn i {
+    color: var(--danger);
+}
+
+.newonInventSmallBtn {
+    padding: 8px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.newonInventSmallBtn i {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Scanner vidéo */
+.newonInventVideoContainer {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+.newonInventScannerVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.newonInventScannerOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.newonInventScanFrame {
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--primary);
+    border-radius: 10px;
+    box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.5);
+}
+
+/* Panier */
+.newonInventCart {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 300px;
+}
+
+.newonInventCartHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.newonInventCartItems {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    min-height: 200px;
+}
+
+.newonInventEmptyCart {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    text-align: center;
+}
+
+.newonInventEmptyCart i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.newonInventHelpText {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.newonInventCartItem {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    margin-bottom: 10px;
+}
+
+.newonInventCartItem .price {
+    text-align: right;
+}
+
+.newonInventCartItem button {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.newonInventQuantity {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.newonInventQuantity button {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.newonInventQuantity input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 2px 5px;
+}
+
+.newonInventCartTotal {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    border-radius: 0 0 10px 10px;
+}
+
+.newonInventTotalLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.newonInventTotalCurrency {
+    font-size: 14px;
+    color: var(--gray);
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+/* Zone de finalisation */
+.newonInventCheckoutZone {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.newonInventClientInfo {
+    margin-bottom: 20px;
+}
+
+.newonInventPaymentOptions h5,
+.newonInventCashierSelection h5 {
+    margin-bottom: 15px;
+}
+
+.newonInventPaymentGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.newonInventPayBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 15px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.newonInventPayBtn i {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.newonInventPayBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.newonInventPayCash i {
+    color: #28a745;
+}
+
+.newonInventPayOther i {
+    color: #007bff;
+}
+
+.newonInventCompleteBtn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.newonInventCompleteBtn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+}
+
+.newonInventCompleteBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Commandes en attente */
+.newonInventPendingOrders {
+    margin-bottom: 20px;
+}
+
+.newonInventPendingOrders h5 {
+    margin-bottom: 15px;
+}
+
+.newonInventOrderCard {
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 4px solid var(--primary);
+}
+
+.newonInventOrderCard:hover {
+    background-color: #f1f1f1;
+}
+
+.newonInventOrderHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.newonInventClientName {
+    font-weight: 600;
+}
+
+.newonInventOrderTime {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.newonInventOrderSummary {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.newonInventActionButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.newonInventActionButtons .newonInventCancelBtn {
+    flex: 0 0 48%;
+    margin-top: 0;
+}
+
+.newonInventActionButtons .newonInventCompleteBtn {
+    flex: 0 0 48%;
+}
+
+/* Caissiers disponibles */
+.newonInventCashierOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.newonInventCashierCard {
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.newonInventCashierCard:hover {
+    background-color: #f1f1f1;
+}
+
+.newonInventCashierCard.active {
+    border-color: var(--primary);
+    background-color: rgba(230, 0, 0, 0.03);
+}
+
+.newonInventCashierIcon {
+    width: 50px;
+    height: 50px;
+    background-color: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+}
+
+.newonInventCashierIcon i {
+    font-size: 20px;
+    color: var(--secondary);
+}
+
+.newonInventCashierInfo h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.newonInventCashierLoad {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+/* Modales */
+.newonInventRoleSelector {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.newonInventRoleOption {
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    border: 2px solid transparent;
+}
+
+.newonInventRoleOption:hover {
+    background-color: #f1f1f1;
+}
+
+.newonInventRoleOption.active {
+    border-color: var(--primary);
+    background-color: rgba(230, 0, 0, 0.03);
+}
+
+.newonInventRoleIcon {
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.newonInventRoleIcon i {
+    font-size: 18px;
+    color: var(--secondary);
+}
+
+.newonInventRoleInfo h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.newonInventRoleInfo p {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 0;
+}
+
+.newonInventModalTotal {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    margin: 15px 0;
+}
+
+.newonInventChangeAmount {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.newonInventChangeValue {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--success);
+    margin-top: 10px;
+}
+
+/* Reçu */
+.newonInventReceipt {
+    background-color: white;
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: 'Courier New', monospace;
+}
+
+.newonInventReceiptHeader {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 15px;
+}
+
+.newonInventReceiptLogo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.newonInventReceiptInfo {
+    margin-bottom: 20px;
+}
+
+.newonInventReceiptInfo p {
+    margin-bottom: 5px;
+}
+
+.newonInventReceiptItems {
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+    padding: 15px 0;
+    margin-bottom: 15px;
+}
+
+.newonInventReceiptItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.newonInventReceiptItemName {
+    flex: 1;
+}
+
+.newonInventReceiptItemQty {
+    width: 50px;
+    text-align: center;
+}
+
+.newonInventReceiptItemPrice {
+    width: 80px;
+    text-align: right;
+}
+
+.newonInventReceiptTotal {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.newonInventReceiptFooter {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.newonInventEmptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: var(--gray);
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.newonInventEmptyState i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.newonInventClientBadge {
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.newonInventProcessHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* États actifs */
+.newonInventPayBtn.active {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: #28a745;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .newonInventPaymentGrid,
+    .newonInventScanActions {
+        grid-template-columns: 1fr;
+    }
+    
+    .newonInventActionButtons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .newonInventActionButtons .newonInventCancelBtn,
+    .newonInventActionButtons .newonInventCompleteBtn {
+        flex: 0 0 100%;
+    }
+}
+
+
+
+
+
+  /* Zone de scan - modifications pour responsivité */
+.newonInventScanZone {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    height: auto;
+    min-height: auto;
+    transition: min-height 0.3s ease;
+    overflow: hidden;
+}
+
+/* Scanner vidéo - amélioration pour petits écrans */
+.newonInventVideoContainer {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #000;
+    margin: 0 auto;
+}
+
+#newonInventScannerVideo2, 
+#newonInventScannerVideo, 
+#newonInventScannerVideo3 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Ajustement pour l'affichage sur petits écrans */
+@media (max-width: 576px) {
+    .newonInventScanZone {
+        padding: 10px;
+    }
+    
+    .newonInventScanActions {
+        gap: 10px;
+    }
+    
+    .newonInventActionBtn {
+        padding: 10px;
+    }
+    
+    .newonInventActionBtn i {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+    
+    .newonInventVideoContainer {
+        height: 180px;
+    }
+    
+    .newonInventScanFrame {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+/* Ajout pour corriger le problème d'espace en bas */
+.newonInventScannerArea-active .newonInventScanZone {
+    min-height: 300px;
+}
+
+
+  /* Scanner ultra-moderne */
+.ScanProdVentContainer {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: #000;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.ScanProdVentOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Corners - Design futuriste */
+.ScanProdVentCorner {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 5px var(--primary)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    animation: ScanProdVentPulse 2s infinite ease-in-out;
+}
+
+.ScanProdVentTopLeft {
+    top: 15px;
+    left: 15px;
+}
+
+.ScanProdVentTopRight {
+    top: 15px;
+    right: 15px;
+    transform: scaleX(-1);
+}
+
+.ScanProdVentBottomLeft {
+    bottom: 15px;
+    left: 15px;
+    transform: scaleY(-1);
+}
+
+.ScanProdVentBottomRight {
+    bottom: 15px;
+    right: 15px;
+    transform: scale(-1);
+}
+
+/* Ligne de scan animée */
+.ScanProdVentScanLine {
+    position: absolute;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(to right, 
+        rgba(var(--primary-rgb), 0), 
+        rgba(var(--primary-rgb), 0.8) 20%, 
+        rgba(var(--primary-rgb), 1) 50%, 
+        rgba(var(--primary-rgb), 0.8) 80%, 
+        rgba(var(--primary-rgb), 0));
+    box-shadow: 0 0 8px var(--primary), 0 0 12px rgba(255, 255, 255, 0.5);
+    animation: ScanProdVentScanAnimation 2s infinite ease-in-out;
+    z-index: 15;
+}
+
+/* Cadre de scan avec cible */
+.ScanProdVentFrame {
+    width: 70%;
+    height: 60%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.ScanProdVentTargetDot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    opacity: 0.7;
+    box-shadow: 0 0 10px var(--primary);
+    animation: ScanProdVentTargetPulse 2s infinite ease-in-out;
+}
+
+/* Indicateur d'état */
+.ScanProdVentStatus {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
+}
+
+.ScanProdVentModeIndicator {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.ScanProdVentModeIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.ScanProdVentModeIcon.active {
+    opacity: 1;
+    background-color: rgba(var(--primary-rgb), 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.ScanProdVentModeIcon i {
+    color: white;
+    font-size: 18px;
+}
+
+.ScanProdVentMessage {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Overlay technique  */
+.ScanProdVentTechOverlay {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 20;
+}
+
+.ScanProdVentInfoPanel {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 5px 10px;
+    border-left: 2px solid var(--primary);
+}
+
+.ScanProdVentInfoLine {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    margin: 2px 0;
+}
+
+/* Boutons de contrôle */
+.ScanProdVentControls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.ScanProdVentBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 15px;
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: var(--dark);
+    flex: 1;
+    max-width: 120px;
+}
+
+.ScanProdVentBtn i {
+    font-size: 20px;
+    margin-bottom: 6px;
+    color: var(--primary);
+}
+
+.ScanProdVentBtn span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.ScanProdVentBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.ScanProdVentModeBtn i {
+    color: #7209b7;
+}
+
+.ScanProdVentLightBtn i {
+    color: #ff9e00;
+}
+
+.ScanProdVentLightBtn.active i {
+    color: #ffdd00;
+    text-shadow: 0 0 10px #ffdd00;
+}
+
+/* Animations */
+@keyframes ScanProdVentScanAnimation {
+    0%, 100% {
+        transform: translateY(-80px);
+        opacity: 0;
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(80px);
+    }
+}
+
+@keyframes ScanProdVentPulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes ScanProdVentTargetPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+}
+
+/* Ajustements responsifs */
+@media (max-width: 576px) {
+    .ScanProdVentContainer {
+        height: 250px;
+    }
+    
+    .ScanProdVentCorner {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .ScanProdVentFrame {
+        width: 80%;
+        height: 50%;
+    }
+    
+    .ScanProdVentControls {
+        flex-wrap: wrap;
+    }
+    
+    .ScanProdVentBtn {
+        min-width: 90px;
+    }
+}
+
+/* Variables CSS pour la couleur primaire */
+:root {
+    --primary-rgb: 0, 123, 255; /* Basé sur la couleur primaire Bootstrap */
+}
+
+
+
+
+
+/* Amélioration du panier client */
+.newonInventCartItems {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  min-height: 200px;
+  max-height: 400px;
+}
+
+/* Structure optimisée pour les éléments du panier */
+.newonInventCartItem {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+.newonInventCartItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+/* En-tête de l'élément avec nom et bouton de suppression */
+.product-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.product-name {
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: var(--dark);
+  max-width: 80%;
+  /* Permettre jusqu'à 2 lignes avec ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Partie inférieure avec prix et quantité */
+.product-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.product-price {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.05rem;
+}
+
+/* Contrôles de quantité modernisés */
+.product-quantity {
+  display: flex;
+  align-items: center;
+}
+
+.newonInventQuantity {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  padding: 2px;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.newonInventQuantity button {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f1f1f1;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.newonInventQuantity button:hover {
+  background-color: #e5e5e5;
+}
+
+.newonInventQuantity input {
+  width: 30px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-weight: 500;
+  padding: 0;
+  margin: 0 2px;
+}
+
+/* Bouton de suppression */
+.remove-item {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-item:hover {
+  color: var(--danger);
+}
+
+/* Animation de notification plus élégante */
+.ScanProdVentNotification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(40, 167, 69, 0.95);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1050;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  max-width: 80%;
+}
+
+.ScanProdVentNotification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+.ScanProdVentNotification i {
+  font-size: 18px;
+}
+
+.ScanProdVentNotification span {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+.newonInventOrderCard {
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.newonInventOrderCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.newonInventOrderHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.newonInventOrderClient {
+    font-weight: 600;
+}
+
+.newonInventOrderTime {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.newonInventOrderSummary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.newonInventOrderItems {
+    color: #666;
+}
+
+.newonInventOrderTotal {
+    font-weight: 600;
+    color: #2d7d9a;
+}
+
+.newonInventEmptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: #999;
+    text-align: center;
+}
+
+.newonInventEmptyState i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+</style>
+
+<script>
+  // Point de Vente / Sales Point
+// ----------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation des variables globales
+    let currentSalesMode = null;
+    let currentRole = null;
+    let currentCart = [];
+    let pendingOrders = [];
+    let deliveryOrders = [];
+    let inventoryData = []; // Sera rempli par vos données d'inventaire existantes
+    
+    // Éléments d'interface
+    const modeSelector = document.getElementById('newonInventSelectMode');
+    const roleInterfaces = document.querySelectorAll('.newonInventRoleInterface');
+    
+    // Chargement des données d'inventaire (pour simuler votre inventaire existant)
+    function loadInventoryData() {
+        // Cette fonction devrait récupérer les données de votre inventaire
+        // Pour l'exemple, nous utiliserons des données fictives
+        inventoryData = [
+            { id: 'P001', name: 'Smartphone XYZ', price: 250, currency: 'usd', stock: 15 },
+            { id: 'P002', name: 'Chargeur USB', price: 15, currency: 'usd', stock: 30 },
+            { id: 'P003', name: 'Écouteurs sans fil', price: 45, currency: 'usd', stock: 10 },
+            { id: 'P004', name: 'Cable HDMI', price: 8, currency: 'usd', stock: 25 },
+            { id: 'P005', name: 'Batterie portable', price: 30, currency: 'usd', stock: 12 }
+        ];
+    }
+    
+    // Sélection du mode de vente
+    function initModeSelectorCard() {
+        const modeCards = document.querySelectorAll('.newonInventModeCard');
+        
+        modeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Supprime la classe active de toutes les cartes
+                modeCards.forEach(c => c.classList.remove('active'));
+                
+                // Ajoute la classe active à la carte cliquée
+                this.classList.add('active');
+                
+                // Récupère le mode sélectionné
+                const mode = this.getAttribute('data-mode');
+                
+                // Définit le mode de vente actuel
+                currentSalesMode = mode;
+                
+                // Active l'interface appropriée selon le mode
+                if (mode === 'oneSeller') {
+                    resetAllInterfaces();
+                    document.getElementById('newonInventSingleSellerMode').style.display = 'block';
+                    modeSelector.style.display = 'none';
+                } 
+                else if (mode === 'twoSellers' || mode === 'threeSellers') {
+                    // Ouvre la modale de sélection de rôle
+                    openRoleSelectionModal(mode);
+                }
+            });
+        });
+    }
+    
+    // Ouvre la modale de sélection de rôle
+    function openRoleSelectionModal(mode) {
+        const roleSelectorContainer = document.getElementById('newonInventRoleSelector');
+        roleSelectorContainer.innerHTML = '';
+        
+        // Crée les options de rôle selon le mode
+        if (mode === 'twoSellers') {
+            // Options pour le mode deux vendeurs
+            roleSelectorContainer.innerHTML = `
+                <div class="newonInventRoleOption" data-role="seller1" data-mode="twoSellers">
+                    <div class="newonInventRoleIcon"><i class="fas fa-user-check"></i></div>
+                    <div class="newonInventRoleInfo">
+                        <h6>Vendeur 1 - Réception Client</h6>
+                        <p>Accueillir le client, scanner les produits et transférer au caissier</p>
+                    </div>
+                </div>
+                <div class="newonInventRoleOption" data-role="seller2" data-mode="twoSellers">
+                    <div class="newonInventRoleIcon"><i class="fas fa-cash-register"></i></div>
+                    <div class="newonInventRoleInfo">
+                        <h6>Vendeur 2 - Caissier</h6>
+                        <p>Recevoir les commandes, encaisser le paiement et apporter les produits</p>
+                    </div>
+                </div>
+            `;
+        } else if (mode === 'threeSellers') {
+            // Options pour le mode trois vendeurs
+            roleSelectorContainer.innerHTML = `
+                <div class="newonInventRoleOption" data-role="seller1" data-mode="threeSellers">
+                    <div class="newonInventRoleIcon"><i class="fas fa-user-check"></i></div>
+                    <div class="newonInventRoleInfo">
+                        <h6>Vendeur 1 - Réception Client</h6>
+                        <p>Accueillir le client, scanner les produits et transférer au caissier</p>
+                    </div>
+                </div>
+                <div class="newonInventRoleOption" data-role="seller2" data-mode="threeSellers">
+                    <div class="newonInventRoleIcon"><i class="fas fa-cash-register"></i></div>
+                    <div class="newonInventRoleInfo">
+                        <h6>Vendeur 2 - Caissier</h6>
+                        <p>Recevoir les commandes et encaisser le paiement</p>
+                    </div>
+                </div>
+                <div class="newonInventRoleOption" data-role="seller3" data-mode="threeSellers">
+                    <div class="newonInventRoleIcon"><i class="fas fa-box"></i></div>
+                    <div class="newonInventRoleInfo">
+                        <h6>Vendeur 3 - Livraison</h6>
+                        <p>Apporter les produits au client après paiement confirmé</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Ajoute des écouteurs d'événements aux options de rôle
+        const roleOptions = document.querySelectorAll('.newonInventRoleOption');
+        roleOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                roleOptions.forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                
+                const role = this.getAttribute('data-role');
+                const mode = this.getAttribute('data-mode');
+                
+                // Sauvegarde le rôle sélectionné
+                currentRole = { role, mode };
+            });
+        });
+        
+        // Initialise et ouvre la modale
+        const roleModal = new bootstrap.Modal(document.getElementById('newonInventRoleModal'));
+        roleModal.show();
+        
+        // Ajoute un écouteur d'événements pour quand la modale est fermée
+        document.getElementById('newonInventRoleModal').addEventListener('hidden.bs.modal', function() {
+            if (currentRole) {
+                // Active l'interface appropriée selon le rôle sélectionné
+                activateRoleInterface(currentRole.role, currentRole.mode);
+            } else {
+                // Si aucun rôle n'a été sélectionné, revenir à la sélection de mode
+                resetAllInterfaces();
+                const modeCards = document.querySelectorAll('.newonInventModeCard');
+                modeCards.forEach(c => c.classList.remove('active'));
+                modeSelector.style.display = 'block';
+            }
+        });
+    }
+    
+    // Active l'interface appropriée selon le rôle
+    function activateRoleInterface(role, mode) {
+        resetAllInterfaces();
+        modeSelector.style.display = 'none';
+        
+        if (mode === 'twoSellers') {
+            if (role === 'seller1') {
+                document.getElementById('newonInventTwoSellers_Seller1').style.display = 'block';
+            } else if (role === 'seller2') {
+                document.getElementById('newonInventTwoSellers_Seller2').style.display = 'block';
+            }
+        } else if (mode === 'threeSellers') {
+            if (role === 'seller1') {
+                document.getElementById('newonInventThreeSellers_Seller1').style.display = 'block';
+            } else if (role === 'seller2') {
+                document.getElementById('newonInventThreeSellers_Seller2').style.display = 'block';
+            } else if (role === 'seller3') {
+                document.getElementById('newonInventThreeSellers_Seller3').style.display = 'block';
+            }
+        }
+    }
+    
+    // Réinitialise toutes les interfaces
+    function resetAllInterfaces() {
+        roleInterfaces.forEach(interface => {
+            interface.style.display = 'none';
+        });
+    }
+    
+    // Initialisation du scanner
+function initScanners() {
+    const scanButtons = [
+        document.getElementById('newonInventScanBtn'),
+        document.getElementById('newonInventScanBtn2'),
+        document.getElementById('newonInventScanBtn3')
+    ];
+    
+    const cancelScanButtons = [
+        document.getElementById('newonInventCancelScan'),
+        document.getElementById('newonInventCancelScan2'),
+        document.getElementById('newonInventCancelScan3')
+    ];
+    
+    const scannerAreas = [
+        document.getElementById('newonInventScannerArea'),
+        document.getElementById('newonInventScannerArea2'),
+        document.getElementById('newonInventScannerArea3')
+    ];
+    
+    const videoElements = [
+        document.getElementById('newonInventScannerVideo'),
+        document.getElementById('newonInventScannerVideo2'),
+        document.getElementById('newonInventScannerVideo3')
+    ];
+    
+    // Initialisation des éléments pour le scanner moderne
+    const toggleModeBtns = [
+        document.getElementById('ScanProdVentToggleMode'),
+        document.getElementById('ScanProdVentToggleMode2'),
+        document.getElementById('ScanProdVentToggleMode3')
+    ];
+    
+    const toggleLightBtns = [
+        document.getElementById('ScanProdVentToggleLight'),
+        document.getElementById('ScanProdVentToggleLight2'),
+        document.getElementById('ScanProdVentToggleLight3')
+    ];
+    
+    const barcodeIcons = [
+        document.getElementById('ScanProdVentBarcode'),
+        document.getElementById('ScanProdVentBarcode2'),
+        document.getElementById('ScanProdVentBarcode3')
+    ];
+    
+    const qrcodeIcons = [
+        document.getElementById('ScanProdVentQRCode'),
+        document.getElementById('ScanProdVentQRCode2'),
+        document.getElementById('ScanProdVentQRCode3')
+    ];
+    
+    const currentModeTexts = [
+        document.getElementById('ScanProdVentCurrentMode'),
+        document.getElementById('ScanProdVentCurrentMode2'),
+        document.getElementById('ScanProdVentCurrentMode3')
+    ];
+    
+    scanButtons.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                // Affiche la zone de scan et cache les autres éléments
+                scannerAreas[index].style.display = 'block';
+                
+                // Mettre à jour la hauteur de la zone
+                updateScanZoneHeight();
+                
+                // Initialise le scanner de code-barres/QR code
+                initBarcodeScannerPos(videoElements[index], index);
+                
+                // Active le mode par défaut (barcode)
+                if (barcodeIcons[index]) {
+                    barcodeIcons[index].classList.add('active');
+                    qrcodeIcons[index].classList.remove('active');
+                    if (currentModeTexts[index]) {
+                        currentModeTexts[index].textContent = 'Code-barres';
+                    }
+                }
+                
+                // Animation de démarrage
+                setTimeout(() => {
+                    const message = document.querySelector('.ScanProdVentMessage');
+                    if (message) {
+                        message.textContent = 'Scanner prêt';
+                        
+                        setTimeout(() => {
+                            message.textContent = 'Positionnez le code dans le cadre';
+                        }, 1500);
+                    }
+                }, 500);
+            });
+        }
+    });
+    
+    cancelScanButtons.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                // Cache la zone de scan
+                scannerAreas[index].style.display = 'none';
+                
+                // Mettre à jour la hauteur de la zone
+                updateScanZoneHeight();
+                
+                // Arrête le scanner
+                stopBarcodeScanner();
+            });
+        }
+    });
+    
+    // Gestion du changement de mode (code-barres / QR code)
+    toggleModeBtns.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                if (barcodeIcons[index] && qrcodeIcons[index]) {
+                    // Change le mode actif
+                    if (barcodeIcons[index].classList.contains('active')) {
+                        barcodeIcons[index].classList.remove('active');
+                        qrcodeIcons[index].classList.add('active');
+                        if (currentModeTexts[index]) {
+                            currentModeTexts[index].textContent = 'QR Code';
+                        }
+                        
+                        // Afficher un message de changement
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Mode QR Code activé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le QR code dans le cadre';
+                            }, 1500);
+                        }
+                    } else {
+                        barcodeIcons[index].classList.add('active');
+                        qrcodeIcons[index].classList.remove('active');
+                        if (currentModeTexts[index]) {
+                            currentModeTexts[index].textContent = 'Code-barres';
+                        }
+                        
+                        // Afficher un message de changement
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Mode Code-barres activé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le code-barres dans le cadre';
+                            }, 1500);
+                        }
+                    }
+                }
+            });
+        }
+    });
+    
+    // Gestion du flash
+    toggleLightBtns.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                button.classList.toggle('active');
+                
+                // Dans une implémentation réelle, vous activeriez le flash de la caméra ici
+                // Pour simuler, changeons l'éclairage de la vidéo
+                if (videoElements[index]) {
+                    if (button.classList.contains('active')) {
+                        videoElements[index].style.filter = 'brightness(1.3)';
+                        
+                        // Message flash activé
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Flash activé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le code dans le cadre';
+                            }, 1000);
+                        }
+                    } else {
+                        videoElements[index].style.filter = 'brightness(1)';
+                        
+                        // Message flash désactivé
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Flash désactivé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le code dans le cadre';
+                            }, 1000);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+    
+    // Initialisation de la saisie manuelle
+    function initManualEntry() {
+        const manualButtons = [
+            document.getElementById('newonInventManualEntryBtn'),
+            document.getElementById('newonInventManualEntryBtn2'),
+            document.getElementById('newonInventManualEntryBtn3')
+        ];
+        
+        const cancelManualButtons = [
+            document.getElementById('newonInventCancelManual'),
+            document.getElementById('newonInventCancelManual2'),
+            document.getElementById('newonInventCancelManual3')
+        ];
+        
+        const manualEntryAreas = [
+            document.getElementById('newonInventManualEntry'),
+            document.getElementById('newonInventManualEntry2'),
+            document.getElementById('newonInventManualEntry3')
+        ];
+        
+        const findProductButtons = [
+            document.getElementById('newonInventFindProduct'),
+            document.getElementById('newonInventFindProduct2'),
+            document.getElementById('newonInventFindProduct3')
+        ];
+        
+        const codeInputs = [
+            document.getElementById('newonInventManualCode'),
+            document.getElementById('newonInventManualCode2'),
+            document.getElementById('newonInventManualCode3')
+        ];
+        
+        manualButtons.forEach((button, index) => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Affiche la zone de saisie manuelle
+                    manualEntryAreas[index].style.display = 'block';
+                });
+            }
+        });
+        
+        cancelManualButtons.forEach((button, index) => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Cache la zone de saisie manuelle
+                    manualEntryAreas[index].style.display = 'none';
+                    
+                    // Réinitialise le champ de saisie
+                    if (codeInputs[index]) {
+                        codeInputs[index].value = '';
+                    }
+                });
+            }
+        });
+        
+        findProductButtons.forEach((button, index) => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    if (codeInputs[index] && codeInputs[index].value) {
+                        const code = codeInputs[index].value;
+                        findAndAddProduct(code, index);
+                        
+                        // Cache la zone de saisie manuelle et réinitialise le champ
+                        manualEntryAreas[index].style.display = 'none';
+                        codeInputs[index].value = '';
+                    }
+                });
+            }
+        });
+    }
+    
+
+let scannerInterval;
+let lastDetectionTime = 0; // Pour éviter les détections multiples
+const DETECTION_COOLDOWN = 3000; // 3 secondes de cooldown entre chaque détection
+
+function initBarcodeScannerPos(videoElement, interfaceIndex) {
+    if (videoElement) {
+        // Cette fonction simule la détection d'un code-barres
+        // Dans une application réelle, vous utiliseriez une bibliothèque comme QuaggaJS ou ZXing
+        
+        // Simulons l'accès à la caméra
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function(stream) {
+                videoElement.srcObject = stream;
+                videoElement.play();
+                
+                // Montrons l'animation de démarrage avec le message
+                let scanProdVentMessages = document.querySelectorAll('.ScanProdVentMessage');
+                let message = scanProdVentMessages[interfaceIndex] || scanProdVentMessages[0];
+                
+                if (message) {
+                    message.textContent = 'Initialisation...';
+                    
+                    setTimeout(() => {
+                        message.textContent = 'Scanner activé';
+                        
+                        setTimeout(() => {
+                            message.textContent = 'Recherche de codes...';
+                            
+                            // Mettons en place une détection continue
+                            startContinuousScanning(videoElement, interfaceIndex, message);
+                            
+                        }, 1000);
+                    }, 1000);
+                }
+            })
+            .catch(function(error) {
+                console.error("Impossible d'accéder à la caméra:", error);
+                
+                // Afficher un message d'erreur stylisé plutôt qu'une alerte
+                let scanProdVentMessages = document.querySelectorAll('.ScanProdVentMessage');
+                let message = scanProdVentMessages[interfaceIndex] || scanProdVentMessages[0];
+                
+                if (message) {
+                    message.textContent = "Erreur: Impossible d'accéder à la caméra";
+                    message.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
+                }
+            });
+    }
+}
+
+function startContinuousScanning(videoElement, interfaceIndex, messageElement) {
+    // Simule une détection de code toutes les 5 secondes
+    scannerInterval = setInterval(() => {
+        const currentTime = Date.now();
+        if (currentTime - lastDetectionTime < DETECTION_COOLDOWN) {
+            return; // Ne pas détecter si on est dans la période de cooldown
+        }
+        
+        // Vérifier si la vidéo est toujours active (flux de la caméra)
+        if (!videoElement.srcObject || videoElement.srcObject.getVideoTracks()[0].readyState !== 'live') {
+            clearInterval(scannerInterval);
+            return;
+        }
+        
+        // 20% de chance de détecter quelque chose pour simuler un comportement plus naturel
+        if (Math.random() < 0.2) {
+            // Mise à jour du temps de dernière détection
+            lastDetectionTime = currentTime;
+            
+            // Jeu d'animation pour la détection
+            let frames = document.querySelectorAll('.ScanProdVentFrame');
+            let frame = frames[interfaceIndex] || frames[0];
+            
+            if (frame) {
+                // Animation de détection
+                frame.style.borderColor = 'var(--primary)';
+                frame.style.boxShadow = '0 0 20px var(--primary), 0 0 0 5000px rgba(0, 0, 0, 0.7)';
+                
+                // Message de détection
+                if (messageElement) {
+                    messageElement.textContent = 'Code détecté !';
+                }
+                
+                // Simulons la détection d'un code aléatoire
+                const randomIndex = Math.floor(Math.random() * inventoryData.length);
+                const detectedProduct = inventoryData[randomIndex];
+                
+                // Ajoutons le produit détecté au panier
+                if (detectedProduct) {
+                    addProductToCart(detectedProduct, interfaceIndex);
+                }
+                
+                // Réinitialisation de l'interface après détection
+                setTimeout(() => {
+                    if (frame) {
+                        frame.style.borderColor = '';
+                        frame.style.boxShadow = '';
+                    }
+                    
+                    if (messageElement) {
+                        messageElement.textContent = 'Recherche de codes...';
+                    }
+                }, 1500);
+            }
+        }
+    }, 1500); // Vérifie toutes les 1.5 secondes si un code est détectable
+}
+
+
+
+// Fonction à ajouter dans votre code JavaScript pour gérer la hauteur
+function updateScanZoneHeight() {
+    const scannerAreas = [
+        document.getElementById('newonInventScannerArea'),
+        document.getElementById('newonInventScannerArea2'),
+        document.getElementById('newonInventScannerArea3')
+    ];
+    
+    const scanZones = document.querySelectorAll('.newonInventScanZone');
+    
+    scannerAreas.forEach((area, index) => {
+        if (area) {
+            // Ajuster la hauteur de la zone seulement quand le scanner est visible
+            if (area.style.display === 'block') {
+                if (scanZones[index]) {
+                    scanZones[index].classList.add('newonInventScannerArea-active');
+                    // Augmenter la hauteur pour l'interface moderne
+                    scanZones[index].style.minHeight = '450px';
+                }
+            } else {
+                if (scanZones[index]) {
+                    scanZones[index].classList.remove('newonInventScannerArea-active');
+                    scanZones[index].style.minHeight = '';
+                }
+            }
+        }
+    });
+}
+    
+// Arrête le scanner
+function stopBarcodeScanner() {
+    clearInterval(scannerInterval);
+    
+    // Arrêtons tous les flux vidéo
+    const videos = [
+        document.getElementById('newonInventScannerVideo'),
+        document.getElementById('newonInventScannerVideo2'),
+        document.getElementById('newonInventScannerVideo3')
+    ];
+    
+    videos.forEach(video => {
+        if (video && video.srcObject) {
+            const tracks = video.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+        }
+    });
+    
+    // Réinitialisation de tous les éléments d'interface scanner
+    const frames = document.querySelectorAll('.ScanProdVentFrame');
+    frames.forEach(frame => {
+        if (frame) {
+            frame.style.borderColor = '';
+            frame.style.boxShadow = '';
+        }
+    });
+    
+    const messages = document.querySelectorAll('.ScanProdVentMessage');
+    messages.forEach(message => {
+        if (message) {
+            message.textContent = 'Positionnez le code dans le cadre';
+            message.style.backgroundColor = '';
+        }
+    });
+}
+
+    
+    // Recherche un produit par code et l'ajoute au panier
+    function findAndAddProduct(code, interfaceIndex) {
+        // Recherche le produit dans les données d'inventaire
+        const product = inventoryData.find(p => p.id === code);
+        
+        if (product) {
+            addProductToCart(product, interfaceIndex);
+        } else {
+            alert("Produit non trouvé. Vérifiez le code.");
+        }
+    }
+    
+// Ajoute un produit au panier
+function addProductToCart(product, interfaceIndex) {
+    // Vérifie si l'interface est celle du vendeur unique, du vendeur 1 (mode 2), ou du vendeur 1 (mode 3)
+    const cartIndex = interfaceIndex;
+    
+    // Détermine dans quel panier ajouter le produit
+    let cartItems;
+    if (cartIndex === 0) {
+        cartItems = document.getElementById('newonInventCartItems');
+    } else if (cartIndex === 1) {
+        cartItems = document.getElementById('newonInventCartItems2');
+    } else if (cartIndex === 2) {
+        cartItems = document.getElementById('newonInventCartItems3');
+    }
+    
+    if (!cartItems) return;
+    
+    // Vide l'état "panier vide" s'il existe
+    const emptyCart = cartItems.querySelector('.newonInventEmptyCart');
+    if (emptyCart) {
+        emptyCart.style.display = 'none';
+    }
+    
+    // Vérifie si le produit est déjà dans le panier
+    const existingItem = currentCart.find(item => item.id === product.id);
+    
+    if (existingItem) {
+        // Si le produit existe déjà, incrémente sa quantité
+        existingItem.quantity += 1;
+        
+        // Met à jour l'affichage de la quantité
+        const quantityInput = document.querySelector(`[data-product-id="${product.id}"] .product-quantity-input`);
+        if (quantityInput) {
+            quantityInput.value = existingItem.quantity;
+        }
+    } else {
+        // Si le produit n'existe pas encore, ajoute-le au panier
+        const newItem = { ...product, quantity: 1 };
+        currentCart.push(newItem);
+        
+        // Crée un élément de panier
+        const cartItemElement = document.createElement('div');
+        cartItemElement.className = 'newonInventCartItem';
+        cartItemElement.setAttribute('data-product-id', product.id);
+        
+        const displayPrice = product.price.toFixed(2) + (product.currency === 'usd' ? ' $' : ' FC');
+        
+// Modifier cette partie dans la fonction addProductToCart
+cartItemElement.innerHTML = `
+    <div class="product-info">
+        <div class="product-name">${product.name}</div>
+        <button class="remove-item" data-product-id="${product.id}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="product-controls">
+        <div class="product-price">${displayPrice}</div>
+        <div class="product-quantity">
+            <div class="newonInventQuantity">
+                <button class="decrement-quantity" data-product-id="${product.id}">-</button>
+                <input type="number" min="1" class="product-quantity-input" value="1" data-product-id="${product.id}">
+                <button class="increment-quantity" data-product-id="${product.id}">+</button>
+            </div>
+        </div>
+    </div>
+`;
+
+        
+        // Ajoute l'élément au panier
+        cartItems.appendChild(cartItemElement);
+        
+        // Ajoute des écouteurs d'événement pour les boutons d'incrémentation/décrémentation
+        cartItemElement.querySelector('.increment-quantity').addEventListener('click', function() {
+            incrementCartItem(product.id);
+        });
+        
+        cartItemElement.querySelector('.decrement-quantity').addEventListener('click', function() {
+            decrementCartItem(product.id);
+        });
+        
+        cartItemElement.querySelector('.remove-item').addEventListener('click', function() {
+            removeCartItem(product.id);
+        });
+        
+        cartItemElement.querySelector('.product-quantity-input').addEventListener('change', function(e) {
+            updateCartItemQuantity(product.id, parseInt(e.target.value));
+        });
+    }
+    
+    // Met à jour le total du panier
+    updateCartTotal(cartIndex);
+    
+    // Active le bouton de finalisation si le panier n'est pas vide
+    if (cartIndex === 0) {
+        document.getElementById('newonInventCompleteSale').disabled = false;
+    } else if (cartIndex === 1) {
+        document.getElementById('newonInventTransferOrder').disabled = false;
+    } else if (cartIndex === 2) {
+        document.getElementById('newonInventTransferOrder3').disabled = false;
+    }
+    
+    // Affiche une notification de succès similaire à showNotification
+    const notificationCenter = document.getElementById('notification-center');
+    if (!notificationCenter) {
+        // Si notification-center n'existe pas, on le crée
+        const newNotificationCenter = document.createElement('div');
+        newNotificationCenter.id = 'notification-center';
+        document.body.appendChild(newNotificationCenter);
+    }
+    
+    const message = `"${product.name}" ajouté au panier`;
+    const notification = document.createElement('div');
+    notification.className = 'notification notification-success';
+    notification.innerHTML = `
+        <div class="notification-header">
+            <div class="notification-title">Succès</div>
+            <div class="notification-close"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="notification-message">${message}</div>
+    `;
+    
+    document.getElementById('notification-center').appendChild(notification);
+    
+    // Fermeture automatique après 5 secondes
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 5000);
+    
+    // Fermeture manuelle
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    });
+}
+
+    
+    // Incrémente la quantité d'un produit dans le panier
+    function incrementCartItem(productId) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item) {
+            item.quantity += 1;
+            
+            // Met à jour l'affichage
+            const quantityInput = document.querySelector(`[data-product-id="${productId}"] .product-quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = item.quantity;
+            }
+            
+            updateCartTotal();
+        }
+    }
+    
+    // Décrémente la quantité d'un produit dans le panier
+    function decrementCartItem(productId) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item && item.quantity > 1) {
+            item.quantity -= 1;
+            
+            // Met à jour l'affichage
+            const quantityInput = document.querySelector(`[data-product-id="${productId}"] .product-quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = item.quantity;
+            }
+            
+            updateCartTotal();
+        } else if (item && item.quantity === 1) {
+            removeCartItem(productId);
+        }
+    }
+    
+    // Supprime un produit du panier
+    function removeCartItem(productId) {
+        // Supprime le produit du panier
+        currentCart = currentCart.filter(item => item.id !== productId);
+        
+        // Supprime l'élément du DOM
+        const cartItemElement = document.querySelector(`[data-product-id="${productId}"].newonInventCartItem`);
+        if (cartItemElement) {
+            cartItemElement.remove();
+        }
+        
+        // Vérifie si le panier est vide
+        checkEmptyCart();
+        
+        // Met à jour le total
+        updateCartTotal();
+    }
+    
+    // Met à jour la quantité d'un produit dans le panier
+    function updateCartItemQuantity(productId, quantity) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item) {
+            item.quantity = Math.max(1, quantity);
+            
+            updateCartTotal();
+        }
+    }
+    
+    // Vérifie si le panier est vide
+    function checkEmptyCart() {
+        const cartItems = [
+            document.getElementById('newonInventCartItems'),
+            document.getElementById('newonInventCartItems2'),
+            document.getElementById('newonInventCartItems3')
+        ];
+        
+        cartItems.forEach((container, index) => {
+            if (container) {
+                // Si le panier est vide, affiche un message
+                if (!container.querySelector('.newonInventCartItem')) {
+                    // Vérifier si le message existe déjà
+                    let emptyCart = container.querySelector('.newonInventEmptyCart');
+                    
+                    if (!emptyCart) {
+                        // Créer le message s'il n'existe pas
+                        emptyCart = document.createElement('div');
+                        emptyCart.className = 'newonInventEmptyCart';
+                        emptyCart.innerHTML = `
+                            <i class="fas fa-shopping-basket"></i>
+                            <p>Le panier est vide</p>
+                            <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                        `;
+                        container.appendChild(emptyCart);
+                    } else {
+                        emptyCart.style.display = 'flex';
+                    }
+                    
+                    // Désactive le bouton de finalisation
+                    if (index === 0) {
+                        document.getElementById('newonInventCompleteSale').disabled = true;
+                    } else if (index === 1) {
+                        document.getElementById('newonInventTransferOrder').disabled = true;
+                    } else if (index === 2) {
+                        document.getElementById('newonInventTransferOrder3').disabled = true;
+                    }
+                }
+            }
+        });
+    }
+    
+    // Met à jour le total du panier
+    function updateCartTotal(interfaceIndex = 0) {
+        // Calcule le total
+        const total = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Détermine quel élément du total mettre à jour
+        let totalDisplay, currencyDisplay;
+        if (interfaceIndex === 0) {
+            totalDisplay = document.getElementById('newonInventTotalAmount');
+            currencyDisplay = document.getElementById('newonInventTotalCurrency');
+        } else if (interfaceIndex === 1) {
+            totalDisplay = document.getElementById('newonInventTotalAmount2');
+            currencyDisplay = document.getElementById('newonInventTotalCurrency2');
+        } else if (interfaceIndex === 2) {
+            totalDisplay = document.getElementById('newonInventTotalAmount3');
+            currencyDisplay = document.getElementById('newonInventTotalCurrency3');
+        }
+        
+        // Met à jour l'affichage du total
+        if (totalDisplay) {
+            totalDisplay.textContent = total.toFixed(2);
+        }
+        
+        // Met à jour l'affichage de la devise
+        if (currencyDisplay) {
+            const mainCurrency = currentCart.length > 0 ? currentCart[0].currency.toUpperCase() : 'USD';
+            currencyDisplay.textContent = mainCurrency;
+        }
+    }
+    
+    // Initialise les écouteurs d'événements pour le point de vente
+    function initSalesEventListeners() {
+        // Bouton de changement de rôle
+        const roleToggleBtn = document.getElementById('newonInventRoleToggle');
+        if (roleToggleBtn) {
+            roleToggleBtn.addEventListener('click', function() {
+                if (currentSalesMode) {
+                    openRoleSelectionModal(currentSalesMode);
+                }
+            });
+        }
+        
+        // Bouton de réinitialisation du panier
+        const resetButtons = [
+            document.getElementById('newonInventResetCart'),
+            document.getElementById('newonInventResetCart2'),
+            document.getElementById('newonInventResetCart3')
+        ];
+        
+        resetButtons.forEach(button => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    resetCart();
+                });
+            }
+        });
+        
+        // Boutons de paiement
+        const paymentButtons = [
+            document.getElementById('newonInventCashPayment'),
+            document.getElementById('newonInventOtherPayment'),
+            document.getElementById('newonInventProcessCash'),
+            document.getElementById('newonInventProcessOther'),
+            document.getElementById('newonInventProcessCash3'),
+            document.getElementById('newonInventProcessOther3')
+        ];
+        
+        paymentButtons.forEach(button => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Retire la classe active de tous les boutons
+                    paymentButtons.forEach(btn => {
+                        if (btn && btn.parentElement === this.parentElement) {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    
+                    // Ajoute la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Active le bouton de validation
+                    if (this.id === 'newonInventCashPayment' || this.id === 'newonInventOtherPayment') {
+                        document.getElementById('newonInventCompleteSale').disabled = false;
+                    } else if (this.id === 'newonInventProcessCash' || this.id === 'newonInventProcessOther') {
+                        document.getElementById('newonInventConfirmPayment').disabled = false;
+                    } else if (this.id === 'newonInventProcessCash3' || this.id === 'newonInventProcessOther3') {
+                        document.getElementById('newonInventConfirmPayment3').disabled = false;
+                    }
+                    
+                    // Si c'est un paiement en espèces, ouvre la modale
+                    if (this.id.includes('Cash')) {
+                        openPaymentModal();
+                    }
+                });
+            }
+        });
+        
+        // Bouton de finalisation de la vente (mode vendeur unique)
+        const completeSaleBtn = document.getElementById('newonInventCompleteSale');
+        if (completeSaleBtn) {
+            completeSaleBtn.addEventListener('click', function() {
+                // Vérifier si un mode de paiement est sélectionné
+                const cashBtn = document.getElementById('newonInventCashPayment');
+                const otherBtn = document.getElementById('newonInventOtherPayment');
+                
+                if ((cashBtn && cashBtn.classList.contains('active')) || 
+                    (otherBtn && otherBtn.classList.contains('active'))) {
+                    // Finaliser la vente
+                    processSale();
+                } else {
+                    alert("Veuillez sélectionner un mode de paiement.");
+                }
+            });
+        }
+        
+        // Bouton de transfert de commande (mode 2 et 3, vendeur 1)
+        const transferButtons = [
+            document.getElementById('newonInventTransferOrder'),
+            document.getElementById('newonInventTransferOrder3')
+        ];
+        
+        transferButtons.forEach(button => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Vérifie si un caissier est sélectionné
+                    const selectedCashier = document.querySelector('.newonInventCashierCard.active');
+                    
+                    if (selectedCashier) {
+                        // Transfère la commande au caissier
+                        transferOrderToCashier(selectedCashier.getAttribute('data-cashier-id'));
+                    } else {
+                        alert("Veuillez sélectionner un caissier pour le transfert.");
+                    }
+                });
+            }
+        });
+        
+        // Initialisation de la sélection des caissiers
+        initCashierSelection();
+    
+      
+      
+      // Bouton d'annulation du traitement de commande
+const cancelProcessButtons = [
+    document.getElementById('newonInventCancelProcess')
+];
+
+cancelProcessButtons.forEach(button => {
+    if (button) {
+        button.addEventListener('click', function() {
+            // Cache la zone de traitement de commande
+            const processOrderElement = document.getElementById('newonInventProcessOrder');
+            if (processOrderElement) {
+                processOrderElement.style.display = 'none';
+            }
+        });
+    }
+});
+
+// Bouton de confirmation de paiement
+const confirmPaymentButtons = [
+    document.getElementById('newonInventConfirmPayment')
+];
+
+confirmPaymentButtons.forEach(button => {
+    if (button) {
+        button.addEventListener('click', function() {
+            // Vérifie si un mode de paiement est sélectionné
+            const cashBtn = document.getElementById('newonInventProcessCash');
+            const otherBtn = document.getElementById('newonInventProcessOther');
+            
+            if ((cashBtn && cashBtn.classList.contains('active')) || 
+                (otherBtn && otherBtn.classList.contains('active'))) {
+                // Si c'est un paiement en espèces, ouvre la modale
+                if (cashBtn && cashBtn.classList.contains('active')) {
+                    openPaymentModal();
+                } else {
+                    // Pour les autres méthodes de paiement, confirme directement
+                    confirmPayment();
+                }
+            } else {
+                alert("Veuillez sélectionner un mode de paiement.");
+            }
+        });
+    }
+});
+
+      
+    }
+    
+    // Initialise la sélection des caissiers
+    function initCashierSelection() {
+        // Simulation de caissiers disponibles
+        const cashiers = [
+            { id: 'C001', name: 'Caissier 1', pendingOrders: 0 },
+            { id: 'C002', name: 'Caissier 2', pendingOrders: 2 },
+            { id: 'C003', name: 'Caissier 3', pendingOrders: 1 }
+        ];
+        
+        // Trie les caissiers par nombre de commandes en attente
+        cashiers.sort((a, b) => a.pendingOrders - b.pendingOrders);
+        
+        // Crée les éléments pour les caissiers
+        const cashierContainers = [
+            document.getElementById('newonInventCashierOptions'),
+            document.getElementById('newonInventCashierOptions3')
+        ];
+        
+        cashierContainers.forEach(container => {
+            if (container) {
+                container.innerHTML = '';
+                
+                cashiers.forEach(cashier => {
+                    const cashierCard = document.createElement('div');
+                    cashierCard.className = 'newonInventCashierCard';
+                    cashierCard.setAttribute('data-cashier-id', cashier.id);
+                    
+                    cashierCard.innerHTML = `
+                        <div class="newonInventCashierIcon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="newonInventCashierInfo">
+                            <h6>${cashier.name}</h6>
+                            <span class="newonInventCashierLoad">${cashier.pendingOrders} client${cashier.pendingOrders !== 1 ? 's' : ''} en attente</span>
+                        </div>
+                    `;
+                    
+                    container.appendChild(cashierCard);
+                    
+                    // Ajoute un écouteur d'événement pour la sélection du caissier
+                    cashierCard.addEventListener('click', function() {
+                        // Retire la classe active de tous les caissiers
+                        container.querySelectorAll('.newonInventCashierCard').forEach(card => {
+                            card.classList.remove('active');
+                        });
+                        
+                        // Ajoute la classe active au caissier sélectionné
+                        cashierCard.classList.add('active');
+                    });
+                });
+            }
+        });
+    }
+    
+    // Ouvre la modale de paiement
+    function openPaymentModal() {
+        // Calcule le total
+        const total = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Met à jour le total dans la modale
+        document.getElementById('newonInventModalTotal').textContent = total.toFixed(2) + ' USD';
+        
+        // Réinitialise le champ du montant reçu
+        document.getElementById('newonInventPaymentAmount').value = '';
+        
+        // Cache la zone de la monnaie à rendre
+        document.getElementById('newonInventChangeContainer').style.display = 'none';
+        
+        // Initialise et ouvre la modale
+        const paymentModal = new bootstrap.Modal(document.getElementById('newonInventPaymentModal'));
+        paymentModal.show();
+        
+        // Ajoute un écouteur d'événement pour calculer la monnaie à rendre
+        document.getElementById('newonInventPaymentAmount').addEventListener('input', function() {
+            const amountReceived = parseFloat(this.value) || 0;
+            
+            if (amountReceived >= total) {
+                const change = amountReceived - total;
+                
+                document.getElementById('newonInventChangeContainer').style.display = 'block';
+                document.getElementById('newonInventChangeAmount').textContent = change.toFixed(2) + ' USD';
+            } else {
+                document.getElementById('newonInventChangeContainer').style.display = 'none';
+            }
+        });
+        
+        // Ajoute un écouteur d'événement pour la confirmation du paiement
+        document.getElementById('newonInventConfirmModalPayment').addEventListener('click', function() {
+            const amountReceived = parseFloat(document.getElementById('newonInventPaymentAmount').value) || 0;
+            
+            if (amountReceived >= total) {
+                // Ferme la modale
+                bootstrap.Modal.getInstance(document.getElementById('newonInventPaymentModal')).hide();
+                
+                // Finalise la vente
+                const paymentInfo = {
+                    amount: amountReceived,
+                    change: amountReceived - total,
+                    currency: document.getElementById('newonInventPaymentCurrency').value
+                };
+                
+                if (currentRole === null || currentRole.role === 'seller1') {
+                    // Mode vendeur unique
+                    processSale(paymentInfo);
+                } else if (currentRole.role === 'seller2') {
+                    // Mode caissier
+                    confirmPayment(paymentInfo);
+                }
+            } else {
+                alert("Le montant reçu doit être supérieur ou égal au montant total.");
+            }
+        });
+    }
+    
+    // Finalise la vente (mode vendeur unique)
+    function processSale(paymentInfo = null) {
+        // Récupère le nom du client
+        const clientName = document.getElementById('newonInventClientName').value || 'Client';
+        
+        // Crée le reçu
+        generateReceipt(clientName, currentCart, paymentInfo);
+        
+        // Ouvre la modale du reçu
+        const receiptModal = new bootstrap.Modal(document.getElementById('newonInventReceiptModal'));
+        receiptModal.show();
+        
+        // Après l'affichage du reçu, réinitialise le panier
+        document.getElementById('newonInventReceiptModal').addEventListener('hidden.bs.modal', function() {
+            resetCart();
+        });
+    }
+    
+// Transfère la commande au caissier
+function transferOrderToCashier(cashierId) {
+    // Récupère le nom du client
+    const clientInputId = currentRole.mode === 'twoSellers' ? 'newonInventClientName2' : 'newonInventClientName3';
+    const clientName = document.getElementById(clientInputId).value || 'Client';
+    
+    // Crée un nouvel objet pour la commande
+    const newOrder = {
+        id: 'O' + Date.now(),
+        clientName: clientName,
+        items: [...currentCart],
+        timestamp: new Date(),
+        status: 'pending',
+        cashierId: cashierId,
+        total: currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    };
+    
+    // Ajoute la commande à la liste des commandes en attente
+    pendingOrders.push(newOrder);
+    
+    // Mettre à jour l'interface du caissier avec la nouvelle commande
+    updatePendingOrdersList();
+    
+    // Affiche un message de confirmation
+    alert(`Commande de ${clientName} transférée avec succès au caissier.`);
+    
+    // Réinitialise le panier
+    resetCart();
+    
+    // Réinitialise le champ du nom du client
+    document.getElementById(clientInputId).value = '';
+}
+
+    
+    // Confirmez le paiement (mode caissier)
+    function confirmPayment(paymentInfo = null) {
+        // Récupère l'ID de la commande en cours
+        const orderId = document.querySelector('#newonInventProcessOrder .newonInventOrderCard').getAttribute('data-order-id');
+        
+        if (orderId) {
+            // Trouve la commande
+            const order = pendingOrders.find(o => o.id === orderId);
+            
+            if (order) {
+                // Met à jour le statut de la commande
+                order.status = 'paid';
+                order.paymentInfo = paymentInfo;
+                
+                // Si mode 2 vendeurs, la commande est terminée
+                if (currentRole.mode === 'twoSellers') {
+                    // Génère le reçu
+                    generateReceipt(order.clientName, order.items, paymentInfo);
+                    
+                    // Ouvre la modale du reçu
+                    const receiptModal = new bootstrap.Modal(document.getElementById('newonInventReceiptModal'));
+                    receiptModal.show();
+                    
+                    // Supprime la commande des commandes en attente
+                    pendingOrders = pendingOrders.filter(o => o.id !== orderId);
+                } 
+                // Si mode 3 vendeurs, transfère la commande au livreur
+                else if (currentRole.mode === 'threeSellers') {
+                    deliveryOrders.push(order);
+                    pendingOrders = pendingOrders.filter(o => o.id !== orderId);
+                    
+                    alert(`Commande payée et transférée au service de livraison.`);
+                }
+                
+                // Cache la zone de traitement de commande
+                document.getElementById('newonInventProcessOrder').style.display = 'none';
+                
+                // Réaffiche la liste des commandes en attente
+                updatePendingOrdersList();
+            }
+        }
+    }
+    
+    // Réinitialise le panier
+    function resetCart() {
+        // Vide le panier
+        currentCart = [];
+        
+        // Vide les éléments du panier dans le DOM
+        const cartContainers = [
+            document.getElementById('newonInventCartItems'),
+            document.getElementById('newonInventCartItems2'),
+            document.getElementById('newonInventCartItems3')
+        ];
+        
+        cartContainers.forEach(container => {
+            if (container) {
+                container.innerHTML = '';
+                
+                // Ajoute le message de panier vide
+                const emptyCart = document.createElement('div');
+                emptyCart.className = 'newonInventEmptyCart';
+                emptyCart.innerHTML = `
+                    <i class="fas fa-shopping-basket"></i>
+                    <p>Le panier est vide</p>
+                    <p class="newonInventHelpText">Scannez ou saisissez un produit pour l'ajouter</p>
+                `;
+                container.appendChild(emptyCart);
+            }
+        });
+        
+        // Réinitialise les totaux
+        const totals = [
+            document.getElementById('newonInventTotalAmount'),
+            document.getElementById('newonInventTotalAmount2'),
+            document.getElementById('newonInventTotalAmount3')
+        ];
+        
+        totals.forEach(total => {
+            if (total) {
+                total.textContent = '0.00';
+            }
+        });
+        
+        // Désactive les boutons de finalisation
+        const completeButtons = [
+            document.getElementById('newonInventCompleteSale'),
+            document.getElementById('newonInventTransferOrder'),
+            document.getElementById('newonInventTransferOrder3')
+        ];
+        
+        completeButtons.forEach(button => {
+            if (button) {
+                button.disabled = true;
+            }
+        });
+        
+        // Réinitialise les boutons de paiement
+        const paymentButtons = document.querySelectorAll('.newonInventPayBtn');
+        paymentButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+    }
+    
+    // Génère un reçu de vente
+    function generateReceipt(clientName, items, paymentInfo = null) {
+        const receiptContent = document.getElementById('newonInventReceiptContent');
+        
+        // Calcule le total
+        const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Crée le contenu du reçu
+        receiptContent.innerHTML = `
+            <div class="newonInventReceiptHeader">
+                <div class="newonInventReceiptLogo">TOTAL</div>
+                <p>Gestion d'Inventaire</p>
+            </div>
+            
+            <div class="newonInventReceiptInfo">
+                <p><strong>Client:</strong> ${clientName}</p>
+                <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>N° de reçu:</strong> R${Date.now()}</p>
+            </div>
+            
+            <div class="newonInventReceiptItems">
+                ${items.map(item => `
+                    <div class="newonInventReceiptItem">
+                        <div class="newonInventReceiptItemName">${item.name}</div>
+                        <div class="newonInventReceiptItemQty">x${item.quantity}</div>
+                        <div class="newonInventReceiptItemPrice">${(item.price * item.quantity).toFixed(2)} ${item.currency.toUpperCase()}</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="newonInventReceiptTotal">
+                <span>TOTAL</span>
+                <span>${total.toFixed(2)} USD</span>
+            </div>
+            
+            ${paymentInfo ? `
+                <div class="newonInventReceiptPayment">
+                    <div class="newonInventReceiptItem">
+                        <div class="newonInventReceiptItemName">Montant reçu</div>
+                        <div class="newonInventReceiptItemQty"></div>
+                        <div class="newonInventReceiptItemPrice">${paymentInfo.amount.toFixed(2)} ${paymentInfo.currency.toUpperCase()}</div>
+                    </div>
+                    <div class="newonInventReceiptItem">
+                        <div class="newonInventReceiptItemName">Monnaie rendue</div>
+                        <div class="newonInventReceiptItemQty"></div>
+                        <div class="newonInventReceiptItemPrice">${paymentInfo.change.toFixed(2)} ${paymentInfo.currency.toUpperCase()}</div>
+                    </div>
+                </div>
+            ` : ''}
+            
+            <div class="newonInventReceiptFooter">
+                <p>Merci pour votre achat!</p>
+                <p>Service client: +243 XXX XXX XXX</p>
+            </div>
+        `;
+    }
+    
+// Met à jour la liste des commandes en attente
+function updatePendingOrdersList() {
+    const orderQueueElement = document.getElementById('newonInventOrderQueue');
+    
+    if (orderQueueElement) {
+        // Vide la liste actuelle
+        orderQueueElement.innerHTML = '';
+        
+        // Vérifie s'il y a des commandes en attente
+        if (pendingOrders.length === 0) {
+            // Affiche un message si aucune commande en attente
+            const emptyState = document.createElement('div');
+            emptyState.className = 'newonInventEmptyState';
+            emptyState.innerHTML = `
+                <i class="fas fa-clipboard-check"></i>
+                <p>Aucune commande en attente</p>
+            `;
+            orderQueueElement.appendChild(emptyState);
+        } else {
+            // Affiche chaque commande en attente
+            pendingOrders.forEach(order => {
+                if (order.status === 'pending') {
+                    const orderCard = document.createElement('div');
+                    orderCard.className = 'newonInventOrderCard';
+                    orderCard.setAttribute('data-order-id', order.id);
+                    
+                    orderCard.innerHTML = `
+                        <div class="newonInventOrderHeader">
+                            <div class="newonInventOrderClient">
+                                <i class="fas fa-user me-1"></i>
+                                <span>${order.clientName}</span>
+                            </div>
+                            <div class="newonInventOrderTime">
+                                <i class="fas fa-clock me-1"></i>
+                                <span>${formatOrderTime(order.timestamp)}</span>
+                            </div>
+                        </div>
+                        <div class="newonInventOrderSummary">
+                            <div class="newonInventOrderItems">
+                                ${order.items.length} article${order.items.length > 1 ? 's' : ''}
+                            </div>
+                            <div class="newonInventOrderTotal">
+                                ${order.total.toFixed(2)} ${order.items.length > 0 ? order.items[0].currency.toUpperCase() : 'USD'}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Ajoute un écouteur d'événement pour sélectionner cette commande
+                    orderCard.addEventListener('click', function() {
+                        processSelectedOrder(order.id);
+                    });
+                    
+                    orderQueueElement.appendChild(orderCard);
+                }
+            });
+        }
+    }
+    
+    // Met à jour également le nombre de commandes en attente dans les sélecteurs de caissiers
+    updateCashierPendingOrders();
+}
+
+// Formate le temps de la commande
+function formatOrderTime(timestamp) {
+    const now = new Date();
+    const orderTime = new Date(timestamp);
+    
+    // Si c'est aujourd'hui, affiche seulement l'heure
+    if (orderTime.toDateString() === now.toDateString()) {
+        return orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else {
+        // Sinon affiche la date et l'heure
+        return orderTime.toLocaleDateString() + ' ' + orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+}
+
+// Traite la commande sélectionnée
+function processSelectedOrder(orderId) {
+    // Trouve la commande dans la liste des commandes en attente
+    const order = pendingOrders.find(o => o.id === orderId);
+    
+    if (order) {
+        // Affiche la zone de traitement de commande
+        const processOrderElement = document.getElementById('newonInventProcessOrder');
+        processOrderElement.style.display = 'block';
+        
+        // Met à jour les informations de la commande
+        document.getElementById('newonInventProcessClientName').textContent = order.clientName;
+        
+        // Affiche les articles de la commande
+        const processItemsElement = document.getElementById('newonInventProcessItems');
+        processItemsElement.innerHTML = '';
+        
+        order.items.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'newonInventCartItem';
+            
+            const displayPrice = item.price.toFixed(2) + (item.currency === 'usd' ? ' $' : ' FC');
+            
+            itemElement.innerHTML = `
+                <div class="product-info">
+                    <div class="product-name">${item.name}</div>
+                </div>
+                <div class="product-controls">
+                    <div class="product-price">${displayPrice}</div>
+                    <div class="product-quantity">
+                        <div class="newonInventQuantity">
+                            <span class="product-quantity-value">x${item.quantity}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            processItemsElement.appendChild(itemElement);
+        });
+        
+        // Met à jour le total
+        document.getElementById('newonInventProcessTotal').textContent = order.total.toFixed(2);
+        document.getElementById('newonInventProcessCurrency').textContent = order.items.length > 0 ? order.items[0].currency.toUpperCase() : 'USD';
+        
+        // Ajoute l'ID de la commande à la zone de traitement
+        if (!processOrderElement.querySelector('.newonInventOrderCard')) {
+            const orderIdElement = document.createElement('div');
+            orderIdElement.className = 'newonInventOrderCard';
+            orderIdElement.setAttribute('data-order-id', order.id);
+            orderIdElement.style.display = 'none';
+            processOrderElement.appendChild(orderIdElement);
+        } else {
+            processOrderElement.querySelector('.newonInventOrderCard').setAttribute('data-order-id', order.id);
+        }
+        
+        // Réinitialise les boutons de paiement
+        document.getElementById('newonInventProcessCash').classList.remove('active');
+        document.getElementById('newonInventProcessOther').classList.remove('active');
+        document.getElementById('newonInventConfirmPayment').disabled = true;
+    }
+}
+
+// Met à jour le nombre de commandes en attente pour chaque caissier
+function updateCashierPendingOrders() {
+    const cashierContainers = [
+        document.getElementById('newonInventCashierOptions'),
+        document.getElementById('newonInventCashierOptions3')
+    ];
+    
+    cashierContainers.forEach(container => {
+        if (container) {
+            const cashierCards = container.querySelectorAll('.newonInventCashierCard');
+            
+            cashierCards.forEach(card => {
+                const cashierId = card.getAttribute('data-cashier-id');
+                const pendingCount = pendingOrders.filter(o => o.cashierId === cashierId && o.status === 'pending').length;
+                
+                const loadElement = card.querySelector('.newonInventCashierLoad');
+                if (loadElement) {
+                    loadElement.textContent = `${pendingCount} client${pendingCount !== 1 ? 's' : ''} en attente`;
+                }
+            });
+        }
+    });
+}
+
+
+    
+// Initialise le module de point de vente
+function initSalesPoint() {
+    // Initialiser les tableaux globaux s'ils n'existent pas
+    if (!window.pendingOrders) {
+        window.pendingOrders = [];
+    }
+    if (!window.deliveryOrders) {
+        window.deliveryOrders = [];
+    }
+    
+    // Charge les données d'inventaire
+    loadInventoryData();
+    
+    // Initialise le sélecteur de mode
+    initModeSelectorCard();
+    
+    // Initialise les scanners
+    initScanners();
+    
+    // Initialise la saisie manuelle
+    initManualEntry();
+    
+    // Initialise les écouteurs d'événements
+    initSalesEventListeners();
+    
+    // Initialise la liste des commandes en attente
+    updatePendingOrdersList();
+}
+
+    
+    // Initialise le module quand on clique sur le lien dans la barre latérale
+    document.querySelector('[data-section="newonInventSalesPoint"]').addEventListener('click', function() {
+        // Réinitialise les interfaces
+        resetAllInterfaces();
+        
+        // Affiche le sélecteur de mode
+        document.getElementById('newonInventSelectMode').style.display = 'block';
+        
+        // Initialise le point de vente si ce n'est pas déjà fait
+        if (!window.salesPointInitialized) {
+            initSalesPoint();
+            window.salesPointInitialized = true;
+        }
+    });
+    
+    // Initialise le point de vente quand on navigue directement vers cette section
+    if (window.location.hash === '#newonInventSalesPoint') {
+        document.querySelector('[data-section="newonInventSalesPoint"]').click();
+    }
+});
+
+</script>
+
+

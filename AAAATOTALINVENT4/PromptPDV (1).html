@@ -1,0 +1,750 @@
+Je veux que tu adaptes mon code pour mes deux AUTRES zones similaires 
+
+Voici à quoi ils doivent ressembler :
+Zone 2 :
+<div class="newonInventScanZone">
+    <div class="newonInventScanActions">
+        <button class="newonInventActionBtn" id="newonInventScanBtn2">
+            <i class="fas fa-camera"></i>
+            <span>Scanner un produit</span>
+        </button>
+        <button class="newonInventActionBtn" id="newonInventManualEntryBtn2">
+            <i class="fas fa-keyboard"></i>
+            <span>Saisie manuelle</span>
+        </button>
+    </div>
+    
+    <div id="newonInventScannerArea2" style="display: none;">
+        <!-- Scanner ultra-moderne -->
+        <div class="newonInventVideoContainer ScanProdVentContainer">
+            <video id="newonInventScannerVideo2"></video>
+            
+            <!-- Nouvelle interface scanner futuriste -->
+            <div class="ScanProdVentOverlay">
+                <!-- Coin supérieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentTopLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 2 L2 20 L20 20 L20 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin supérieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentTopRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 2 L48 20 L30 20 L30 2" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur gauche -->
+                <div class="ScanProdVentCorner ScanProdVentBottomLeft">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M2 48 L2 30 L20 30 L20 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Coin inférieur droit -->
+                <div class="ScanProdVentCorner ScanProdVentBottomRight">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path d="M48 48 L48 30 L30 30 L30 48" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                
+                <!-- Ligne de scan -->
+                <div class="ScanProdVentScanLine"></div>
+                
+                <!-- Indicateur d'état et mode -->
+                <div class="ScanProdVentStatus">
+                    <div class="ScanProdVentModeIndicator">
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentBarcode">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <div class="ScanProdVentModeIcon" id="ScanProdVentQRCode">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                    <div class="ScanProdVentMessage">Positionnez le code dans le cadre</div>
+                </div>
+                
+                <!-- Cadre de scan dynamique -->
+                <div class="ScanProdVentFrame">
+                    <div class="ScanProdVentTargetDot"></div>
+                </div>
+                
+                <!-- Écran d'information technique -->
+                <div class="ScanProdVentTechOverlay">
+                    <div class="ScanProdVentInfoPanel">
+                        <div class="ScanProdVentInfoLine">Scanner v2.5</div>
+                        <div class="ScanProdVentInfoLine">Mode: <span id="ScanProdVentCurrentMode">Auto-détection</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action scanner -->
+        <div class="ScanProdVentControls">
+            <button class="ScanProdVentBtn ScanProdVentModeBtn" id="ScanProdVentToggleMode">
+                <i class="fas fa-sync-alt"></i>
+                <span>Changer de mode</span>
+            </button>
+            <button class="ScanProdVentBtn ScanProdVentLightBtn" id="ScanProdVentToggleLight">
+                <i class="fas fa-lightbulb"></i>
+                <span>Flash</span>
+            </button>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelScan2">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+    
+    <div id="newonInventManualEntry2" style="display: none;">
+        <!-- Contenu saisie manuelle similaire -->
+        <div class="newonInventManualForm">
+            <div class="mb-3">
+                <label class="form-label">Code produit</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="newonInventManualCode2" placeholder="Entrez le code produit">
+                    <button class="btn btn-primary" id="newonInventFindProduct2">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelManual2">
+                <i class="fas fa-times"></i>
+                <span>Annuler</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+Voici les 2 autres zones similaires :
+
+Zone 1 :
+
+                        <div class="newonInventScanZone">
+                            <div class="newonInventScanActions">
+                                <button class="newonInventActionBtn" id="newonInventScanBtn">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Scanner un produit</span>
+                                </button>
+                                <button class="newonInventActionBtn" id="newonInventManualEntryBtn">
+                                    <i class="fas fa-keyboard"></i>
+                                    <span>Saisie manuelle</span>
+                                </button>
+                            </div>
+                            
+                            <div id="newonInventScannerArea" style="display: none;">
+                                <div class="newonInventVideoContainer">
+                                    <video id="newonInventScannerVideo"></video>
+                                    <div class="newonInventScannerOverlay">
+                                        <div class="newonInventScanFrame"></div>
+                                    </div>
+                                </div>
+                                <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelScan">
+                                    <i class="fas fa-times"></i>
+                                    <span>Annuler</span>
+                                </button>
+                            </div>
+                            
+                            <div id="newonInventManualEntry" style="display: none;">
+                                <div class="newonInventManualForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Code produit</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="newonInventManualCode" placeholder="Entrez le code produit">
+                                            <button class="btn btn-primary" id="newonInventFindProduct">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelManual">
+                                        <i class="fas fa-times"></i>
+                                        <span>Annuler</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+Zone 3 :
+
+                        <div class="newonInventScanZone">
+                            <div class="newonInventScanActions">
+                                <button class="newonInventActionBtn" id="newonInventScanBtn3">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Scanner un produit</span>
+                                </button>
+                                <button class="newonInventActionBtn" id="newonInventManualEntryBtn3">
+                                    <i class="fas fa-keyboard"></i>
+                                    <span>Saisie manuelle</span>
+                                </button>
+                            </div>
+                            
+                            <div id="newonInventScannerArea3" style="display: none;">
+                                <div class="newonInventVideoContainer">
+                                    <video id="newonInventScannerVideo3"></video>
+                                    <div class="newonInventScannerOverlay">
+                                        <div class="newonInventScanFrame"></div>
+                                    </div>
+                                </div>
+                                <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelScan3">
+                                    <i class="fas fa-times"></i>
+                                    <span>Annuler</span>
+                                </button>
+                            </div>
+                            
+                            <div id="newonInventManualEntry3" style="display: none;">
+                                <div class="newonInventManualForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Code produit</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="newonInventManualCode3" placeholder="Entrez le code produit">
+                                            <button class="btn btn-primary" id="newonInventFindProduct3">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button class="newonInventActionBtn newonInventCancelBtn" id="newonInventCancelManual3">
+                                        <i class="fas fa-times"></i>
+                                        <span>Annuler</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+Certains Javascript  :
+
+    // Initialisation du scanner
+function initScanners() {
+    const scanButtons = [
+        document.getElementById('newonInventScanBtn'),
+        document.getElementById('newonInventScanBtn2'),
+        document.getElementById('newonInventScanBtn3')
+    ];
+    
+    const cancelScanButtons = [
+        document.getElementById('newonInventCancelScan'),
+        document.getElementById('newonInventCancelScan2'),
+        document.getElementById('newonInventCancelScan3')
+    ];
+    
+    const scannerAreas = [
+        document.getElementById('newonInventScannerArea'),
+        document.getElementById('newonInventScannerArea2'),
+        document.getElementById('newonInventScannerArea3')
+    ];
+    
+    const videoElements = [
+        document.getElementById('newonInventScannerVideo'),
+        document.getElementById('newonInventScannerVideo2'),
+        document.getElementById('newonInventScannerVideo3')
+    ];
+    
+    // Initialisation des éléments pour le scanner moderne
+    const toggleModeBtns = [
+        document.getElementById('ScanProdVentToggleMode'),
+        document.getElementById('ScanProdVentToggleMode2'),
+        document.getElementById('ScanProdVentToggleMode3')
+    ];
+    
+    const toggleLightBtns = [
+        document.getElementById('ScanProdVentToggleLight'),
+        document.getElementById('ScanProdVentToggleLight2'),
+        document.getElementById('ScanProdVentToggleLight3')
+    ];
+    
+    const barcodeIcons = [
+        document.getElementById('ScanProdVentBarcode'),
+        document.getElementById('ScanProdVentBarcode2'),
+        document.getElementById('ScanProdVentBarcode3')
+    ];
+    
+    const qrcodeIcons = [
+        document.getElementById('ScanProdVentQRCode'),
+        document.getElementById('ScanProdVentQRCode2'),
+        document.getElementById('ScanProdVentQRCode3')
+    ];
+    
+    const currentModeTexts = [
+        document.getElementById('ScanProdVentCurrentMode'),
+        document.getElementById('ScanProdVentCurrentMode2'),
+        document.getElementById('ScanProdVentCurrentMode3')
+    ];
+    
+    scanButtons.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                // Affiche la zone de scan et cache les autres éléments
+                scannerAreas[index].style.display = 'block';
+                
+                // Mettre à jour la hauteur de la zone
+                updateScanZoneHeight();
+                
+                // Initialise le scanner de code-barres/QR code
+                initBarcodeScanner(videoElements[index], index);
+                
+                // Active le mode par défaut (barcode)
+                if (barcodeIcons[index]) {
+                    barcodeIcons[index].classList.add('active');
+                    qrcodeIcons[index].classList.remove('active');
+                    if (currentModeTexts[index]) {
+                        currentModeTexts[index].textContent = 'Code-barres';
+                    }
+                }
+                
+                // Animation de démarrage
+                setTimeout(() => {
+                    const message = document.querySelector('.ScanProdVentMessage');
+                    if (message) {
+                        message.textContent = 'Scanner prêt';
+                        
+                        setTimeout(() => {
+                            message.textContent = 'Positionnez le code dans le cadre';
+                        }, 1500);
+                    }
+                }, 500);
+            });
+        }
+    });
+    
+    cancelScanButtons.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                // Cache la zone de scan
+                scannerAreas[index].style.display = 'none';
+                
+                // Mettre à jour la hauteur de la zone
+                updateScanZoneHeight();
+                
+                // Arrête le scanner
+                stopBarcodeScanner();
+            });
+        }
+    });
+    
+    // Gestion du changement de mode (code-barres / QR code)
+    toggleModeBtns.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                if (barcodeIcons[index] && qrcodeIcons[index]) {
+                    // Change le mode actif
+                    if (barcodeIcons[index].classList.contains('active')) {
+                        barcodeIcons[index].classList.remove('active');
+                        qrcodeIcons[index].classList.add('active');
+                        if (currentModeTexts[index]) {
+                            currentModeTexts[index].textContent = 'QR Code';
+                        }
+                        
+                        // Afficher un message de changement
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Mode QR Code activé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le QR code dans le cadre';
+                            }, 1500);
+                        }
+                    } else {
+                        barcodeIcons[index].classList.add('active');
+                        qrcodeIcons[index].classList.remove('active');
+                        if (currentModeTexts[index]) {
+                            currentModeTexts[index].textContent = 'Code-barres';
+                        }
+                        
+                        // Afficher un message de changement
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Mode Code-barres activé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le code-barres dans le cadre';
+                            }, 1500);
+                        }
+                    }
+                }
+            });
+        }
+    });
+    
+    // Gestion du flash
+    toggleLightBtns.forEach((button, index) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                button.classList.toggle('active');
+                
+                // Dans une implémentation réelle, vous activeriez le flash de la caméra ici
+                // Pour simuler, changeons l'éclairage de la vidéo
+                if (videoElements[index]) {
+                    if (button.classList.contains('active')) {
+                        videoElements[index].style.filter = 'brightness(1.3)';
+                        
+                        // Message flash activé
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Flash activé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le code dans le cadre';
+                            }, 1000);
+                        }
+                    } else {
+                        videoElements[index].style.filter = 'brightness(1)';
+                        
+                        // Message flash désactivé
+                        const message = document.querySelector('.ScanProdVentMessage');
+                        if (message) {
+                            message.textContent = 'Flash désactivé';
+                            
+                            setTimeout(() => {
+                                message.textContent = 'Positionnez le code dans le cadre';
+                            }, 1000);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+    
+    // Initialisation de la saisie manuelle
+    function initManualEntry() {
+        const manualButtons = [
+            document.getElementById('newonInventManualEntryBtn'),
+            document.getElementById('newonInventManualEntryBtn2'),
+            document.getElementById('newonInventManualEntryBtn3')
+        ];
+        
+        const cancelManualButtons = [
+            document.getElementById('newonInventCancelManual'),
+            document.getElementById('newonInventCancelManual2'),
+            document.getElementById('newonInventCancelManual3')
+        ];
+        
+        const manualEntryAreas = [
+            document.getElementById('newonInventManualEntry'),
+            document.getElementById('newonInventManualEntry2'),
+            document.getElementById('newonInventManualEntry3')
+        ];
+        
+        const findProductButtons = [
+            document.getElementById('newonInventFindProduct'),
+            document.getElementById('newonInventFindProduct2'),
+            document.getElementById('newonInventFindProduct3')
+        ];
+        
+        const codeInputs = [
+            document.getElementById('newonInventManualCode'),
+            document.getElementById('newonInventManualCode2'),
+            document.getElementById('newonInventManualCode3')
+        ];
+        
+        manualButtons.forEach((button, index) => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Affiche la zone de saisie manuelle
+                    manualEntryAreas[index].style.display = 'block';
+                });
+            }
+        });
+        
+        cancelManualButtons.forEach((button, index) => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Cache la zone de saisie manuelle
+                    manualEntryAreas[index].style.display = 'none';
+                    
+                    // Réinitialise le champ de saisie
+                    if (codeInputs[index]) {
+                        codeInputs[index].value = '';
+                    }
+                });
+            }
+        });
+        
+        findProductButtons.forEach((button, index) => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    if (codeInputs[index] && codeInputs[index].value) {
+                        const code = codeInputs[index].value;
+                        findAndAddProduct(code, index);
+                        
+                        // Cache la zone de saisie manuelle et réinitialise le champ
+                        manualEntryAreas[index].style.display = 'none';
+                        codeInputs[index].value = '';
+                    }
+                });
+            }
+        });
+    }
+    
+let scannerInterval;
+function initBarcodeScanner(videoElement, interfaceIndex) {
+    if (videoElement) {
+        // Cette fonction simule la détection d'un code-barres
+        // Dans une application réelle, vous utiliseriez une bibliothèque comme QuaggaJS ou ZXing
+        
+        // Simulons l'accès à la caméra
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function(stream) {
+                videoElement.srcObject = stream;
+                videoElement.play();
+                
+                // Montrons l'animation de démarrage avec le message
+                const message = document.querySelector('.ScanProdVentMessage');
+                if (message) {
+                    message.textContent = 'Initialisation...';
+                    
+                    setTimeout(() => {
+                        message.textContent = 'Scanner activé';
+                        
+                        setTimeout(() => {
+                            message.textContent = 'Recherche de codes...';
+                            
+                            // Simulons une détection après 3 secondes
+                            scannerInterval = setTimeout(() => {
+                                // Jeu d'animation pour la détection
+                                const frame = document.querySelector('.ScanProdVentFrame');
+                                if (frame) {
+                                    frame.style.borderColor = 'var(--primary)';
+                                    frame.style.boxShadow = '0 0 20px var(--primary), 0 0 0 5000px rgba(0, 0, 0, 0.7)';
+                                }
+                                
+                                if (message) {
+                                    message.textContent = 'Code détecté !';
+                                }
+                                
+                                // Simulons la détection d'un code aléatoire
+                                const randomIndex = Math.floor(Math.random() * inventoryData.length);
+                                const detectedProduct = inventoryData[randomIndex];
+                                
+                                // Affichons le résultat avant de fermer
+                                setTimeout(() => {
+                                    // Arrêtons le flux vidéo
+                                    const tracks = videoElement.srcObject.getTracks();
+                                    tracks.forEach(track => track.stop());
+                                    
+                                    // Masquons la zone de scan
+                                    const scannerArea = document.getElementById(`newonInventScannerArea${interfaceIndex > 0 ? interfaceIndex : ''}`);
+                                    if (scannerArea) {
+                                        scannerArea.style.display = 'none';
+                                    }
+                                    
+                                    // Ajoutons le produit détecté au panier
+                                    if (detectedProduct) {
+                                        addProductToCart(detectedProduct, interfaceIndex);
+                                    }
+                                }, 1000);
+                                
+                            }, 3000);
+                        }, 1000);
+                    }, 1000);
+                }
+            })
+            .catch(function(error) {
+                console.error("Impossible d'accéder à la caméra:", error);
+                
+                // Afficher un message d'erreur stylisé plutôt qu'une alerte
+                const message = document.querySelector('.ScanProdVentMessage');
+                if (message) {
+                    message.textContent = "Erreur: Impossible d'accéder à la caméra";
+                    message.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
+                }
+            });
+    }
+}
+
+
+// Fonction à ajouter dans votre code JavaScript pour gérer la hauteur
+function updateScanZoneHeight() {
+    const scannerAreas = [
+        document.getElementById('newonInventScannerArea'),
+        document.getElementById('newonInventScannerArea2'),
+        document.getElementById('newonInventScannerArea3')
+    ];
+    
+    const scanZones = document.querySelectorAll('.newonInventScanZone');
+    
+    scannerAreas.forEach((area, index) => {
+        if (area) {
+            // Ajuster la hauteur de la zone seulement quand le scanner est visible
+            if (area.style.display === 'block') {
+                if (scanZones[index]) {
+                    scanZones[index].classList.add('newonInventScannerArea-active');
+                    // Augmenter la hauteur pour l'interface moderne
+                    scanZones[index].style.minHeight = '450px';
+                }
+            } else {
+                if (scanZones[index]) {
+                    scanZones[index].classList.remove('newonInventScannerArea-active');
+                    scanZones[index].style.minHeight = '';
+                }
+            }
+        }
+    });
+}
+    
+    // Arrête le scanner
+    function stopBarcodeScanner() {
+        clearTimeout(scannerInterval);
+        
+        // Arrêtons tous les flux vidéo
+        const videos = [
+            document.getElementById('newonInventScannerVideo'),
+            document.getElementById('newonInventScannerVideo2'),
+            document.getElementById('newonInventScannerVideo3')
+        ];
+        
+        videos.forEach(video => {
+            if (video && video.srcObject) {
+                const tracks = video.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+        });
+    }
+    
+    // Recherche un produit par code et l'ajoute au panier
+    function findAndAddProduct(code, interfaceIndex) {
+        // Recherche le produit dans les données d'inventaire
+        const product = inventoryData.find(p => p.id === code);
+        
+        if (product) {
+            addProductToCart(product, interfaceIndex);
+        } else {
+            alert("Produit non trouvé. Vérifiez le code.");
+        }
+    }
+    
+    // Ajoute un produit au panier
+    function addProductToCart(product, interfaceIndex) {
+        // Vérifie si l'interface est celle du vendeur unique, du vendeur 1 (mode 2), ou du vendeur 1 (mode 3)
+        const cartIndex = interfaceIndex;
+        
+        // Détermine dans quel panier ajouter le produit
+        let cartItems;
+        if (cartIndex === 0) {
+            cartItems = document.getElementById('newonInventCartItems');
+        } else if (cartIndex === 1) {
+            cartItems = document.getElementById('newonInventCartItems2');
+        } else if (cartIndex === 2) {
+            cartItems = document.getElementById('newonInventCartItems3');
+        }
+        
+        if (!cartItems) return;
+        
+        // Vide l'état "panier vide" s'il existe
+        const emptyCart = cartItems.querySelector('.newonInventEmptyCart');
+        if (emptyCart) {
+            emptyCart.style.display = 'none';
+        }
+        
+        // Vérifie si le produit est déjà dans le panier
+        const existingItem = currentCart.find(item => item.id === product.id);
+        
+        if (existingItem) {
+            // Si le produit existe déjà, incrémente sa quantité
+            existingItem.quantity += 1;
+            
+            // Met à jour l'affichage de la quantité
+            const quantityInput = document.querySelector(`[data-product-id="${product.id}"] .product-quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = existingItem.quantity;
+            }
+        } else {
+            // Si le produit n'existe pas encore, ajoute-le au panier
+            const newItem = { ...product, quantity: 1 };
+            currentCart.push(newItem);
+            
+            // Crée un élément de panier
+            const cartItemElement = document.createElement('div');
+            cartItemElement.className = 'newonInventCartItem';
+            cartItemElement.setAttribute('data-product-id', product.id);
+            
+            const displayPrice = product.price.toFixed(2) + (product.currency === 'usd' ? ' $' : ' FC');
+            
+            cartItemElement.innerHTML = `
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">${displayPrice}</div>
+                </div>
+                <div class="product-quantity">
+                    <div class="newonInventQuantity">
+                        <button class="decrement-quantity" data-product-id="${product.id}">-</button>
+                        <input type="number" min="1" class="product-quantity-input" value="1" data-product-id="${product.id}">
+                        <button class="increment-quantity" data-product-id="${product.id}">+</button>
+                    </div>
+                </div>
+                <button class="remove-item" data-product-id="${product.id}">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Ajoute l'élément au panier
+            cartItems.appendChild(cartItemElement);
+            
+            // Ajoute des écouteurs d'événement pour les boutons d'incrémentation/décrémentation
+            cartItemElement.querySelector('.increment-quantity').addEventListener('click', function() {
+                incrementCartItem(product.id);
+            });
+            
+            cartItemElement.querySelector('.decrement-quantity').addEventListener('click', function() {
+                decrementCartItem(product.id);
+            });
+            
+            cartItemElement.querySelector('.remove-item').addEventListener('click', function() {
+                removeCartItem(product.id);
+            });
+            
+            cartItemElement.querySelector('.product-quantity-input').addEventListener('change', function(e) {
+                updateCartItemQuantity(product.id, parseInt(e.target.value));
+            });
+        }
+        
+        // Met à jour le total du panier
+        updateCartTotal(cartIndex);
+        
+        // Active le bouton de finalisation si le panier n'est pas vide
+        if (cartIndex === 0) {
+            document.getElementById('newonInventCompleteSale').disabled = false;
+        } else if (cartIndex === 1) {
+            document.getElementById('newonInventTransferOrder').disabled = false;
+        } else if (cartIndex === 2) {
+            document.getElementById('newonInventTransferOrder3').disabled = false;
+        }
+    }
+    
+    // Incrémente la quantité d'un produit dans le panier
+    function incrementCartItem(productId) {
+        const item = currentCart.find(item => item.id === productId);
+        if (item) {
+            item.quantity += 1;
+            
+            // Met à jour l'affichage
+            const quantityInput = document.querySelector(`[data-product-id="${productId}"] .product-quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = item.quantity;
+            }
+            
+            updateCartTotal();
+        }
+    }
+
+
+
+
+
+Réécris les 3 zones au complet avec leurs ajouts et modifications, sans laisser des vides à compléter 
+
+NB: FAIS BIEN ATTENTION À CHAQUE DÉTAILS : CLASSES, ID, FONCTIONS...
+FAUT S'ASSURER QUE LES BOUTONS "CHANGER DE MODE" ET "FLASH" FOCTIONNENT CORRECTEMENT DANS LES 3 ZONES
+
+NB: JE VEUX QUE LE SCANNER RESTE ACTIF APRÈS AVOIR SCANNER/SIMULER SCANNER UN CODE, CAR SI ÇA NE FAIT QUE SE FERMER À CHAQUE FOIS QU'IL AJOUT UJ PRODUIT DANS LE PANIER, ÇA NE SERA PAS TRÈS PRATIQUE, ÇA DONNERA LA FLEMME À L'UTILISATEUR DE CLIQUER À CHAQUE FOIS POUR LE FAIRE REVENIR
+TU PEUX TOUJOURS AJOUTER D'AUTRES TRUCS, D'AUTRES FONCTIONNALITÉS ULTRA MODERNE 
+
+
+Donne-moi les codes à modifier ou à ajouter avec précision 
+
+
+Si tu modifies une fonction, tu dois écrire la fonction modifié au complet, dans son intégralité, sans laisser des vides à compléter 

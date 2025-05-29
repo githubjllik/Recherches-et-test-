@@ -1,0 +1,1500 @@
+
+<!-- après alert -->
+<li class="nav-item" data-section="newoninvent-pos-system">
+    <a href="#"><i class="fas fa-cash-register"></i> Point de Vente</a>
+</li>
+
+<!-- Point de Vente Section -->
+<div id="newoninvent-pos-system" class="content-section" style="display: none;">
+    <h2 class="mb-4"><i class="fas fa-cash-register me-2"></i> Point de Vente</h2>
+    
+    <div class="newoninvent-roles-container">
+        <!-- Sélecteur de rôle -->
+        <div class="newoninvent-role-selector">
+            <div class="role-selector-header">
+                <h5>Sélectionnez votre rôle</h5>
+            </div>
+            <div class="role-buttons">
+                <button class="newoninvent-role-btn" data-role="order-taker">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Preneur de commande</span>
+                </button>
+                <button class="newoninvent-role-btn" data-role="cashier">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Caissier</span>
+                </button>
+                <button class="newoninvent-role-btn" data-role="product-giver">
+                    <i class="fas fa-box-open"></i>
+                    <span>Distributeur</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Interface du preneur de commande -->
+        <div class="newoninvent-role-interface" id="newoninvent-order-taker" style="display: none;">
+            <div class="newoninvent-role-header">
+                <h4><i class="fas fa-clipboard-list"></i> Preneur de commande</h4>
+                <button class="btn btn-sm btn-outline-secondary newoninvent-change-role">
+                    <i class="fas fa-exchange-alt"></i> Changer de rôle
+                </button>
+            </div>
+            
+            <div class="newoninvent-workspace">
+                <div class="row">
+                    <!-- Formulaire de commande -->
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header">
+                                Nouvelle commande
+                            </div>
+                            <div class="card-body">
+                                <form id="newoninvent-order-form">
+                                    <div class="mb-3">
+                                        <label for="newoninvent-client-name" class="form-label">Nom du client</label>
+                                        <input type="text" class="form-control" id="newoninvent-client-name" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Mode d'ajout</label>
+                                        <div class="input-group mb-3">
+                                            <button class="btn btn-outline-secondary newoninvent-add-mode active" type="button" data-mode="scan">
+                                                <i class="fas fa-barcode"></i> Scanner
+                                            </button>
+                                            <button class="btn btn-outline-secondary newoninvent-add-mode" type="button" data-mode="manual">
+                                                <i class="fas fa-keyboard"></i> Manuel
+                                            </button>
+                                            <button class="btn btn-outline-secondary newoninvent-add-mode" type="button" data-mode="list">
+                                                <i class="fas fa-list"></i> Liste
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Scanner mode -->
+                                    <div id="newoninvent-scan-mode" class="newoninvent-add-mode-container">
+                                        <div class="mb-3 text-center">
+                                            <button type="button" class="btn btn-primary" id="newoninvent-start-scan">
+                                                <i class="fas fa-camera"></i> Scanner un code
+                                            </button>
+                                        </div>
+                                        <div id="newoninvent-scanner-container" class="mt-3" style="display: none;">
+                                            <div class="scanner-wrapper">
+                                                <div class="scanner-overlay"></div>
+                                                <video id="newoninvent-scanner-video"></video>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Manual mode -->
+                                    <div id="newoninvent-manual-mode" class="newoninvent-add-mode-container" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="newoninvent-product-code" class="form-label">Code produit</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="newoninvent-product-code">
+                                                <button class="btn btn-primary" type="button" id="newoninvent-add-product-btn">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- List mode -->
+                                    <div id="newoninvent-list-mode" class="newoninvent-add-mode-container" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="newoninvent-product-search" class="form-label">Recherche</label>
+                                            <input type="text" class="form-control" id="newoninvent-product-search" placeholder="Rechercher un produit...">
+                                        </div>
+                                        <div class="newoninvent-product-list">
+                                            <div class="list-group" id="newoninvent-product-list-container">
+                                                <!-- Les produits seront ajoutés ici dynamiquement -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Panier et total -->
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Panier</span>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-danger" id="newoninvent-clear-cart">
+                                        <i class="fas fa-trash"></i> Vider
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="newoninvent-cart-items">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>Prix</th>
+                                                <th>Qté</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="newoninvent-cart-body">
+                                            <tr class="newoninvent-empty-cart">
+                                                <td colspan="5" class="text-center">Panier vide</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="newoninvent-cart-total mt-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h5>Total:</h5>
+                                        <h5 id="newoninvent-cart-total">0 $</h5>
+                                    </div>
+                                </div>
+                                
+                                <div class="newoninvent-cart-actions mt-4">
+                                    <button type="button" class="btn btn-lg btn-primary w-100" id="newoninvent-send-to-cashier" disabled>
+                                        <i class="fas fa-paper-plane me-2"></i> Envoyer au caissier
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interface du caissier -->
+        <div class="newoninvent-role-interface" id="newoninvent-cashier" style="display: none;">
+            <div class="newoninvent-role-header">
+                <h4><i class="fas fa-cash-register"></i> Caissier</h4>
+                <button class="btn btn-sm btn-outline-secondary newoninvent-change-role">
+                    <i class="fas fa-exchange-alt"></i> Changer de rôle
+                </button>
+            </div>
+            
+            <div class="newoninvent-workspace">
+                <div class="row">
+                    <!-- Liste des commandes en attente -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                Commandes en attente
+                            </div>
+                            <div class="card-body">
+                                <div class="newoninvent-pending-orders" id="newoninvent-pending-orders">
+                                    <div class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>Aucune commande en attente</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Détails de la commande sélectionnée -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Détails de la commande</span>
+                                <div class="newoninvent-order-id-display">
+                                    N°: <span id="newoninvent-current-order-id">--</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="newoninvent-empty-order-details" class="text-center py-5">
+                                    <i class="fas fa-hand-pointer fa-3x mb-3 text-muted"></i>
+                                    <p class="text-muted">Sélectionnez une commande pour voir les détails</p>
+                                </div>
+                                
+                                <div id="newoninvent-order-details" style="display: none;">
+                                    <div class="newoninvent-order-client mb-4">
+                                        <h5>Client: <span id="newoninvent-order-client-name">--</span></h5>
+                                    </div>
+                                    
+                                    <div class="newoninvent-order-items mb-4">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Produit</th>
+                                                    <th>Prix</th>
+                                                    <th>Qté</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="newoninvent-order-items-body">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="newoninvent-order-total mb-4">
+                                        <div class="d-flex justify-content-between">
+                                            <h5>Total:</h5>
+                                            <h5 id="newoninvent-order-total">0 $</h5>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="newoninvent-payment-section mb-4">
+                                        <h5 class="mb-3">Paiement</h5>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="newoninvent-payment-amount" class="form-label">Montant reçu</label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" id="newoninvent-payment-amount" step="0.01" min="0">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="newoninvent-payment-change" class="form-label">Monnaie à rendre</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="newoninvent-payment-change" readonly>
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="newoninvent-cashier-actions">
+                                        <button type="button" class="btn btn-lg btn-success w-100" id="newoninvent-process-payment" disabled>
+                                            <i class="fas fa-print me-2"></i> Encaisser et imprimer le ticket
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interface du distributeur de produits -->
+        <div class="newoninvent-role-interface" id="newoninvent-product-giver" style="display: none;">
+            <div class="newoninvent-role-header">
+                <h4><i class="fas fa-box-open"></i> Distributeur de produits</h4>
+                <button class="btn btn-sm btn-outline-secondary newoninvent-change-role">
+                    <i class="fas fa-exchange-alt"></i> Changer de rôle
+                </button>
+            </div>
+            
+            <div class="newoninvent-workspace">
+                <div class="row">
+                    <!-- Scan du ticket -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                Scan du ticket
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3 text-center">
+                                    <button type="button" class="btn btn-primary" id="newoninvent-scan-ticket">
+                                        <i class="fas fa-qrcode me-2"></i> Scanner un ticket
+                                    </button>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="newoninvent-ticket-number" class="form-label">Ou entrez le numéro du ticket</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="newoninvent-ticket-number" placeholder="Ex: T12345">
+                                        <button class="btn btn-primary" type="button" id="newoninvent-find-ticket">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="newoninvent-ticket-scanner-container" class="mt-3" style="display: none;">
+                                    <div class="scanner-wrapper">
+                                        <div class="scanner-overlay"></div>
+                                        <video id="newoninvent-ticket-scanner-video"></video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                Commandes récentes
+                            </div>
+                            <div class="card-body">
+                                <div class="newoninvent-recent-orders" id="newoninvent-recent-orders">
+                                    <div class="text-center text-muted py-4">
+                                        <p>Aucune commande récente</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Détails de la commande à distribuer -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Détails de la commande</span>
+                                <div class="newoninvent-ticket-id-display">
+                                    Ticket N°: <span id="newoninvent-current-ticket-id">--</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="newoninvent-empty-ticket-details" class="text-center py-5">
+                                    <i class="fas fa-ticket-alt fa-3x mb-3 text-muted"></i>
+                                    <p class="text-muted">Scannez un ticket ou sélectionnez une commande récente</p>
+                                </div>
+                                
+                                <div id="newoninvent-ticket-details" style="display: none;">
+                                    <div class="newoninvent-ticket-client mb-4">
+                                        <h5>Client: <span id="newoninvent-ticket-client-name">--</span></h5>
+                                        <div class="text-muted">
+                                            <small>Date: <span id="newoninvent-ticket-date">--</span></small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="newoninvent-ticket-items mb-4">
+                                        <h5 class="mb-3">Produits à distribuer</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 50px;"></th>
+                                                        <th>Produit</th>
+                                                        <th>Qté</th>
+                                                        <th>Emplacement</th>
+                                                        <th>Statut</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="newoninvent-ticket-items-body">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="newoninvent-problem-report mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="newoninvent-problem-checkbox">
+                                            <label class="form-check-label" for="newoninvent-problem-checkbox">
+                                                Signaler un problème
+                                            </label>
+                                        </div>
+                                        
+                                        <div id="newoninvent-problem-section" class="mt-3" style="display: none;">
+                                            <select class="form-select mb-2" id="newoninvent-problem-type">
+                                                <option value="">Sélectionnez le type de problème</option>
+                                                <option value="wrong-product">Produit incorrect</option>
+                                                <option value="damaged">Produit endommagé</option>
+                                                <option value="expired">Produit périmé</option>
+                                                <option value="color">Couleur non conforme</option>
+                                                <option value="other">Autre problème</option>
+                                            </select>
+                                            
+                                            <textarea class="form-control" id="newoninvent-problem-details" rows="3" placeholder="Décrivez le problème..."></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="newoninvent-satisfaction mb-4">
+                                        <h5 class="mb-3">Satisfaction client</h5>
+                                        <div class="newoninvent-satisfaction-stars">
+                                            <i class="far fa-star newoninvent-star" data-value="1"></i>
+                                            <i class="far fa-star newoninvent-star" data-value="2"></i>
+                                            <i class="far fa-star newoninvent-star" data-value="3"></i>
+                                            <i class="far fa-star newoninvent-star" data-value="4"></i>
+                                            <i class="far fa-star newoninvent-star" data-value="5"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="newoninvent-giver-actions">
+                                        <button type="button" class="btn btn-lg btn-success w-100" id="newoninvent-complete-distribution">
+                                            <i class="fas fa-check-circle me-2"></i> Confirmer la distribution
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+  /*═══════════════════════════*\
+  🟢 NEWONINVENT POS SYSTEM  
+\*═══════════════════════════*/
+
+.newoninvent-roles-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Sélecteur de rôle */
+.newoninvent-role-selector {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.role-selector-header {
+    margin-bottom: 20px;
+}
+
+.role-selector-header h5 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.role-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.newoninvent-role-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    background: white;
+    border: 2px solid #f5f5f5;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.newoninvent-role-btn i {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    color: var(--primary);
+}
+
+.newoninvent-role-btn span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.newoninvent-role-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+}
+
+/* Interface des rôles */
+.newoninvent-role-interface {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+}
+
+.newoninvent-role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.newoninvent-role-header h4 {
+    font-weight: 600;
+    color: var(--secondary);
+    margin: 0;
+}
+
+.newoninvent-role-header h4 i {
+    margin-right: 10px;
+    color: var(--primary);
+}
+
+.newoninvent-workspace {
+    margin-top: 20px;
+}
+
+/* Scanner */
+.scanner-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 3px solid var(--primary);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#newoninvent-scanner-video, #newoninvent-ticket-scanner-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Liste des produits */
+.newoninvent-product-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+}
+
+.newoninvent-product-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.newoninvent-product-item:hover {
+    background: #f9f9f9;
+}
+
+.newoninvent-product-item-info {
+    flex-grow: 1;
+}
+
+.newoninvent-product-item-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.newoninvent-product-item-code {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.newoninvent-product-item-price {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Panier */
+.newoninvent-cart-items {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.newoninvent-cart-quantity {
+    display: flex;
+    align-items: center;
+}
+
+.newoninvent-qty-btn {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.newoninvent-qty-btn:hover {
+    background: #e0e0e0;
+}
+
+.newoninvent-qty-value {
+    width: 40px;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.newoninvent-cart-total {
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.newoninvent-remove-item {
+    color: var(--danger);
+    cursor: pointer;
+}
+
+/* Commandes en attente */
+.newoninvent-pending-orders {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.newoninvent-order-card {
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.newoninvent-order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-color: var(--primary);
+}
+
+.newoninvent-order-card.active {
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.newoninvent-order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.newoninvent-order-card-id {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.newoninvent-order-card-time {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.newoninvent-order-card-client {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.newoninvent-order-card-items {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.newoninvent-order-card-total {
+    margin-top: 10px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--primary);
+}
+
+/* Commandes récentes */
+.newoninvent-recent-orders {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.newoninvent-recent-order-item {
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.newoninvent-recent-order-item:hover {
+    background: #f9f9f9;
+}
+
+.newoninvent-recent-order-id {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.newoninvent-recent-order-client {
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Satisfaction stars */
+.newoninvent-satisfaction-stars {
+    display: flex;
+    gap: 10px;
+    font-size: 2rem;
+}
+
+.newoninvent-star {
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.newoninvent-star.active {
+    color: #ffc107;
+}
+
+.newoninvent-star:hover {
+    color: #ffd54f;
+}
+
+/* Badges et états */
+.newoninvent-item-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.newoninvent-status-pending {
+    background: #fff8e1;
+    color: #f57f17;
+}
+
+.newoninvent-status-ready {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.newoninvent-status-missing {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.newoninvent-item-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+/* Mode d'ajout */
+.newoninvent-add-mode.active {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Ticket display */
+.newoninvent-order-id-display, .newoninvent-ticket-id-display {
+    background: #f5f5f5;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .newoninvent-role-btn {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .newoninvent-role-btn i {
+        font-size: 2.5rem;
+    }
+    
+    .newoninvent-role-interface {
+        padding: 15px;
+    }
+}
+
+</style>
+
+<script>
+// POS System JavaScript
+document.addEventListener("DOMContentLoaded", function() {
+    // Variables globales
+    const newOnInventPOS = {
+        currentRole: null,
+        cart: [],
+        pendingOrders: [],
+        completedOrders: [],
+        currentOrderId: 1000,
+        products: [
+            { id: "P001", name: "Smartphone XYZ", price: 499.99, location: "Rayon A, Étagère 3", quantity: 10 },
+            { id: "P002", name: "Casque Audio Pro", price: 129.99, location: "Rayon B, Étagère 1", quantity: 15 },
+            { id: "P003", name: "Clavier Mécanique", price: 89.99, location: "Rayon A, Étagère 2", quantity: 8 },
+            { id: "P004", name: "Souris Gamer", price: 49.99, location: "Rayon A, Étagère 2", quantity: 12 },
+            { id: "P005", name: "Écran 27 pouces", price: 249.99, location: "Rayon C, Étagère 4", quantity: 5 }
+        ]
+    };
+    
+    // Gestion des rôles
+    document.querySelectorAll('.newoninvent-role-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const role = this.getAttribute('data-role');
+            newOnInventPOS.currentRole = role;
+            
+            // Cacher le sélecteur de rôle
+            document.querySelector('.newoninvent-role-selector').style.display = 'none';
+            
+            // Afficher l'interface du rôle sélectionné
+            document.querySelectorAll('.newoninvent-role-interface').forEach(interface => {
+                interface.style.display = 'none';
+            });
+            document.getElementById(`newoninvent-${role}`).style.display = 'block';
+            
+            // Initialiser l'interface selon le rôle
+            switch(role) {
+                case 'order-taker':
+                    initOrderTakerInterface();
+                    break;
+                case 'cashier':
+                    initCashierInterface();
+                    break;
+                case 'product-giver':
+                    initProductGiverInterface();
+                    break;
+            }
+        });
+    });
+    
+    // Boutons de changement de rôle
+    document.querySelectorAll('.newoninvent-change-role').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Cacher toutes les interfaces
+            document.querySelectorAll('.newoninvent-role-interface').forEach(interface => {
+                interface.style.display = 'none';
+            });
+            
+            // Afficher le sélecteur de rôle
+            document.querySelector('.newoninvent-role-selector').style.display = 'block';
+        });
+    });
+    
+    // Initialisation de l'interface du preneur de commande
+    function initOrderTakerInterface() {
+        // Gestion des modes d'ajout de produits
+        document.querySelectorAll('.newoninvent-add-mode').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Retirer la classe active de tous les boutons
+                document.querySelectorAll('.newoninvent-add-mode').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Ajouter la classe active au bouton cliqué
+                this.classList.add('active');
+                
+                // Masquer tous les conteneurs de mode
+                document.querySelectorAll('.newoninvent-add-mode-container').forEach(container => {
+                    container.style.display = 'none';
+                });
+                
+                // Afficher le conteneur correspondant au mode sélectionné
+                const mode = this.getAttribute('data-mode');
+                document.getElementById(`newoninvent-${mode}-mode`).style.display = 'block';
+                
+                if (mode === 'list') {
+                    loadProductList();
+                }
+            });
+        });
+        
+        // Charger la liste des produits
+        function loadProductList() {
+            const container = document.getElementById('newoninvent-product-list-container');
+            container.innerHTML = '';
+            
+            if (newOnInventPOS.products.length === 0) {
+                container.innerHTML = '<div class="p-3 text-center text-muted">Aucun produit disponible</div>';
+                return;
+            }
+            
+            newOnInventPOS.products.forEach(product => {
+                const productItem = document.createElement('a');
+                productItem.href = "#";
+                productItem.className = "list-group-item newoninvent-product-item";
+                productItem.innerHTML = `
+                    <div class="newoninvent-product-item-info">
+                        <div class="newoninvent-product-item-name">${product.name}</div>
+                        <div class="newoninvent-product-item-code">${product.id}</div>
+                    </div>
+                    <div class="newoninvent-product-item-price">${product.price.toFixed(2)} $</div>
+                `;
+                
+                productItem.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    addToCart(product);
+                });
+                
+                container.appendChild(productItem);
+            });
+        }
+        
+        // Recherche de produits
+        document.getElementById('newoninvent-product-search').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const productItems = document.querySelectorAll('.newoninvent-product-item');
+            
+            productItems.forEach(item => {
+                const productName = item.querySelector('.newoninvent-product-item-name').textContent.toLowerCase();
+                const productCode = item.querySelector('.newoninvent-product-item-code').textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || productCode.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Ajout manuel de produit
+        document.getElementById('newoninvent-add-product-btn').addEventListener('click', function() {
+            const codeInput = document.getElementById('newoninvent-product-code');
+            const productCode = codeInput.value.trim();
+            
+            if (productCode === '') {
+                alert('Veuillez entrer un code produit');
+                return;
+            }
+            
+            const product = newOnInventPOS.products.find(p => p.id === productCode);
+            
+            if (product) {
+                addToCart(product);
+                codeInput.value = '';
+            } else {
+                alert('Produit non trouvé');
+            }
+        });
+        
+        // Scanner (simulation)
+        document.getElementById('newoninvent-start-scan').addEventListener('click', function() {
+            const scannerContainer = document.getElementById('newoninvent-scanner-container');
+            
+            if (scannerContainer.style.display === 'none') {
+                scannerContainer.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-stop"></i> Arrêter le scan';
+                
+                // Simuler un scan après 3 secondes
+                setTimeout(() => {
+                    const randomIndex = Math.floor(Math.random() * newOnInventPOS.products.length);
+                    const randomProduct = newOnInventPOS.products[randomIndex];
+                    addToCart(randomProduct);
+                    
+                    scannerContainer.style.display = 'none';
+                    this.innerHTML = '<i class="fas fa-camera"></i> Scanner un code';
+                }, 3000);
+            } else {
+                scannerContainer.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-camera"></i> Scanner un code';
+            }
+        });
+        
+        // Ajouter au panier
+        function addToCart(product) {
+            const existingItemIndex = newOnInventPOS.cart.findIndex(item => item.product.id === product.id);
+            
+            if (existingItemIndex !== -1) {
+                newOnInventPOS.cart[existingItemIndex].quantity++;
+            } else {
+                newOnInventPOS.cart.push({
+                    product: product,
+                    quantity: 1
+                });
+            }
+            
+            updateCartDisplay();
+        }
+        
+        // Mise à jour de l'affichage du panier
+        function updateCartDisplay() {
+            const cartBody = document.getElementById('newoninvent-cart-body');
+            const cartTotal = document.getElementById('newoninvent-cart-total');
+            const sendButton = document.getElementById('newoninvent-send-to-cashier');
+            
+            if (newOnInventPOS.cart.length === 0) {
+                cartBody.innerHTML = `
+                    <tr class="newoninvent-empty-cart">
+                        <td colspan="5" class="text-center">Panier vide</td>
+                    </tr>
+                `;
+                cartTotal.textContent = '0 $';
+                sendButton.disabled = true;
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            newOnInventPOS.cart.forEach((item, index) => {
+                const itemTotal = item.product.price * item.quantity;
+                total += itemTotal;
+                
+                html += `
+                    <tr>
+                        <td>${item.product.name}</td>
+                        <td>${item.product.price.toFixed(2)} $</td>
+                        <td>
+                            <div class="newoninvent-cart-quantity">
+                                <button type="button" class="newoninvent-qty-btn minus" data-index="${index}">-</button>
+                                <span class="newoninvent-qty-value">${item.quantity}</span>
+                                <button type="button" class="newoninvent-qty-btn plus" data-index="${index}">+</button>
+                            </div>
+                        </td>
+                        <td>${itemTotal.toFixed(2)} $</td>
+                        <td>
+                            <i class="fas fa-times newoninvent-remove-item" data-index="${index}"></i>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            cartBody.innerHTML = html;
+            cartTotal.textContent = `${total.toFixed(2)} $`;
+            sendButton.disabled = false;
+            
+            // Événements pour les boutons de quantité
+            document.querySelectorAll('.newoninvent-qty-btn.minus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    if (newOnInventPOS.cart[index].quantity > 1) {
+                        newOnInventPOS.cart[index].quantity--;
+                        updateCartDisplay();
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.newoninvent-qty-btn.plus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    newOnInventPOS.cart[index].quantity++;
+                    updateCartDisplay();
+                });
+            });
+            
+            // Événement pour supprimer un article
+            document.querySelectorAll('.newoninvent-remove-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    newOnInventPOS.cart.splice(index, 1);
+                    updateCartDisplay();
+                });
+            });
+        }
+        
+        // Vider le panier
+        document.getElementById('newoninvent-clear-cart').addEventListener('click', function() {
+            newOnInventPOS.cart = [];
+            updateCartDisplay();
+        });
+        
+        // Envoyer au caissier
+        document.getElementById('newoninvent-send-to-cashier').addEventListener('click', function() {
+            const clientName = document.getElementById('newoninvent-client-name').value.trim();
+            
+            if (clientName === '') {
+                alert('Veuillez entrer le nom du client');
+                return;
+            }
+            
+            if (newOnInventPOS.cart.length === 0) {
+                alert('Le panier est vide');
+                return;
+            }
+            
+            // Calculer le total
+            let total = 0;
+            newOnInventPOS.cart.forEach(item => {
+                total += item.product.price * item.quantity;
+            });
+            
+            // Créer la commande
+            const order = {
+                id: `CMD${newOnInventPOS.currentOrderId++}`,
+                client: clientName,
+                items: [...newOnInventPOS.cart],
+                total: total,
+                timestamp: new Date(),
+                status: 'pending'
+            };
+            
+            // Ajouter aux commandes en attente
+            newOnInventPOS.pendingOrders.push(order);
+            
+            // Réinitialiser le formulaire et le panier
+            document.getElementById('newoninvent-client-name').value = '';
+            newOnInventPOS.cart = [];
+            updateCartDisplay();
+            
+            alert(`Commande ${order.id} envoyée au caissier pour le client ${clientName}`);
+        });
+    }
+    
+    // Initialisation de l'interface du caissier
+    function initCashierInterface() {
+        updatePendingOrdersList();
+        
+        // Fonction de mise à jour de la liste des commandes en attente
+        function updatePendingOrdersList() {
+            const container = document.getElementById('newoninvent-pending-orders');
+            
+            if (newOnInventPOS.pendingOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>Aucune commande en attente</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            newOnInventPOS.pendingOrders.forEach(order => {
+                const time = order.timestamp.toLocaleTimeString();
+                const itemCount = order.items.reduce((total, item) => total + item.quantity, 0);
+                
+                html += `
+                    <div class="newoninvent-order-card" data-order-id="${order.id}">
+                        <div class="newoninvent-order-card-header">
+                            <div class="newoninvent-order-card-id">${order.id}</div>
+                            <div class="newoninvent-order-card-time">${time}</div>
+                        </div>
+                        <div class="newoninvent-order-card-client">${order.client}</div>
+                        <div class="newoninvent-order-card-items">${itemCount} articles</div>
+                        <div class="newoninvent-order-card-total">${order.total.toFixed(2)} $</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Ajouter les événements de clic
+            document.querySelectorAll('.newoninvent-order-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    document.querySelectorAll('.newoninvent-order-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    displayOrderDetails(orderId);
+                });
+            });
+        }
+        
+        // Afficher les détails d'une commande
+        function displayOrderDetails(orderId) {
+            const order = newOnInventPOS.pendingOrders.find(o => o.id === orderId);
+            
+            if (!order) return;
+            
+            document.getElementById('newoninvent-empty-order-details').style.display = 'none';
+            document.getElementById('newoninvent-order-details').style.display = 'block';
+            
+            document.getElementById('newoninvent-current-order-id').textContent = order.id;
+            document.getElementById('newoninvent-order-client-name').textContent = order.client;
+            
+            const itemsBody = document.getElementById('newoninvent-order-items-body');
+            let html = '';
+            
+            order.items.forEach(item => {
+                const itemTotal = item.product.price * item.quantity;
+                
+                html += `
+                    <tr>
+                        <td>${item.product.name} (${item.product.id})</td>
+                        <td>${item.product.price.toFixed(2)} $</td>
+                        <td>${item.quantity}</td>
+                        <td>${itemTotal.toFixed(2)} $</td>
+                    </tr>
+                `;
+            });
+            
+            itemsBody.innerHTML = html;
+            document.getElementById('newoninvent-order-total').textContent = `${order.total.toFixed(2)} $`;
+            
+            // Activer le champ de paiement
+            const paymentAmount = document.getElementById('newoninvent-payment-amount');
+            paymentAmount.value = '';
+            document.getElementById('newoninvent-payment-change').value = '';
+            document.getElementById('newoninvent-process-payment').disabled = true;
+            
+            // Événement pour le calcul de la monnaie
+            paymentAmount.addEventListener('input', function() {
+                const amount = parseFloat(this.value) || 0;
+                const change = amount - order.total;
+                
+                document.getElementById('newoninvent-payment-change').value = change >= 0 ? change.toFixed(2) : 'Montant insuffisant';
+                document.getElementById('newoninvent-process-payment').disabled = change < 0;
+            });
+            
+            // Événement pour le traitement du paiement
+            document.getElementById('newoninvent-process-payment').addEventListener('click', function() {
+                // Traiter le paiement
+                const amount = parseFloat(paymentAmount.value) || 0;
+                const change = amount - order.total;
+                
+                if (change < 0) {
+                    alert('Montant insuffisant');
+                    return;
+                }
+                
+                // Créer le ticket
+                const ticket = {
+                    ...order,
+                    amountPaid: amount,
+                    change: change,
+                    paymentTimestamp: new Date(),
+                    ticketId: `T${Math.floor(Math.random() * 90000) + 10000}`,
+                    status: 'paid'
+                };
+                
+                // Ajouter aux commandes terminées
+                newOnInventPOS.completedOrders.push(ticket);
+                
+                // Retirer des commandes en attente
+                newOnInventPOS.pendingOrders = newOnInventPOS.pendingOrders.filter(o => o.id !== order.id);
+                
+                // Afficher le ticket et réinitialiser l'interface
+                alert(`Paiement traité avec succès!\nTicket n°: ${ticket.ticketId}\nMonnaie à rendre: ${change.toFixed(2)} $`);
+                
+                document.getElementById('newoninvent-empty-order-details').style.display = 'block';
+                document.getElementById('newoninvent-order-details').style.display = 'none';
+                document.getElementById('newoninvent-current-order-id').textContent = '--';
+                
+                updatePendingOrdersList();
+            });
+        }
+    }
+    
+    // Initialisation de l'interface du distributeur de produits
+    function initProductGiverInterface() {
+        updateRecentOrders();
+        
+        // Fonction de mise à jour des commandes récentes
+        function updateRecentOrders() {
+            const container = document.getElementById('newoninvent-recent-orders');
+            
+            if (newOnInventPOS.completedOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <p>Aucune commande récente</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            // Prendre les 5 dernières commandes
+            const recentOrders = [...newOnInventPOS.completedOrders]
+                .sort((a, b) => b.paymentTimestamp - a.paymentTimestamp)
+                .slice(0, 5);
+            
+            recentOrders.forEach(order => {
+                html += `
+                    <div class="newoninvent-recent-order-item" data-ticket-id="${order.ticketId}">
+                        <div class="newoninvent-recent-order-id">${order.ticketId}</div>
+                        <div class="newoninvent-recent-order-client">${order.client}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Ajouter les événements de clic
+            document.querySelectorAll('.newoninvent-recent-order-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const ticketId = this.getAttribute('data-ticket-id');
+                    displayTicketDetails(ticketId);
+                });
+            });
+        }
+        
+        // Scanner un ticket (simulation)
+        document.getElementById('newoninvent-scan-ticket').addEventListener('click', function() {
+            const scannerContainer = document.getElementById('newoninvent-ticket-scanner-container');
+            
+            if (scannerContainer.style.display === 'none') {
+                scannerContainer.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-stop"></i> Arrêter le scan';
+                
+                // Simuler un scan après 3 secondes
+                setTimeout(() => {
+                    scannerContainer.style.display = 'none';
+                    this.innerHTML = '<i class="fas fa-qrcode me-2"></i> Scanner un ticket';
+                    
+                    if (newOnInventPOS.completedOrders.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * newOnInventPOS.completedOrders.length);
+                        const randomTicket = newOnInventPOS.completedOrders[randomIndex];
+                        displayTicketDetails(randomTicket.ticketId);
+                    } else {
+                        alert('Aucun ticket trouvé');
+                    }
+                }, 3000);
+            } else {
+                scannerContainer.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-qrcode me-2"></i> Scanner un ticket';
+            }
+        });
+        
+        // Rechercher un ticket par numéro
+        document.getElementById('newoninvent-find-ticket').addEventListener('click', function() {
+            const ticketNumber = document.getElementById('newoninvent-ticket-number').value.trim();
+            
+            if (ticketNumber === '') {
+                alert('Veuillez entrer un numéro de ticket');
+                return;
+            }
+            
+            const ticket = newOnInventPOS.completedOrders.find(t => t.ticketId === ticketNumber);
+            
+            if (ticket) {
+                displayTicketDetails(ticket.ticketId);
+            } else {
+                alert(`Ticket n°${ticketNumber} non trouvé`);
+            }
+        });
+        
+        // Afficher les détails d'un ticket
+        function displayTicketDetails(ticketId) {
+            const ticket = newOnInventPOS.completedOrders.find(t => t.ticketId === ticketId);
+            
+            if (!ticket) return;
+            
+            document.getElementById('newoninvent-empty-ticket-details').style.display = 'none';
+            document.getElementById('newoninvent-ticket-details').style.display = 'block';
+            
+            document.getElementById('newoninvent-current-ticket-id').textContent = ticket.ticketId;
+            document.getElementById('newoninvent-ticket-client-name').textContent = ticket.client;
+            document.getElementById('newoninvent-ticket-date').textContent = ticket.paymentTimestamp.toLocaleString();
+            
+            const itemsBody = document.getElementById('newoninvent-ticket-items-body');
+            let html = '';
+            
+            ticket.items.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="newoninvent-item-checkbox" data-index="${index}">
+                        </td>
+                        <td>${item.product.name} (${item.product.id})</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.product.location}</td>
+                        <td>
+                            <span class="newoninvent-item-status newoninvent-status-pending">En attente</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            itemsBody.innerHTML = html;
+            
+            // Gestion des cases à cocher
+            document.querySelectorAll('.newoninvent-item-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const statusSpan = this.closest('tr').querySelector('.newoninvent-item-status');
+                    
+                    if (this.checked) {
+                        statusSpan.className = 'newoninvent-item-status newoninvent-status-ready';
+                        statusSpan.textContent = 'Prêt';
+                    } else {
+                        statusSpan.className = 'newoninvent-item-status newoninvent-status-pending';
+                        statusSpan.textContent = 'En attente';
+                    }
+                });
+            });
+            
+            // Gestion du signalement de problème
+            document.getElementById('newoninvent-problem-checkbox').checked = false;
+            document.getElementById('newoninvent-problem-section').style.display = 'none';
+            
+            document.getElementById('newoninvent-problem-checkbox').addEventListener('change', function() {
+                document.getElementById('newoninvent-problem-section').style.display = this.checked ? 'block' : 'none';
+            });
+            
+            // Gestion des étoiles de satisfaction
+            document.querySelectorAll('.newoninvent-star').forEach(star => {
+                star.className = 'far fa-star newoninvent-star';
+                
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    
+                    document.querySelectorAll('.newoninvent-star').forEach(s => {
+                        const starValue = parseInt(s.getAttribute('data-value'));
+                        if (starValue <= value) {
+                            s.className = 'fas fa-star newoninvent-star active';
+                        } else {
+                            s.className = 'far fa-star newoninvent-star';
+                        }
+                    });
+                });
+            });
+            
+            // Événement pour confirmer la distribution
+            document.getElementById('newoninvent-complete-distribution').addEventListener('click', function() {
+                const allCheckboxes = document.querySelectorAll('.newoninvent-item-checkbox');
+                const checkedCount = document.querySelectorAll('.newoninvent-item-checkbox:checked').length;
+                
+                if (checkedCount === 0) {
+                    alert('Aucun produit n\'a été distribué');
+                    return;
+                }
+                
+                if (checkedCount < allCheckboxes.length) {
+                    const confirm = window.confirm('Certains produits n\'ont pas été distribués. Voulez-vous quand même finaliser la distribution?');
+                    if (!confirm) return;
+                }
+                
+                // Vérifier si un problème a été signalé
+                if (document.getElementById('newoninvent-problem-checkbox').checked) {
+                    const problemType = document.getElementById('newoninvent-problem-type').value;
+                    const problemDetails = document.getElementById('newoninvent-problem-details').value;
+                    
+                    if (problemType === '') {
+                        alert('Veuillez sélectionner le type de problème');
+                        return;
+                    }
+                    
+                    if (problemDetails.trim() === '') {
+                        alert('Veuillez décrire le problème');
+                        return;
+                    }
+                    
+                    // Enregistrer le problème (simulé)
+                    console.log('Problème signalé:', {
+                        ticketId: ticket.ticketId,
+                        type: problemType,
+                        details: problemDetails
+                    });
+                }
+                
+                // Marquer comme distribué
+                ticket.status = 'distributed';
+                ticket.distributionTimestamp = new Date();
+                
+                alert(`Distribution confirmée pour le ticket n°${ticket.ticketId}`);
+                
+                // Réinitialiser l'affichage
+                document.getElementById('newoninvent-empty-ticket-details').style.display = 'block';
+                document.getElementById('newoninvent-ticket-details').style.display = 'none';
+                document.getElementById('newoninvent-current-ticket-id').textContent = '--';
+                
+                updateRecentOrders();
+            });
+        }
+    }
+    
+    // Mettre à jour la navigation pour le nouvel onglet
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.nav-item').forEach(i => {
+                i.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            const sectionId = this.getAttribute('data-section');
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        });
+    });
+});
+</script>
+
+
+

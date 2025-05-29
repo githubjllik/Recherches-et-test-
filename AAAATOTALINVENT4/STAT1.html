@@ -1,0 +1,1632 @@
+<li class="nav-item" data-section="global-analytics">
+    <a href="#"><i class="fas fa-chart-network"></i> Analyses & Statistiques</a>
+</li>
+
+<!-- Section Analyses & Statistiques Globales -->
+<div id="global-analytics" class="content-section" style="display: none;">
+    <h2 class="mb-4"><i class="fas fa-chart-network me-2"></i> Analyses & Statistiques</h2>
+    
+    <!-- Filtres principaux -->
+    <div class="StatSuiviGlobal_filterBar">
+        <div class="StatSuiviGlobal_activeFilters">
+            <div class="StatSuiviGlobal_activeFilterTag">
+                <i class="fas fa-calendar me-1"></i> Période: Cette semaine
+                <i class="fas fa-times-circle ms-2"></i>
+            </div>
+        </div>
+        <div class="StatSuiviGlobal_filterButtons">
+            <button class="StatSuiviGlobal_filterBtn" id="StatSuiviGlobal_periodFilterBtn">
+                <i class="fas fa-calendar-alt me-1"></i> Période
+            </button>
+            <button class="StatSuiviGlobal_advancedFilterBtn" id="StatSuiviGlobal_showAdvancedFilters">
+                <i class="fas fa-sliders-h me-1"></i> Filtres avancés
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filtres avancés (cachés par défaut) -->
+    <div class="StatSuiviGlobal_advancedFiltersPanel" id="StatSuiviGlobal_advancedFiltersPanel" style="display: none;">
+        <div class="StatSuiviGlobal_filterGroup">
+            <h6 class="StatSuiviGlobal_filterGroupTitle">Période</h6>
+            <div class="StatSuiviGlobal_filterOptions">
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="today" checked>
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-day me-1"></i> Aujourd'hui</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="yesterday">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-day me-1"></i> Hier</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="thisWeek">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-week me-1"></i> Cette semaine</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="lastWeek">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-week me-1"></i> Semaine dernière</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="thisMonth">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-alt me-1"></i> Ce mois</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="lastMonth">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-alt me-1"></i> Mois dernier</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="thisYear">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar me-1"></i> Cette année</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="lastYear">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar me-1"></i> Année dernière</span>
+                </label>
+                <label class="StatSuiviGlobal_radioOption">
+                    <input type="radio" name="timePeriod" value="custom">
+                    <span class="StatSuiviGlobal_radioLabel"><i class="fas fa-calendar-plus me-1"></i> Personnalisée</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_filterGroup" id="StatSuiviGlobal_customDateContainer" style="display: none;">
+            <h6 class="StatSuiviGlobal_filterGroupTitle">Période personnalisée</h6>
+            <div class="StatSuiviGlobal_customDateFields">
+                <div class="StatSuiviGlobal_dateField">
+                    <label>De</label>
+                    <div class="StatSuiviGlobal_inputWithIcon">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="StatSuiviGlobal_startDate">
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_dateField">
+                    <label>À</label>
+                    <div class="StatSuiviGlobal_inputWithIcon">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="StatSuiviGlobal_endDate">
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_dateField">
+                    <label>Mois/Année</label>
+                    <div class="StatSuiviGlobal_dualSelect">
+                        <div class="StatSuiviGlobal_customSelectSmall">
+                            <div class="StatSuiviGlobal_selectedOption" id="StatSuiviGlobal_monthSelector">
+                                <span>Mai</span> <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="StatSuiviGlobal_options">
+                                <div class="StatSuiviGlobal_option" data-value="0">Janvier</div>
+                                <div class="StatSuiviGlobal_option" data-value="1">Février</div>
+                                <div class="StatSuiviGlobal_option" data-value="2">Mars</div>
+                                <div class="StatSuiviGlobal_option" data-value="3">Avril</div>
+                                <div class="StatSuiviGlobal_option" data-value="4">Mai</div>
+                                <div class="StatSuiviGlobal_option" data-value="5">Juin</div>
+                                <div class="StatSuiviGlobal_option" data-value="6">Juillet</div>
+                                <div class="StatSuiviGlobal_option" data-value="7">Août</div>
+                                <div class="StatSuiviGlobal_option" data-value="8">Septembre</div>
+                                <div class="StatSuiviGlobal_option" data-value="9">Octobre</div>
+                                <div class="StatSuiviGlobal_option" data-value="10">Novembre</div>
+                                <div class="StatSuiviGlobal_option" data-value="11">Décembre</div>
+                            </div>
+                        </div>
+                        <div class="StatSuiviGlobal_customSelectSmall">
+                            <div class="StatSuiviGlobal_selectedOption" id="StatSuiviGlobal_yearSelector">
+                                <span>2025</span> <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="StatSuiviGlobal_options">
+                                <div class="StatSuiviGlobal_option" data-value="2025">2025</div>
+                                <div class="StatSuiviGlobal_option" data-value="2024">2024</div>
+                                <div class="StatSuiviGlobal_option" data-value="2023">2023</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_filterActions">
+            <button class="StatSuiviGlobal_applyBtn" id="StatSuiviGlobal_applyFilters">
+                <i class="fas fa-check me-1"></i> Appliquer
+            </button>
+            <button class="StatSuiviGlobal_resetBtn" id="StatSuiviGlobal_resetFilters">
+                <i class="fas fa-undo me-1"></i> Réinitialiser
+            </button>
+            <button class="StatSuiviGlobal_closeBtn" id="StatSuiviGlobal_closeAdvancedFilters">
+                <i class="fas fa-times me-1"></i> Fermer
+            </button>
+        </div>
+    </div>
+    
+    <!-- Vue d'ensemble / Tableaux de bord -->
+    <div class="StatSuiviGlobal_dashboardSection">
+        <div class="StatSuiviGlobal_sectionTitle">
+            <i class="fas fa-tachometer-alt me-2"></i> Vue d'ensemble
+            <div class="StatSuiviGlobal_sectionControls">
+                <button class="StatSuiviGlobal_iconBtn" title="Filtrer">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <button class="StatSuiviGlobal_iconBtn" title="Actualiser">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="StatSuiviGlobal_iconBtn" title="Télécharger">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_cardGrid">
+            <!-- Cartes statistiques -->
+            <div class="StatSuiviGlobal_card StatSuiviGlobal_trend_up">
+                <div class="StatSuiviGlobal_cardIcon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="StatSuiviGlobal_cardContent">
+                    <div class="StatSuiviGlobal_cardTitle">Ventes totales</div>
+                    <div class="StatSuiviGlobal_cardValue">24 950 €</div>
+                    <div class="StatSuiviGlobal_cardTrend">
+                        <i class="fas fa-arrow-up"></i> +12.5%
+                    </div>
+                </div>
+            </div>
+            
+            <div class="StatSuiviGlobal_card StatSuiviGlobal_trend_down">
+                <div class="StatSuiviGlobal_cardIcon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="StatSuiviGlobal_cardContent">
+                    <div class="StatSuiviGlobal_cardTitle">Unités en stock</div>
+                    <div class="StatSuiviGlobal_cardValue">1 245</div>
+                    <div class="StatSuiviGlobal_cardTrend">
+                        <i class="fas fa-arrow-down"></i> -5.3%
+                    </div>
+                </div>
+            </div>
+            
+            <div class="StatSuiviGlobal_card StatSuiviGlobal_trend_up">
+                <div class="StatSuiviGlobal_cardIcon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="StatSuiviGlobal_cardContent">
+                    <div class="StatSuiviGlobal_cardTitle">Produits vendus</div>
+                    <div class="StatSuiviGlobal_cardValue">485</div>
+                    <div class="StatSuiviGlobal_cardTrend">
+                        <i class="fas fa-arrow-up"></i> +8.7%
+                    </div>
+                </div>
+            </div>
+            
+            <div class="StatSuiviGlobal_card StatSuiviGlobal_trend_neutral">
+                <div class="StatSuiviGlobal_cardIcon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="StatSuiviGlobal_cardContent">
+                    <div class="StatSuiviGlobal_cardTitle">Ruptures de stock</div>
+                    <div class="StatSuiviGlobal_cardValue">12</div>
+                    <div class="StatSuiviGlobal_cardTrend">
+                        <i class="fas fa-minus"></i> 0%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section Ventes et Stocks -->
+    <div class="StatSuiviGlobal_row">
+        <!-- Graphique des ventes -->
+        <div class="StatSuiviGlobal_col">
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-chart-line me-2"></i> Évolution des ventes</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <div class="StatSuiviGlobal_moduleFilter">
+                            <button class="StatSuiviGlobal_filterToggle" id="StatSuiviGlobal_salesChartFilter">
+                                <i class="fas fa-calendar-alt me-1"></i> Cette semaine <i class="fas fa-chevron-down ms-1"></i>
+                            </button>
+                            <div class="StatSuiviGlobal_filterDropdown">
+                                <div class="StatSuiviGlobal_filterOption" data-value="today">Aujourd'hui</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="yesterday">Hier</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="thisWeek">Cette semaine</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="lastWeek">Semaine dernière</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="thisMonth">Ce mois</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="custom">Personnalisée...</div>
+                            </div>
+                        </div>
+                        <button class="StatSuiviGlobal_iconBtn" title="Télécharger">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="StatSuiviGlobal_iconBtn" title="Actualiser">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_chartContainer">
+                        <canvas id="StatSuiviGlobal_salesChart" height="250"></canvas>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleFooter">
+                    <div class="StatSuiviGlobal_insight">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Analyse IA : Les ventes sont en hausse de 12.5% par rapport à la semaine précédente. La tendance est positive pour ce mois.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Répartition des stocks -->
+        <div class="StatSuiviGlobal_col">
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-chart-pie me-2"></i> Répartition des stocks</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <div class="StatSuiviGlobal_moduleFilter">
+                            <button class="StatSuiviGlobal_filterToggle" id="StatSuiviGlobal_stocksChartFilter">
+                                <i class="fas fa-filter me-1"></i> Par catégorie <i class="fas fa-chevron-down ms-1"></i>
+                            </button>
+                            <div class="StatSuiviGlobal_filterDropdown">
+                                <div class="StatSuiviGlobal_filterOption" data-value="category">Par catégorie</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="status">Par statut</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="price">Par gamme de prix</div>
+                            </div>
+                        </div>
+                        <button class="StatSuiviGlobal_iconBtn" title="Télécharger">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="StatSuiviGlobal_iconBtn" title="Actualiser">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_chartContainer">
+                        <canvas id="StatSuiviGlobal_stocksChart" height="250"></canvas>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleFooter">
+                    <div class="StatSuiviGlobal_insight">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Analyse IA : La catégorie "Électronique" représente 45% de votre stock total en valeur. Envisagez une diversification.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performances des produits -->
+    <div class="StatSuiviGlobal_sectionTitle">
+        <i class="fas fa-award me-2"></i> Performances des produits
+        <div class="StatSuiviGlobal_sectionControls">
+            <div class="StatSuiviGlobal_moduleFilter">
+                <button class="StatSuiviGlobal_filterToggle" id="StatSuiviGlobal_productPerformanceFilter">
+                    <i class="fas fa-calendar-alt me-1"></i> Ce mois <i class="fas fa-chevron-down ms-1"></i>
+                </button>
+                <div class="StatSuiviGlobal_filterDropdown">
+                    <div class="StatSuiviGlobal_filterOption" data-value="today">Aujourd'hui</div>
+                    <div class="StatSuiviGlobal_filterOption" data-value="yesterday">Hier</div>
+                    <div class="StatSuiviGlobal_filterOption" data-value="thisWeek">Cette semaine</div>
+                    <div class="StatSuiviGlobal_filterOption" data-value="lastWeek">Semaine dernière</div>
+                    <div class="StatSuiviGlobal_filterOption" data-value="thisMonth">Ce mois</div>
+                    <div class="StatSuiviGlobal_filterOption" data-value="custom">Personnalisée...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tableau des tops produits -->
+    <div class="StatSuiviGlobal_row">
+        <div class="StatSuiviGlobal_col">
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-star me-2"></i> Produits les plus vendus</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <div class="StatSuiviGlobal_moduleFilter">
+                            <button class="StatSuiviGlobal_filterToggle">
+                                <i class="fas fa-sort-amount-down me-1"></i> Top 10 <i class="fas fa-chevron-down ms-1"></i>
+                            </button>
+                            <div class="StatSuiviGlobal_filterDropdown">
+                                <div class="StatSuiviGlobal_filterOption" data-value="5">Top 5</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="10">Top 10</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="20">Top 20</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="50">Top 50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_tableContainer">
+                        <table class="StatSuiviGlobal_table">
+                            <thead>
+                                <tr>
+                                    <th>Rang</th>
+                                    <th>Produit</th>
+                                    <th>Ventes</th>
+                                    <th>% du total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">1</td>
+                                    <td>Smartphone Galaxy X12</td>
+                                    <td>84 unités</td>
+                                    <td>17.3%</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">2</td>
+                                    <td>Écouteurs sans fil Pro</td>
+                                    <td>62 unités</td>
+                                    <td>12.8%</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">3</td>
+                                    <td>Batterie externe 20000mAh</td>
+                                    <td>45 unités</td>
+                                    <td>9.3%</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">4</td>
+                                    <td>Montre connectée Sport+</td>
+                                    <td>38 unités</td>
+                                    <td>7.8%</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">5</td>
+                                    <td>Casque audio Bluetooth</td>
+                                    <td>31 unités</td>
+                                    <td>6.4%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleFooter">
+                    <a href="#" class="StatSuiviGlobal_viewAllLink">Voir tout <i class="fas fa-chevron-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_col">
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-exclamation-circle me-2"></i> Produits en surstock</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <div class="StatSuiviGlobal_moduleFilter">
+                            <button class="StatSuiviGlobal_filterToggle">
+                                <i class="fas fa-sort-amount-down me-1"></i> Top 10 <i class="fas fa-chevron-down ms-1"></i>
+                            </button>
+                            <div class="StatSuiviGlobal_filterDropdown">
+                                <div class="StatSuiviGlobal_filterOption" data-value="5">Top 5</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="10">Top 10</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="20">Top 20</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="50">Top 50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_tableContainer">
+                        <table class="StatSuiviGlobal_table">
+                            <thead>
+                                <tr>
+                                    <th>Rang</th>
+                                    <th>Produit</th>
+                                    <th>En stock</th>
+                                    <th>Jours inactifs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank StatSuiviGlobal_rankWarning">1</td>
+                                    <td>Câble HDMI 5m</td>
+                                    <td>120 unités</td>
+                                    <td>45j</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank StatSuiviGlobal_rankWarning">2</td>
+                                    <td>Adaptateur USB Type-C</td>
+                                    <td>95 unités</td>
+                                    <td>38j</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank StatSuiviGlobal_rankWarning">3</td>
+                                    <td>Support téléphone voiture</td>
+                                    <td>82 unités</td>
+                                    <td>32j</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">4</td>
+                                    <td>Housse ordinateur 15"</td>
+                                    <td>75 unités</td>
+                                    <td>28j</td>
+                                </tr>
+                                <tr>
+                                    <td class="StatSuiviGlobal_rank">5</td>
+                                    <td>Chargeur secteur universel</td>
+                                    <td>68 unités</td>
+                                    <td>25j</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleFooter">
+                    <a href="#" class="StatSuiviGlobal_viewAllLink">Voir tout <i class="fas fa-chevron-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Produits à surveiller et Alertes -->
+    <div class="StatSuiviGlobal_row">
+        <div class="StatSuiviGlobal_col">
+            <!-- Produits en rupture de stock prolongée -->
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-exclamation-triangle me-2"></i> Ruptures prolongées</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <button class="StatSuiviGlobal_actionBtn">
+                            <i class="fas fa-cart-plus me-1"></i> Commander
+                        </button>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_tableContainer">
+                        <table class="StatSuiviGlobal_table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Rupture depuis</th>
+                                    <th>Demande estimée</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tablette Éducative Kids+</td>
+                                    <td class="StatSuiviGlobal_alertCell">38 jours</td>
+                                    <td>Forte</td>
+                                    <td>
+                                        <button class="StatSuiviGlobal_tableActionBtn">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Casque VR Immersive 3D</td>
+                                    <td class="StatSuiviGlobal_alertCell">25 jours</td>
+                                    <td>Moyenne</td>
+                                    <td>
+                                        <button class="StatSuiviGlobal_tableActionBtn">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Station de charge 6 ports</td>
+                                    <td>12 jours</td>
+                                    <td>Faible</td>
+                                    <td>
+                                        <button class="StatSuiviGlobal_tableActionBtn">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_col">
+            <!-- Alerte d'optimisation des prix -->
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-tags me-2"></i> Optimisation des prix</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <button class="StatSuiviGlobal_actionBtn">
+                            <i class="fas fa-magic me-1"></i> Appliquer tout
+                        </button>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_tableContainer">
+                        <table class="StatSuiviGlobal_table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix actuel</th>
+                                    <th>Prix suggéré</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Smartphone Galaxy X12</td>
+                                    <td>399 €</td>
+                                    <td class="StatSuiviGlobal_positiveCell">429 €</td>
+                                    <td>
+                                        <button class="StatSuiviGlobal_tableActionBtn">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Écouteurs sans fil Pro</td>
+                                    <td>89 €</td>
+                                    <td class="StatSuiviGlobal_positiveCell">99 €</td>
+                                    <td>
+                                        <button class="StatSuiviGlobal_tableActionBtn">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Câble HDMI 5m</td>
+                                    <td>19.99 €</td>
+                                    <td class="StatSuiviGlobal_negativeCell">14.99 €</td>
+                                    <td>
+                                        <button class="StatSuiviGlobal_tableActionBtn">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prévisions et Rapports -->
+    <div class="StatSuiviGlobal_sectionTitle">
+        <i class="fas fa-brain me-2"></i> Analyse prédictive et rapports
+        <div class="StatSuiviGlobal_sectionControls">
+            <button class="StatSuiviGlobal_actionBtn">
+                <i class="fas fa-file-pdf me-1"></i> Exporter rapport
+            </button>
+        </div>
+    </div>
+    
+    <div class="StatSuiviGlobal_row">
+        <div class="StatSuiviGlobal_col">
+            <!-- Graphique de prévision des ventes -->
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-chart-line me-2"></i> Prévisions des ventes</h3>
+                    <div class="StatSuiviGlobal_moduleControls">
+                        <div class="StatSuiviGlobal_moduleFilter">
+                            <button class="StatSuiviGlobal_filterToggle" id="StatSuiviGlobal_forecastPeriodFilter">
+                                <i class="fas fa-calendar-alt me-1"></i> 3 prochains mois <i class="fas fa-chevron-down ms-1"></i>
+                            </button>
+                            <div class="StatSuiviGlobal_filterDropdown">
+                                <div class="StatSuiviGlobal_filterOption" data-value="1month">Prochain mois</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="3months">3 prochains mois</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="6months">6 prochains mois</div>
+                                <div class="StatSuiviGlobal_filterOption" data-value="1year">Année à venir</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_chartContainer">
+                        <canvas id="StatSuiviGlobal_forecastChart" height="250"></canvas>
+                    </div>
+                </div>
+                <div class="StatSuiviGlobal_moduleFooter">
+                    <div class="StatSuiviGlobal_insight">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Analyse IA : Une croissance de 18% des ventes est prévue pour le prochain trimestre, principalement portée par la catégorie Électronique.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_col">
+            <!-- Alertes et recommandations -->
+            <div class="StatSuiviGlobal_moduleCard">
+                <div class="StatSuiviGlobal_moduleHeader">
+                    <h3><i class="fas fa-robot me-2"></i> Recommandations IA</h3>
+                </div>
+                <div class="StatSuiviGlobal_moduleBody">
+                    <div class="StatSuiviGlobal_aiRecommendations">
+                        <div class="StatSuiviGlobal_aiRecommendation">
+                            <div class="StatSuiviGlobal_aiRecommendationIcon">
+                                <i class="fas fa-cart-plus"></i>
+                            </div>
+                            <div class="StatSuiviGlobal_aiRecommendationContent">
+                                <h4>Augmenter les stocks d'accessoires mobiles</h4>
+                                <p>Les ventes d'accessoires pour smartphones ont augmenté de 22% ce mois. Envisagez de commander plus de coques, protections d'écran et chargeurs rapides.</p>
+                                <div class="StatSuiviGlobal_aiRecommendationActions">
+                                    <button class="StatSuiviGlobal_aiActionBtn">
+                                        <i class="fas fa-check me-1"></i> Appliquer
+                                    </button>
+                                    <button class="StatSuiviGlobal_aiActionBtn StatSuiviGlobal_aiActionBtnSecondary">
+                                        <i class="fas fa-file-alt me-1"></i> Détails
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="StatSuiviGlobal_aiRecommendation">
+                            <div class="StatSuiviGlobal_aiRecommendationIcon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="StatSuiviGlobal_aiRecommendationContent">
+                                <h4>Promotion sur les produits en surstock</h4>
+                                <p>5 produits sont en surstock depuis plus de 30 jours. Une remise de 15% pourrait accélérer les ventes et libérer de l'espace de stockage.</p>
+                                <div class="StatSuiviGlobal_aiRecommendationActions">
+                                    <button class="StatSuiviGlobal_aiActionBtn">
+                                        <i class="fas fa-check me-1"></i> Appliquer
+                                    </button>
+                                    <button class="StatSuiviGlobal_aiActionBtn StatSuiviGlobal_aiActionBtnSecondary">
+                                        <i class="fas fa-file-alt me-1"></i> Détails
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="StatSuiviGlobal_aiRecommendation">
+                            <div class="StatSuiviGlobal_aiRecommendationIcon">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                            </div>
+                            <div class="StatSuiviGlobal_aiRecommendationContent">
+                                <h4>Diversifier la gamme audio</h4>
+                                <p>Les produits audio représentent 28% de vos ventes mais seulement 15% de votre catalogue. Élargir cette gamme pourrait augmenter vos revenus.</p>
+                                <div class="StatSuiviGlobal_aiRecommendationActions">
+                                    <button class="StatSuiviGlobal_aiActionBtn">
+                                        <i class="fas fa-check me-1"></i> Appliquer
+                                    </button>
+                                    <button class="StatSuiviGlobal_aiActionBtn StatSuiviGlobal_aiActionBtnSecondary">
+                                        <i class="fas fa-file-alt me-1"></i> Détails
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rapports détaillés -->
+    <div class="StatSuiviGlobal_sectionTitle">
+        <i class="fas fa-file-alt me-2"></i> Rapports détaillés
+    </div>
+    
+    <div class="StatSuiviGlobal_reportCards">
+        <div class="StatSuiviGlobal_reportCard">
+            <div class="StatSuiviGlobal_reportCardIcon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="StatSuiviGlobal_reportCardContent">
+                <h4>Rapport mensuel d'activité</h4>
+                <p>Synthèse complète des ventes, stocks et performance</p>
+                <div class="StatSuiviGlobal_reportCardActions">
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-eye me-1"></i> Consulter
+                    </button>
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-download me-1"></i> Télécharger
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_reportCard">
+            <div class="StatSuiviGlobal_reportCardIcon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="StatSuiviGlobal_reportCardContent">
+                <h4>Analyse des tendances</h4>
+                <p>Évolution du marché et recommandations stratégiques</p>
+                <div class="StatSuiviGlobal_reportCardActions">
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-eye me-1"></i> Consulter
+                    </button>
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-download me-1"></i> Télécharger
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_reportCard">
+            <div class="StatSuiviGlobal_reportCardIcon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <div class="StatSuiviGlobal_reportCardContent">
+                <h4>État des stocks</h4>
+                <p>Inventaire détaillé et recommandations de réapprovisionnement</p>
+                <div class="StatSuiviGlobal_reportCardActions">
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-eye me-1"></i> Consulter
+                    </button>
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-download me-1"></i> Télécharger
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="StatSuiviGlobal_reportCard">
+            <div class="StatSuiviGlobal_reportCardIcon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="StatSuiviGlobal_reportCardContent">
+                <h4>Analyse financière</h4>
+                <p>Bilan des revenus, marges et suggestions d'optimisation</p>
+                <div class="StatSuiviGlobal_reportCardActions">
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-eye me-1"></i> Consulter
+                    </button>
+                    <button class="StatSuiviGlobal_reportBtn">
+                        <i class="fas fa-download me-1"></i> Télécharger
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+  /* ═══════════════════════════════
+   Styles pour Suivi Global & Statistiques
+   ═══════════════════════════════ */
+
+/* Structure de base et conteneurs */
+.StatSuiviGlobal_filterBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.StatSuiviGlobal_activeFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.StatSuiviGlobal_activeFilterTag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e6f0ff;
+    color: #0066cc;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.StatSuiviGlobal_activeFilterTag i.fa-times-circle {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.StatSuiviGlobal_activeFilterTag i.fa-times-circle:hover {
+    opacity: 1;
+}
+
+.StatSuiviGlobal_filterButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.StatSuiviGlobal_filterBtn {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_filterBtn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.StatSuiviGlobal_advancedFilterBtn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_advancedFilterBtn:hover {
+    background-color: var(--primary-dark);
+}
+
+.StatSuiviGlobal_advancedFiltersPanel {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.StatSuiviGlobal_filterGroup {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.StatSuiviGlobal_filterGroup:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.StatSuiviGlobal_filterGroupTitle {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #444;
+}
+
+.StatSuiviGlobal_filterOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.StatSuiviGlobal_radioOption {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.StatSuiviGlobal_radioOption input[type="radio"] {
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.StatSuiviGlobal_radioLabel {
+    font-size: 0.9rem;
+}
+
+.StatSuiviGlobal_customDateFields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.StatSuiviGlobal_dateField {
+    flex: 1;
+    min-width: 200px;
+}
+
+.StatSuiviGlobal_dateField label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.StatSuiviGlobal_inputWithIcon {
+    position: relative;
+}
+
+.StatSuiviGlobal_inputWithIcon i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+}
+
+.StatSuiviGlobal_inputWithIcon input {
+    padding-left: 35px;
+    width: 100%;
+    height: 38px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.StatSuiviGlobal_dualSelect {
+    display: flex;
+    gap: 10px;
+}
+
+.StatSuiviGlobal_customSelectSmall {
+    position: relative;
+    flex: 1;
+}
+
+.StatSuiviGlobal_customSelect,
+.StatSuiviGlobal_customSelectSmall {
+    position: relative;
+    cursor: pointer;
+}
+
+.StatSuiviGlobal_selectedOption {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.StatSuiviGlobal_options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.StatSuiviGlobal_option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.StatSuiviGlobal_option:hover {
+    background-color: #f5f5f5;
+}
+
+.StatSuiviGlobal_customSelect.active .StatSuiviGlobal_options,
+.StatSuiviGlobal_customSelectSmall.active .StatSuiviGlobal_options {
+    display: block;
+}
+
+.StatSuiviGlobal_filterActions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.StatSuiviGlobal_applyBtn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_applyBtn:hover {
+    background-color: var(--primary-dark);
+}
+
+.StatSuiviGlobal_resetBtn, .StatSuiviGlobal_closeBtn {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_resetBtn:hover, .StatSuiviGlobal_closeBtn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+/* Cartes statistiques */
+.StatSuiviGlobal_dashboardSection {
+    margin-bottom: 30px;
+}
+
+.StatSuiviGlobal_sectionTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.StatSuiviGlobal_sectionControls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.StatSuiviGlobal_iconBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_iconBtn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.StatSuiviGlobal_cardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.StatSuiviGlobal_card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    position: relative;
+}
+
+.StatSuiviGlobal_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.StatSuiviGlobal_trend_up::before {
+    background-color: #28a745;
+}
+
+.StatSuiviGlobal_trend_down::before {
+    background-color: #dc3545;
+}
+
+.StatSuiviGlobal_trend_neutral::before {
+    background-color: #6c757d;
+}
+
+.StatSuiviGlobal_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.StatSuiviGlobal_cardIcon {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.StatSuiviGlobal_cardIcon i {
+    font-size: 1.8rem;
+    color: var(--primary);
+}
+
+.StatSuiviGlobal_cardContent {
+    flex: 1;
+}
+
+.StatSuiviGlobal_cardTitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.StatSuiviGlobal_cardValue {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.StatSuiviGlobal_cardTrend {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.StatSuiviGlobal_trend_up .StatSuiviGlobal_cardTrend {
+    color: #28a745;
+}
+
+.StatSuiviGlobal_trend_down .StatSuiviGlobal_cardTrend {
+    color: #dc3545;
+}
+
+.StatSuiviGlobal_trend_neutral .StatSuiviGlobal_cardTrend {
+    color: #6c757d;
+}
+
+/* Layout de modules */
+.StatSuiviGlobal_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.StatSuiviGlobal_col {
+    flex: 1;
+    min-width: 350px;
+}
+
+.StatSuiviGlobal_moduleCard {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.StatSuiviGlobal_moduleHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.StatSuiviGlobal_moduleHeader h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.StatSuiviGlobal_moduleControls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.StatSuiviGlobal_moduleFilter {
+    position: relative;
+}
+
+.StatSuiviGlobal_filterToggle {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_filterToggle:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.StatSuiviGlobal_filterDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    display: none;
+}
+
+.StatSuiviGlobal_filterOption {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.StatSuiviGlobal_filterOption:hover {
+    background-color: #f5f5f5;
+}
+
+.StatSuiviGlobal_moduleFilter.active .StatSuiviGlobal_filterDropdown {
+    display: block;
+}
+
+.StatSuiviGlobal_moduleBody {
+    padding: 20px;
+}
+
+.StatSuiviGlobal_moduleFooter {
+    padding: 12px 20px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+.StatSuiviGlobal_chartContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.StatSuiviGlobal_insight {
+    display: flex;
+    align-items: flex-start;
+}
+
+.StatSuiviGlobal_insight i {
+    color: #ffc107;
+    margin-right: 10px;
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.StatSuiviGlobal_insight span {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* Tableaux */
+.StatSuiviGlobal_tableContainer {
+    overflow-x: auto;
+}
+
+.StatSuiviGlobal_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.StatSuiviGlobal_table th {
+    background-color: #f8f9fa;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.StatSuiviGlobal_table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.StatSuiviGlobal_table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.StatSuiviGlobal_table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.StatSuiviGlobal_rank {
+    font-weight: 700;
+    text-align: center;
+    width: 50px;
+}
+
+.StatSuiviGlobal_rankWarning {
+    color: #dc3545;
+}
+
+.StatSuiviGlobal_alertCell {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.StatSuiviGlobal_positiveCell {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.StatSuiviGlobal_negativeCell {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.StatSuiviGlobal_tableActionBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_tableActionBtn:hover {
+    background-color: var(--primary-dark);
+}
+
+.StatSuiviGlobal_viewAllLink {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.StatSuiviGlobal_viewAllLink:hover {
+    text-decoration: underline;
+}
+
+/* Boutons d'action */
+.StatSuiviGlobal_actionBtn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_actionBtn:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Recommandations IA */
+.StatSuiviGlobal_aiRecommendations {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.StatSuiviGlobal_aiRecommendation {
+    display: flex;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid var(--primary);
+}
+
+.StatSuiviGlobal_aiRecommendationIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.StatSuiviGlobal_aiRecommendationIcon i {
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.StatSuiviGlobal_aiRecommendationContent {
+    flex: 1;
+}
+
+.StatSuiviGlobal_aiRecommendationContent h4 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.StatSuiviGlobal_aiRecommendationContent p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.StatSuiviGlobal_aiRecommendationActions {
+    display: flex;
+    gap: 10px;
+}
+
+.StatSuiviGlobal_aiActionBtn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_aiActionBtn:hover {
+    background-color: var(--primary-dark);
+}
+
+.StatSuiviGlobal_aiActionBtnSecondary {
+    background-color: white;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.StatSuiviGlobal_aiActionBtnSecondary:hover {
+    background-color: #f8f9fa;
+}
+
+/* Cartes de rapport */
+.StatSuiviGlobal_reportCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.StatSuiviGlobal_reportCard {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.StatSuiviGlobal_reportCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.StatSuiviGlobal_reportCardIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.StatSuiviGlobal_reportCardIcon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.StatSuiviGlobal_reportCardContent {
+    flex: 1;
+}
+
+.StatSuiviGlobal_reportCardContent h4 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.StatSuiviGlobal_reportCardContent p {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.StatSuiviGlobal_reportCardActions {
+    display: flex;
+    gap: 10px;
+}
+
+.StatSuiviGlobal_reportBtn {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.StatSuiviGlobal_reportBtn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+/* Adaptations responsives */
+@media (max-width: 768px) {
+    .StatSuiviGlobal_filterBar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .StatSuiviGlobal_activeFilters {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    
+    .StatSuiviGlobal_filterButtons {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .StatSuiviGlobal_customDateFields {
+        flex-direction: column;
+    }
+    
+    .StatSuiviGlobal_dateField {
+        width: 100%;
+    }
+    
+    .StatSuiviGlobal_card {
+        min-width: 100%;
+    }
+    
+    .StatSuiviGlobal_moduleHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .StatSuiviGlobal_moduleControls {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .StatSuiviGlobal_aiRecommendation {
+        flex-direction: column;
+    }
+    
+    .StatSuiviGlobal_aiRecommendationIcon {
+        margin-bottom: 10px;
+    }
+}
+
+</style>
+
+
+<!-- head -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+
+<resumejs>
+  ## Récapitulatif des technologies à utiliser pour le JavaScript
+
+Pour la prochaine étape (implémentation JavaScript), voici les technologies et fonctionnalités que nous utiliserons:
+
+1. **Chart.js**: Pour tous les graphiques (barres, lignes, circulaires) - déjà inclus
+2. **Moment.js**: Pour la gestion des dates et périodes - déjà inclus
+3. **Fonctionnalités à implémenter**:
+   - Système de filtres dynamique avec états multiples
+   - Génération de graphiques interactifs
+   - Système de recommandations basé sur l'analyse des données
+   - Prévisions et estimations basées sur des tendances historiques
+   - Exportation de rapports en PDF
+   - Tri et classement des produits selon divers critères
+   - Interface interactive pour toutes les vues et tableaux
+
+La prochaine étape consistera à implémenter toutes ces fonctionnalités en JavaScript, en simulant les données pour le moment, mais avec une structure prête à être connectée à une base de données à l'avenir.
+</resumejs>
+
