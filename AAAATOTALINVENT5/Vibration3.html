@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Supermarché</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        
+        .scan-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s, box-shadow 0.1s;
+            outline: none;
+        }
+        
+        .scan-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scan-button:hover {
+            background-color: #45a049;
+        }
+        
+        .status {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <button class="scan-button" id="scanButton">Scanner</button>
+    <div class="status" id="status"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Création du contexte audio
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioContext = new AudioContext();
+            
+            // Fonction pour générer un son de beep de scanner de supermarché
+            function createScannerSound() {
+                // Durée très courte pour un beep net
+                const duration = 0.07;
+                
+                // Oscillateur principal pour le beep
+                const oscillator = audioContext.createOscillator();
+                
+                // Gain pour contrôler le volume et l'enveloppe du son
+                const gainNode = audioContext.createGain();
+                
+                // Filtre pour affiner le son
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 2500;
+                filter.Q.value = 10;
+                
+                // Configuration de l'oscillateur
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(2500, audioContext.currentTime);
+                
+                // Enveloppe sonore pour un beep net et court
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.7, audioContext.currentTime + 0.01);
+                gainNode.gain.setValueAtTime(0.7, audioContext.currentTime + duration - 0.01);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
+                
+                // Connexion des nœuds audio
+                oscillator.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Démarrage et arrêt de l'oscillateur
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + duration + 0.01);
+            }
+            
+            // Fonction pour faire vibrer l'appareil
+            function vibrate() {
+                // Motif de vibration pour une confirmation positive:
+                // vibration courte, pause, vibration légèrement plus longue
+                if (navigator.vibrate) {
+                    // Le pattern [40, 30, 70] signifie:
+                    // - vibrer 40ms
+                    // - pause 30ms
+                    // - vibrer 70ms
+                    navigator.vibrate([40, 30, 70]);
+                    return true;
+                }
+                return false;
+            }
+            
+            // Configuration du bouton
+            const scanButton = document.getElementById('scanButton');
+            const statusElement = document.getElementById('status');
+            
+            scanButton.addEventListener('click', function() {
+                // Démarrer le contexte audio s'il est suspendu (politique d'autoplay)
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Jouer le son
+                createScannerSound();
+                
+                // Essayer de faire vibrer
+                const vibrationSupported = vibrate();
+                
+                // Afficher l'état des fonctionnalités
+                if (!vibrationSupported) {
+                    statusElement.textContent = "Vibration non supportée sur cet appareil";
+                    setTimeout(() => {
+                        statusElement.textContent = "";
+                    }, 2000);
+                } else {
+                    statusElement.textContent = "Produit scanné avec succès";
+                    setTimeout(() => {
+                        statusElement.textContent = "";
+                    }, 2000);
+                }
+                
+                // Animation visuelle pour confirmer l'action
+                scanButton.style.backgroundColor = '#2E7D32';
+                setTimeout(() => {
+                    scanButton.style.backgroundColor = '#4CAF50';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
