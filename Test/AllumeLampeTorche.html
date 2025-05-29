@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrôle de la Lampe Torche</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #121212;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+        }
+        
+        #torchButton {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 20px 0;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        #torchButton.on {
+            background-color: #f44336;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+        
+        #status {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        
+        .torch-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .not-supported {
+            color: #f44336;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contrôle de la Lampe Torche</h1>
+    
+    <button id="torchButton">
+        <div class="torch-icon">💡</div>
+        <span id="buttonText">ALLUMER</span>
+    </button>
+    
+    <div id="status">Prêt à utiliser</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const torchButton = document.getElementById('torchButton');
+            const buttonText = document.getElementById('buttonText');
+            const statusElement = document.getElementById('status');
+            
+            let track = null;
+            let torchOn = false;
+            
+            // Vérifier si l'API est supportée
+            if (!('mediaDevices' in navigator) || !('getUserMedia' in navigator.mediaDevices)) {
+                statusElement.innerHTML = '<div class="not-supported">Votre appareil ou navigateur ne supporte pas l\'accès à la lampe torche.</div>';
+                torchButton.disabled = true;
+                return;
+            }
+            
+            torchButton.addEventListener('click', async () => {
+                try {
+                    if (!track) {
+                        // Demander l'accès à la caméra
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment' }
+                        });
+                        
+                        track = stream.getVideoTracks()[0];
+                        
+                        // Vérifier si la fonction torch est disponible
+                        const capabilities = track.getCapabilities();
+                        if (!('torch' in capabilities)) {
+                            statusElement.innerHTML = '<div class="not-supported">Votre appareil ne prend pas en charge le contrôle de la lampe torche.</div>';
+                            torchButton.disabled = true;
+                            return;
+                        }
+                        
+                        statusElement.textContent = 'Accès à la caméra accordé';
+                    }
+                    
+                    // Inverser l'état de la lampe torche
+                    torchOn = !torchOn;
+                    
+                    // Appliquer le changement
+                    await track.applyConstraints({
+                        advanced: [{ torch: torchOn }]
+                    });
+                    
+                    // Mettre à jour l'interface
+                    if (torchOn) {
+                        torchButton.classList.add('on');
+                        buttonText.textContent = 'ÉTEINDRE';
+                        statusElement.textContent = 'Lampe torche allumée';
+                    } else {
+                        torchButton.classList.remove('on');
+                        buttonText.textContent = 'ALLUMER';
+                        statusElement.textContent = 'Lampe torche éteinte';
+                    }
+                    
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    statusElement.innerHTML = `<div class="not-supported">Erreur: ${error.message}</div>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
