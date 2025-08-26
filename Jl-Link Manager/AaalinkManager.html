@@ -955,6 +955,113 @@
     border-radius: 4px;
     object-fit: cover;
 }
+.modern-pc-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));
+    transform: perspective(100px) rotateX(10deg) rotateY(-10deg);
+    transition: transform 0.3s ease;
+}
+
+.sidebar-item:hover .modern-pc-icon {
+    transform: perspective(100px) rotateX(5deg) rotateY(-5deg) scale(1.1);
+}
+
+    
+    
+    
+    /* Styles pour le header et la navigation */
+.desktop-header-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.header-btn {
+    background-color: rgba(255,255,255,0.05);
+    border: none;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.header-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+.explore-btn {
+    background-color: rgba(88, 101, 242, 0.2);
+}
+
+.explore-btn:hover {
+    background-color: rgba(88, 101, 242, 0.3);
+}
+
+.export-btn {
+    background-color: rgba(114, 137, 218, 0.2);
+}
+
+.export-btn:hover {
+    background-color: rgba(114, 137, 218, 0.3);
+}
+
+.nav-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.nav-btn {
+    background-color: transparent;
+    border: none;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.nav-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.nav-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    background-color: rgba(0,0,0,0.15);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Modification de la section desktop-content pour ajuster le padding */
+.desktop-content {
+    grid-area: content;
+    padding: 20px;
+    overflow-y: auto;
+    margin-top: 0; /* Supprimer la marge puisque le path est maintenant dans le header */
+}
 
     </style>
 </head>
@@ -1343,18 +1450,52 @@
     <!-- Desktop View -->
     <div class="desktop-view">
  <div class="desktop-header">
-    <div class="desktop-header-top">
-        <div class="logo">
-            <i class="fas fa-link"></i>
-            JL-Link Manager
-        </div>
-        
-        <div class="search-container desktop-search">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search links and folders...">
-
-        </div>
+<div class="desktop-header-top">
+    <div class="logo">
+        <i class="fas fa-link"></i>
+        JL-Link Manager
     </div>
+    
+    <div class="search-container desktop-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search links and folders...">
+    </div>
+    
+    <div class="header-actions">
+        <button class="header-btn explore-btn">
+            <i class="fas fa-compass"></i>
+            <span>Explorer</span>
+        </button>
+        <button class="header-btn export-btn">
+            <i class="fas fa-download"></i>
+            <span>Exporter</span>
+        </button>
+    </div>
+</div>
+<div class="desktop-header-nav">
+    <div class="nav-controls">
+        <button class="nav-btn">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <button class="nav-btn">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+        <button class="nav-btn">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button class="nav-btn">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    
+    <div class="nav-breadcrumb">
+        <i class="fas fa-home"></i>
+        <span class="path-item">Storage</span>
+        <span class="separator">/</span>
+        <span class="path-item">Desktop</span>
+    </div>
+</div>
+
     
     <div class="action-buttons">
         <button class="action-btn" id="desktop-create-btn">
@@ -1527,7 +1668,23 @@
         Folders
     </div>
     <div class="sidebar-item">
-        <i class="fas fa-folder"></i>
+        <div class="modern-pc-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4H4C2.89543 4 2 4.89543 2 6V15C2 16.1046 2.89543 17 4 17H20C21.1046 17 22 16.1046 22 15V6C22 4.89543 21.1046 4 20 4Z" fill="url(#pc-gradient-1)"/>
+                <path d="M8 20H16M12 17V20" stroke="#5865f2" stroke-width="2" stroke-linecap="round"/>
+                <rect x="4" y="6" width="16" height="9" rx="1" fill="url(#pc-gradient-2)"/>
+                <defs>
+                    <linearGradient id="pc-gradient-1" x1="2" y1="4" x2="22" y2="17" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#5865f2"/>
+                        <stop offset="1" stop-color="#7289da"/>
+                    </linearGradient>
+                    <linearGradient id="pc-gradient-2" x1="4" y1="6" x2="20" y2="15" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#1e1e2e"/>
+                        <stop offset="1" stop-color="#2a2a3a"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
         <span>This PC</span>
     </div>
     <div class="folder-tree">
@@ -1564,6 +1721,7 @@
     </div>
 </div>
 
+
             
             <div class="user-section">
                 <div class="user-avatar">JD</div>
@@ -1576,26 +1734,7 @@
         </div>
         
         <div class="desktop-content">
-            <div class="desktop-path">
-                <button class="desktop-path-btn">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <button class="desktop-path-btn">
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <button class="desktop-path-btn">
-                    <i class="fas fa-arrow-up"></i>
-                </button>
-                <div class="desktop-path-breadcrumb">
-                    <i class="fas fa-home"></i>
-                    <span class="path-item">Storage</span>
-                    <span class="separator">/</span>
-                    <span class="path-item">Desktop</span>
-                </div>
-                <button class="desktop-path-btn">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
-            </div>
+ 
             
             <div class="grid-container desktop-grid">
                 <div class="folder-item" data-name="Work">
