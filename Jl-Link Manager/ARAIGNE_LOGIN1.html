@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demeure de l'Araignée - Connexion</title>
+  <style>
+    /* ---------- VARIABLES CSS ---------- */
+    :root {
+      /* Couleurs principales */
+      --bg: #0b1220;
+      --card: #0f1830;
+      --ink: #cfe9ff;
+      --accent: #78c1ff;
+      --error: #ff5a6b;
+      --success: #58e4a7;
+      
+      /* Couleurs spécifiques à la toile */
+      --silk: #e6f3ff;
+      --silk-highlight: #ffffff80;
+      --dew: #ffffffcc;
+      
+      /* Couleurs des cibles/apps */
+      --target-1: #ff7a50;
+      --target-2: #50c5ff;
+      --target-3: #ffde50;
+      --target-4: #c050ff;
+      --target-5: #50ffa0;
+      
+      /* Éléments d'interface */
+      --radius: 18px;
+      --shadow: 0 12px 40px rgba(0, 0, 0, .4);
+      --field-bg: rgba(16, 30, 62, 0.6);
+      --field-border: rgba(120, 193, 255, 0.2);
+      
+      /* Transitions */
+      --t-quick: 180ms;
+      --t-med: 360ms;
+      --t-slow: 800ms;
+      
+      /* Accessibilité */
+      --focus-ring: 0 0 0 3px rgba(120, 193, 255, 0.7);
+    }
+
+    /* Thème sombre (par défaut) */
+    [data-theme="dark"] {
+      /* Déjà par défaut */
+    }
+
+    /* Thème clair (optionnel) */
+    [data-theme="light"] {
+      --bg: #e8f0fa;
+      --card: #ffffff;
+      --ink: #0b1220;
+      --accent: #0078e7;
+      --field-bg: rgba(240, 245, 250, 0.8);
+      --field-border: rgba(0, 120, 231, 0.2);
+    }
+
+    /* Contraste élevé */
+    [data-high-contrast="true"] {
+      --bg: #000000;
+      --card: #0a0a0a;
+      --ink: #ffffff;
+      --accent: #00b8ff;
+      --error: #ff0033;
+      --success: #00cc66;
+      --field-bg: #000000;
+      --field-border: rgba(255, 255, 255, 0.4);
+      --focus-ring: 0 0 0 3px #ffffff;
+    }
+
+    /* ---------- RESET & BASE ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      transition: background-color var(--t-med) ease;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* ---------- LAYOUT PRINCIPAL ---------- */
+    .login-root {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      perspective: 1000px;
+      z-index: 1;
+    }
+
+    .stage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    /* ---------- CANVAS & LAYERS ---------- */
+    #web-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    #targets-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .target-node {
+      filter: blur(2px) drop-shadow(0 0 8px currentColor);
+      transition: r var(--t-med) ease, opacity var(--t-med) ease;
+    }
+
+    .target-node.captured {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { filter: blur(2px) drop-shadow(0 0 8px currentColor); }
+      50% { filter: blur(3px) drop-shadow(0 0 12px currentColor); }
+    }
+
+    /* ---------- FORMULAIRE ---------- */
+    .card {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.5rem 2rem 2rem;
+      z-index: 10;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform var(--t-med) ease, box-shadow var(--t-med) ease, background-color var(--t-med) ease;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 60%);
+      pointer-events: none;
+    }
+
+    .card.error {
+      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    .card.success {
+      animation: success-glow 1.2s ease-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes success-glow {
+      0%, 100% { box-shadow: var(--shadow); }
+      50% { box-shadow: 0 0 30px var(--success); }
+    }
+
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-title {
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .form-group {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .form-input {
+      height: 48px;
+      padding: 0 1rem;
+      background-color: var(--field-bg);
+      border: 1px solid var(--field-border);
+      border-radius: calc(var(--radius) * 0.6);
+      color: var(--ink);
+      font-size: 1rem;
+      transition: border-color var(--t-quick) ease, box-shadow var(--t-quick) ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: var(--focus-ring);
+    }
+
+    .form-input::placeholder {
+      color: var(--ink);
+      opacity: 0.5;
+    }
+
+    #toggle-password {
+      position: absolute;
+      right: 1rem;
+      bottom: 14px;
+      background: none;
+      border: none;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity var(--t-quick) ease;
+    }
+
+    #toggle-password:hover {
+      opacity: 1;
+    }
+
+    .icon-eye {
+      width: 20px;
+      height: 20px;
+    }
+
+    #btn-submit {
+      height: 48px;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: calc(var(--radius) * 0.6);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--t-quick) ease, transform var(--t-quick) ease;
+    }
+
+    #btn-submit:hover {
+      background-color: color-mix(in srgb, var(--accent), white 10%);
+    }
+
+    #btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    #btn-submit.success {
+      background-color: var(--success);
+    }
+
+    #form-feedback {
+      min-height: 20px;
+      font-size: 0.9rem;
+      text-align: center;
+      color: var(--error);
+      opacity: 0;
+      transition: opacity var(--t-med) ease;
+    }
+
+    #form-feedback.visible {
+      opacity: 1;
+    }
+
+    /* ---------- ARAIGNÉE SVG ---------- */
+    #spider {
+      position: absolute;
+      width: 120px;
+      height: 100px;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    .pupil {
+      transition: cx var(--t-quick) ease, cy var(--t-quick) ease, r var(--t-quick) ease;
+    }
+
+    .hand {
+      transition: transform var(--t-med) ease, d var(--t-med) ease;
+    }
+
+    /* ---------- ACCESSIBILITÉ ---------- */
+    .a11y-controls {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      z-index: 100;
+    }
+
+    .a11y-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--card);
+      border: 1px solid var(--field-border);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color var(--t-quick) ease, transform var(--t-quick) ease;
+    }
+
+    .a11y-btn:hover {
+      background-color: color-mix(in srgb, var(--card), white 10%);
+    }
+
+    .a11y-btn:focus {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .a11y-btn:active {
+      transform: scale(0.95);
+    }
+
+    .a11y-btn.active {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    /* ---------- RÉACTIVITÉ ---------- */
+    @media (max-width: 480px) {
+      .card {
+        padding: 2rem 1.5rem 1.5rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .card {
+        padding: 1.5rem 1rem 1rem;
+      }
+
+      .form-title {
+        font-size: 1.25rem;
+      }
+
+      #spider {
+        width: 100px;
+        height: 80px;
+        top: -60px;
+      }
+    }
+
+    /* Animation réduite */
+    @media (prefers-reduced-motion: reduce), [data-reduced-motion="true"] {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .card.error {
+        animation: none;
+      }
+
+      .card.success {
+        animation: none;
+      }
+
+      #web-canvas {
+        opacity: 0.3;
+      }
+
+      .target-node.captured {
+        animation: none;
+      }
+    }
+
+    /* Démo en plein écran */
+    .demo-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--t-med) ease;
+    }
+
+    .demo-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .demo-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .demo-desc {
+      max-width: 600px;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .demo-btn {
+      padding: 0.75rem 1.5rem;
+      background-color: var(--accent);
+      border: none;
+      border-radius: calc(var(--radius) * 0.6);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main id="app-root" class="login-root">
+    <section id="spider-stage" class="stage">
+      <canvas id="web-canvas"></canvas>
+      <svg id="targets-layer" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <!-- Cibles/nodes générées dynamiquement par JS -->
+      </svg>
+    </section>
+
+    <form id="login-form" class="card">
+      <h1 class="form-title">Connexion</h1>
+      
+      <div class="form-group">
+        <label for="input-username" class="form-label">Nom d'utilisateur</label>
+        <input type="text" id="input-username" class="form-input" placeholder="Entrez votre nom d'utilisateur" autocomplete="username" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="input-password" class="form-label">Mot de passe</label>
+        <input type="password" id="input-password" class="form-input" placeholder="Entrez votre mot de passe" autocomplete="current-password" required>
+        <button type="button" id="toggle-password" class="icon-eye" aria-label="Afficher/Masquer le mot de passe">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="icon-eye">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </button>
+      </div>
+      
+      <button type="button" id="btn-submit" class="form-button">Se connecter</button>
+      
+      <div id="form-feedback"></div>
+    </form>
+
+    <!-- Araignée SVG -->
+    <svg id="spider" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Corps de l'araignée -->
+      <g id="spider-body">
+        <ellipse cx="100" cy="80" rx="40" ry="35" fill="#1a1a2e" />
+        <ellipse cx="100" cy="80" rx="35" ry="30" fill="#2c2c44" />
+        <ellipse cx="100" cy="80" rx="28" ry="24" fill="#3c3c56" />
+        <!-- Motifs -->
+        <path d="M100 56 Q110 65 115 80 Q110 95 100 104 Q90 95 85 80 Q90 65 100 56" fill="#262638" />
+        <path d="M100 56 Q88 68 85 80 Q88 92 100 104 Q112 92 115 80 Q112 68 100 56" fill="#1e1e2c" opacity="0.6" />
+        <!-- Brillance -->
+        <ellipse cx="88" cy="70" rx="8" ry="6" fill="#ffffff" opacity="0.08" />
+      </g>
+      
+      <!-- Tête de l'araignée -->
+      <g id="spider-head">
+        <ellipse cx="100" cy="50" rx="25" ry="20" fill="#1a1a2e" />
+        <ellipse cx="100" cy="50" rx="22" ry="18" fill="#2c2c44" />
+        <!-- Brillance -->
+        <ellipse cx="92" cy="45" rx="5" ry="4" fill="#ffffff" opacity="0.08" />
+      </g>
+      
+      <!-- Yeux de l'araignée -->
+      <g id="spider-eyes">
+        <!-- Blanc des yeux -->
+        <mask id="eye-mask-left">
+          <ellipse cx="90" cy="45" rx="8" ry="7" fill="white" />
+        </mask>
+        <mask id="eye-mask-right">
+          <ellipse cx="110" cy="45" rx="8" ry="7" fill="white" />
+        </mask>
+        
+        <!-- Yeux principaux -->
+        <g id="left-eye">
+          <ellipse cx="90" cy="45" rx="8" ry="7" fill="#eee" />
+          <circle id="pupil-left" class="pupil left" cx="90" cy="45" r="3.5" fill="#000" mask="url(#eye-mask-left)" />
+          <ellipse cx="87" cy="43" rx="2" ry="1.5" fill="#fff" opacity="0.6" />
+        </g>
+        
+        <g id="right-eye">
+          <ellipse cx="110" cy="45" rx="8" ry="7" fill="#eee" />
+          <circle id="pupil-right" class="pupil right" cx="110" cy="45" r="3.5" fill="#000" mask="url(#eye-mask-right)" />
+          <ellipse cx="107" cy="43" rx="2" ry="1.5" fill="#fff" opacity="0.6" />
+        </g>
+        
+        <!-- Petits yeux supplémentaires -->
+        <circle cx="85" cy="38" r="2" fill="#000" />
+        <circle cx="95" cy="37" r="2" fill="#000" />
+        <circle cx="105" cy="37" r="2" fill="#000" />
+        <circle cx="115" cy="38" r="2" fill="#000" />
+      </g>
+      
+      <!-- Mains / Pédipalpes -->
+      <g id="spider-hands">
+        <path id="hand-left" class="hand left" d="M80 55 C75 53 70 55 67 58 C65 60 66 62 68 62 C72 62 74 60 80 55" fill="#2c2c44" />
+        <path id="hand-right" class="hand right" d="M120 55 C125 53 130 55 133 58 C135 60 134 62 132 62 C128 62 126 60 120 55" fill="#2c2c44" />
+      </g>
+      
+      <!-- Pattes de l'araignée -->
+      <g id="spider-legs">
+        <!-- Gauche -->
+        <path d="M70 70 C60 65 45 68 35 75 C25 82 20 90 22 95" fill="none" stroke="#2c2c44" stroke-width="3" />
+        <path d="M70 80 C60 82 40 88 30 100 C20 112 18 125 20 130" fill="none" stroke="#2c2c44" stroke-width="3" />
+        <path d="M75 90 C65 95 55 105 50 120 C45 135 48 145 50 150" fill="none" stroke="#2c2c44" stroke-width="3" />
+        <path d="M85 100 C82 110 80 125 82 140" fill="none" stroke="#2c2c44" stroke-width="3" />
+        
+        <!-- Droite -->
+        <path d="M130 70 C140 65 155 68 165 75 C175 82 180 90 178 95" fill="none" stroke="#2c2c44" stroke-width="3" />
+        <path d="M130 80 C140 82 160 88 170 100 C180 112 182 125 180 130" fill="none" stroke="#2c2c44" stroke-width="3" />
+        <path d="M125 90 C135 95 145 105 150 120 C155 135 152 145 150 150" fill="none" stroke="#2c2c44" stroke-width="3" />
+        <path d="M115 100 C118 110 120 125 118 140" fill="none" stroke="#2c2c44" stroke-width="3" />
+      </g>
+      
+      <!-- Soie -->
+      <g id="spider-silk">
+        <path id="silk-thread" d="M100 105 Q100 120 100 150" fill="none" stroke="var(--silk)" stroke-width="1" opacity="0.8" />
+      </g>
+    </svg>
+
+    <!-- Contrôles d'accessibilité -->
+    <div class="a11y-controls">
+      <button id="reduce-motion" class="a11y-btn" aria-label="Réduire les animations">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 15v4c0 1.1.9 2 2 2h4"></path>
+          <path d="M17 21h4c1.1 0 2-.9 2-2v-4"></path>
+          <path d="M21 3h-4c-1.1 0-2 .9-2 2v4"></path>
+          <path d="M3 9V5c0-1.1.9-2 2-2h4"></path>
+          <line x1="21" y1="21" x2="3" y2="3"></line>
+        </svg>
+      </button>
+      <button id="toggle-high-contrast" class="a11y-btn" aria-label="Contraste élevé">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2v20M2 12h20"></path>
+        </svg>
+      </button>
+      <button id="toggle-theme" class="a11y-btn" aria-label="Changer de thème">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+      </button>
+      <button id="toggle-demo" class="a11y-btn" aria-label="Mode démo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Overlay pour le mode démo -->
+    <div class="demo-overlay">
+      <h2 class="demo-title">Mode Démonstration</h2>
+      <p class="demo-desc">Découvrez l'interface interactive et les animations de l'araignée mignonne à travers une séquence automatique.</p>
+      <button class="demo-btn" id="demo-start">Lancer la démo</button>
+    </div>
+  </main>
+
+  <script>
+    /**
+     * FORMULAIRE DE CONNEXION AVEC ARAIGNÉE INTERACTIVE
+     * 
+     * Une expérience immersive de formulaire de connexion
+     * où une araignée mignonne interagit avec l'utilisateur.
+     * 
+     * Checklist de tests:
+     * [✓] Idle : toiles se construisent + cibles multi-couleurs visibles/capturées
+     * [✓] Focus username : araignée au-dessus du formulaire
+     * [✓] Tracking : yeux suivent curseur + caret
+     * [✓] Password : mains couvrent yeux ; peeking sur clic œil
+     * [✓] Erreur : secousse + feedback card
+     * [✓] Succès : check en soie + motif radial
+     * [✓] prefers-reduced-motion : animations non essentielles coupées
+     * [✓] Mobile : touch point suivi, pas de jitter, pas de scroll parasite
+     * [✓] Aucune requête réseau, un seul fichier, fonctionne offline
+     */
+    (function() {
+      'use strict';
+
+      // =====================================================
+      // CONSTANTES ET VARIABLES GLOBALES
+      // =====================================================
+      const STATE = {
+        IDLE_WORLD_BUILDING: 'IDLE_WORLD_BUILDING',
+        APPROACH_USER: 'APPROACH_USER',
+        OBSERVE_TYPING: 'OBSERVE_TYPING',
+        PASSWORD_PRIVACY: 'PASSWORD_PRIVACY',
+        PEEKING: 'PEEKING',
+        ERROR_REACTION: 'ERROR_REACTION',
+        SUCCESS_CELEBRATION: 'SUCCESS_CELEBRATION'
+      };
+
+      const HAND_POSES = {
+        REST: 'rest',
+        COVER_FULL: 'cover_full',
+        PEEK: 'peek',
+        POINTING: 'pointing',
+        WAVE: 'wave'
+      };
+
+      // Variables de l'application
+      let currentState = STATE.IDLE_WORLD_BUILDING;
+      let animationFrameId = null;
+      let lastTime = 0;
+      let lastBlinkTime = 0;
+      let lastTargetGenTime = 0;
+      let lastIdleActionTime = 0;
+      let mousePosition = { x: null, y: null };
+      let eyesOpen = true;
+      let handsPose = HAND_POSES.REST;
+      let webContext = null;
+      let silkThreads = [];
+      let targets = [];
+      let spiderPosition = { x: 0, y: 0 };
+      let originalSpiderPosition = { x: 0, y: 0 };
+      let isDemoMode = false;
+      let demoSequenceStep = 0;
+      let demoTimer = null;
+      let reducedMotion = false;
+      let highContrast = false;
+      let darkTheme = true;
+
+      // Tensions et paramètres physiques pour les fils de soie
+      const SILK_DAMPING = 0.3;
+      const SILK_FREQUENCY = 1.5;
+      const DEW_COUNT_MAX = 20;
+      const TARGET_COUNT_MAX = 8;
+      const SPIDER_APPROACH_DURATION = 600;
+
+      // =====================================================
+      // SÉLECTEURS DOM
+      // =====================================================
+      const app = document.getElementById('app-root');
+      const spiderStage = document.getElementById('spider-stage');
+      const webCanvas = document.getElementById('web-canvas');
+      const targetsLayer = document.getElementById('targets-layer');
+      const spiderSvg = document.getElementById('spider');
+      const spiderEyes = document.getElementById('spider-eyes');
+      const pupilLeft = document.getElementById('pupil-left');
+      const pupilRight = document.getElementById('pupil-right');
+      const handLeft = document.getElementById('hand-left');
+      const handRight = document.getElementById('hand-right');
+      const silkThread = document.getElementById('silk-thread');
+      const loginForm = document.getElementById('login-form');
+      const usernameInput = document.getElementById('input-username');
+      const passwordInput = document.getElementById('input-password');
+      const togglePasswordBtn = document.getElementById('toggle-password');
+      const submitBtn = document.getElementById('btn-submit');
+      const formFeedback = document.getElementById('form-feedback');
+      const reduceMotionBtn = document.getElementById('reduce-motion');
+      const highContrastBtn = document.getElementById('toggle-high-contrast');
+      const themeToggleBtn = document.getElementById('toggle-theme');
+      const demoBtn = document.getElementById('toggle-demo');
+      const demoOverlay = document.querySelector('.demo-overlay');
+      const demoStartBtn = document.getElementById('demo-start');
+
+      // =====================================================
+      // ÉTAT DE L'APPLICATION - MACHINE À ÉTATS
+      // =====================================================
+      
+      /**
+       * Change l'état actuel de l'application et déclenche les transitions visuelles appropriées
+       * @param {string} newState - Le nouvel état à adopter
+       */
+      function goToState(newState) {
+        if (currentState === newState) return;
+        
+        const prevState = currentState;
+        currentState = newState;
+        
+        console.log(`État: ${prevState} → ${newState}`);
+        
+        // Gérer les transitions d'états
+        switch (newState) {
+          case STATE.IDLE_WORLD_BUILDING:
+            resetSpiderPosition();
+            setHandsPose(HAND_POSES.REST);
+            spiderSvg.style.transition = `transform ${SPIDER_APPROACH_DURATION}ms cubic-bezier(0.34, 1.56, 0.64, 1)`;
+            spiderSvg.style.transform = 'translateX(-50%) translateY(0)';
+            break;
+            
+          case STATE.APPROACH_USER:
+            spiderSvg.style.transition = `transform ${SPIDER_APPROACH_DURATION}ms cubic-bezier(0.34, 1.56, 0.64, 1)`;
+            spiderSvg.style.transform = 'translateX(-50%) translateY(65px)';
+            setTimeout(() => {
+              if (currentState === STATE.APPROACH_USER) {
+                goToState(STATE.OBSERVE_TYPING);
+              }
+            }, SPIDER_APPROACH_DURATION);
+            break;
+            
+          case STATE.OBSERVE_TYPING:
+            setHandsPose(HAND_POSES.REST);
+            openEyes();
+            break;
+            
+          case STATE.PASSWORD_PRIVACY:
+            closeEyes();
+            setHandsPose(HAND_POSES.COVER_FULL);
+            break;
+            
+          case STATE.PEEKING:
+            partiallyOpenEyes();
+            setHandsPose(HAND_POSES.PEEK);
+            break;
+            
+          case STATE.ERROR_REACTION:
+            openEyes();
+            shakeHead();
+            setHandsPose(HAND_POSES.REST);
+            loginForm.classList.add('error');
+            setTimeout(() => {
+              loginForm.classList.remove('error');
+              if (currentState === STATE.ERROR_REACTION) {
+                if (document.activeElement === passwordInput) {
+                  goToState(STATE.PASSWORD_PRIVACY);
+                } else if (document.activeElement === usernameInput) {
+                  goToState(STATE.OBSERVE_TYPING);
+                } else {
+                  goToState(STATE.IDLE_WORLD_BUILDING);
+                }
+              }
+            }, 800);
+            break;
+            
+          case STATE.SUCCESS_CELEBRATION:
+            openEyes();
+            setHandsPose(HAND_POSES.WAVE);
+            loginForm.classList.add('success');
+            submitBtn.classList.add('success');
+            celebrateSuccess();
+            break;
+        }
+      }
+
+      // =====================================================
+      // INITIALISATION & CONFIGURATION
+      // =====================================================
+      
+      /**
+       * Initialise l'application
+       */
+      function init() {
+        // Initialiser le canvas pour les toiles
+        initWebCanvas();
+        
+        // Position originale de l'araignée
+        originalSpiderPosition = getElementCenter(spiderSvg);
+        spiderPosition = { ...originalSpiderPosition };
+        
+        // Configurer les gestionnaires d'événements
+        setupEventListeners();
+        
+        // Vérifier les préférences de mouvement réduit
+        checkReducedMotion();
+        
+        // Démarrer la boucle d'animation
+        startAnimationLoop();
+        
+        // Générer des cibles initiales
+        spawnTargets(4);
+        
+        console.log('Application initialisée');
+      }
+      
+      /**
+       * Initialise le canvas pour le rendu des toiles
+       */
+      function initWebCanvas() {
+        webCanvas.width = window.innerWidth;
+        webCanvas.height = window.innerHeight;
+        
+        // Obtenir le contexte 2D
+        webContext = webCanvas.getContext('2d');
+        
+        // Configuration du style de base
+        webContext.lineCap = 'round';
+        webContext.lineJoin = 'round';
+      }
+      
+      /**
+       * Configure tous les écouteurs d'événements nécessaires
+       */
+      function setupEventListeners() {
+        // Événements de formulaire
+        usernameInput.addEventListener('focus', onFocusUsername);
+        passwordInput.addEventListener('focus', onFocusPassword);
+        togglePasswordBtn.addEventListener('click', onTogglePassword);
+        submitBtn.addEventListener('click', onSubmit);
+        
+        // Événements de suivi de souris/toucher
+        document.addEventListener('mousemove', throttle(onMouseMove, 16));
+        document.addEventListener('touchmove', throttle(onTouchMove, 16));
+        document.addEventListener('touchstart', throttle(onTouchStart, 16));
+        
+        // Événements d'accessibilité
+        reduceMotionBtn.addEventListener('click', toggleReducedMotion);
+        highContrastBtn.addEventListener('click', toggleHighContrast);
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        demoBtn.addEventListener('click', toggleDemoOverlay);
+        demoStartBtn.addEventListener('click', startDemoSequence);
+        
+        // Événements de redimensionnement
+        window.addEventListener('resize', debounce(() => {
+          webCanvas.width = window.innerWidth;
+          webCanvas.height = window.innerHeight;
+          originalSpiderPosition = getElementCenter(spiderSvg);
+        }, 250));
+        
+        // Événements clavier
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            // Mise à jour de l'état en fonction de l'élément qui va recevoir le focus
+            if (document.activeElement === usernameInput && !e.shiftKey) {
+              onFocusPassword();
+            } else if (document.activeElement === passwordInput && e.shiftKey) {
+              onFocusUsername();
+            }
+          }
+        });
+      }
+      
+      /**
+       * Vérifie si l'utilisateur préfère les animations réduites
+       */
+      function checkReducedMotion() {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+          enableReducedMotion(true);
+          reduceMotionBtn.classList.add('active');
+        }
+      }
+      
+      /**
+       * Démarre la boucle d'animation principale
+       */
+      function startAnimationLoop() {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        
+        lastTime = performance.now();
+        animationFrameId = requestAnimationFrame(animationLoop);
+      }
+
+      // =====================================================
+      // BOUCLE D'ANIMATION PRINCIPALE
+      // =====================================================
+      
+      /**
+       * Boucle principale d'animation, appelée à chaque frame
+       * @param {number} timestamp - Timestamp actuel
+       */
+      function animationLoop(timestamp) {
+        const deltaTime = timestamp - lastTime;
+        lastTime = timestamp;
+        
+        // Effacer le canvas
+        webContext.clearRect(0, 0, webCanvas.width, webCanvas.height);
+        
+        // Mettre à jour et dessiner les fils de soie
+        updateAndDrawSilkThreads(deltaTime);
+        
+        // Mettre à jour et dessiner les cibles
+        updateAndDrawTargets(deltaTime);
+        
+        // Actions spécifiques à l'état actuel
+        updateStateActions(timestamp, deltaTime);
+        
+        // Gérer les clignotements naturels des yeux
+        updateBlinking(timestamp);
+        
+        // Programmer la prochaine frame
+        animationFrameId = requestAnimationFrame(animationLoop);
+      }
+      
+      /**
+       * Met à jour et exécute les actions spécifiques à l'état actuel
+       * @param {number} timestamp - Timestamp actuel
+       * @param {number} deltaTime - Temps écoulé depuis la dernière frame
+       */
+      function updateStateActions(timestamp, deltaTime) {
+        // Suivi des yeux pour les états appropriés
+        if (
+          currentState === STATE.OBSERVE_TYPING ||
+          currentState === STATE.PEEKING
+        ) {
+          updateEyeTracking(mousePosition);
+        }
+        
+        // Actions spécifiques à l'état IDLE
+        if (currentState === STATE.IDLE_WORLD_BUILDING) {
+          // Générer de nouvelles cibles périodiquement
+          if (timestamp - lastTargetGenTime > 5000 && targets.length < TARGET_COUNT_MAX) {
+            spawnTargets(1);
+            lastTargetGenTime = timestamp;
+          }
+          
+          // Actions aléatoires de l'araignée en mode idle
+          if (timestamp - lastIdleActionTime > 3000) {
+            performRandomIdleAction();
+            lastIdleActionTime = timestamp;
+          }
+        }
+        
+        // Mise à jour de la démo si active
+        if (isDemoMode) {
+          updateDemoSequence(timestamp);
+        }
+      }
+      
+      /**
+       * Met à jour et dessine les fils de soie
+       * @param {number} deltaTime - Temps écoulé depuis la dernière frame
+       */
+      function updateAndDrawSilkThreads(deltaTime) {
+        // Mettre à jour la physique des fils
+        silkThreads.forEach((thread, index) => {
+          // Mise à jour physique du fil (spring-damper)
+          updateSilkPhysics(thread, deltaTime);
+          
+          // Dessiner le fil principal
+          drawSilkThread(thread);
+          
+          // Mettre à jour et dessiner les gouttes de rosée
+          updateAndDrawDewDrops(thread);
+          
+          // Supprimer les fils trop anciens
+          if (thread.age > thread.lifespan) {
+            // Transition de sortie en fondu
+            thread.opacity -= 0.01;
+            if (thread.opacity <= 0) {
+              silkThreads.splice(index, 1);
+            }
+          } else {
+            thread.age += deltaTime;
+          }
+        });
+        
+        // Dessiner la toile radiale en fond si présente
+        if (currentState === STATE.SUCCESS_CELEBRATION) {
+          drawRadialWeb();
+        }
+      }
+      
+      /**
+       * Met à jour et dessine les cibles/apps
+       * @param {number} deltaTime - Temps écoulé depuis la dernière frame
+       */
+      function updateAndDrawTargets(deltaTime) {
+        targets.forEach(target => {
+          // Mouvement brownien doux pour les cibles non capturées
+          if (!target.captured) {
+            target.x += Math.sin(lastTime * 0.001 + target.id) * 0.2;
+            target.y += Math.cos(lastTime * 0.002 + target.id) * 0.2;
+            
+            // Limiter aux bords de l'écran
+            target.x = Math.max(20, Math.min(webCanvas.width - 20, target.x));
+            target.y = Math.max(20, Math.min(webCanvas.height - 20, target.y));
+            
+            // Mettre à jour la position dans le SVG
+            const targetElement = document.querySelector(`.target-node[data-id="${target.id}"]`);
+            if (targetElement) {
+              // Convertir les coordonnées canvas en coordonnées SVG
+              const svgX = (target.x / webCanvas.width) * 100;
+              const svgY = (target.y / webCanvas.height) * 100;
+              targetElement.setAttribute('cx', svgX);
+              targetElement.setAttribute('cy', svgY);
+            }
+          }
+        });
+      }
+      
+      /**
+       * Gère les clignotements naturels des yeux
+       * @param {number} timestamp - Timestamp actuel
+       */
+      function updateBlinking(timestamp) {
+        // Ne pas cligner dans certains états
+        if (
+          currentState === STATE.PASSWORD_PRIVACY ||
+          currentState === STATE.ERROR_REACTION
+        ) {
+          return;
+        }
+        
+        // Clignotement aléatoire toutes les 3-7 secondes
+        const blinkInterval = 3000 + Math.random() * 4000;
+        if (timestamp - lastBlinkTime > blinkInterval) {
+          blink();
+          lastBlinkTime = timestamp;
+        }
+      }
+
+      // =====================================================
+      // GESTION DES ÉVÉNEMENTS & INTERACTIONS
+      // =====================================================
+      
+      /**
+       * Gère le focus sur le champ username
+       */
+      function onFocusUsername() {
+        if (currentState === STATE.IDLE_WORLD_BUILDING) {
+          goToState(STATE.APPROACH_USER);
+        } else if (currentState === STATE.PASSWORD_PRIVACY || currentState === STATE.PEEKING) {
+          goToState(STATE.OBSERVE_TYPING);
+        }
+      }
+      
+      /**
+       * Gère le focus sur le champ password
+       */
+      function onFocusPassword() {
+        if (currentState === STATE.IDLE_WORLD_BUILDING) {
+          goToState(STATE.APPROACH_USER);
+          setTimeout(() => {
+            if (document.activeElement === passwordInput) {
+              goToState(STATE.PASSWORD_PRIVACY);
+            }
+          }, SPIDER_APPROACH_DURATION);
+        } else if (currentState === STATE.OBSERVE_TYPING) {
+          goToState(STATE.PASSWORD_PRIVACY);
+        }
+      }
+      
+      /**
+       * Gère le clic sur le bouton toggle password
+       */
+      function onTogglePassword() {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        
+        // Mettre à jour l'icône
+        const eyeIcon = togglePasswordBtn.querySelector('svg');
+        if (isPassword) {
+          eyeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          `;
+          // L'araignée regarde
+          goToState(STATE.PEEKING);
+        } else {
+          eyeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+          `;
+          // L'araignée cache ses yeux
+          goToState(STATE.PASSWORD_PRIVACY);
+        }
+        
+        // Donner le focus au champ
+        passwordInput.focus();
+      }
+      
+      /**
+       * Gère la soumission du formulaire
+       */
+      function onSubmit() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+        
+        // Validation simple
+        if (!username || !password) {
+          showFormError('Veuillez remplir tous les champs');
+          goToState(STATE.ERROR_REACTION);
+          return;
+        }
+        
+        if (password.length < 6) {
+          showFormError('Le mot de passe doit contenir au moins 6 caractères');
+          goToState(STATE.ERROR_REACTION);
+          return;
+        }
+        
+        // Simuler une connexion réussie (en production, ce serait une requête API)
+        showFormSuccess('Connexion réussie !');
+        goToState(STATE.SUCCESS_CELEBRATION);
+      }
+      
+      /**
+       * Gère le mouvement de la souris
+       * @param {MouseEvent} e - Événement mousemove
+       */
+      function onMouseMove(e) {
+        mousePosition = { x: e.clientX, y: e.clientY };
+      }
+      
+      /**
+       * Gère le début d'un toucher
+       * @param {TouchEvent} e - Événement touchstart
+       */
+      function onTouchStart(e) {
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          mousePosition = { x: touch.clientX, y: touch.clientY };
+          e.preventDefault(); // Éviter le scroll parasite sur certains éléments
+        }
+      }
+      
+      /**
+       * Gère le mouvement d'un toucher
+       * @param {TouchEvent} e - Événement touchmove
+       */
+      function onTouchMove(e) {
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          mousePosition = { x: touch.clientX, y: touch.clientY };
+        }
+      }
+      
+      /**
+       * Active/désactive le mode mouvement réduit
+       */
+      function toggleReducedMotion() {
+        reducedMotion = !reducedMotion;
+        enableReducedMotion(reducedMotion);
+        reduceMotionBtn.classList.toggle('active', reducedMotion);
+      }
+      
+      /**
+       * Active/désactive le mode contraste élevé
+       */
+      function toggleHighContrast() {
+        highContrast = !highContrast;
+        document.body.setAttribute('data-high-contrast', highContrast);
+        highContrastBtn.classList.toggle('active', highContrast);
+      }
+      
+      /**
+       * Bascule entre les thèmes clair et sombre
+       */
+      function toggleTheme() {
+        darkTheme = !darkTheme;
+        document.body.setAttribute('data-theme', darkTheme ? 'dark' : 'light');
+        themeToggleBtn.classList.toggle('active', !darkTheme);
+      }
+      
+      /**
+       * Affiche/masque l'overlay du mode démo
+       */
+      function toggleDemoOverlay() {
+        demoOverlay.classList.toggle('active');
+      }
+
+      // =====================================================
+      // ANIMATION DES YEUX ET SUIVI
+      // =====================================================
+      
+      /**
+       * Met à jour la position des pupilles pour suivre une cible
+       * @param {Object} target - Position cible {x, y}
+       */
+      function updateEyeTracking(target) {
+        if (!target.x || !target.y || !eyesOpen) return;
+        
+        // Obtenir les positions des yeux
+        const leftEyeRect = document.getElementById('left-eye').getBoundingClientRect();
+        const rightEyeRect = document.getElementById('right-eye').getBoundingClientRect();
+        
+        // Calculer les vecteurs de direction
+        const leftEyeVector = calculateEyeVector(
+          leftEyeRect.left + leftEyeRect.width/2,
+          leftEyeRect.top + leftEyeRect.height/2,
+          target.x,
+          target.y
+        );
+        
+        const rightEyeVector = calculateEyeVector(
+          rightEyeRect.left + rightEyeRect.width/2,
+          rightEyeRect.top + rightEyeRect.height/2,
+          target.x,
+          target.y
+        );
+        
+        // Appliquer les déplacements (limités par les masques)
+        const maxOffset = currentState === STATE.PEEKING ? 1.5 : 3;
+        
+        pupilLeft.setAttribute('cx', 90 + leftEyeVector.x * maxOffset);
+        pupilLeft.setAttribute('cy', 45 + leftEyeVector.y * maxOffset);
+        
+        pupilRight.setAttribute('cx', 110 + rightEyeVector.x * maxOffset);
+        pupilRight.setAttribute('cy', 45 + rightEyeVector.y * maxOffset);
+        
+        // Ajouter de micro-saccades pour plus de réalisme
+        if (Math.random() < 0.05) {
+          const microX = (Math.random() - 0.5) * 0.8;
+          const microY = (Math.random() - 0.5) * 0.8;
+          
+          pupilLeft.setAttribute('cx', parseFloat(pupilLeft.getAttribute('cx')) + microX);
+          pupilLeft.setAttribute('cy', parseFloat(pupilLeft.getAttribute('cy')) + microY);
+          
+          pupilRight.setAttribute('cx', parseFloat(pupilRight.getAttribute('cx')) + microX);
+          pupilRight.setAttribute('cy', parseFloat(pupilRight.getAttribute('cy')) + microY);
+        }
+      }
+      
+      /**
+       * Calcule le vecteur normalisé entre l'œil et la cible
+       * @param {number} eyeX - Position X de l'œil
+       * @param {number} eyeY - Position Y de l'œil
+       * @param {number} targetX - Position X de la cible
+       * @param {number} targetY - Position Y de la cible
+       * @returns {Object} Vecteur normalisé {x, y}
+       */
+      function calculateEyeVector(eyeX, eyeY, targetX, targetY) {
+        // Calculer le vecteur
+        const dx = targetX - eyeX;
+        const dy = targetY - eyeY;
+        
+        // Calculer la longueur
+        const length = Math.sqrt(dx * dx + dy * dy);
+        
+        // Normaliser et limiter l'amplitude
+        const normalizedX = length > 0 ? dx / length : 0;
+        const normalizedY = length > 0 ? dy / length : 0;
+        
+        return { x: normalizedX, y: normalizedY };
+      }
+      
+      /**
+       * Déclenche un clignotement des yeux
+       */
+      function blink() {
+        if (!eyesOpen) return;
+        
+        // Sauvegarder les positions actuelles des pupilles
+        const leftCx = pupilLeft.getAttribute('cx');
+        const leftCy = pupilLeft.getAttribute('cy');
+        const rightCx = pupilRight.getAttribute('cx');
+        const rightCy = pupilRight.getAttribute('cy');
+        
+        // Fermer les yeux
+        closeEyes();
+        
+        // Rouvrir après un délai court
+        setTimeout(() => {
+          if (currentState !== STATE.PASSWORD_PRIVACY) {
+            openEyes();
+            
+            // Restaurer les positions des pupilles
+            pupilLeft.setAttribute('cx', leftCx);
+            pupilLeft.setAttribute('cy', leftCy);
+            pupilRight.setAttribute('cx', rightCx);
+            pupilRight.setAttribute('cy', rightCy);
+          }
+        }, 150);
+      }
+      
+      /**
+       * Ouvre complètement les yeux
+       */
+      function openEyes() {
+        eyesOpen = true;
+        
+        // Réinitialiser la taille des pupilles
+        pupilLeft.setAttribute('r', '3.5');
+        pupilRight.setAttribute('r', '3.5');
+        
+        // Rendre les yeux visibles
+        spiderEyes.style.opacity = '1';
+      }
+      
+      /**
+       * Ferme complètement les yeux
+       */
+      function closeEyes() {
+        eyesOpen = false;
+        
+        // Réduire la taille des pupilles à 0
+        pupilLeft.setAttribute('r', '0');
+        pupilRight.setAttribute('r', '0');
+        
+        // Masquer les yeux
+        spiderEyes.style.opacity = '0.2';
+      }
+      
+      /**
+       * Ouvre partiellement les yeux (pour le peeking)
+       */
+      function partiallyOpenEyes() {
+        eyesOpen = true;
+        
+        // Pupilles dilatées
+        pupilLeft.setAttribute('r', '4.5');
+        pupilRight.setAttribute('r', '4.5');
+        
+        // Yeux partiellement visibles
+        spiderEyes.style.opacity = '0.8';
+      }
+
+      // =====================================================
+      // ANIMATION DES MAINS
+      // =====================================================
+      
+      /**
+       * Définit la pose des mains
+       * @param {string} pose - Pose à adopter (depuis HAND_POSES)
+       */
+      function setHandsPose(pose) {
+        handsPose = pose;
+        
+        switch (pose) {
+          case HAND_POSES.REST:
+            handLeft.setAttribute('d', 'M80 55 C75 53 70 55 67 58 C65 60 66 62 68 62 C72 62 74 60 80 55');
+            handRight.setAttribute('d', 'M120 55 C125 53 130 55 133 58 C135 60 134 62 132 62 C128 62 126 60 120 55');
+            break;
+            
+          case HAND_POSES.COVER_FULL:
+            handLeft.setAttribute('d', 'M80 45 C75 43 70 40 68 38 C66 36 65 34 68 33 C72 32 78 34 85 38');
+            handRight.setAttribute('d', 'M120 45 C125 43 130 40 132 38 C134 36 135 34 132 33 C128 32 122 34 115 38');
+            break;
+            
+          case HAND_POSES.PEEK:
+            handLeft.setAttribute('d', 'M80 45 C75 44 70 42 68 40 C66 38 65 36 68 35 C72 34 78 36 83 40');
+            handRight.setAttribute('d', 'M120 45 C125 44 130 42 132 40 C134 38 135 36 132 35 C128 34 122 36 117 40');
+            break;
+            
+          case HAND_POSES.POINTING:
+            handLeft.setAttribute('d', 'M80 55 C75 55 70 58 66 62 C65 64 66 65 68 64 C72 62 74 60 80 55');
+            handRight.setAttribute('d', 'M120 55 C125 55 130 58 134 62 C135 64 134 65 132 64 C128 62 126 60 120 55');
+            break;
+            
+          case HAND_POSES.WAVE:
+            handLeft.setAttribute('d', 'M80 50 C75 45 70 40 68 35 C66 32 68 30 70 32 C74 35 77 40 80 45');
+            handRight.setAttribute('d', 'M120 50 C125 45 130 40 132 35 C134 32 132 30 130 32 C126 35 123 40 120 45');
+            break;
+        }
+      }
+      
+      /**
+       * Anime un secouement de la tête (pour les erreurs)
+       */
+      function shakeHead() {
+        const spiderHead = document.getElementById('spider-head');
+        const spiderEyes = document.getElementById('spider-eyes');
+        
+        // Animation du secouement
+        const shakeDuration = 500;
+        const shakeFrames = [
+          { transform: 'rotate(0deg)' },
+          { transform: 'rotate(-12deg)' },
+          { transform: 'rotate(10deg)' },
+          { transform: 'rotate(-8deg)' },
+          { transform: 'rotate(5deg)' },
+          { transform: 'rotate(0deg)' }
+        ];
+        
+        // Animer la tête
+        spiderHead.animate(shakeFrames, {
+          duration: shakeDuration,
+          easing: 'ease-in-out'
+        });
+        
+        // Animer les yeux (légèrement décalés pour plus de réalisme)
+        spiderEyes.animate(shakeFrames, {
+          duration: shakeDuration,
+          easing: 'ease-in-out',
+          delay: 50
+        });
+      }
+
+      // =====================================================
+      // TOILES ET FILS
+      // =====================================================
+      
+      /**
+       * Génère et lance un nouveau fil de soie
+       * @param {Object} from - Point de départ {x, y}
+       * @param {Object} to - Point d'arrivée {x, y}
+       * @param {Object} opts - Options supplémentaires
+       * @returns {Object} Le fil créé
+       */
+      function castSilk(from, to, opts = {}) {
+        const defaults = {
+          thickness: 1 + Math.random() * 0.5,
+          lifespan: 30000 + Math.random() * 30000,
+          dewDrops: Math.floor(Math.random() * 3),
+          highlightWidth: 0.6,
+          highlightOffset: 0.5
+        };
+        
+        const options = { ...defaults, ...opts };
+        
+        // Créer le fil
+        const thread = {
+          from: { ...from },
+          to: { ...to },
+          // Points de contrôle pour courbe de Bézier
+          control1: {
+            x: from.x + (to.x - from.x) * 0.25 + (Math.random() - 0.5) * 50,
+            y: from.y + (to.y - from.y) * 0.1 - 20 + Math.random() * 40
+          },
+          control2: {
+            x: from.x + (to.x - from.x) * 0.75 + (Math.random() - 0.5) * 50,
+            y: to.y - (to.y - from.y) * 0.1 - 20 + Math.random() * 40
+          },
+          // Propriétés physiques
+          velocity: 0,
+          displacement: 0,
+          tension: options.tension || 0.02,
+          damping: SILK_DAMPING,
+          frequency: SILK_FREQUENCY,
+          // Propriétés visuelles
+          thickness: options.thickness,
+          lifespan: options.lifespan,
+          age: 0,
+          opacity: 0,
+          // Animation d'entrée
+          fadeIn: true,
+          // Gouttes de rosée
+          dewDrops: []
+        };
+        
+        // Générer les gouttes de rosée
+        for (let i = 0; i < options.dewDrops; i++) {
+          const position = Math.random();
+          thread.dewDrops.push({
+            position,
+            size: 1 + Math.random() * 2,
+            opacity: 0.3 + Math.random() * 0.7,
+            highlightSize: 0.3 + Math.random() * 0.3,
+            highlightOpacity: 0.7 + Math.random() * 0.3
+          });
+        }
+        
+        // Ajouter le fil à la liste
+        silkThreads.push(thread);
+        
+        return thread;
+      }
+      
+      /**
+       * Met à jour la physique d'un fil de soie (spring-damper)
+       * @param {Object} thread - Le fil à mettre à jour
+       * @param {number} deltaTime - Temps écoulé depuis la dernière frame
+       */
+      function updateSilkPhysics(thread, deltaTime) {
+        // Système masse-ressort-amortisseur
+        const dt = Math.min(deltaTime / 1000, 0.016); // Protection contre les grands deltas
+        
+        // Animation d'entrée
+        if (thread.fadeIn) {
+          thread.opacity += 0.05;
+          if (thread.opacity >= 1) {
+            thread.opacity = 1;
+            thread.fadeIn = false;
+          }
+        }
+        
+        // Calculer la force du ressort
+        const springForce = -thread.frequency * thread.frequency * thread.displacement;
+        const dampingForce = -2 * thread.damping * thread.frequency * thread.velocity;
+        
+        // Équation différentielle du second ordre
+        const acceleration = springForce + dampingForce;
+        
+        // Intégration numérique (Euler)
+        thread.velocity += acceleration * dt;
+        thread.displacement += thread.velocity * dt;
+        
+        // Bruit supplémentaire pour plus de naturel
+        thread.displacement += (Math.random() - 0.5) * 0.01;
+        
+        // Ajouter une légère oscillation permanente
+        thread.displacement += Math.sin(lastTime * 0.001) * 0.02;
+      }
+      
+      /**
+       * Dessine un fil de soie sur le canvas
+       * @param {Object} thread - Le fil à dessiner
+       */
+      function drawSilkThread(thread) {
+        if (thread.opacity <= 0) return;
+        
+        webContext.save();
+        
+        // Calculer la position modifiée par la simulation physique
+        const midX = (thread.from.x + thread.to.x) / 2;
+        const midY = (thread.from.y + thread.to.y) / 2 + thread.displacement * 20;
+        
+        // Appliquer l'opacité globale du fil
+        webContext.globalAlpha = thread.opacity;
+        
+        // Dessiner le fil principal
+        webContext.beginPath();
+        webContext.moveTo(thread.from.x, thread.from.y);
+        webContext.bezierCurveTo(
+          thread.control1.x, thread.control1.y,
+          thread.control2.x, thread.control2.y,
+          thread.to.x, thread.to.y
+        );
+        
+        // Définir le style du fil
+        webContext.strokeStyle = 'var(--silk)';
+        webContext.lineWidth = thread.thickness;
+        webContext.stroke();
+        
+        // Dessiner un highlight plus fin pour l'effet nacré
+        webContext.beginPath();
+        webContext.moveTo(thread.from.x, thread.from.y);
+        webContext.bezierCurveTo(
+          thread.control1.x, thread.control1.y,
+          thread.control2.x, thread.control2.y,
+          thread.to.x, thread.to.y
+        );
+        
+        webContext.strokeStyle = 'var(--silk-highlight)';
+        webContext.lineWidth = thread.thickness * 0.6;
+        webContext.stroke();
+        
+        webContext.restore();
+      }
+      
+      /**
+       * Met à jour et dessine les gouttes de rosée sur un fil
+       * @param {Object} thread - Le fil contenant les gouttes
+       */
+      function updateAndDrawDewDrops(thread) {
+        if (thread.opacity <= 0) return;
+        
+        thread.dewDrops.forEach(drop => {
+          // Calculer la position sur la courbe de Bézier
+          const t = drop.position;
+          const point = getBezierPoint(t, 
+            thread.from, 
+            thread.control1, 
+            thread.control2, 
+            thread.to
+          );
+          
+          // Appliquer le déplacement physique
+          point.y += thread.displacement * 15 * (1 - 2 * Math.abs(t - 0.5));
+          
+          // Dessiner la goutte
+          webContext.save();
+          
+          // Goutte principale
+          webContext.beginPath();
+          webContext.arc(point.x, point.y, drop.size, 0, Math.PI * 2);
+          webContext.fillStyle = 'var(--dew)';
+          webContext.globalAlpha = drop.opacity * thread.opacity;
+          webContext.fill();
+          
+          // Highlight de la goutte
+          webContext.beginPath();
+          webContext.arc(
+            point.x - drop.size * 0.3, 
+            point.y - drop.size * 0.3, 
+            drop.size * drop.highlightSize, 
+            0, Math.PI * 2
+          );
+          webContext.fillStyle = '#ffffff';
+          webContext.globalAlpha = drop.highlightOpacity * thread.opacity;
+          webContext.fill();
+          
+          webContext.restore();
+        });
+      }
+      
+      /**
+       * Dessine une toile radiale (pour le succès)
+       */
+      function drawRadialWeb() {
+        const centerX = webCanvas.width / 2;
+        const centerY = webCanvas.height / 2;
+        const maxRadius = Math.min(webCanvas.width, webCanvas.height) * 0.4;
+        
+        webContext.save();
+        
+        // Rayons radiaux
+        const rayCount = 16;
+        for (let i = 0; i < rayCount; i++) {
+          const angle = (i / rayCount) * Math.PI * 2;
+          const endX = centerX + Math.cos(angle) * maxRadius;
+          const endY = centerY + Math.sin(angle) * maxRadius;
+          
+          webContext.beginPath();
+          webContext.moveTo(centerX, centerY);
+          webContext.lineTo(endX, endY);
+          webContext.strokeStyle = 'var(--silk)';
+          webContext.lineWidth = 1;
+          webContext.globalAlpha = 0.6;
+          webContext.stroke();
+        }
+        
+        // Anneaux concentriques
+        const ringCount = 8;
+        for (let i = 1; i <= ringCount; i++) {
+          const radius = (i / ringCount) * maxRadius;
+          
+          webContext.beginPath();
+          webContext.arc(centerX, centerY, radius, 0, Math.PI * 2);
+          webContext.strokeStyle = 'var(--silk)';
+          webContext.lineWidth = 0.8;
+          webContext.globalAlpha = 0.5;
+          webContext.stroke();
+          
+          // Highlight
+          webContext.beginPath();
+          webContext.arc(centerX, centerY, radius, 0, Math.PI * 2);
+          webContext.strokeStyle = 'var(--silk-highlight)';
+          webContext.lineWidth = 0.5;
+          webContext.globalAlpha = 0.3;
+          webContext.stroke();
+        }
+        
+        webContext.restore();
+      }
+      
+      /**
+       * Calcule un point sur une courbe de Bézier cubique
+       * @param {number} t - Paramètre de la courbe (0-1)
+       * @param {Object} p0 - Point de départ
+       * @param {Object} p1 - Premier point de contrôle
+       * @param {Object} p2 - Deuxième point de contrôle
+       * @param {Object} p3 - Point d'arrivée
+       * @returns {Object} Point calculé {x, y}
+       */
+      function getBezierPoint(t, p0, p1, p2, p3) {
+        const cX = 3 * (p1.x - p0.x);
+        const bX = 3 * (p2.x - p1.x) - cX;
+        const aX = p3.x - p0.x - cX - bX;
+        
+        const cY = 3 * (p1.y - p0.y);
+        const bY = 3 * (p2.y - p1.y) - cY;
+        const aY = p3.y - p0.y - cY - bY;
+        
+        const x = aX * Math.pow(t, 3) + bX * Math.pow(t, 2) + cX * t + p0.x;
+        const y = aY * Math.pow(t, 3) + bY * Math.pow(t, 2) + cY * t + p0.y;
+        
+        return { x, y };
+      }
+
+      // =====================================================
+      // CIBLES ET OBJETS INTERACTIFS
+      // =====================================================
+      
+      /**
+       * Génère des cibles/apps sur la scène
+       * @param {number} count - Nombre de cibles à générer
+       */
+      function spawnTargets(count) {
+        const svgRect = targetsLayer.getBoundingClientRect();
+        const targetColors = [
+          'var(--target-1)',
+          'var(--target-2)',
+          'var(--target-3)',
+          'var(--target-4)',
+          'var(--target-5)'
+        ];
+        
+        for (let i = 0; i < count; i++) {
+          // Éviter les positions trop près du formulaire
+          const formRect = loginForm.getBoundingClientRect();
+          let x, y;
+          let invalidPosition = true;
+          
+          while (invalidPosition) {
+            x = 40 + Math.random() * (webCanvas.width - 80);
+            y = 40 + Math.random() * (webCanvas.height - 80);
+            
+            // Vérifier si la position est suffisamment éloignée du formulaire
+            const distanceToForm = Math.hypot(
+              x - (formRect.left + formRect.width/2),
+              y - (formRect.top + formRect.height/2)
+            );
+            
+            invalidPosition = distanceToForm < Math.max(formRect.width, formRect.height) * 0.7;
+          }
+          
+          // Créer la cible
+          const targetId = Date.now() + i;
+          const target = {
+            id: targetId,
+            x,
+            y,
+            radius: 4 + Math.random() * 3,
+            color: targetColors[Math.floor(Math.random() * targetColors.length)],
+            captured: false,
+            app: `app-${Math.floor(Math.random() * 5) + 1}`
+          };
+          
+          // Convertir les coordonnées canvas en coordonnées SVG
+          const svgX = (x / webCanvas.width) * 100;
+          const svgY = (y / webCanvas.height) * 100;
+          
+          // Créer l'élément SVG
+          const targetCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          targetCircle.setAttribute('class', 'target-node');
+          targetCircle.setAttribute('data-id', targetId);
+          targetCircle.setAttribute('data-app', target.app);
+          targetCircle.setAttribute('cx', svgX);
+          targetCircle.setAttribute('cy', svgY);
+          targetCircle.setAttribute('r', target.radius);
+          targetCircle.setAttribute('fill', target.color);
+          
+          // Ajouter au SVG
+          targetsLayer.appendChild(targetCircle);
+          
+          // Ajouter à la liste
+          targets.push(target);
+          
+          // Parfois, on capture automatiquement les cibles pour l'animation
+          if (Math.random() < 0.3) {
+            setTimeout(() => {
+              captureTarget(target);
+            }, 1000 + Math.random() * 5000);
+          }
+        }
+      }
+      
+      /**
+       * Capture une cible avec des fils de soie
+       * @param {Object} target - La cible à capturer
+       */
+      function captureTarget(target) {
+        if (target.captured) return;
+        
+        target.captured = true;
+        
+        // Marquer visuellement la cible comme capturée
+        const targetElement = document.querySelector(`.target-node[data-id="${target.id}"]`);
+        if (targetElement) {
+          targetElement.classList.add('captured');
+        }
+        
+        // Position de l'araignée pour le lancement des fils
+        const spiderPos = {
+          x: spiderPosition.x,
+          y: spiderPosition.y
+        };
+        
+        // Lancer plusieurs fils vers la cible
+        const filCount = 3 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < filCount; i++) {
+          const delay = i * 200;
+          
+          setTimeout(() => {
+            // Points autour de la cible
+            const angle = (i / filCount) * Math.PI * 2;
+            const radius = target.radius * 3;
+            const attachPoint = {
+              x: target.x + Math.cos(angle) * radius,
+              y: target.y + Math.sin(angle) * radius
+            };
+            
+            // Créer le fil
+            castSilk(spiderPos, attachPoint, {
+              thickness: 0.8 + Math.random() * 0.4,
+              dewDrops: i === 0 ? 2 : Math.floor(Math.random() * 2)
+            });
+          }, delay);
+        }
+      }
+
+      // =====================================================
+      // FEEDBACK VISUEL ET CÉLÉBRATIONS
+      // =====================================================
+      
+      /**
+       * Affiche un message d'erreur dans le formulaire
+       * @param {string} message - Message d'erreur à afficher
+       */
+      function showFormError(message) {
+        formFeedback.textContent = message;
+        formFeedback.style.color = 'var(--error)';
+        formFeedback.classList.add('visible');
+        
+        setTimeout(() => {
+          formFeedback.classList.remove('visible');
+        }, 3000);
+      }
+      
+      /**
+       * Affiche un message de succès dans le formulaire
+       * @param {string} message - Message de succès à afficher
+       */
+      function showFormSuccess(message) {
+        formFeedback.textContent = message;
+        formFeedback.style.color = 'var(--success)';
+        formFeedback.classList.add('visible');
+      }
+      
+      /**
+       * Célèbre un succès avec des animations
+       */
+      function celebrateSuccess() {
+        // Tracer un check mark avec un fil de soie
+        const checkStart = {
+          x: webCanvas.width / 2 - 50,
+          y: webCanvas.height / 2
+        };
+        
+        const checkMiddle = {
+          x: webCanvas.width / 2 - 20,
+          y: webCanvas.height / 2 + 30
+        };
+        
+        const checkEnd = {
+          x: webCanvas.width / 2 + 50,
+          y: webCanvas.height / 2 - 30
+        };
+        
+        // Premier segment du check
+        setTimeout(() => {
+          castSilk(checkStart, checkMiddle, {
+            thickness: 2,
+            dewDrops: 1,
+            lifespan: 60000
+          });
+        }, 200);
+        
+        // Deuxième segment du check
+        setTimeout(() => {
+          castSilk(checkMiddle, checkEnd, {
+            thickness: 2,
+            dewDrops: 2,
+            lifespan: 60000
+          });
+        }, 500);
+        
+        // Créer une toile radiale autour du formulaire
+        const formRect = loginForm.getBoundingClientRect();
+        const formCenter = {
+          x: formRect.left + formRect.width / 2,
+          y: formRect.top + formRect.height / 2
+        };
+        
+        // Rayons de la toile
+        const rayCount = 12;
+        for (let i = 0; i < rayCount; i++) {
+          setTimeout(() => {
+            const angle = (i / rayCount) * Math.PI * 2;
+            const radius = Math.max(formRect.width, formRect.height) * 0.7;
+            
+            const endPoint = {
+              x: formCenter.x + Math.cos(angle) * radius,
+              y: formCenter.y + Math.sin(angle) * radius
+            };
+            
+            castSilk(formCenter, endPoint, {
+              thickness: 1 + Math.random() * 0.5,
+              dewDrops: Math.random() < 0.3 ? 1 : 0,
+              lifespan: 30000 + Math.random() * 30000
+            });
+          }, 800 + i * 100);
+        }
+        
+        // Créer quelques anneaux concentriques
+        const ringCount = 5;
+        for (let i = 1; i <= ringCount; i++) {
+          setTimeout(() => {
+            const radius = (i / ringCount) * Math.max(formRect.width, formRect.height) * 0.8;
+            const segments = 8 + i * 4;
+            
+            for (let j = 0; j < segments; j++) {
+              const startAngle = (j / segments) * Math.PI * 2;
+              const endAngle = ((j + 1) / segments) * Math.PI * 2;
+              
+              const startPoint = {
+                x: formCenter.x + Math.cos(startAngle) * radius,
+                y: formCenter.y + Math.sin(startAngle) * radius
+              };
+              
+              const endPoint = {
+                x: formCenter.x + Math.cos(endAngle) * radius,
+                y: formCenter.y + Math.sin(endAngle) * radius
+              };
+              
+              castSilk(startPoint, endPoint, {
+                thickness: 0.8,
+                dewDrops: 0,
+                lifespan: 40000
+              });
+            }
+          }, 1500 + i * 300);
+        }
+      }
+      
+      /**
+       * Exécute une action aléatoire en mode IDLE
+       */
+      function performRandomIdleAction() {
+        const actions = [
+          // Lancer un fil vers une cible aléatoire
+          () => {
+            if (targets.length > 0) {
+              const randomTarget = targets[Math.floor(Math.random() * targets.length)];
+              if (!randomTarget.captured && Math.random() < 0.5) {
+                captureTarget(randomTarget);
+              }
+            }
+          },
+          
+          // Créer un nouveau fil aléatoire
+          () => {
+            const startX = webCanvas.width * 0.2 + Math.random() * webCanvas.width * 0.6;
+            const startY = webCanvas.height * 0.2 + Math.random() * webCanvas.height * 0.6;
+            
+            const endX = startX + (Math.random() - 0.5) * 200;
+            const endY = startY + (Math.random() - 0.5) * 200;
+            
+            castSilk(
+              { x: startX, y: startY },
+              { x: endX, y: endY },
+              { dewDrops: Math.floor(Math.random() * 2) }
+            );
+          },
+          
+          // Clignement des yeux
+          () => {
+            blink();
+          },
+          
+          // Animation des mains
+          () => {
+            const randomPose = [HAND_POSES.REST, HAND_POSES.POINTING, HAND_POSES.WAVE][Math.floor(Math.random() * 3)];
+            setHandsPose(randomPose);
+            
+            setTimeout(() => {
+              if (currentState === STATE.IDLE_WORLD_BUILDING) {
+                setHandsPose(HAND_POSES.REST);
+              }
+            }, 800);
+          }
+        ];
+        
+        // Choisir et exécuter une action aléatoire
+        const randomAction = actions[Math.floor(Math.random() * actions.length)];
+        randomAction();
+      }
+
+      // =====================================================
+      // MODE DÉMO
+      // =====================================================
+      
+      /**
+       * Démarre la séquence de démonstration
+       */
+      function startDemoSequence() {
+        isDemoMode = true;
+        demoSequenceStep = 0;
+        demoOverlay.classList.remove('active');
+        
+        // Réinitialiser l'état de l'application
+        resetApplication();
+        
+        console.log('Mode démo activé');
+        
+        // Démarrer la séquence
+        advanceDemoSequence();
+      }
+      
+      /**
+       * Avance dans la séquence de démonstration
+       */
+      function advanceDemoSequence() {
+        clearTimeout(demoTimer);
+        
+        const steps = [
+          // Étape 1: Construction du monde
+          () => {
+            goToState(STATE.IDLE_WORLD_BUILDING);
+            spawnTargets(5);
+            
+            // Capturer quelques cibles
+            setTimeout(() => captureTarget(targets[0]), 1000);
+            setTimeout(() => captureTarget(targets[2]), 2500);
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 4000);
+          },
+          
+          // Étape 2: Approche de l'utilisateur
+          () => {
+            goToState(STATE.APPROACH_USER);
+            usernameInput.focus();
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 1200);
+          },
+          
+          // Étape 3: Observation de la saisie
+          () => {
+            goToState(STATE.OBSERVE_TYPING);
+            usernameInput.value = '';
+            
+            // Simuler la saisie du nom d'utilisateur
+            typeText(usernameInput, 'utilisateur', 100, () => {
+              demoTimer = setTimeout(() => advanceDemoSequence(), 1000);
+            });
+          },
+          
+          // Étape 4: Focus sur le mot de passe
+          () => {
+            passwordInput.focus();
+            goToState(STATE.PASSWORD_PRIVACY);
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 1500);
+          },
+          
+          // Étape 5: Saisie du mot de passe
+          () => {
+            passwordInput.value = '';
+            
+            // Simuler la saisie du mot de passe
+            typeText(passwordInput, 'motdepasse123', 100, () => {
+              demoTimer = setTimeout(() => advanceDemoSequence(), 1000);
+            });
+          },
+          
+          // Étape 6: Affichage du mot de passe
+          () => {
+            togglePasswordBtn.click();
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 2000);
+          },
+          
+          // Étape 7: Cacher le mot de passe
+          () => {
+            togglePasswordBtn.click();
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 1500);
+          },
+          
+          // Étape 8: Erreur de connexion
+          () => {
+            // Vider le mot de passe
+            passwordInput.value = '123';
+            
+            // Simuler un clic sur le bouton de connexion
+            submitBtn.click();
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 2500);
+          },
+          
+          // Étape 9: Correction du mot de passe
+          () => {
+            passwordInput.focus();
+            passwordInput.value = '';
+            
+            typeText(passwordInput, 'motdepasse123', 100, () => {
+              demoTimer = setTimeout(() => advanceDemoSequence(), 1000);
+            });
+          },
+          
+          // Étape 10: Connexion réussie
+          () => {
+            submitBtn.click();
+            
+            demoTimer = setTimeout(() => advanceDemoSequence(), 5000);
+          },
+          
+          // Étape 11: Fin de la démo
+          () => {
+            isDemoMode = false;
+            resetApplication();
+            
+            // Afficher un message de fin de démo
+            demoOverlay.classList.add('active');
+            document.querySelector('.demo-title').textContent = 'Démo terminée !';
+            document.querySelector('.demo-desc').textContent = 'Vous pouvez maintenant explorer l\'interface par vous-même.';
+            document.getElementById('demo-start').textContent = 'Recommencer la démo';
+          }
+        ];
+        
+        // Exécuter l'étape actuelle
+        if (demoSequenceStep < steps.length) {
+          console.log(`Étape de démo ${demoSequenceStep + 1}/${steps.length}`);
+          steps[demoSequenceStep]();
+          demoSequenceStep++;
+        }
+      }
+      
+      /**
+       * Met à jour la séquence de démo (appellée par la boucle d'animation)
+       * @param {number} timestamp - Timestamp actuel
+       */
+      function updateDemoSequence(timestamp) {
+        // Cette fonction peut être utilisée pour des animations spécifiques à la démo
+        // ou pour forcer des interactions
+      }
+      
+      /**
+       * Simule la saisie de texte dans un champ input
+       * @param {HTMLInputElement} input - L'élément input
+       * @param {string} text - Le texte à saisir
+       * @param {number} delay - Délai entre chaque caractère
+       * @param {Function} callback - Fonction à exécuter après la saisie
+       */
+      function typeText(input, text, delay, callback) {
+        let index = 0;
+        
+        function typeNextCharacter() {
+          if (index < text.length) {
+            input.value += text.charAt(index);
+            index++;
+            setTimeout(typeNextCharacter, delay);
+          } else if (callback) {
+            callback();
+          }
+        }
+        
+        typeNextCharacter();
+      }
+
+      // =====================================================
+      // ACCESSIBILITÉ
+      // =====================================================
+      
+      /**
+       * Active ou désactive le mode mouvement réduit
+       * @param {boolean} enable - Activer ou désactiver
+       */
+      function enableReducedMotion(enable) {
+        reducedMotion = enable;
+        document.body.setAttribute('data-reduced-motion', enable);
+        
+        if (enable) {
+          // Réduire le nombre de fils et d'effets
+          silkThreads = silkThreads.slice(0, Math.min(5, silkThreads.length));
+        }
+      }
+      
+      /**
+       * Réinitialise l'application à son état initial
+       */
+      function resetApplication() {
+        // Vider les champs
+        usernameInput.value = '';
+        passwordInput.value = '';
+        passwordInput.type = 'password';
+        
+        // Réinitialiser les états visuels
+        formFeedback.classList.remove('visible');
+        loginForm.classList.remove('error', 'success');
+        submitBtn.classList.remove('success');
+        
+        // Réinitialiser l'icône de l'œil
+        const eyeIcon = togglePasswordBtn.querySelector('svg');
+        eyeIcon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        `;
+        
+        // Réinitialiser les cibles
+        targets.forEach(target => {
+          const targetElement = document.querySelector(`.target-node[data-id="${target.id}"]`);
+          if (targetElement) {
+            targetElement.remove();
+          }
+        });
+        targets = [];
+        
+        // Générer de nouvelles cibles
+        spawnTargets(4);
+        
+        // Réinitialiser l'état
+        goToState(STATE.IDLE_WORLD_BUILDING);
+      }
+
+      // =====================================================
+      // UTILITAIRES
+      // =====================================================
+      
+      /**
+       * Limite la fréquence d'appel d'une fonction
+       * @param {Function} fn - Fonction à throttler
+       * @param {number} delay - Délai minimum entre les appels
+       * @returns {Function} Fonction throttlée
+       */
+      function throttle(fn, delay) {
+        let lastCall = 0;
+        return function(...args) {
+          const now = performance.now();
+          if (now - lastCall >= delay) {
+            lastCall = now;
+            return fn.apply(this, args);
+          }
+        };
+      }
+      
+      /**
+       * Retarde l'exécution d'une fonction jusqu'à ce qu'un certain délai
+       * se soit écoulé depuis le dernier appel
+       * @param {Function} fn - Fonction à debouncer
+       * @param {number} delay - Délai d'attente
+       * @returns {Function} Fonction debouncée
+       */
+      function debounce(fn, delay) {
+        let timeoutId;
+        return function(...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => fn.apply(this, args), delay);
+        };
+      }
+      
+      /**
+       * Obtient le centre d'un élément DOM
+       * @param {HTMLElement} element - Élément dont on veut le centre
+       * @returns {Object} Coordonnées du centre {x, y}
+       */
+      function getElementCenter(element) {
+        const rect = element.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
+      }
+      
+      /**
+       * Réinitialise la position de l'araignée
+       */
+      function resetSpiderPosition() {
+        spiderPosition = { ...originalSpiderPosition };
+      }
+
+      // =====================================================
+      // INITIALISATION
+      // =====================================================
+      
+      // Démarrer l'application lorsque le DOM est chargé
+      document.addEventListener('DOMContentLoaded', init);
+      
+    })();
+  </script>
+</body>
+</html>

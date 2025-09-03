@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire Immersif avec Araignée</title>
+    <style>
+        :root {
+            --primary-color: #7289da;
+            --secondary-color: #5865f2;
+            --background-dark: #1e1e2e;
+            --card-dark: #2a2a3a;
+            --text-light: #f0f0f0;
+            --text-dim: #a0a0a0;
+            --border-radius: 10px;
+            --folder-color: #ffca28;
+            --app-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .web-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .web-icon {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--card-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--app-shadow);
+            transform: scale(0);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        opacity 0.5s ease-in-out;
+        }
+
+        .web-icon.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .web-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .web-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .spider-web {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .web-line {
+            position: absolute;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform-origin: left center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        .web-line.visible {
+            opacity: 1;
+        }
+
+        .web-line.highlight {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            height: 1.5px;
+        }
+
+        .login-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background-color: var(--card-dark);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--app-shadow);
+            z-index: 10;
+            opacity: 0;
+        }
+
+        .login-title {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            height: 36px;
+            overflow: hidden;
+        }
+
+        .login-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: var(--transition-speed);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-speed);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .login-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .spider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 120px;
+            z-index: 11;
+        }
+
+        .spider-body {
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            width: 40px;
+            height: 60px;
+            background-color: #222;
+            border-radius: 50%;
+        }
+
+        .spider-head {
+            position: absolute;
+            top: 20px;
+            left: 35px;
+            width: 30px;
+            height: 30px;
+            background-color: #111;
+            border-radius: 50%;
+        }
+
+        .spider-eyes {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .spider-eye {
+            position: relative;
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            margin: 0 2px;
+            transition: height 0.15s ease;
+            overflow: hidden;
+        }
+
+        .spider-pupil {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: black;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.15s ease;
+        }
+
+        .spider-leg {
+            position: absolute;
+            width: 40px;
+            height: 4px;
+            background-color: #222;
+            border-radius: 4px;
+            transform-origin: 0% 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .leg-1 {
+            top: 35px;
+            left: 5px;
+            transform: rotate(45deg);
+        }
+
+        .leg-2 {
+            top: 45px;
+            left: 5px;
+            transform: rotate(20deg);
+        }
+
+        .leg-3 {
+            top: 55px;
+            left: 5px;
+            transform: rotate(-20deg);
+        }
+
+        .leg-4 {
+            top: 65px;
+            left: 5px;
+            transform: rotate(-45deg);
+        }
+
+        .leg-5 {
+            top: 35px;
+            right: 5px;
+            transform: rotate(-45deg);
+        }
+
+        .leg-6 {
+            top: 45px;
+            right: 5px;
+            transform: rotate(-20deg);
+        }
+
+        .leg-7 {
+            top: 55px;
+            right: 5px;
+            transform: rotate(20deg);
+        }
+
+        .leg-8 {
+            top: 65px;
+            right: 5px;
+            transform: rotate(45deg);
+        }
+
+        .spider-thread {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .web-shot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform-origin: top left;
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .login-container {
+                width: 90%;
+                max-width: 320px;
+                padding: 1.5rem;
+            }
+
+            .spider {
+                width: 80px;
+                height: 100px;
+            }
+
+            .spider-body {
+                top: 35px;
+                left: 25px;
+                width: 30px;
+                height: 45px;
+            }
+
+            .spider-head {
+                top: 15px;
+                left: 25px;
+                width: 25px;
+                height: 25px;
+            }
+
+            .spider-eye {
+                width: 10px;
+                height: 10px;
+            }
+
+            .spider-pupil {
+                width: 5px;
+                height: 5px;
+                top: 2.5px;
+                left: 2.5px;
+            }
+
+            .spider-leg {
+                width: 30px;
+                height: 3px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .login-container {
+                width: 380px;
+                padding: 2.5rem;
+            }
+
+            .spider {
+                width: 120px;
+                height: 140px;
+            }
+
+            .spider-body {
+                top: 45px;
+                left: 35px;
+                width: 50px;
+                height: 70px;
+            }
+
+            .spider-head {
+                top: 25px;
+                left: 40px;
+                width: 35px;
+                height: 35px;
+            }
+
+            .spider-eye {
+                width: 14px;
+                height: 14px;
+            }
+
+            .spider-pupil {
+                width: 7px;
+                height: 7px;
+                top: 3.5px;
+                left: 3.5px;
+            }
+
+            .spider-leg {
+                width: 50px;
+                height: 5px;
+            }
+        }
+
+        .camera-web {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 9;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* WebGL Canvas pour optimisation du rendu des milliers d'icônes */
+        #webGLCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Layer secondaire pour icônes proches */
+        .secondary-icons-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        /* Icônes de différentes tailles selon profondeur */
+        .web-icon.depth-1 {
+            width: 20px;
+            height: 20px;
+            z-index: 1;
+        }
+        
+        .web-icon.depth-2 {
+            width: 16px;
+            height: 16px;
+            z-index: 0;
+        }
+        
+        .web-icon.depth-3 {
+            width: 12px;
+            height: 12px;
+            z-index: -1;
+            opacity: 0.7;
+        }
+        
+        /* Animation pour la toile */
+        @keyframes pulse {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.1; }
+        }
+        
+        .web-pulse {
+            animation: pulse 5s infinite;
+        }
+        
+        /* Cercles concentriques pour donner de la profondeur */
+        .web-circle {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="webGLCanvas"></canvas>
+    <div class="secondary-icons-layer" id="secondaryIcons"></div>
+    <div class="web-icons" id="webIcons"></div>
+    <div class="spider-web" id="spiderWeb"></div>
+    <div class="camera-web" id="cameraWeb"></div>
+    
+    <div class="login-container" id="loginContainer">
+        <h2 class="login-title" id="loginTitle">
+            <span>C</span><span>o</span><span>n</span><span>n</span><span>e</span><span>x</span><span>i</span><span>o</span><span>n</span>
+        </h2>
+        <div class="form-group" id="usernameGroup">
+            <label for="username">Nom d'utilisateur</label>
+            <div class="input-wrapper">
+                <input type="text" id="username" class="form-control" placeholder="Entrez votre identifiant">
+            </div>
+        </div>
+        <div class="form-group" id="passwordGroup">
+            <label for="password">Mot de passe</label>
+            <div class="input-wrapper">
+                <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe">
+                <button type="button" class="password-toggle" id="passwordToggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <button type="button" class="login-button" id="loginButton">Se connecter</button>
+    </div>
+
+    <div class="spider" id="spider">
+        <div class="spider-thread"></div>
+        <div class="spider-head">
+            <div class="spider-eyes">
+                <div class="spider-eye">
+                    <div class="spider-pupil" id="leftPupil"></div>
+                </div>
+                <div class="spider-eye">
+                    <div class="spider-pupil" id="rightPupil"></div>
+                </div>
+            </div>
+        </div>
+        <div class="spider-body"></div>
+        <div class="spider-leg leg-1"></div>
+        <div class="spider-leg leg-2"></div>
+        <div class="spider-leg leg-3"></div>
+        <div class="spider-leg leg-4"></div>
+        <div class="spider-leg leg-5"></div>
+        <div class="spider-leg leg-6"></div>
+        <div class="spider-leg leg-7"></div>
+        <div class="spider-leg leg-8"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const spider = document.getElementById('spider');
+            const loginContainer = document.getElementById('loginContainer');
+            const loginTitle = document.getElementById('loginTitle');
+            const titleSpans = loginTitle.querySelectorAll('span');
+            const usernameGroup = document.getElementById('usernameGroup');
+            const passwordGroup = document.getElementById('passwordGroup');
+            const loginButton = document.getElementById('loginButton');
+            const passwordToggle = document.getElementById('passwordToggle');
+            const password = document.getElementById('password');
+            const username = document.getElementById('username');
+            const leftPupil = document.getElementById('leftPupil');
+            const rightPupil = document.getElementById('rightPupil');
+            const spiderWeb = document.getElementById('spiderWeb');
+            const webIcons = document.getElementById('webIcons');
+            const secondaryIcons = document.getElementById('secondaryIcons');
+            const cameraWeb = document.getElementById('cameraWeb');
+            
+            // Création des cercles concentriques pour donner de la profondeur
+            const createWebCircles = () => {
+                const maxRadius = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+                const numCircles = 8;
+                
+                for (let i = 1; i <= numCircles; i++) {
+                    const circle = document.createElement('div');
+                    circle.className = 'web-circle';
+                    circle.style.width = `${maxRadius * (i/numCircles)}px`;
+                    circle.style.height = `${maxRadius * (i/numCircles)}px`;
+                    spiderWeb.appendChild(circle);
+                }
+            };
+            
+            createWebCircles();
+            
+            // Base des icônes web principales
+            const websites = [
+                'google.com', 'youtube.com', 'tiktok.com', 'facebook.com', 
+                'github.com', 'twitter.com', 'telegram.org', 'poe.com', 
+                'reddit.com', 'openai.com', 'instagram.com', 'linkedin.com',
+                'dropbox.com', 'netflix.com', 'apple.com', 'microsoft.com',
+                'amazon.com', 'spotify.com', 'twitch.tv', 'pinterest.com',
+                'discord.com', 'slack.com', 'adobe.com', 'zoom.us'
+            ];
+            
+            // Icônes des systèmes d'exploitation
+            const osIcons = [
+                { icon: 'logos:microsoft-windows', name: 'Windows' },
+                { icon: 'logos:apple', name: 'macOS' },
+                { icon: 'logos:linux-tux', name: 'Linux' },
+                { icon: 'logos:android-icon', name: 'Android' },
+                { icon: 'logos:ios', name: 'iOS' }
+            ];
+            
+            // Icônes des appareils
+            const deviceIcons = [
+                { icon: 'mdi:cellphone', name: 'Smartphone', color: '#4285F4' },
+                { icon: 'mdi:tablet', name: 'Tablette', color: '#EA4335' },
+                { icon: 'mdi:laptop', name: 'Laptop', color: '#FBBC05' },
+                { icon: 'mdi:desktop-tower', name: 'Desktop', color: '#34A853' },
+                { icon: 'mdi:television', name: 'TV', color: '#FF6D00' },
+                { icon: 'mdi:watch', name: 'Smartwatch', color: '#9C27B0' },
+                { icon: 'mdi:headphones', name: 'Casque', color: '#795548' },
+                { icon: 'mdi:speaker', name: 'Enceinte', color: '#607D8B' }
+            ];
+            
+            // Icônes des dossiers
+            const folderIcons = [
+                { icon: 'mdi:folder', name: 'Dossier', color: '#FFD54F' },
+                { icon: 'mdi:folder-open', name: 'Dossier ouvert', color: '#FFD54F' },
+                { icon: 'mdi:folder-download', name: 'Téléchargements', color: '#4FC3F7' },
+                { icon: 'mdi:folder-upload', name: 'Envois', color: '#81C784' },
+                { icon: 'mdi:folder-image', name: 'Images', color: '#FF8A65' },
+                { icon: 'mdi:folder-video', name: 'Vidéos', color: '#BA68C8' },
+                { icon: 'mdi:folder-music', name: 'Musique', color: '#7986CB' },
+                { icon: 'mdi:folder-account', name: 'Utilisateurs', color: '#4DD0E1' },
+                { icon: 'mdi:folder-text', name: 'Documents', color: '#AED581' },
+                { icon: 'mdi:folder-lock', name: 'Sécurité', color: '#FF8A65' }
+            ];
+            
+            // Icônes de stockage et cloud
+            const storageIcons = [
+                { icon: 'logos:google-cloud', name: 'Google Cloud' },
+                { icon: 'logos:aws', name: 'AWS' },
+                { icon: 'logos:microsoft-azure', name: 'Azure' },
+                { icon: 'mdi:server', name: 'Serveur', color: '#607D8B' },
+                { icon: 'mdi:database', name: 'Base de données', color: '#1976D2' },
+                { icon: 'mdi:cloud', name: 'Cloud', color: '#42A5F5' },
+                { icon: 'mdi:cloud-download', name: 'Cloud download', color: '#26A69A' },
+                { icon: 'mdi:cloud-upload', name: 'Cloud upload', color: '#FF7043' },
+                { icon: 'mdi:dns', name: 'DNS', color: '#78909C' },
+                { icon: 'mdi:harddisk', name: 'Disque dur', color: '#5D4037' },
+                { icon: 'mdi:memory', name: 'Mémoire', color: '#3949AB' },
+                { icon: 'mdi:sd', name: 'Carte SD', color: '#8D6E63' }
+            ];
+            
+            // Icônes de recherche, découverte, partage
+            const actionIcons = [
+                { icon: 'mdi:magnify', name: 'Recherche', color: '#42A5F5' },
+                { icon: 'mdi:compass', name: 'Exploration', color: '#66BB6A' },
+                { icon: 'mdi:share-variant', name: 'Partage', color: '#FF7043' },
+                { icon: 'mdi:link-variant', name: 'Lien', color: '#5C6BC0' },
+                { icon: 'mdi:rocket-launch', name: 'Lancement', color: '#FFA726' },
+                { icon: 'mdi:download', name: 'Téléchargement', color: '#26A69A' },
+                { icon: 'mdi:upload', name: 'Envoi', color: '#EC407A' },
+                { icon: 'mdi:sync', name: 'Synchronisation', color: '#AB47BC' },
+                { icon: 'mdi:earth', name: 'Web', color: '#42A5F5' },
+                { icon: 'mdi:wifi', name: 'Wifi', color: '#43A047' }
+            ];
+            
+            // Combiner toutes les icônes pour la couche secondaire
+            const allIconTypes = [
+                ...osIcons.map(icon => ({ ...icon, type: 'os' })),
+                ...deviceIcons.map(icon => ({ ...icon, type: 'device' })),
+                ...folderIcons.map(icon => ({ ...icon, type: 'folder' })),
+                ...storageIcons.map(icon => ({ ...icon, type: 'storage' })),
+                ...actionIcons.map(icon => ({ ...icon, type: 'action' }))
+            ];
+            
+            // Générer une couleur aléatoire
+            const getRandomColor = () => {
+                const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#FF6D00', '#9C27B0', '#795548', '#607D8B', 
+                                '#3F51B5', '#E91E63', '#009688', '#FF5722', '#2196F3', '#FFC107'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            };
+            
+            // Fonction pour charger le script Iconify
+            const loadIconify = () => {
+                return new Promise((resolve, reject) => {
+                    if (window.Iconify) {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = 'https://code.iconify.design/1/1.0.7/iconify.min.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            };
+            
+            // Créer une icône Iconify
+            const createIconifyIcon = (iconData, x, y, depth = 1) => {
+                const icon = document.createElement('div');
+                icon.className = `web-icon depth-${depth}`;
+                icon.style.left = `${x}px`;
+                icon.style.top = `${y}px`;
+                
+                const span = document.createElement('span');
+                span.className = 'iconify';
+                span.setAttribute('data-icon', iconData.icon);
+                span.setAttribute('data-inline', 'false');
+                span.setAttribute('title', iconData.name);
+                
+                if (iconData.color) {
+                    span.style.color = iconData.color;
+                }
+                
+                icon.appendChild(span);
+                return icon;
+            };
+            
+            // Créer les icônes principales (sites web)
+            const createMainIcons = () => {
+                websites.forEach((site, index) => {
+                    const angle = (index / websites.length) * 2 * Math.PI;
+                    const distance = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                    const x = Math.cos(angle) * distance + window.innerWidth / 2 - 16;
+                    const y = Math.sin(angle) * distance + window.innerHeight / 2 - 16;
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'web-icon';
+                    icon.style.left = `${x}px`;
+                    icon.style.top = `${y}px`;
+                    
+                    const img = document.createElement('img');
+                    img.src = `https://www.google.com/s2/favicons?domain=${site}&sz=64`;
+                    icon.appendChild(img);
+                    webIcons.appendChild(icon);
+                    
+                    // Créer la ligne de toile
+                    const line = document.createElement('div');
+                    line.className = 'web-line';
+                    line.dataset.target = index;
+                    line.style.top = `${window.innerHeight / 2}px`;
+                    line.style.left = `${window.innerWidth / 2}px`;
+                    const length = Math.sqrt(Math.pow(x - window.innerWidth / 2, 2) + Math.pow(y - window.innerHeight / 2, 2));
+                    line.style.width = `${length}px`;
+                    line.style.transform = `rotate(${angle}rad)`;
+                    spiderWeb.appendChild(line);
+                    
+                    setTimeout(() => {
+                        icon.classList.add('visible');
+                        line.classList.add('visible');
+                    }, 500 + index * 50);
+                });
+            };
+            
+            // Créer les icônes secondaires (cercles concentriques)
+            const createSecondaryIcons = async () => {
+                try {
+                    await loadIconify();
+                    
+                    // Nombre d'icônes secondaires (plusieurs milliers)
+                    const numSecondaryIcons = 2000;
+                    
+                    // Créer les icônes secondaires
+                    for (let i = 0; i < numSecondaryIcons; i++) {
+                        // Déterminer sur quel cercle placer l'icône
+                        const depthLevel = Math.random() < 0.7 ? 
+                                        (Math.random() < 0.7 ? 3 : 2) : 1;
+                        
+                        // Distance par rapport au centre (cercles concentriques)
+                        const baseRadius = Math.min(window.innerWidth, window.innerHeight) * 0.6;
+                        const radiusVariation = 0.1; // Variation pour ne pas avoir des cercles parfaits
+                        const radiusFactor = (depthLevel === 1) ? 0.8 : 
+                                           (depthLevel === 2) ? 0.6 : 0.4;
+                        
+                        const radius = baseRadius * radiusFactor * (1 + (Math.random() * radiusVariation * 2 - radiusVariation));
+                        
+                        // Angle aléatoire
+                        const angle = Math.random() * 2 * Math.PI;
+                        
+                        // Position
+                        const x = Math.cos(angle) * radius + window.innerWidth / 2 - 8;
+                        const y = Math.sin(angle) * radius + window.innerHeight / 2 - 8;
+                        
+                        // Choisir une icône aléatoire dans notre collection
+                        const randomIconIndex = Math.floor(Math.random() * allIconTypes.length);
+                        const iconData = allIconTypes[randomIconIndex];
+                        
+                        // Créer l'icône avec Iconify
+                        const icon = createIconifyIcon(iconData, x, y, depthLevel);
+                        secondaryIcons.appendChild(icon);
+                        
+                        // Animer l'apparition
+                        setTimeout(() => {
+                            icon.classList.add('visible');
+                        }, 2000 + i % 100 * 20);
+                        
+                        // Si c'est une icône de premier niveau, créer une ligne de toile
+                        if (depthLevel === 1 && i % 5 === 0) {
+                            const line = document.createElement('div');
+                            line.className = 'web-line';
+                            line.style.top = `${window.innerHeight / 2}px`;
+                            line.style.left = `${window.innerWidth / 2}px`;
+                            const length = radius;
+                            line.style.width = `${length}px`;
+                            line.style.transform = `rotate(${angle}rad)`;
+                            
+                            // Ajouter un effet de pulsation aléatoire
+                            if (Math.random() < 0.3) {
+                                line.classList.add('web-pulse');
+                            }
+                            
+                            spiderWeb.appendChild(line);
+                            
+                            setTimeout(() => {
+                                line.classList.add('visible');
+                            }, 2500 + i % 50 * 30);
+                        }
+                    }
+                    
+                    // Ajouter des toiles entre certaines icônes pour plus de réalisme
+                    const icons = document.querySelectorAll('.web-icon.depth-1');
+                    const maxConnections = Math.min(500, icons.length * 2);
+                    
+                    for (let i = 0; i < maxConnections; i++) {
+                        const icon1 = icons[Math.floor(Math.random() * icons.length)];
+                        const icon2 = icons[Math.floor(Math.random() * icons.length)];
+                        
+                        if (icon1 === icon2) continue;
+                        
+                        const rect1 = icon1.getBoundingClientRect();
+                        const rect2 = icon2.getBoundingClientRect();
+                        
+                        const x1 = rect1.left + rect1.width / 2;
+                        const y1 = rect1.top + rect1.height / 2;
+                        const x2 = rect2.left + rect2.width / 2;
+                        const y2 = rect2.top + rect2.height / 2;
+                        
+                        // Calculer la distance
+                        const dx = x2 - x1;
+                        const dy = y2 - y1;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // Ne connecter que les icônes relativement proches
+                        if (distance < 200) {
+                            const angle = Math.atan2(dy, dx);
+                            
+                            const line = document.createElement('div');
+                            line.className = 'web-line';
+                            line.style.top = `${y1}px`;
+                            line.style.left = `${x1}px`;
+                            line.style.width = `${distance}px`;
+                            line.style.transform = `rotate(${angle}rad)`;
+                            line.style.opacity = '0';
+                            line.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                            spiderWeb.appendChild(line);
+                            
+                            setTimeout(() => {
+                                line.style.opacity = '1';
+                            }, 4000 + i * 10);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erreur lors du chargement des icônes:', error);
+                }
+            };
+            
+            // Initialiser les icônes
+            createMainIcons();
+            createSecondaryIcons();
+            
+            // Initial spider position
+            spider.style.top = '-120px';
+            
+            // Animation sequence
+            setTimeout(() => {
+                // Spider descends
+                spider.style.transition = 'top 2s ease-in-out';
+                spider.style.top = '120px';
+                
+                // After spider is in position
+                setTimeout(() => {
+                    // Web shot to pull login container
+                    createWebShot(spider, loginContainer, () => {
+                        loginContainer.style.transition = 'opacity 1s ease-in-out';
+                        loginContainer.style.opacity = '1';
+                        
+                        // After container appears, start title animation
+                        setTimeout(() => {
+                            titleSpans.forEach((span, index) => {
+                                setTimeout(() => {
+                                    createWebShot(spider, span, () => {
+                                        span.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                        span.style.opacity = '1';
+                                        span.style.transform = 'translateY(0)';
+                                    });
+                                }, index * 300);
+                            });
+                            
+                            // After title animation, pull username field
+                            setTimeout(() => {
+                                createWebShot(spider, usernameGroup, () => {
+                                    usernameGroup.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                    usernameGroup.style.opacity = '1';
+                                    usernameGroup.style.transform = 'translateY(0)';
+                                    
+                                    // After username field, pull password field
+                                    setTimeout(() => {
+                                        createWebShot(spider, passwordGroup, () => {
+                                            passwordGroup.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                            passwordGroup.style.opacity = '1';
+                                            passwordGroup.style.transform = 'translateY(0)';
+                                            
+                                            // After password field, pull login button
+                                            setTimeout(() => {
+                                                createWebShot(spider, loginButton, () => {
+                                                    loginButton.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                                    loginButton.style.opacity = '1';
+                                                    loginButton.style.transform = 'translateY(0)';
+                                                    
+                                                    // After login button, pull password toggle
+                                                    setTimeout(() => {
+                                                        createWebShot(spider, passwordToggle, () => {
+                                                            passwordToggle.style.transition = 'opacity 0.5s ease-in-out';
+                                                            passwordToggle.style.opacity = '1';
+                                                            
+                                                            // Setup is complete, start idle animations
+                                                            setupIdleAnimations();
+                                                        });
+                                                    }, 800);
+                                                });
+                                            }, 800);
+                                        });
+                                    }, 800);
+                                });
+                            }, titleSpans.length * 300 + 500);
+                        }, 1000);
+                    });
+                }, 2000);
+            }, 1000);
+            
+            // Function to create web shot animation
+            function createWebShot(source, target, callback) {
+                const sourceRect = source.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+                
+                const startX = sourceRect.left + sourceRect.width / 2;
+                const startY = sourceRect.top + sourceRect.height / 2;
+                const endX = targetRect.left + targetRect.width / 2;
+                const endY = targetRect.top + targetRect.height / 2;
+                
+                const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                const angle = Math.atan2(endY - startY, endX - startX);
+                
+                const webShot = document.createElement('div');
+                webShot.className = 'web-shot';
+                webShot.style.left = `${startX}px`;
+                webShot.style.top = `${startY}px`;
+                webShot.style.width = '0';
+                webShot.style.height = '2px';
+                webShot.style.transform = `rotate(${angle}rad)`;
+                document.body.appendChild(webShot);
+                
+                // Highlight nearest web line when shooting
+                highlightNearestWebLine(angle);
+                
+                // Animate spider legs when shooting
+                animateSpiderLegs(angle);
+                
+                // Animate web shot going out
+                setTimeout(() => {
+                    webShot.style.transition = 'width 0.3s ease-out, opacity 0.3s ease-out';
+                    webShot.style.width = `${distance}px`;
+                    webShot.style.opacity = '1';
+                    
+                    // Pull back with target
+                    setTimeout(() => {
+                        webShot.style.transition = 'width 0.3s ease-in';
+                        webShot.style.width = '0';
+                        
+                        if (callback) {
+                            callback();
+                        }
+                        
+                        // Remove web shot element
+                        setTimeout(() => {
+                            webShot.remove();
+                            resetWebLineHighlights();
+                            resetSpiderLegs();
+                        }, 300);
+                    }, 300);
+                }, 10);
+            }
+            
+            // Highlight the web line closest to the shooting angle
+            function highlightNearestWebLine(shotAngle) {
+                const webLines = document.querySelectorAll('.web-line');
+                let closestLine = null;
+                let minAngleDiff = Math.PI;
+                
+                webLines.forEach(line => {
+                    const transformValue = line.style.transform;
+                    if (!transformValue) return;
+                    
+                    const match = transformValue.match(/rotate\(([-\d.]+)rad\)/);
+                    if (!match) return;
+                    
+                    const lineAngle = parseFloat(match[1]);
+                    const angleDiff = Math.abs(normalizeAngle(shotAngle - lineAngle));
+                    
+                    if (angleDiff < minAngleDiff) {
+                        minAngleDiff = angleDiff;
+                        closestLine = line;
+                    }
+                });
+                
+                if (closestLine && minAngleDiff < Math.PI / 8) {
+                    closestLine.classList.add('highlight');
+                }
+            }
+            
+            // Normalize angle to [-π, π]
+            function normalizeAngle(angle) {
+                while (angle > Math.PI) angle -= 2 * Math.PI;
+                while (angle < -Math.PI) angle += 2 * Math.PI;
+                return Math.abs(angle);
+            }
+            
+            // Reset all web line highlights
+            function resetWebLineHighlights() {
+                document.querySelectorAll('.web-line.highlight').forEach(line => {
+                    line.classList.remove('highlight');
+                });
+            }
+            
+            // Animate spider legs when shooting web
+            function animateSpiderLegs(angle) {
+                // Normalize angle to 0-360 degrees for easier calculations
+                const degrees = (angle * 180 / Math.PI + 360) % 360;
+                
+                // Get all spider legs
+                const legs = document.querySelectorAll('.spider-leg');
+                
+                // Reset leg positions
+                resetSpiderLegs();
+                
+                // Determine which legs to move based on the angle
+                if (degrees >= 315 || degrees < 45) {
+                    // Right direction - use right legs
+                    legs[4].style.transform = 'rotate(-60deg)';
+                    legs[6].style.transform = 'rotate(35deg)';
+                } else if (degrees >= 45 && degrees < 135) {
+                    // Down direction - use bottom legs
+                    legs[3].style.transform = 'rotate(-60deg)';
+                    legs[7].style.transform = 'rotate(60deg)';
+                } else if (degrees >= 135 && degrees < 225) {
+                    // Left direction - use left legs
+                    legs[0].style.transform = 'rotate(60deg)';
+                    legs[2].style.transform = 'rotate(-35deg)';
+                } else {
+                    // Up direction - use top legs
+                    legs[0].style.transform = 'rotate(60deg)';
+                    legs[4].style.transform = 'rotate(-60deg)';
+                }
+            }
+            
+            // Reset spider legs to original position
+            function resetSpiderLegs() {
+                const legs = document.querySelectorAll('.spider-leg');
+                const originalRotations = [45, 20, -20, -45, -45, -20, 20, 45];
+                
+                legs.forEach((leg, index) => {
+                    const direction = index < 4 ? '' : '-';
+                    leg.style.transform = `rotate(${direction}${Math.abs(originalRotations[index])}deg)`;
+                });
+            }
+            
+            // Setup pupil tracking
+            document.addEventListener('mousemove', (e) => {
+                trackPupils(e);
+            });
+            
+            function trackPupils(e) {
+                if (document.activeElement === password && !password.type.includes('text')) {
+                    // Eyes closed when typing in password field
+                    leftPupil.parentElement.style.height = '1px';
+                    rightPupil.parentElement.style.height = '1px';
+                    return;
+                } else {
+                    leftPupil.parentElement.style.height = '';
+                    rightPupil.parentElement.style.height = '';
+                }
+                
+                const eyeRect = leftPupil.parentElement.getBoundingClientRect();
+                const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+                const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+                
+                const maxDistance = eyeRect.width / 4;
+                const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
+                const distance = Math.min(maxDistance, Math.sqrt(Math.pow(e.clientX - eyeCenterX, 2) + Math.pow(e.clientY - eyeCenterY, 2)) / 10);
+                
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                leftPupil.style.transform = `translate(${x}px, ${y}px)`;
+                rightPupil.style.transform = `translate(${x}px, ${y}px)`;
+            }
+            
+            // Track input in username field
+            username.addEventListener('input', () => {
+                const rect = username.getBoundingClientRect();
+                const x = rect.left + username.value.length * 8;
+                const y = rect.top + rect.height / 2;
+                
+                trackPupils({ clientX: x, clientY: y });
+            });
+            
+            // Password visibility toggle
+            passwordToggle.addEventListener('click', () => {
+                if (password.type === 'password') {
+                    password.type = 'text';
+                    leftPupil.parentElement.style.height = '';
+                    rightPupil.parentElement.style.height = '';
+                } else {
+                    password.type = 'password';
+                    if (document.activeElement === password) {
+                        leftPupil.parentElement.style.height = '1px';
+                        rightPupil.parentElement.style.height = '1px';
+                    }
+                }
+            });
+            
+            // Focus and blur events for password field
+            password.addEventListener('focus', () => {
+                if (password.type === 'password') {
+                    leftPupil.parentElement.style.height = '1px';
+                    rightPupil.parentElement.style.height = '1px';
+                }
+            });
+            
+            password.addEventListener('blur', () => {
+                leftPupil.parentElement.style.height = '';
+                rightPupil.parentElement.style.height = '';
+            });
+            
+            // Spider reaction on touch/click
+            spider.addEventListener('click', () => {
+                spider.style.transform = 'translateX(-50%) scale(0.9)';
+                setTimeout(() => {
+                    spider.style.transform = 'translateX(-50%) scale(1)';
+                }, 200);
+                
+                // Shoot web at camera
+                cameraWeb.style.opacity = '1';
+                setTimeout(() => {
+                    cameraWeb.style.opacity = '0';
+                }, 1000);
+            });
+            
+            // Animer les lignes de toile de façon aléatoire
+            function animateRandomWebLines() {
+                const webLines = document.querySelectorAll('.web-line');
+                const totalLines = webLines.length;
+                
+                // Animer quelques lignes aléatoirement
+                const numLinesToAnimate = Math.floor(totalLines * 0.05); // 5% des lignes
+                
+                for (let i = 0; i < numLinesToAnimate; i++) {
+                    const randomIndex = Math.floor(Math.random() * totalLines);
+                    const line = webLines[randomIndex];
+                    
+                    if (line && !line.classList.contains('highlight')) {
+                        line.classList.add('highlight');
+                        
+                        setTimeout(() => {
+                            line.classList.remove('highlight');
+                        }, 500 + Math.random() * 1000);
+                    }
+                }
+                
+                // Planifier la prochaine animation
+                setTimeout(animateRandomWebLines, 3000 + Math.random() * 5000);
+            }
+            
+            // Démarrer l'animation des lignes après l'initialisation
+            setTimeout(animateRandomWebLines, 5000);
+            
+            // Function to setup idle animations
+            function setupIdleAnimations() {
+                const animations = [
+                    // Blink
+                    () => {
+                        leftPupil.parentElement.style.height = '1px';
+                        rightPupil.parentElement.style.height = '1px';
+                        setTimeout(() => {
+                            leftPupil.parentElement.style.height = '';
+                            rightPupil.parentElement.style.height = '';
+                        }, 150);
+                    },
+                    // Look left
+                    () => {
+                        leftPupil.style.transform = 'translate(-3px, 0)';
+                        rightPupil.style.transform = 'translate(-3px, 0)';
+                        setTimeout(() => {
+                            leftPupil.style.transform = '';
+                            rightPupil.style.transform = '';
+                        }, 1500);
+                    },
+                    // Look right
+                    () => {
+                        leftPupil.style.transform = 'translate(3px, 0)';
+                        rightPupil.style.transform = 'translate(3px, 0)';
+                        setTimeout(() => {
+                            leftPupil.style.transform = '';
+                            rightPupil.style.transform = '';
+                        }, 1500);
+                    },
+                    // Shoot web at camera
+                    () => {
+                        cameraWeb.style.opacity = '1';
+                        setTimeout(() => {
+                            cameraWeb.style.opacity = '0';
+                        }, 1000);
+                    },
+                    // Look at random icon
+                    () => {
+                        const icons = document.querySelectorAll('.web-icon.visible');
+                        if (icons.length > 0) {
+                            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                            const rect = randomIcon.getBoundingClientRect();
+                            const x = rect.left + rect.width / 2;
+                            const y = rect.top + rect.height / 2;
+                            
+                            trackPupils({ clientX: x, clientY: y });
+                            
+                            // Highlight corresponding web line
+                            const iconCenter = {
+                                x: rect.left + rect.width / 2,
+                                y: rect.top + rect.height / 2
+                            };
+                            const spiderCenter = {
+                                x: window.innerWidth / 2,
+                                y: parseInt(spider.style.top || '120px', 10)
+                            };
+                            const angle = Math.atan2(
+                                iconCenter.y - spiderCenter.y,
+                                iconCenter.x - spiderCenter.x
+                            );
+                            
+                            highlightNearestWebLine(angle);
+                            animateSpiderLegs(angle);
+                            
+                            setTimeout(() => {
+                                resetWebLineHighlights();
+                                resetSpiderLegs();
+                            }, 1500);
+                        }
+                    }
+                ];
+                
+                // Start random animation every 5-10 seconds if no user activity
+                let lastActivity = Date.now();
+                let animationTimer;
+                
+                function startRandomAnimation() {
+                    if (Date.now() - lastActivity > 5000) {
+                        const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                        randomAnimation();
+                    }
+                    
+                    animationTimer = setTimeout(() => {
+                        startRandomAnimation();
+                    }, 5000 + Math.random() * 5000);
+                }
+                
+                // Reset activity timer on user interaction
+                document.addEventListener('mousemove', () => {
+                    lastActivity = Date.now();
+                });
+                
+                document.addEventListener('keydown', () => {
+                    lastActivity = Date.now();
+                });
+                
+                document.addEventListener('click', () => {
+                    lastActivity = Date.now();
+                });
+                
+                // Start idle animations
+                startRandomAnimation();
+            }
+            
+            // Resize handler for responsive behavior
+            window.addEventListener('resize', () => {
+                // Redessiner les cercles concentriques
+                spiderWeb.querySelectorAll('.web-circle').forEach(circle => circle.remove());
+                createWebCircles();
+                
+                // Update web icons positions
+                const webIconElements = document.querySelectorAll('.web-icon');
+                const webLineElements = document.querySelectorAll('.web-line');
+                
+                // Mettre à jour les icônes principales
+                websites.forEach((site, index) => {
+                    const angle = (index / websites.length) * 2 * Math.PI;
+                    const distance = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                    const x = Math.cos(angle) * distance + window.innerWidth / 2 - 16;
+                    const y = Math.sin(angle) * distance + window.innerHeight / 2 - 16;
+                    
+                    if (webIconElements[index]) {
+                        webIconElements[index].style.left = `${x}px`;
+                        webIconElements[index].style.top = `${y}px`;
+                    }
+                    
+                    if (webLineElements[index]) {
+                        webLineElements[index].style.top = `${window.innerHeight / 2}px`;
+                        webLineElements[index].style.left = `${window.innerWidth / 2}px`;
+                        const length = Math.sqrt(Math.pow(x - window.innerWidth / 2, 2) + Math.pow(y - window.innerHeight / 2, 2));
+                        webLineElements[index].style.width = `${length}px`;
+                        webLineElements[index].style.transform = `rotate(${angle}rad)`;
+                    }
+                });
+                
+                // Repositionner les icônes secondaires
+                const secondaryIconElements = document.querySelectorAll('#secondaryIcons .web-icon');
+                secondaryIconElements.forEach((icon, index) => {
+                    const depthClass = Array.from(icon.classList).find(c => c.startsWith('depth-'));
+                    const depth = depthClass ? parseInt(depthClass.split('-')[1]) : 3;
+                    
+                    // Calculer un nouvel angle et rayon pour cette icône
+                    const angle = (index / secondaryIconElements.length) * 2 * Math.PI;
+                    const baseRadius = Math.min(window.innerWidth, window.innerHeight) * 0.6;
+                    const radiusFactor = (depth === 1) ? 0.8 : 
+                                        (depth === 2) ? 0.6 : 0.4;
+                    const radius = baseRadius * radiusFactor * (1 + (Math.random() * 0.1 * 2 - 0.1));
+                    
+                    // Nouvelle position
+                    const x = Math.cos(angle) * radius + window.innerWidth / 2 - 8;
+                    const y = Math.sin(angle) * radius + window.innerHeight / 2 - 8;
+                    
+                    // Appliquer
+                    icon.style.left = `${x}px`;
+                    icon.style.top = `${y}px`;
+                });
+            });
+            
+            // Fonction pour ajouter un effet de profondeur 3D avec WebGL
+            function initWebGLBackground() {
+                const canvas = document.getElementById('webGLCanvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                
+                if (!gl) {
+                    console.warn('WebGL non supporté, utilisation du rendu standard');
+                    return;
+                }
+                
+                // Ajuster la taille du canvas
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    gl.viewport(0, 0, canvas.width, canvas.height);
+                }
+                
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                
+                // Définir les shaders
+                const vertexShaderSource = `
+                    attribute vec4 a_position;
+                    varying vec2 v_texCoord;
+                    
+                    void main() {
+                        gl_Position = a_position;
+                        v_texCoord = a_position.xy * 0.5 + 0.5;
+                    }
+                `;
+                
+                const fragmentShaderSource = `
+                    precision mediump float;
+                    varying vec2 v_texCoord;
+                    uniform float u_time;
+                    
+                    float random(vec2 st) {
+                        return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+                    }
+                    
+                    void main() {
+                        vec2 center = vec2(0.5, 0.5);
+                        float dist = distance(v_texCoord, center);
+                        
+                        float circle = smoothstep(0.5, 0.48, dist);
+                        
+                        // Étoiles qui scintillent
+                        float stars = 0.0;
+                        if (random(v_texCoord) > 0.997) {
+                            float blink = sin(u_time * 3.0 + random(v_texCoord) * 10.0) * 0.5 + 0.5;
+                            stars = blink * 0.5;
+                        }
+                        
+                        // Toile discrète
+                        vec2 grid = fract(v_texCoord * 20.0);
+                        float web = 0.0;
+                        if (grid.x < 0.05 || grid.y < 0.05) {
+                            web = 0.03 * (1.0 - dist * 2.0);
+                        }
+                        
+                        // Couleur de fond
+                        vec3 color = vec3(0.12, 0.12, 0.18);
+                        color += vec3(web);
+                        color += vec3(stars);
+                        
+                        gl_FragColor = vec4(color, 1.0);
+                    }
+                `;
+                
+                // Compiler les shaders
+                function createShader(gl, type, source) {
+                    const shader = gl.createShader(type);
+                    gl.shaderSource(shader, source);
+                    gl.compileShader(shader);
+                    
+                    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                        console.error('Erreur de compilation du shader:', gl.getShaderInfoLog(shader));
+                        gl.deleteShader(shader);
+                        return null;
+                    }
+                    
+                    return shader;
+                }
+                
+                const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+                const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+                
+                // Créer le programme shader
+                const program = gl.createProgram();
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                gl.linkProgram(program);
+                
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error('Erreur de linkage du programme:', gl.getProgramInfoLog(program));
+                    return;
+                }
+                
+                gl.useProgram(program);
+                
+                // Créer un rectangle qui couvre tout l'écran
+                const positionBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1,
+                    1, -1,
+                    -1, 1,
+                    1, 1
+                ]), gl.STATIC_DRAW);
+                
+                const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+                gl.enableVertexAttribArray(positionAttributeLocation);
+                gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+                
+                const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
+                
+                // Animation
+                let startTime = Date.now();
+                
+                function render() {
+                    const currentTime = (Date.now() - startTime) / 1000;
+                    
+                    gl.uniform1f(timeUniformLocation, currentTime);
+                    
+                    gl.clearColor(0, 0, 0, 1);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    
+                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                    
+                    requestAnimationFrame(render);
+                }
+                
+                render();
+            }
+            
+            // Initialiser le fond WebGL
+            initWebGLBackground();
+        });
+    </script>
+</body>
+</html>

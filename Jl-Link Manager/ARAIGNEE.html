@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire Immersif avec Araignée</title>
+    <style>
+        :root {
+            --primary-color: #7289da;
+            --secondary-color: #5865f2;
+            --background-dark: #1e1e2e;
+            --card-dark: #2a2a3a;
+            --text-light: #f0f0f0;
+            --text-dim: #a0a0a0;
+            --border-radius: 10px;
+            --folder-color: #ffca28;
+            --app-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .web-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .web-icon {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--card-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--app-shadow);
+        }
+
+        .web-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .spider-web {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .web-line {
+            position: absolute;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transform-origin: left center;
+            opacity: 0;
+        }
+
+        .login-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background-color: var(--card-dark);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--app-shadow);
+            z-index: 3;
+            opacity: 0;
+        }
+
+        .login-title {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            height: 36px;
+            overflow: hidden;
+        }
+
+        .login-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: var(--transition-speed);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-speed);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .login-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .spider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 120px;
+            z-index: 10;
+        }
+
+        .spider-body {
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            width: 40px;
+            height: 60px;
+            background-color: #222;
+            border-radius: 50%;
+        }
+
+        .spider-head {
+            position: absolute;
+            top: 20px;
+            left: 35px;
+            width: 30px;
+            height: 30px;
+            background-color: #111;
+            border-radius: 50%;
+        }
+
+        .spider-eyes {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .spider-eye {
+            position: relative;
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            margin: 0 2px;
+        }
+
+        .spider-pupil {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: black;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+        }
+
+        .spider-leg {
+            position: absolute;
+            width: 40px;
+            height: 4px;
+            background-color: #222;
+            border-radius: 4px;
+        }
+
+        .leg-1 {
+            top: 35px;
+            left: 5px;
+            transform: rotate(45deg);
+        }
+
+        .leg-2 {
+            top: 45px;
+            left: 5px;
+            transform: rotate(20deg);
+        }
+
+        .leg-3 {
+            top: 55px;
+            left: 5px;
+            transform: rotate(-20deg);
+        }
+
+        .leg-4 {
+            top: 65px;
+            left: 5px;
+            transform: rotate(-45deg);
+        }
+
+        .leg-5 {
+            top: 35px;
+            right: 5px;
+            transform: rotate(-45deg);
+        }
+
+        .leg-6 {
+            top: 45px;
+            right: 5px;
+            transform: rotate(-20deg);
+        }
+
+        .leg-7 {
+            top: 55px;
+            right: 5px;
+            transform: rotate(20deg);
+        }
+
+        .leg-8 {
+            top: 65px;
+            right: 5px;
+            transform: rotate(45deg);
+        }
+
+        .spider-thread {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .web-shot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform-origin: top left;
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .login-container {
+                width: 90%;
+                max-width: 320px;
+                padding: 1.5rem;
+            }
+
+            .spider {
+                width: 80px;
+                height: 100px;
+            }
+
+            .spider-body {
+                top: 35px;
+                left: 25px;
+                width: 30px;
+                height: 45px;
+            }
+
+            .spider-head {
+                top: 15px;
+                left: 25px;
+                width: 25px;
+                height: 25px;
+            }
+
+            .spider-eye {
+                width: 10px;
+                height: 10px;
+            }
+
+            .spider-pupil {
+                width: 5px;
+                height: 5px;
+                top: 2.5px;
+                left: 2.5px;
+            }
+
+            .spider-leg {
+                width: 30px;
+                height: 3px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .login-container {
+                width: 380px;
+                padding: 2.5rem;
+            }
+
+            .spider {
+                width: 120px;
+                height: 140px;
+            }
+
+            .spider-body {
+                top: 45px;
+                left: 35px;
+                width: 50px;
+                height: 70px;
+            }
+
+            .spider-head {
+                top: 25px;
+                left: 40px;
+                width: 35px;
+                height: 35px;
+            }
+
+            .spider-eye {
+                width: 14px;
+                height: 14px;
+            }
+
+            .spider-pupil {
+                width: 7px;
+                height: 7px;
+                top: 3.5px;
+                left: 3.5px;
+            }
+
+            .spider-leg {
+                width: 50px;
+                height: 5px;
+            }
+        }
+
+        .camera-web {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 999;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="web-icons" id="webIcons"></div>
+    <div class="spider-web" id="spiderWeb"></div>
+    <div class="camera-web" id="cameraWeb"></div>
+    
+    <div class="login-container" id="loginContainer">
+        <h2 class="login-title" id="loginTitle">
+            <span>C</span><span>o</span><span>n</span><span>n</span><span>e</span><span>x</span><span>i</span><span>o</span><span>n</span>
+        </h2>
+        <div class="form-group" id="usernameGroup">
+            <label for="username">Nom d'utilisateur</label>
+            <div class="input-wrapper">
+                <input type="text" id="username" class="form-control" placeholder="Entrez votre identifiant">
+            </div>
+        </div>
+        <div class="form-group" id="passwordGroup">
+            <label for="password">Mot de passe</label>
+            <div class="input-wrapper">
+                <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe">
+                <button type="button" class="password-toggle" id="passwordToggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <button type="button" class="login-button" id="loginButton">Se connecter</button>
+    </div>
+
+    <div class="spider" id="spider">
+        <div class="spider-thread"></div>
+        <div class="spider-head">
+            <div class="spider-eyes">
+                <div class="spider-eye">
+                    <div class="spider-pupil" id="leftPupil"></div>
+                </div>
+                <div class="spider-eye">
+                    <div class="spider-pupil" id="rightPupil"></div>
+                </div>
+            </div>
+        </div>
+        <div class="spider-body"></div>
+        <div class="spider-leg leg-1"></div>
+        <div class="spider-leg leg-2"></div>
+        <div class="spider-leg leg-3"></div>
+        <div class="spider-leg leg-4"></div>
+        <div class="spider-leg leg-5"></div>
+        <div class="spider-leg leg-6"></div>
+        <div class="spider-leg leg-7"></div>
+        <div class="spider-leg leg-8"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const spider = document.getElementById('spider');
+            const loginContainer = document.getElementById('loginContainer');
+            const loginTitle = document.getElementById('loginTitle');
+            const titleSpans = loginTitle.querySelectorAll('span');
+            const usernameGroup = document.getElementById('usernameGroup');
+            const passwordGroup = document.getElementById('passwordGroup');
+            const loginButton = document.getElementById('loginButton');
+            const passwordToggle = document.getElementById('passwordToggle');
+            const password = document.getElementById('password');
+            const username = document.getElementById('username');
+            const leftPupil = document.getElementById('leftPupil');
+            const rightPupil = document.getElementById('rightPupil');
+            const spiderWeb = document.getElementById('spiderWeb');
+            const webIcons = document.getElementById('webIcons');
+            const cameraWeb = document.getElementById('cameraWeb');
+            
+            // Web icons setup
+            const websites = [
+                'google.com', 'youtube.com', 'tiktok.com', 'facebook.com', 
+                'github.com', 'twitter.com', 'telegram.org', 'poe.com', 
+                'reddit.com', 'openai.com', 'instagram.com', 'linkedin.com'
+            ];
+            
+            // Create web icons
+            websites.forEach((site, index) => {
+                const angle = (index / websites.length) * 2 * Math.PI;
+                const distance = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                const x = Math.cos(angle) * distance + window.innerWidth / 2 - 16;
+                const y = Math.sin(angle) * distance + window.innerHeight / 2 - 16;
+                
+                const icon = document.createElement('div');
+                icon.className = 'web-icon';
+                icon.style.left = `${x}px`;
+                icon.style.top = `${y}px`;
+                
+                const img = document.createElement('img');
+                img.src = `https://www.google.com/s2/favicons?domain=${site}&sz=64`;
+                icon.appendChild(img);
+                webIcons.appendChild(icon);
+                
+                // Create web line
+                const line = document.createElement('div');
+                line.className = 'web-line';
+                line.style.top = `${window.innerHeight / 2}px`;
+                line.style.left = `${window.innerWidth / 2}px`;
+                const length = Math.sqrt(Math.pow(x - window.innerWidth / 2, 2) + Math.pow(y - window.innerHeight / 2, 2));
+                line.style.width = `${length}px`;
+                line.style.transform = `rotate(${angle}rad)`;
+                spiderWeb.appendChild(line);
+                
+                setTimeout(() => {
+                    line.style.opacity = '1';
+                }, 500 + index * 100);
+            });
+            
+            // Initial spider position
+            spider.style.top = '-120px';
+            
+            // Animation sequence
+            setTimeout(() => {
+                // Spider descends
+                spider.style.transition = 'top 2s ease-in-out';
+                spider.style.top = '120px';
+                
+                // After spider is in position
+                setTimeout(() => {
+                    // Web shot to pull login container
+                    createWebShot(spider, loginContainer, () => {
+                        loginContainer.style.transition = 'opacity 1s ease-in-out';
+                        loginContainer.style.opacity = '1';
+                        
+                        // After container appears, start title animation
+                        setTimeout(() => {
+                            titleSpans.forEach((span, index) => {
+                                setTimeout(() => {
+                                    createWebShot(spider, span, () => {
+                                        span.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                        span.style.opacity = '1';
+                                        span.style.transform = 'translateY(0)';
+                                    });
+                                }, index * 300);
+                            });
+                            
+                            // After title animation, pull username field
+                            setTimeout(() => {
+                                createWebShot(spider, usernameGroup, () => {
+                                    usernameGroup.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                    usernameGroup.style.opacity = '1';
+                                    usernameGroup.style.transform = 'translateY(0)';
+                                    
+                                    // After username field, pull password field
+                                    setTimeout(() => {
+                                        createWebShot(spider, passwordGroup, () => {
+                                            passwordGroup.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                            passwordGroup.style.opacity = '1';
+                                            passwordGroup.style.transform = 'translateY(0)';
+                                            
+                                            // After password field, pull login button
+                                            setTimeout(() => {
+                                                createWebShot(spider, loginButton, () => {
+                                                    loginButton.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                                                    loginButton.style.opacity = '1';
+                                                    loginButton.style.transform = 'translateY(0)';
+                                                    
+                                                    // After login button, pull password toggle
+                                                    setTimeout(() => {
+                                                        createWebShot(spider, passwordToggle, () => {
+                                                            passwordToggle.style.transition = 'opacity 0.5s ease-in-out';
+                                                            passwordToggle.style.opacity = '1';
+                                                            
+                                                            // Setup is complete, start idle animations
+                                                            setupIdleAnimations();
+                                                        });
+                                                    }, 800);
+                                                });
+                                            }, 800);
+                                        });
+                                    }, 800);
+                                });
+                            }, titleSpans.length * 300 + 500);
+                        }, 1000);
+                    });
+                }, 2000);
+            }, 1000);
+            
+            // Function to create web shot animation
+            function createWebShot(source, target, callback) {
+                const sourceRect = source.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+                
+                const startX = sourceRect.left + sourceRect.width / 2;
+                const startY = sourceRect.top + sourceRect.height / 2;
+                const endX = targetRect.left + targetRect.width / 2;
+                const endY = targetRect.top + targetRect.height / 2;
+                
+                const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                const angle = Math.atan2(endY - startY, endX - startX);
+                
+                const webShot = document.createElement('div');
+                webShot.className = 'web-shot';
+                webShot.style.left = `${startX}px`;
+                webShot.style.top = `${startY}px`;
+                webShot.style.width = '0';
+                webShot.style.height = '2px';
+                webShot.style.transform = `rotate(${angle}rad)`;
+                document.body.appendChild(webShot);
+                
+                // Animate web shot going out
+                setTimeout(() => {
+                    webShot.style.transition = 'width 0.3s ease-out, opacity 0.3s ease-out';
+                    webShot.style.width = `${distance}px`;
+                    webShot.style.opacity = '1';
+                    
+                    // Pull back with target
+                    setTimeout(() => {
+                        webShot.style.transition = 'width 0.3s ease-in';
+                        webShot.style.width = '0';
+                        
+                        if (callback) {
+                            callback();
+                        }
+                        
+                        // Remove web shot element
+                        setTimeout(() => {
+                            webShot.remove();
+                        }, 300);
+                    }, 300);
+                }, 10);
+            }
+            
+            // Setup pupil tracking
+            document.addEventListener('mousemove', (e) => {
+                trackPupils(e);
+            });
+            
+            function trackPupils(e) {
+                if (document.activeElement === password && !password.type.includes('text')) {
+                    // Eyes closed when typing in password field
+                    leftPupil.parentElement.style.height = '1px';
+                    rightPupil.parentElement.style.height = '1px';
+                    return;
+                } else {
+                    leftPupil.parentElement.style.height = '';
+                    rightPupil.parentElement.style.height = '';
+                }
+                
+                const eyeRect = leftPupil.parentElement.getBoundingClientRect();
+                const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+                const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+                
+                const maxDistance = eyeRect.width / 4;
+                const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
+                const distance = Math.min(maxDistance, Math.sqrt(Math.pow(e.clientX - eyeCenterX, 2) + Math.pow(e.clientY - eyeCenterY, 2)) / 10);
+                
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                leftPupil.style.transform = `translate(${x}px, ${y}px)`;
+                rightPupil.style.transform = `translate(${x}px, ${y}px)`;
+            }
+            
+            // Track input in username field
+            username.addEventListener('input', () => {
+                const rect = username.getBoundingClientRect();
+                const x = rect.left + username.value.length * 8;
+                const y = rect.top + rect.height / 2;
+                
+                trackPupils({ clientX: x, clientY: y });
+            });
+            
+            // Password visibility toggle
+            passwordToggle.addEventListener('click', () => {
+                if (password.type === 'password') {
+                    password.type = 'text';
+                    leftPupil.parentElement.style.height = '6px';
+                    rightPupil.parentElement.style.height = '6px';
+                } else {
+                    password.type = 'password';
+                    if (document.activeElement === password) {
+                        leftPupil.parentElement.style.height = '1px';
+                        rightPupil.parentElement.style.height = '1px';
+                    }
+                }
+            });
+            
+            // Focus and blur events for password field
+            password.addEventListener('focus', () => {
+                if (password.type === 'password') {
+                    leftPupil.parentElement.style.height = '1px';
+                    rightPupil.parentElement.style.height = '1px';
+                } else {
+                    leftPupil.parentElement.style.height = '6px';
+                    rightPupil.parentElement.style.height = '6px';
+                }
+            });
+            
+            password.addEventListener('blur', () => {
+                leftPupil.parentElement.style.height = '';
+                rightPupil.parentElement.style.height = '';
+            });
+            
+            // Spider reaction on touch/click
+            spider.addEventListener('click', () => {
+                spider.style.transform = 'translateX(-50%) scale(0.9)';
+                setTimeout(() => {
+                    spider.style.transform = 'translateX(-50%) scale(1)';
+                }, 200);
+                
+                // Shoot web at camera
+                cameraWeb.style.opacity = '1';
+                setTimeout(() => {
+                    cameraWeb.style.opacity = '0';
+                }, 1000);
+            });
+            
+            // Function to setup idle animations
+            function setupIdleAnimations() {
+                const animations = [
+                    // Blink
+                    () => {
+                        leftPupil.parentElement.style.height = '1px';
+                        rightPupil.parentElement.style.height = '1px';
+                        setTimeout(() => {
+                            leftPupil.parentElement.style.height = '';
+                            rightPupil.parentElement.style.height = '';
+                        }, 150);
+                    },
+                    // Look left
+                    () => {
+                        leftPupil.style.transform = 'translate(-3px, 0)';
+                        rightPupil.style.transform = 'translate(-3px, 0)';
+                        setTimeout(() => {
+                            leftPupil.style.transform = '';
+                            rightPupil.style.transform = '';
+                        }, 1500);
+                    },
+                    // Look right
+                    () => {
+                        leftPupil.style.transform = 'translate(3px, 0)';
+                        rightPupil.style.transform = 'translate(3px, 0)';
+                        setTimeout(() => {
+                            leftPupil.style.transform = '';
+                            rightPupil.style.transform = '';
+                        }, 1500);
+                    },
+                    // Shoot web at camera
+                    () => {
+                        cameraWeb.style.opacity = '1';
+                        setTimeout(() => {
+                            cameraWeb.style.opacity = '0';
+                        }, 1000);
+                    }
+                ];
+                
+                // Start random animation every 5-10 seconds if no user activity
+                let lastActivity = Date.now();
+                let animationTimer;
+                
+                function startRandomAnimation() {
+                    if (Date.now() - lastActivity > 5000) {
+                        const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                        randomAnimation();
+                    }
+                    
+                    animationTimer = setTimeout(() => {
+                        startRandomAnimation();
+                    }, 5000 + Math.random() * 5000);
+                }
+                
+                // Reset activity timer on user interaction
+                document.addEventListener('mousemove', () => {
+                    lastActivity = Date.now();
+                });
+                
+                document.addEventListener('keydown', () => {
+                    lastActivity = Date.now();
+                });
+                
+                document.addEventListener('click', () => {
+                    lastActivity = Date.now();
+                });
+                
+                // Start idle animations
+                startRandomAnimation();
+            }
+            
+            // Resize handler for responsive behavior
+            window.addEventListener('resize', () => {
+                // Update web icons positions
+                const webIconElements = document.querySelectorAll('.web-icon');
+                const webLineElements = document.querySelectorAll('.web-line');
+                
+                websites.forEach((site, index) => {
+                    const angle = (index / websites.length) * 2 * Math.PI;
+                    const distance = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                    const x = Math.cos(angle) * distance + window.innerWidth / 2 - 16;
+                    const y = Math.sin(angle) * distance + window.innerHeight / 2 - 16;
+                    
+                    if (webIconElements[index]) {
+                        webIconElements[index].style.left = `${x}px`;
+                        webIconElements[index].style.top = `${y}px`;
+                    }
+                    
+                    if (webLineElements[index]) {
+                        webLineElements[index].style.top = `${window.innerHeight / 2}px`;
+                        webLineElements[index].style.left = `${window.innerWidth / 2}px`;
+                        const length = Math.sqrt(Math.pow(x - window.innerWidth / 2, 2) + Math.pow(y - window.innerHeight / 2, 2));
+                        webLineElements[index].style.width = `${length}px`;
+                        webLineElements[index].style.transform = `rotate(${angle}rad)`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
