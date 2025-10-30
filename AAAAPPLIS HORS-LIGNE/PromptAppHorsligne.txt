@@ -1,0 +1,26 @@
+Je cherche une possibilité 
+Je cherche à créer une application HTML qui recevra des données venant d'un fichier, un fichier capable de communiquer avec le HMTL , 
+L'objectif est de se rapprocher de la logique d'une base de données
+
+Le HMTL  doit :
+D'abord être capable de charger les données de ce fichier dans mon application 
+- ou alors Me demander de télécharger ce fichier depuis projet (si est seulement si je n'ai pas le fichier dans mon appareil)
+Et ensuite de trouver le fichier et l'uploader 
+- ensuite présente l'application avec les éléments provenant de ce fichier 
+- pour finir me demander d'enregistrer le fichier et d'aller l'importer sur mon projet 
+
+Bref, un fichier qui peut recevoir des instructions du du code, interagir avec
+
+Avec du HMTL, CSS, JavaScript
+
+Exemple l'application consiste à ajouter les nouveaux étudiants de la formation 
+
+Donc l'objectif est de l'ajouter depuis l'interface HTML (navigateur) ensuite les données ajouter vont s'enregistrer/lors du téléchargement... Ainsi de suite 
+Donc ce nouveau fichier téléchargé avec les données entrée depuis HMTL , si je l'importe à nouveau je verrai tous les étudiants ajoutées précédemment...
+
+Faut que tout soit propre sur l'interface stylé, avec des emojis comme profil de l'étudiant...etc
+
+Ne me donne pas uniquement l'application, l'application ne sert à rien si ça ne peut pas prouver que s'interagit avec le fichier comme une base de données, faut me donner aussi le fichier déjà prêt 
+
+Ça serait encore plus meilleur si ça fonctionnait comme une image qu'on localise dans le dossier de l'application depuis le code (src) , ça s'affiche direct sans besoin d'importer quoi que ce soit mais vu son effectuera des ajouts dans l'interface voilà pourquoi le téléchargement serait nécessaire pour remplacer ce fichier avec des nouvelles mises à jour effectuer 
+Je crois que tu comprends ma logique, trouve une solution, une logique intelligente et cohérente pour implémenter tout ceci
