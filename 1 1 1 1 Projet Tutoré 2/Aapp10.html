@@ -1,0 +1,3890 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quincaillerie TOTAL</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           VARIABLES CSS - Thèmes et couleurs
+           ============================================ */
+        :root {
+            --primaire: #006f78;
+            --primaire-clair: #008a96;
+            --primaire-fonce: #005459;
+            --secondaire: #e62311;
+            --secondaire-clair: #ff3b28;
+            --blanc: #ffffff;
+            --noir: #1a1a1a;
+            
+            --fond: #ffffff;
+            --fond-carte: #f8fafa;
+            --fond-input: #f0f2f3;
+            --texte: #1a1a1a;
+            --texte-secondaire: #5a5a5a;
+            --texte-tertiaire: #8a8a8a;
+            --bordure: #e0e4e5;
+            --ombre: rgba(0, 111, 120, 0.08);
+            --succes: #22c55e;
+            --alerte: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        /* Thème sombre */
+        [data-theme="sombre"] {
+            --fond: #0f1419;
+            --fond-carte: #1a2027;
+            --fond-input: #242d35;
+            --texte: #f0f2f3;
+            --texte-secondaire: #a0a8ad;
+            --texte-tertiaire: #6b7280;
+            --bordure: #2d3640;
+            --ombre: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* ============================================
+           RESET ET BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            font-size: 16px;
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* ============================================
+           ÉCRANS ET CONTENEURS
+           ============================================ */
+        .ecran {
+            display: none;
+            min-height: 100vh;
+            padding: 24px;
+            animation: fonduEntree 0.3s ease;
+        }
+        
+        .ecran.actif {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes fonduEntree {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .contenu {
+            flex: 1;
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* ============================================
+           LANGUE - Écran de sélection
+           ============================================ */
+        .ecran-langue {
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(160deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+        }
+        
+        .logo-accueil {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .logo-accueil .icone {
+            width: 80px;
+            height: 80px;
+            background: var(--blanc);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-accueil .icone svg {
+            width: 48px;
+            height: 48px;
+            color: var(--primaire);
+        }
+        
+        .logo-accueil h1 {
+            color: var(--blanc);
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo-accueil p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .liste-langues {
+            width: 100%;
+            max-width: 320px;
+        }
+        
+        .liste-langues h2 {
+            color: var(--blanc);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .btn-langue {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--blanc);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-langue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-langue:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-langue .drapeau {
+            font-size: 28px;
+            line-height: 1;
+        }
+        
+        .btn-langue .info-langue {
+            text-align: left;
+        }
+        
+        .btn-langue .nom {
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .btn-langue .local {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           ONBOARDING
+           ============================================ */
+        .ecran-onboarding {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .onboarding-slides {
+            width: 100%;
+            max-width: 360px;
+        }
+        
+        .slide {
+            display: none;
+            animation: fonduEntree 0.4s ease;
+        }
+        
+        .slide.actif {
+            display: block;
+        }
+        
+        .slide-icone {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primaire-clair), var(--primaire));
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            box-shadow: 0 12px 40px var(--ombre);
+        }
+        
+        .slide-icone svg {
+            width: 56px;
+            height: 56px;
+            color: var(--blanc);
+        }
+        
+        .slide h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--texte);
+        }
+        
+        .slide p {
+            font-size: 15px;
+            color: var(--texte-secondaire);
+            line-height: 1.6;
+        }
+        
+        .indicateurs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 40px 0 24px;
+        }
+        
+        .indicateur {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--bordure);
+            transition: all 0.3s ease;
+        }
+        
+        .indicateur.actif {
+            width: 24px;
+            border-radius: 4px;
+            background: var(--primaire);
+        }
+        
+        /* ============================================
+           BOUTONS
+           ============================================ */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-principal {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        .btn-principal:hover {
+            background: var(--primaire-clair);
+            transform: translateY(-1px);
+        }
+        
+        .btn-principal:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-secondaire {
+            background: var(--fond-input);
+            color: var(--texte);
+        }
+        
+        .btn-secondaire:hover {
+            background: var(--bordure);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: var(--blanc);
+        }
+        
+        .btn-texte {
+            background: transparent;
+            color: var(--primaire);
+            padding: 10px 16px;
+        }
+        
+        .btn-texte:hover {
+            background: rgba(0, 111, 120, 0.08);
+        }
+        
+        .btn-plein {
+            width: 100%;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ============================================
+           FORMULAIRES
+           ============================================ */
+        .groupe-input {
+            margin-bottom: 20px;
+        }
+        
+        .groupe-input label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .groupe-input input,
+        .groupe-input textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--fond-input);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--texte);
+            transition: all 0.2s ease;
+        }
+        
+        .groupe-input input:focus,
+        .groupe-input textarea:focus {
+            outline: none;
+            border-color: var(--primaire);
+            background: var(--fond);
+        }
+        
+        .groupe-input input::placeholder {
+            color: var(--texte-tertiaire);
+        }
+        
+        .input-avec-icone {
+            position: relative;
+        }
+        
+        .input-avec-icone input {
+            padding-left: 48px;
+        }
+        
+        .input-avec-icone .icone-gauche {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--texte-tertiaire);
+        }
+        
+        .input-avec-icone .icone-droite {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primaire);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        .input-avec-bouton {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-avec-bouton input {
+            flex: 1;
+        }
+        
+        .input-avec-bouton button {
+            padding: 14px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 12px;
+            color: var(--blanc);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .equivalent {
+            font-size: 13px;
+            color: var(--texte-tertiaire);
+            margin-top: 6px;
+        }
+        
+        /* ============================================
+           SÉLECTEUR PERSONNALISÉ
+           ============================================ */
+        .selecteur {
+            position: relative;
+        }
+        
+        .selecteur-btn {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--fond-input);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--texte);
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        
+        .selecteur-btn:focus {
+            outline: none;
+            border-color: var(--primaire);
+            background: var(--fond);
+        }
+        
+        .selecteur-btn svg {
+            color: var(--texte-tertiaire);
+            transition: transform 0.2s;
+        }
+        
+        .selecteur-btn.ouvert svg {
+            transform: rotate(180deg);
+        }
+        
+        .selecteur-options {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px var(--ombre);
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+            border: 1px solid var(--bordure);
+        }
+        
+        .selecteur-options.ouvert {
+            display: block;
+            animation: fonduEntree 0.2s ease;
+        }
+        
+        .selecteur-option {
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .selecteur-option:hover {
+            background: var(--fond-input);
+        }
+        
+        .selecteur-option.selectionne {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+        
+        /* ============================================
+           EN-TÊTE
+           ============================================ */
+        .en-tete {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 12px;
+        }
+        
+        .en-tete h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+        
+        .en-tete .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icone {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 12px;
+            background: var(--fond-input);
+            color: var(--texte);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .btn-icone:hover {
+            background: var(--bordure);
+        }
+        
+        .btn-icone svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* ============================================
+           NAVIGATION PRINCIPALE
+           ============================================ */
+        .nav-principale {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--fond);
+            border-top: 1px solid var(--bordure);
+            padding: 8px 16px;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            display: none;
+            z-index: 50;
+        }
+        
+        .nav-principale.actif {
+            display: block;
+        }
+        
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--texte-tertiaire);
+            transition: color 0.2s;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .nav-item.actif {
+            color: var(--primaire);
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* ============================================
+           CARTES ET LISTES
+           ============================================ */
+        .carte {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--bordure);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .carte-cliquable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--ombre);
+        }
+        
+        .carte-vide {
+            text-align: center;
+            padding: 48px 24px;
+        }
+        
+        .carte-vide svg {
+            width: 64px;
+            height: 64px;
+            color: var(--texte-tertiaire);
+            margin-bottom: 16px;
+        }
+        
+        .carte-vide h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+        
+        .carte-vide p {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+        
+        .liste-produits {
+            padding-bottom: 100px;
+        }
+        
+        .produit-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: var(--fond-carte);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid var(--bordure);
+            transition: all 0.2s;
+        }
+        
+        .produit-item:hover {
+            border-color: var(--primaire);
+            transform: translateX(4px);
+        }
+        
+        .produit-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primaire), var(--primaire-clair));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanc);
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .produit-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .produit-info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .produit-info .reference {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+        }
+        
+        .produit-meta {
+            text-align: right;
+        }
+        
+        .produit-meta .quantite {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+        
+        .produit-meta .prix {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        .badge-etat {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-stock { background: rgba(34, 197, 94, 0.15); color: var(--succes); }
+        .badge-faible { background: rgba(245, 158, 11, 0.15); color: var(--alerte); }
+        .badge-rupture { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .badge-surstock { background: rgba(0, 111, 120, 0.15); color: var(--primaire); }
+        
+        /* ============================================
+           BOUTON FLOTTANT
+           ============================================ */
+        .btn-flottant {
+            position: fixed;
+            bottom: 88px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--secondaire);
+            border: none;
+            border-radius: 16px;
+            color: var(--blanc);
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(230, 35, 17, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 40;
+            transition: all 0.2s;
+        }
+        
+        .btn-flottant.actif {
+            display: flex;
+        }
+        
+        .btn-flottant:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-flottant svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s;
+        }
+        
+        .btn-flottant.ouvert svg {
+            transform: rotate(45deg);
+        }
+        
+        .flottant-options {
+            position: fixed;
+            bottom: 156px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 40;
+        }
+        
+        .flottant-options.ouvert {
+            display: flex;
+            animation: monterOptions 0.3s ease;
+        }
+        
+        @keyframes monterOptions {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .flottant-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            border: 1px solid var(--bordure);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+            white-space: nowrap;
+            box-shadow: 0 4px 16px var(--ombre);
+            transition: all 0.2s;
+        }
+        
+        .flottant-option:hover {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        .flottant-option svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* ============================================
+           MODALES
+           ============================================ */
+        .modale-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+            animation: fonduOverlay 0.2s ease;
+        }
+        
+        .modale-overlay.actif {
+            display: flex;
+        }
+        
+        @keyframes fonduOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modale {
+            background: var(--fond);
+            border-radius: 24px 24px 16px 16px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: monterModale 0.3s ease;
+        }
+        
+        @keyframes monterModale {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modale-header {
+            position: sticky;
+            top: 0;
+            background: var(--fond);
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--bordure);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        
+        .modale-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .modale-corps {
+            padding: 20px;
+        }
+        
+        .modale-pied {
+            padding: 16px 20px 24px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modale-pied .btn {
+            flex: 1;
+        }
+        
+        /* ============================================
+           PARAMÈTRES
+           ============================================ */
+        .parametre-section {
+            margin-bottom: 28px;
+        }
+        
+        .parametre-section h3 {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--texte-tertiaire);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+        
+        .parametre-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .parametre-item:last-child {
+            border-bottom: none;
+        }
+        
+        .parametre-info h4 {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+        
+        .parametre-info p {
+            font-size: 13px;
+            color: var(--texte-tertiaire);
+        }
+        
+        /* Toggle switch */
+        .toggle {
+            position: relative;
+            width: 52px;
+            height: 28px;
+        }
+        
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--fond-input);
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+        
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--blanc);
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle input:checked + .toggle-slider {
+            background: var(--primaire);
+        }
+        
+        .toggle input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+        }
+        
+        /* ============================================
+           DÉPÔTS
+           ============================================ */
+        .depot-actuel {
+            background: linear-gradient(135deg, var(--primaire), var(--primaire-fonce));
+            border-radius: 16px;
+            padding: 20px;
+            color: var(--blanc);
+            margin-bottom: 20px;
+        }
+        
+        .depot-actuel h3 {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .depot-actuel .nom {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .depot-actuel .stats {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .depot-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--bordure);
+        }
+        
+        .depot-item.actif {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+        
+        .depot-item .info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .depot-item .info p {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+        }
+        
+        .depot-item .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* ============================================
+           TAUX DE CHANGE
+           ============================================ */
+        .taux-carte {
+            background: linear-gradient(135deg, var(--primaire-clair), var(--primaire));
+            border-radius: 16px;
+            padding: 20px;
+            color: var(--blanc);
+            margin-bottom: 20px;
+        }
+        
+        .taux-carte h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+        
+        .taux-valeur {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        
+        .taux-valeur .montant {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .taux-valeur .devise {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .taux-input {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--blanc);
+            width: 100%;
+            text-align: center;
+            margin-top: 16px;
+        }
+        
+        .taux-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .taux-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* ============================================
+           RECHERCHE
+           ============================================ */
+        .barre-recherche {
+            margin-bottom: 20px;
+        }
+        
+        /* ============================================
+           RAPPORT
+           ============================================ */
+        .rapport-header {
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--primaire), var(--primaire-fonce));
+            border-radius: 20px;
+            color: var(--blanc);
+            margin-bottom: 20px;
+        }
+        
+        .rapport-header .depot-nom {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .rapport-header .valeur {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 8px 0 4px;
+        }
+        
+        .rapport-header .articles {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .rapport-header .date {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 12px;
+        }
+        
+        .rapport-table {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--bordure);
+            margin-bottom: 20px;
+        }
+        
+        .rapport-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .rapport-table th {
+            background: var(--fond-input);
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        .rapport-table td {
+            padding: 12px 10px;
+            border-top: 1px solid var(--bordure);
+            color: var(--texte);
+        }
+        
+        .rapport-table tr:hover td {
+            background: rgba(0, 111, 120, 0.03);
+        }
+        
+        /* ============================================
+           DÉTAIL PRODUIT
+           ============================================ */
+        .produit-detail-header {
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--primaire), var(--primaire-fonce));
+            border-radius: 20px;
+            color: var(--blanc);
+            margin-bottom: 20px;
+        }
+        
+        .produit-detail-header .avatar {
+            width: 72px;
+            height: 72px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .produit-detail-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .produit-detail-header .reference {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .produit-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .produit-stat {
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--bordure);
+        }
+        
+        .produit-stat .valeur {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+        
+        .produit-stat .label {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+            margin-top: 4px;
+        }
+        
+        .produit-section {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--bordure);
+        }
+        
+        .produit-section h4 {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--texte-tertiaire);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        
+        .produit-ligne {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .produit-ligne:last-child {
+            border-bottom: none;
+        }
+        
+        .produit-ligne .label {
+            color: var(--texte-secondaire);
+        }
+        
+        .produit-ligne .valeur {
+            font-weight: 500;
+            color: var(--texte);
+        }
+        
+        .qr-code {
+            text-align: center;
+            padding: 20px;
+            background: var(--blanc);
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+        
+        .qr-code svg {
+            width: 160px;
+            height: 160px;
+        }
+        
+        .qr-code p {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+            margin-top: 8px;
+        }
+        
+        .historique-item {
+            padding: 12px;
+            background: var(--fond-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .historique-item .action {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .historique-item .details {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-top: 4px;
+        }
+        
+        .historique-item .date {
+            font-size: 11px;
+            color: var(--texte-tertiaire);
+            margin-top: 4px;
+        }
+        
+        /* ============================================
+           ACTIONS PRODUIT
+           ============================================ */
+        .actions-rapides {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .action-rapide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 8px;
+            background: var(--fond-carte);
+            border-radius: 14px;
+            border: 1px solid var(--bordure);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-rapide:hover {
+            background: var(--primaire);
+            border-color: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        .action-rapide svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .action-rapide span {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .action-rapide.entree { color: var(--succes); }
+        .action-rapide.entree:hover { background: var(--succes); border-color: var(--succes); }
+        
+        .action-rapide.sortie { color: var(--danger); }
+        .action-rapide.sortie:hover { background: var(--danger); border-color: var(--danger); }
+        
+        .action-rapide.supprimer { color: var(--secondaire); }
+        .action-rapide.supprimer:hover { background: var(--secondaire); border-color: var(--secondaire); }
+        
+        /* ============================================
+           MOUVEMENTS
+           ============================================ */
+        .mouvement-apercu {
+            background: var(--fond-input);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .mouvement-apercu h4 {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+            margin-bottom: 12px;
+        }
+        
+        .mouvement-ligne {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .mouvement-ligne .label {
+            color: var(--texte-secondaire);
+        }
+        
+        .mouvement-ligne .valeur {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .mouvement-ligne.apres .valeur {
+            color: var(--succes);
+        }
+        
+        /* ============================================
+           MESSAGES ET ALERTES
+           ============================================ */
+        .message {
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .message svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .message-info {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+        
+        .message-succes {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--succes);
+        }
+        
+        .message-alerte {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--alerte);
+        }
+        
+        .message-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        /* ============================================
+           SAUVEGARDE
+           ============================================ */
+        .sauvegarde-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .sauvegarde-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--fond-carte);
+            border-radius: 16px;
+            border: 1px solid var(--bordure);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .sauvegarde-option:hover {
+            border-color: var(--primaire);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--ombre);
+        }
+        
+        .sauvegarde-option .icone {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primaire), var(--primaire-clair));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanc);
+        }
+        
+        .sauvegarde-option .info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .sauvegarde-option .info p {
+            font-size: 13px;
+            color: var(--texte-tertiaire);
+        }
+        
+        /* ============================================
+           RESPONSIVE TABLETTE
+           ============================================ */
+        @media (min-width: 768px) {
+            .ecran {
+                padding: 32px;
+            }
+            
+            .contenu {
+                max-width: 600px;
+            }
+            
+            .produit-stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .actions-rapides {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 400px;
+            }
+        }
+        
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         ÉCRAN 1: SÉLECTION DE LANGUE
+         ============================================ -->
+    <div id="ecran-langue" class="ecran ecran-langue actif">
+        <div class="contenu">
+            <div class="logo-accueil">
+                <div class="icone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                <h1>Quincaillerie TOTAL</h1>
+                <p>Gestion des mouvements</p>
+            </div>
+            
+            <div class="liste-langues">
+                <h2>Choisissez votre langue</h2>
+                <button class="btn-langue" data-lang="fr" onclick="selectionnerLangue('fr')">
+                    <span class="drapeau">🇫🇷</span>
+                    <div class="info-langue">
+                        <div class="nom">Français</div>
+                        <div class="local">France</div>
+                    </div>
+                </button>
+                <button class="btn-langue" data-lang="en" onclick="selectionnerLangue('en')">
+                    <span class="drapeau">🇬🇧</span>
+                    <div class="info-langue">
+                        <div class="nom">English</div>
+                        <div class="local">United Kingdom</div>
+                    </div>
+                </button>
+                <button class="btn-langue" data-lang="hi" onclick="selectionnerLangue('hi')">
+                    <span class="drapeau">🇮🇳</span>
+                    <div class="info-langue">
+                        <div class="nom">हिन्दी</div>
+                        <div class="local">India</div>
+                    </div>
+                </button>
+                <button class="btn-langue" data-lang="ln" onclick="selectionnerLangue('ln')">
+                    <span class="drapeau">🇨🇩</span>
+                    <div class="info-langue">
+                        <div class="nom">Lingala</div>
+                        <div class="local">RDC</div>
+                    </div>
+                </button>
+                <button class="btn-langue" data-lang="sw" onclick="selectionnerLangue('sw')">
+                    <span class="drapeau">🇨🇩</span>
+                    <div class="info-langue">
+                        <div class="nom">Swahili</div>
+                        <div class="local">RDC</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN 2: ONBOARDING
+         ============================================ -->
+    <div id="ecran-onboarding" class="ecran ecran-onboarding">
+        <div class="contenu">
+            <div class="onboarding-slides">
+                <div class="slide actif" data-slide="0">
+                    <div class="slide-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h2 data-trad="onboard1_titre">Gérez vos stocks</h2>
+                    <p data-trad="onboard1_desc">Suivez facilement vos entrées, sorties et inventaires en temps réel.</p>
+                </div>
+                
+                <div class="slide" data-slide="1">
+                    <div class="slide-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9"/>
+                            <line x1="9" y1="21" x2="9" y2="9"/>
+                        </svg>
+                    </div>
+                    <h2 data-trad="onboard2_titre">Organisez vos dépôts</h2>
+                    <p data-trad="onboard2_desc">Créez plusieurs dépôts et gérez chaque espace de travail indépendamment.</p>
+                </div>
+                
+                <div class="slide" data-slide="2">
+                    <div class="slide-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h2 data-trad="onboard3_titre">Données sécurisées</h2>
+                    <p data-trad="onboard3_desc">Vos données sont stockées localement. Exportez vos sauvegardes à tout moment.</p>
+                </div>
+                
+                <div class="indicateurs">
+                    <div class="indicateur actif" data-indicateur="0"></div>
+                    <div class="indicateur" data-indicateur="1"></div>
+                    <div class="indicateur" data-indicateur="2"></div>
+                </div>
+                
+                <button class="btn btn-principal btn-plein" onclick="slideSuivant()" data-trad="suivant">Suivant</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN 3: CRÉATION DÉPÔT INITIAL
+         ============================================ -->
+    <div id="ecran-nouveau-depot" class="ecran">
+        <div class="contenu">
+            <div class="en-tete">
+                <h1 data-trad="nouveau_depot">Nouveau dépôt</h1>
+            </div>
+            
+            <div class="carte" style="text-align: center; margin-bottom: 24px;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--primaire); margin-bottom: 16px;">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <h3 data-trad="creer_premier_depot">Créez votre premier dépôt</h3>
+                <p data-trad="depot_explication" style="font-size: 14px; color: var(--texte-secondaire); margin-top: 8px;">Un dépôt représente votre espace de stockage avec ses propres produits et mouvements.</p>
+            </div>
+            
+            <div class="groupe-input">
+                <label data-trad="nom_depot">Nom du dépôt</label>
+                <input type="text" id="input-nom-depot" placeholder="Ex: Dépot Principal, Entrepôt A..." data-trad-placeholder="placeholder_depot">
+            </div>
+            
+            <button class="btn btn-principal btn-plein" onclick="creerPremierDepot()" style="margin-top: 16px;" data-trad="commencer">Commencer</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN PRINCIPAL: PRODUITS
+         ============================================ -->
+    <div id="ecran-produits" class="ecran">
+        <div class="contenu">
+            <div class="en-tete">
+                <h1 data-trad="produits">Produits</h1>
+                <div class="actions">
+                    <button class="btn-icone" onclick="ouvrirParametres()" aria-label="Paramètres">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Dépôt actuel -->
+            <div class="depot-actuel" onclick="ouvrirGestionDepots()">
+                <h3 data-trad="depot_actuel">Dépôt actuel</h3>
+                <div class="nom" id="depot-nom-affichage">Dépôt Principal</div>
+                <div class="stats"><span id="depot-nb-produits">0</span> <span data-trad="articles">articles</span></div>
+            </div>
+            
+            <!-- Barre de recherche -->
+            <div class="barre-recherche">
+                <div class="input-avec-icone">
+                    <svg class="icone-gauche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="recherche-produit" placeholder="Rechercher un produit..." data-trad-placeholder="rechercher_produit" oninput="filtrerProduits()">
+                    <button class="icone-droite" onclick="simulerScan()" aria-label="Scanner">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                            <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                            <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                            <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                            <line x1="7" y1="12" x2="17" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Liste des produits -->
+            <div class="liste-produits" id="liste-produits">
+                <!-- Les produits seront insérés ici dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN RAPPORT
+         ============================================ -->
+    <div id="ecran-rapport" class="ecran">
+        <div class="contenu">
+            <div class="en-tete">
+                <h1 data-trad="rapport">Rapport</h1>
+                <div class="actions">
+                    <button class="btn-icone" onclick="exporterRapportPDF()" aria-label="Exporter PDF">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="rapport-header">
+                <div class="depot-nom" id="rapport-depot-nom">Dépôt Principal</div>
+                <div class="valeur" id="rapport-valeur-totale">0 FC</div>
+                <div class="articles"><span id="rapport-nb-articles">0</span> <span data-trad="articles">articles</span></div>
+                <div class="date" id="rapport-date"></div>
+            </div>
+            
+            <div class="rapport-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-trad="ref">Réf.</th>
+                            <th data-trad="article">Article</th>
+                            <th data-trad="qte">Qté</th>
+                            <th data-trad="pu">PU</th>
+                            <th data-trad="valeur">Valeur</th>
+                            <th data-trad="etat">État</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rapport-tableau-corps">
+                        <!-- Lignes insérées dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button class="btn btn-principal btn-plein" onclick="exporterRapportExcel()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span data-trad="exporter_excel">Exporter Excel</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN SAUVEGARDE
+         ============================================ -->
+    <div id="ecran-sauvegarde" class="ecran">
+        <div class="contenu">
+            <div class="en-tete">
+                <h1 data-trad="sauvegarde">Sauvegarde</h1>
+            </div>
+            
+            <div class="sauvegarde-options">
+                <div class="sauvegarde-option" onclick="exporterSauvegarde()">
+                    <div class="icone">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </div>
+                    <div class="info">
+                        <h4 data-trad="exporter_donnees">Exporter les données</h4>
+                        <p data-trad="exporter_desc">Sauvegardez vos données dans un fichier CSV</p>
+                    </div>
+                </div>
+                
+                <div class="sauvegarde-option" onclick="importerSauvegarde()">
+                    <div class="icone">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="info">
+                        <h4 data-trad="importer_donnees">Importer les données</h4>
+                        <p data-trad="importer_desc">Restaurez vos données depuis un fichier CSV</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message message-info" style="margin-top: 20px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span data-trad="conseil_sauvegarde">Conseil : Exportez régulièrement vos données pour éviter toute perte.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         NAVIGATION PRINCIPALE
+         ============================================ -->
+    <nav class="nav-principale" id="nav-principale">
+        <div class="nav-items">
+            <button class="nav-item actif" data-nav="produits" onclick="naviguerVers('produits')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                </svg>
+                <span data-trad="produits">Produits</span>
+            </button>
+            <button class="nav-item" data-nav="rapport" onclick="naviguerVers('rapport')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+                <span data-trad="rapport">Rapport</span>
+            </button>
+            <button class="nav-item" data-nav="sauvegarde" onclick="naviguerVers('sauvegarde')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                <span data-trad="sauvegarde">Sauvegarde</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         BOUTON FLOTTANT
+         ============================================ -->
+    <button class="btn-flottant" id="btn-flottant" onclick="toggleFlottant()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+    
+    <div class="flottant-options" id="flottant-options">
+        <div class="flottant-option" onclick="ouvrirAjoutProduit(true)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span data-trad="produit_avec_code">Produit avec code</span>
+        </div>
+        <div class="flottant-option" onclick="ouvrirAjoutProduit(false)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            <span data-trad="produit_sans_code">Produit sans code</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE PARAMÈTRES
+         ============================================ -->
+    <div class="modale-overlay" id="modale-parametres">
+        <div class="modale">
+            <div class="modale-header">
+                <h2 data-trad="parametres">Paramètres</h2>
+                <button class="btn-icone" onclick="fermerModale('modale-parametres')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <!-- Langue -->
+                <div class="parametre-section">
+                    <h3 data-trad="langue">Langue</h3>
+                    <div class="selecteur">
+                        <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-langue')">
+                            <span id="langue-actuelle">Français</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="selecteur-options" id="selecteur-langue">
+                            <div class="selecteur-option selectionne" onclick="changerLangue('fr')">
+                                <span>🇫🇷</span> Français
+                            </div>
+                            <div class="selecteur-option" onclick="changerLangue('en')">
+                                <span>🇬🇧</span> English
+                            </div>
+                            <div class="selecteur-option" onclick="changerLangue('hi')">
+                                <span>🇮🇳</span> हिन्दी
+                            </div>
+                            <div class="selecteur-option" onclick="changerLangue('ln')">
+                                <span>🇨🇩</span> Lingala
+                            </div>
+                            <div class="selecteur-option" onclick="changerLangue('sw')">
+                                <span>🇨🇩</span> Swahili
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thème -->
+                <div class="parametre-section">
+                    <h3 data-trad="theme">Thème</h3>
+                    <div class="selecteur">
+                        <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-theme')">
+                            <span id="theme-actuel">Système</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="selecteur-options" id="selecteur-theme">
+                            <div class="selecteur-option selectionne" onclick="changerTheme('systeme')" data-trad="systeme">Système</div>
+                            <div class="selecteur-option" onclick="changerTheme('sombre')" data-trad="sombre">Sombre</div>
+                            <div class="selecteur-option" onclick="changerTheme('clair')" data-trad="clair">Clair</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Taux de change -->
+                <div class="parametre-section">
+                    <h3 data-trad="taux_change">Taux de change</h3>
+                    <div class="taux-carte">
+                        <h3 data-trad="valeur_dollar">1 Dollar américain =</h3>
+                        <input type="number" class="taux-input" id="input-taux" value="2800" oninput="sauvegarderTaux()">
+                        <div style="font-size: 14px; opacity: 0.9; margin-top: 8px;">Francs congolais</div>
+                    </div>
+                </div>
+                
+                <!-- Affichage prix -->
+                <div class="parametre-section">
+                    <h3 data-trad="affichage_prix">Affichage des prix</h3>
+                    <div class="selecteur">
+                        <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-prix')">
+                            <span id="prix-actuel">Francs congolais</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="selecteur-options" id="selecteur-prix">
+                            <div class="selecteur-option selectionne" onclick="changerAffichagePrix('fc')" data-trad="francs_fc">Francs congolais</div>
+                            <div class="selecteur-option" onclick="changerAffichagePrix('usd')" data-trad="dollars_usd">Dollars</div>
+                            <div class="selecteur-option" onclick="changerAffichagePrix('les deux')" data-trad="les_deux">Les deux</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestion dépôts -->
+                <div class="parametre-section">
+                    <h3 data-trad="gestion_depots">Gestion des dépôts</h3>
+                    <button class="btn btn-secondaire btn-plein" onclick="ouvrirGestionDepots()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <span data-trad="gerer_depots">Gérer les dépôts</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE GESTION DÉPÔTS
+         ============================================ -->
+    <div class="modale-overlay" id="modale-depots">
+        <div class="modale">
+            <div class="modale-header">
+                <h2 data-trad="gestion_depots">Gestion des dépôts</h2>
+                <button class="btn-icone" onclick="fermerModale('modale-depots')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="groupe-input">
+                    <label data-trad="creer_nouveau_depot">Créer un nouveau dépôt</label>
+                    <div class="input-avec-bouton">
+                        <input type="text" id="input-nouveau-depot" placeholder="Nom du dépôt" data-trad-placeholder="nom_depot">
+                        <button onclick="creerNouveauDepot()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <h4 style="font-size: 12px; color: var(--texte-tertiaire); text-transform: uppercase; margin: 20px 0 12px;" data-trad="depots_disponibles">Dépôts disponibles</h4>
+                
+                <div id="liste-depots">
+                    <!-- Dépôts insérés dynamiquement -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE AJOUT PRODUIT
+         ============================================ -->
+    <div class="modale-overlay" id="modale-produit">
+        <div class="modale" style="max-height: 95vh;">
+            <div class="modale-header">
+                <h2 id="titre-modale-produit" data-trad="nouveau_produit">Nouveau produit</h2>
+                <button class="btn-icone" onclick="fermerModale('modale-produit')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="groupe-input">
+                    <label data-trad="reference_code">Référence / Code-barres</label>
+                    <div class="input-avec-bouton">
+                        <input type="text" id="produit-reference" placeholder="Scannez ou saisissez">
+                        <button onclick="genererReference()" title="Générer une référence">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h.01M12 12h.01M12 17h.01M17 7h.01M17 12h.01M17 17h.01"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="groupe-input">
+                    <label data-trad="nom_produit">Nom du produit</label>
+                    <input type="text" id="produit-nom" placeholder="Ex: Marteau 500g">
+                </div>
+                
+                <div class="groupe-input">
+                    <label data-trad="emplacements">Emplacements et quantités</label>
+                    <div id="emplacements-liste">
+                        <div class="emplacement-item" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" placeholder="Emplacement" style="flex: 2;" class="input-emplacement">
+                            <input type="number" placeholder="Qté" style="flex: 1;" min="0" value="0" class="input-qte">
+                        </div>
+                    </div>
+                    <button class="btn btn-texte" onclick="ajouterEmplacement()" style="margin-top: 8px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span data-trad="ajouter_emplacement">Ajouter un emplacement</span>
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="groupe-input">
+                        <label data-trad="qte_min">Quantité min.</label>
+                        <input type="number" id="produit-qte-min" min="0" value="0">
+                    </div>
+                    <div class="groupe-input">
+                        <label data-trad="qte_max">Quantité max.</label>
+                        <input type="number" id="produit-qte-max" min="0" value="100">
+                    </div>
+                </div>
+                
+                <div class="groupe-input">
+                    <label data-trad="prix_achat">Prix d'achat unitaire</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="produit-prix" min="0" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculerEquivalentPrix()">
+                        <div class="selecteur" style="width: 100px;">
+                            <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-devise-prix')" style="padding: 14px 12px;">
+                                <span id="devise-prix-actuelle">FC</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </button>
+                            <div class="selecteur-options" id="selecteur-devise-prix">
+                                <div class="selecteur-option selectionne" onclick="changerDevisePrix('FC')">FC</div>
+                                <div class="selecteur-option" onclick="changerDevisePrix('USD')">USD</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="equivalent" id="equivalent-prix"></div>
+                </div>
+                
+                <!-- QR Code généré -->
+                <div class="qr-code" id="qr-preview" style="display: none;">
+                    <svg viewBox="0 0 200 200" id="qr-svg">
+                        <!-- QR Code simulé -->
+                    </svg>
+                    <p data-trad="qr_genere">QR Code généré</p>
+                </div>
+            </div>
+            <div class="modale-pied">
+                <button class="btn btn-secondaire" onclick="fermerModale('modale-produit')" data-trad="annuler">Annuler</button>
+                <button class="btn btn-principal" onclick="sauvegarderProduit()" data-trad="sauvegarder">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE DÉTAIL PRODUIT
+         ============================================ -->
+    <div class="modale-overlay" id="modale-detail">
+        <div class="modale" style="max-height: 95vh;">
+            <div class="modale-header">
+                <h2 data-trad="detail_produit">Détail du produit</h2>
+                <button class="btn-icone" onclick="fermerModale('modale-detail')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <!-- Header produit -->
+                <div class="produit-detail-header">
+                    <div class="avatar" id="detail-avatar">P</div>
+                    <h2 id="detail-nom">Produit</h2>
+                    <div class="reference" id="detail-reference">REF-001</div>
+                </div>
+                
+                <!-- Actions rapides -->
+                <div class="actions-rapides">
+                    <div class="action-rapide entree" onclick="ouvrirMouvement('entree')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span data-trad="entree">Entrée</span>
+                    </div>
+                    <div class="action-rapide sortie" onclick="ouvrirMouvement('sortie')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span data-trad="sortie">Sortie</span>
+                    </div>
+                    <div class="action-rapide" onclick="ouvrirInventaire()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <span data-trad="inventaire">Inventaire</span>
+                    </div>
+                    <div class="action-rapide supprimer" onclick="supprimerProduit()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                        <span data-trad="supprimer">Supprimer</span>
+                    </div>
+                </div>
+                
+                <!-- Stats -->
+                <div class="produit-stats">
+                    <div class="produit-stat">
+                        <div class="valeur" id="detail-qte-total">0</div>
+                        <div class="label" data-trad="qte_totale">Qté totale</div>
+                    </div>
+                    <div class="produit-stat">
+                        <div class="valeur" id="detail-prix">0 FC</div>
+                        <div class="label" data-trad="prix_unitaire">Prix unitaire</div>
+                    </div>
+                    <div class="produit-stat">
+                        <div class="valeur" id="detail-valeur">0 FC</div>
+                        <div class="label" data-trad="valeur_stock">Valeur stock</div>
+                    </div>
+                    <div class="produit-stat">
+                        <div class="valeur" id="detail-etat">-</div>
+                        <div class="label" data-trad="etat">État</div>
+                    </div>
+                </div>
+                
+                <!-- Emplacements -->
+                <div class="produit-section">
+                    <h4 data-trad="emplacements_stockage">Emplacements de stockage</h4>
+                    <div id="detail-emplacements">
+                        <!-- Emplacements insérés dynamiquement -->
+                    </div>
+                </div>
+                
+                <!-- Alertes -->
+                <div class="produit-section">
+                    <h4 data-trad="seuils_alerte">Seuils d'alerte</h4>
+                    <div class="produit-ligne">
+                        <span class="label" data-trad="quantite_min">Quantité minimum</span>
+                        <span class="valeur" id="detail-qte-min">0</span>
+                    </div>
+                    <div class="produit-ligne">
+                        <span class="label" data-trad="quantite_max">Quantité maximum</span>
+                        <span class="valeur" id="detail-qte-max">100</span>
+                    </div>
+                </div>
+                
+                <!-- Historique -->
+                <div class="produit-section">
+                    <h4 data-trad="historique">Historique</h4>
+                    <div id="detail-historique">
+                        <!-- Historique inséré dynamiquement -->
+                    </div>
+                </div>
+                
+                <!-- QR Code -->
+                <div class="produit-section">
+                    <h4>QR Code</h4>
+                    <div class="qr-code">
+                        <svg viewBox="0 0 200 200" id="detail-qr-svg">
+                            <!-- QR Code inséré dynamiquement -->
+                        </svg>
+                    </div>
+                    <button class="btn btn-secondaire btn-plein" onclick="exporterQR()" style="margin-top: 12px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+                            <polyline points="16 6 12 2 8 6"/>
+                            <line x1="12" y1="2" x2="12" y2="15"/>
+                        </svg>
+                        <span data-trad="exporter_qr">Exporter le QR Code</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modale-pied">
+                <button class="btn btn-principal btn-plein" onclick="modifierProduit()" data-trad="modifier">Modifier</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE MOUVEMENT (Entrée/Sortie)
+         ============================================ -->
+    <div class="modale-overlay" id="modale-mouvement">
+        <div class="modale">
+            <div class="modale-header">
+                <h2 id="titre-mouvement">Entrée</h2>
+                <button class="btn-icone" onclick="fermerModale('modale-mouvement')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <!-- Sélection emplacement -->
+                <div class="groupe-input" id="groupe-select-emplacement">
+                    <label data-trad="selectionner_emplacement">Sélectionner l'emplacement</label>
+                    <div class="selecteur">
+                        <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-emplacement')">
+                            <span id="emplacement-selectionne">-</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="selecteur-options" id="selecteur-emplacement">
+                            <!-- Options insérées dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prix unitaire actuel -->
+                <div class="groupe-input">
+                    <label data-trad="prix_unitaire_actuel">Prix unitaire actuel</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="mouvement-prix" min="0" step="0.01" style="flex: 1;" oninput="calculerEquivalentMouvement()">
+                        <div class="selecteur" style="width: 100px;">
+                            <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-devise-mouvement')" style="padding: 14px 12px;">
+                                <span id="devise-mouvement-actuelle">FC</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </button>
+                            <div class="selecteur-options" id="selecteur-devise-mouvement">
+                                <div class="selecteur-option selectionne" onclick="changerDeviseMouvement('FC')">FC</div>
+                                <div class="selecteur-option" onclick="changerDeviseMouvement('USD')">USD</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="equivalent" id="equivalent-mouvement"></div>
+                </div>
+                
+                <!-- Quantité -->
+                <div class="groupe-input">
+                    <label data-trad="quantite">Quantité</label>
+                    <input type="number" id="mouvement-qte" min="1" value="1" oninput="mettreAJourApercu()">
+                </div>
+                
+                <!-- Aperçu -->
+                <div class="mouvement-apercu">
+                    <h4 data-trad="apercu">Aperçu</h4>
+                    <div class="mouvement-ligne">
+                        <span class="label" data-trad="quantite_actuelle">Quantité actuelle</span>
+                        <span class="valeur" id="apercu-qte-actuelle">0</span>
+                    </div>
+                    <div class="mouvement-ligne apres">
+                        <span class="label" id="apres-label" data-trad="apres_entree">Après entrée</span>
+                        <span class="valeur" id="apercu-qte-apres">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modale-pied">
+                <button class="btn btn-secondaire" onclick="fermerModale('modale-mouvement')" data-trad="annuler">Annuler</button>
+                <button class="btn btn-principal" onclick="confirmerMouvement()" data-trad="confirmer">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE INVENTAIRE
+         ============================================ -->
+    <div class="modale-overlay" id="modale-inventaire">
+        <div class="modale">
+            <div class="modale-header">
+                <h2 data-trad="inventaire">Inventaire</h2>
+                <button class="btn-icone" onclick="fermerModale('modale-inventaire')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <!-- Sélection emplacement -->
+                <div class="groupe-input">
+                    <label data-trad="selectionner_emplacement">Sélectionner l'emplacement</label>
+                    <div class="selecteur">
+                        <button class="selecteur-btn" onclick="toggleSelecteur('selecteur-emplacement-inv')">
+                            <span id="emplacement-inv-selectionne">-</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="selecteur-options" id="selecteur-emplacement-inv">
+                            <!-- Options insérées dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stock théorique -->
+                <div class="groupe-input">
+                    <label data-trad="stock_theorique">Stock théorique</label>
+                    <input type="number" id="inv-theorique" readonly>
+                </div>
+                
+                <!-- Stock réel -->
+                <div class="groupe-input">
+                    <label data-trad="stock_reel">Stock réel (compté)</label>
+                    <input type="number" id="inv-reel" min="0" value="0" oninput="calculerEcart()">
+                </div>
+                
+                <!-- Écart -->
+                <div class="mouvement-apercu">
+                    <h4 data-trad="resultat">Résultat</h4>
+                    <div class="mouvement-ligne">
+                        <span class="label" data-trad="ecart">Écart</span>
+                        <span class="valeur" id="inv-ecart">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modale-pied">
+                <button class="btn btn-secondaire" onclick="fermerModale('modale-inventaire')" data-trad="annuler">Annuler</button>
+                <button class="btn btn-principal" onclick="regulariserInventaire()" data-trad="regulariser">Régulariser</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE CONFIRMATION SUPPRESSION DÉPÔT
+         ============================================ -->
+    <div class="modale-overlay" id="modale-confirm-suppression">
+        <div class="modale" style="max-width: 360px;">
+            <div class="modale-header">
+                <h2 data-trad="attention">Attention</h2>
+            </div>
+            <div class="modale-corps">
+                <div class="message message-danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span data-trad="avertissement_suppression">Supprimer ce dépôt effacera toutes ses données de façon irréversible.</span>
+                </div>
+                
+                <p style="font-size: 14px; color: var(--texte-secondaire); margin-top: 12px;" data-trad="conseil_export_avant">Nous vous conseillons d'exporter vos données avant de continuer.</p>
+            </div>
+            <div class="modale-pied" style="flex-direction: column; gap: 8px;">
+                <button class="btn btn-principal btn-plein" onclick="exporterEtSupprimer()" data-trad="exporter_supprimer">Exporter puis supprimer</button>
+                <button class="btn btn-danger btn-plein" onclick="confirmerSuppressionDepot()" data-trad="supprimer_quand_meme">Supprimer quand même</button>
+                <button class="btn btn-texte btn-plein" onclick="fermerModale('modale-confirm-suppression')" data-trad="annuler">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input fichier caché pour import -->
+    <input type="file" id="input-fichier-import" accept=".csv" style="display: none;" onchange="traiterFichierImport(event)">
+
+    <script>
+        // ============================================
+        // FICHIER DE LANGUE FRANÇAIS (à dupliquer pour autres langues)
+        // ============================================
+        const traductions = {
+            fr: {
+                // Onboarding
+                onboard1_titre: "Gérez vos stocks",
+                onboard1_desc: "Suivez facilement vos entrées, sorties et inventaires en temps réel.",
+                onboard2_titre: "Organisez vos dépôts",
+                onboard2_desc: "Créez plusieurs dépôts et gérez chaque espace de travail indépendamment.",
+                onboard3_titre: "Données sécurisées",
+                onboard3_desc: "Vos données sont stockées localement. Exportez vos sauvegardes à tout moment.",
+                suivant: "Suivant",
+                commencer: "Commencer",
+                
+                // Navigation
+                produits: "Produits",
+                rapport: "Rapport",
+                sauvegarde: "Sauvegarde",
+                
+                // Dépôt
+                nouveau_depot: "Nouveau dépôt",
+                creer_premier_depot: "Créez votre premier dépôt",
+                depot_explication: "Un dépôt représente votre espace de stockage avec ses propres produits et mouvements.",
+                nom_depot: "Nom du dépôt",
+                placeholder_depot: "Ex: Dépôt Principal, Entrepôt A...",
+                depot_actuel: "Dépôt actuel",
+                articles: "articles",
+                gestion_depots: "Gestion des dépôts",
+                gerer_depots: "Gérer les dépôts",
+                creer_nouveau_depot: "Créer un nouveau dépôt",
+                depots_disponibles: "Dépôts disponibles",
+                acceder: "Accéder",
+                renommer: "Renommer",
+                supprimer: "Supprimer",
+                attention: "Attention",
+                avertissement_suppression: "Supprimer ce dépôt effacera toutes ses données de façon irréversible.",
+                conseil_export_avant: "Nous vous conseillons d'exporter vos données avant de continuer.",
+                exporter_supprimer: "Exporter puis supprimer",
+                supprimer_quand_meme: "Supprimer quand même",
+                
+                // Paramètres
+                parametres: "Paramètres",
+                langue: "Langue",
+                theme: "Thème",
+                systeme: "Système",
+                sombre: "Sombre",
+                clair: "Clair",
+                taux_change: "Taux de change",
+                valeur_dollar: "1 Dollar américain =",
+                affichage_prix: "Affichage des prix",
+                francs_fc: "Francs congolais",
+                dollars_usd: "Dollars",
+                les_deux: "Les deux",
+                
+                // Produits
+                rechercher_produit: "Rechercher un produit...",
+                nouveau_produit: "Nouveau produit",
+                modifier_produit: "Modifier le produit",
+                reference_code: "Référence / Code-barres",
+                nom_produit: "Nom du produit",
+                emplacements: "Emplacements et quantités",
+                ajouter_emplacement: "Ajouter un emplacement",
+                qte_min: "Quantité min.",
+                qte_max: "Quantité max.",
+                prix_achat: "Prix d'achat unitaire",
+                qr_genere: "QR Code généré",
+                sauvegarder: "Sauvegarder",
+                annuler: "Annuler",
+                
+                // Détail produit
+                detail_produit: "Détail du produit",
+                entree: "Entrée",
+                sortie: "Sortie",
+                inventaire: "Inventaire",
+                qte_totale: "Qté totale",
+                prix_unitaire: "Prix unitaire",
+                valeur_stock: "Valeur stock",
+                etat: "État",
+                emplacements_stockage: "Emplacements de stockage",
+                seuils_alerte: "Seuils d'alerte",
+                quantite_min: "Quantité minimum",
+                quantite_max: "Quantité maximum",
+                historique: "Historique",
+                exporter_qr: "Exporter le QR Code",
+                modifier: "Modifier",
+                
+                // Mouvement
+                selectionner_emplacement: "Sélectionner l'emplacement",
+                prix_unitaire_actuel: "Prix unitaire actuel",
+                quantite: "Quantité",
+                apercu: "Aperçu",
+                quantite_actuelle: "Quantité actuelle",
+                apres_entree: "Après entrée",
+                apres_sortie: "Après sortie",
+                confirmer: "Confirmer",
+                
+                // Inventaire
+                stock_theorique: "Stock théorique",
+                stock_reel: "Stock réel (compté)",
+                resultat: "Résultat",
+                ecart: "Écart",
+                regulariser: "Régulariser",
+                
+                // Rapport
+                ref: "Réf.",
+                article: "Article",
+                qte: "Qté",
+                pu: "PU",
+                valeur: "Valeur",
+                exporter_excel: "Exporter Excel",
+                
+                // Sauvegarde
+                exporter_donnees: "Exporter les données",
+                exporter_desc: "Sauvegardez vos données dans un fichier CSV",
+                importer_donnees: "Importer les données",
+                importer_desc: "Restaurez vos données depuis un fichier CSV",
+                conseil_sauvegarde: "Conseil : Exportez régulièrement vos données pour éviter toute perte.",
+                
+                // États
+                en_stock: "En stock",
+                stock_faible: "Stock faible",
+                rupture: "Rupture",
+                surstock: "Surstock",
+                
+                // Messages
+                produit_ajoute: "Produit ajouté avec succès",
+                produit_modifie: "Produit modifié avec succès",
+                produit_supprime: "Produit supprimé",
+                entree_enregistree: "Entrée enregistrée",
+                sortie_enregistree: "Sortie enregistrée",
+                inventaire_regularise: "Inventaire régularisé",
+                
+                // Types d'action
+                cree: "Créé",
+                modifie: "Modifié",
+                
+                // Produit avec/sans code
+                produit_avec_code: "Produit avec code",
+                produit_sans_code: "Produit sans code"
+            }
+        };
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        let langueActuelle = 'fr';
+        let themeActuel = 'systeme';
+        let affichagePrix = 'fc';
+        let tauxChange = 2800;
+        let devisePrix = 'FC';
+        let deviseMouvement = 'FC';
+        let depotActuel = null;
+        let produitSelectionne = null;
+        let typeMouvement = 'entree';
+        let emplacementMouvement = null;
+        let emplacementInventaire = null;
+        let depotASupprimer = null;
+        let modeEditionProduit = false;
+
+        // Base de données locale (simulée avec localStorage)
+        let donnees = {
+            depots: [],
+            depotActifId: null,
+            parametres: {
+                langue: 'fr',
+                theme: 'systeme',
+                affichagePrix: 'fc',
+                tauxChange: 2800
+            }
+        };
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données depuis localStorage
+            chargerDonnees();
+            
+            // Vérifier si l'utilisateur a déjà fait l'onboarding
+            if (donnees.parametres.langue) {
+                langueActuelle = donnees.parametres.langue;
+                themeActuel = donnees.parametres.theme || 'systeme';
+                affichagePrix = donnees.parametres.affichagePrix || 'fc';
+                tauxChange = donnees.parametres.tauxChange || 2800;
+                
+                appliquerTheme(themeActuel);
+                
+                if (donnees.depotActifId) {
+                    depotActuel = donnees.depots.find(d => d.id === donnees.depotActifId);
+                    if (depotActuel) {
+                        afficherEcran('ecran-produits');
+                        document.getElementById('nav-principale').classList.add('actif');
+                        document.getElementById('btn-flottant').classList.add('actif');
+                        mettreAJourInterface();
+                    } else {
+                        afficherEcran('ecran-nouveau-depot');
+                    }
+                } else {
+                    afficherEcran('ecran-nouveau-depot');
+                }
+            }
+            
+            // Fermer les sélecteurs en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.selecteur')) {
+                    document.querySelectorAll('.selecteur-options').forEach(el => {
+                        el.classList.remove('ouvert');
+                    });
+                    document.querySelectorAll('.selecteur-btn').forEach(el => {
+                        el.classList.remove('ouvert');
+                    });
+                }
+            });
+        });
+
+        // ============================================
+        // GESTION DES DONNÉES (localStorage)
+        // ============================================
+        function chargerDonnees() {
+            const donneesSauvegardees = localStorage.getItem('quincaillerie_total');
+            if (donneesSauvegardees) {
+                donnees = JSON.parse(donneesSauvegardees);
+            }
+        }
+
+        function sauvegarderDonnees() {
+            localStorage.setItem('quincaillerie_total', JSON.stringify(donnees));
+        }
+
+        // ============================================
+        // NAVIGATION ENTRE ÉCRANS
+        // ============================================
+        function afficherEcran(idEcran) {
+            document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
+            document.getElementById(idEcran).classList.add('actif');
+        }
+
+        function naviguerVers(section) {
+            // Mettre à jour la navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('actif');
+                if (item.dataset.nav === section) {
+                    item.classList.add('actif');
+                }
+            });
+            
+            afficherEcran('ecran-' + section);
+            
+            // Mettre à jour le contenu selon la section
+            if (section === 'rapport') {
+                mettreAJourRapport();
+            }
+        }
+
+        // ============================================
+        // SÉLECTION LANGUE
+        // ============================================
+        function selectionnerLangue(lang) {
+            langueActuelle = lang;
+            donnees.parametres.langue = lang;
+            sauvegarderDonnees();
+            
+            // Passer à l'onboarding
+            afficherEcran('ecran-onboarding');
+            traduireInterface();
+        }
+
+        // ============================================
+        // ONBOARDING
+        // ============================================
+        let slideActuel = 0;
+
+        function slideSuivant() {
+            const slides = document.querySelectorAll('.slide');
+            const indicateurs = document.querySelectorAll('.indicateur');
+            
+            if (slideActuel < slides.length - 1) {
+                slides[slideActuel].classList.remove('actif');
+                indicateurs[slideActuel].classList.remove('actif');
+                
+                slideActuel++;
+                
+                slides[slideActuel].classList.add('actif');
+                indicateurs[slideActuel].classList.add('actif');
+                
+                // Changer le texte du bouton au dernier slide
+                if (slideActuel === slides.length - 1) {
+                    document.querySelector('.onboarding-slides .btn').textContent = traductions[langueActuelle].commencer;
+                }
+            } else {
+                // Passer à la création du dépôt
+                afficherEcran('ecran-nouveau-depot');
+            }
+        }
+
+        // ============================================
+        // TRADUCTION
+        // ============================================
+        function traduireInterface() {
+            const trads = traductions[langueActuelle];
+            
+            document.querySelectorAll('[data-trad]').forEach(el => {
+                const cle = el.dataset.trad;
+                if (trads[cle]) {
+                    el.textContent = trads[cle];
+                }
+            });
+            
+            document.querySelectorAll('[data-trad-placeholder]').forEach(el => {
+                const cle = el.dataset.tradPlaceholder;
+                if (trads[cle]) {
+                    el.placeholder = trads[cle];
+                }
+            });
+        }
+
+        // ============================================
+        // GESTION THÈME
+        // ============================================
+        function appliquerTheme(theme) {
+            if (theme === 'sombre') {
+                document.documentElement.setAttribute('data-theme', 'sombre');
+            } else if (theme === 'clair') {
+                document.documentElement.removeAttribute('data-theme');
+            } else {
+                // Système
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'sombre');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            }
+        }
+
+        function changerTheme(theme) {
+            themeActuel = theme;
+            donnees.parametres.theme = theme;
+            sauvegarderDonnees();
+            
+            appliquerTheme(theme);
+            
+            // Mettre à jour l'affichage
+            const nomsTheme = { systeme: 'Système', sombre: 'Sombre', clair: 'Clair' };
+            document.getElementById('theme-actuel').textContent = nomsTheme[theme];
+            
+            // Mettre à jour la sélection visuelle
+            document.querySelectorAll('#selecteur-theme .selecteur-option').forEach(opt => {
+                opt.classList.remove('selectionne');
+            });
+            event.target.classList.add('selectionne');
+            
+            fermerSelecteur('selecteur-theme');
+        }
+
+        // ============================================
+        // GESTION DÉPÔTS
+        // ============================================
+        function creerPremierDepot() {
+            const nom = document.getElementById('input-nom-depot').value.trim();
+            if (!nom) return;
+            
+            const nouveauDepot = {
+                id: Date.now().toString(),
+                nom: nom,
+                produits: [],
+                dateCreation: new Date().toISOString()
+            };
+            
+            donnees.depots.push(nouveauDepot);
+            donnees.depotActifId = nouveauDepot.id;
+            depotActuel = nouveauDepot;
+            sauvegarderDonnees();
+            
+            // Afficher l'écran principal
+            afficherEcran('ecran-produits');
+            document.getElementById('nav-principale').classList.add('actif');
+            document.getElementById('btn-flottant').classList.add('actif');
+            mettreAJourInterface();
+            traduireInterface();
+        }
+
+        function creerNouveauDepot() {
+            const input = document.getElementById('input-nouveau-depot');
+            const nom = input.value.trim();
+            if (!nom) return;
+            
+            const nouveauDepot = {
+                id: Date.now().toString(),
+                nom: nom,
+                produits: [],
+                dateCreation: new Date().toISOString()
+            };
+            
+            donnees.depots.push(nouveauDepot);
+            sauvegarderDonnees();
+            
+            input.value = '';
+            mettreAJourListeDepots();
+        }
+
+        function accederDepot(id) {
+            depotActuel = donnees.depots.find(d => d.id === id);
+            donnees.depotActifId = id;
+            sauvegarderDonnees();
+            
+            fermerModale('modale-depots');
+            mettreAJourInterface();
+        }
+
+        function renommerDepot(id) {
+            const depot = donnees.depots.find(d => d.id === id);
+            const nouveauNom = prompt('Nouveau nom du dépôt:', depot.nom);
+            if (nouveauNom && nouveauNom.trim()) {
+                depot.nom = nouveauNom.trim();
+                sauvegarderDonnees();
+                mettreAJourListeDepots();
+                if (depotActuel && depotActuel.id === id) {
+                    mettreAJourInterface();
+                }
+            }
+        }
+
+        function demanderSuppressionDepot(id) {
+            depotASupprimer = id;
+            ouvrirModale('modale-confirm-suppression');
+        }
+
+        function confirmerSuppressionDepot() {
+            if (!depotASupprimer) return;
+            
+            donnees.depots = donnees.depots.filter(d => d.id !== depotASupprimer);
+            
+            if (donnees.depotActifId === depotASupprimer) {
+                if (donnees.depots.length > 0) {
+                    donnees.depotActifId = donnees.depots[0].id;
+                    depotActuel = donnees.depots[0];
+                } else {
+                    donnees.depotActifId = null;
+                    depotActuel = null;
+                }
+            }
+            
+            sauvegarderDonnees();
+            depotASupprimer = null;
+            
+            fermerModale('modale-confirm-suppression');
+            
+            if (!depotActuel) {
+                fermerModale('modale-depots');
+                afficherEcran('ecran-nouveau-depot');
+                document.getElementById('nav-principale').classList.remove('actif');
+                document.getElementById('btn-flottant').classList.remove('actif');
+            } else {
+                mettreAJourListeDepots();
+                mettreAJourInterface();
+            }
+        }
+
+        function exporterEtSupprimer() {
+            // Exporter d'abord
+            exporterSauvegarde();
+            // Puis supprimer
+            confirmerSuppressionDepot();
+        }
+
+        // ============================================
+        // MISE À JOUR INTERFACE
+        // ============================================
+        function mettreAJourInterface() {
+            if (!depotActuel) return;
+            
+            // Nom du dépôt
+            document.getElementById('depot-nom-affichage').textContent = depotActuel.nom;
+            document.getElementById('depot-nb-produits').textContent = depotActuel.produits.length;
+            
+            // Taux de change
+            document.getElementById('input-taux').value = tauxChange;
+            
+            // Liste des produits
+            afficherProduits();
+        }
+
+        function mettreAJourListeDepots() {
+            const conteneur = document.getElementById('liste-depots');
+            conteneur.innerHTML = '';
+            
+            donnees.depots.forEach(depot => {
+                const estActif = depot.id === donnees.depotActifId;
+                const nbProduits = depot.produits ? depot.produits.length : 0;
+                
+                const html = `
+                    <div class="depot-item ${estActif ? 'actif' : ''}">
+                        <div class="info">
+                            <h4>${depot.nom}</h4>
+                            <p>${nbProduits} article(s)</p>
+                        </div>
+                        <div class="actions">
+                            ${!estActif ? `<button class="btn-icone" onclick="accederDepot('${depot.id}')" title="Accéder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>` : ''}
+                            <button class="btn-icone" onclick="renommerDepot('${depot.id}')" title="Renommer">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            ${!estActif ? `<button class="btn-icone" onclick="demanderSuppressionDepot('${depot.id}')" title="Supprimer" style="color: var(--danger);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                </svg>
+                            </button>` : ''}
+                        </div>
+                    </div>
+                `;
+                conteneur.innerHTML += html;
+            });
+        }
+
+        // ============================================
+        // GESTION PRODUITS
+        // ============================================
+        function afficherProduits() {
+            const conteneur = document.getElementById('liste-produits');
+            const terme = document.getElementById('recherche-produit').value.toLowerCase();
+            
+            if (!depotActuel || !depotActuel.produits) {
+                conteneur.innerHTML = `
+                    <div class="carte-vide">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        <h3>Aucun produit</h3>
+                        <p>Appuyez sur + pour ajouter un produit</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const produitsFiltres = depotActuel.produits.filter(p => 
+                p.nom.toLowerCase().includes(terme) || 
+                p.reference.toLowerCase().includes(terme)
+            );
+            
+            if (produitsFiltres.length === 0) {
+                conteneur.innerHTML = `
+                    <div class="carte-vide">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <h3>Aucun résultat</h3>
+                        <p>Essayez avec d'autres termes</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            conteneur.innerHTML = '';
+            
+            produitsFiltres.forEach(produit => {
+                const qteTotal = calculerQteTotal(produit);
+                const etat = calculerEtat(produit, qteTotal);
+                const prixFormate = formaterPrix(produit.prix, produit.devise);
+                
+                const html = `
+                    <div class="produit-item" onclick="ouvrirDetailProduit('${produit.id}')">
+                        <div class="produit-avatar">${produit.nom.charAt(0).toUpperCase()}</div>
+                        <div class="produit-info">
+                            <h3>${produit.nom}</h3>
+                            <div class="reference">${produit.reference}</div>
+                        </div>
+                        <div class="produit-meta">
+                            <div class="quantite">${qteTotal}</div>
+                            <div class="prix">${prixFormate}</div>
+                        </div>
+                    </div>
+                `;
+                conteneur.innerHTML += html;
+            });
+        }
+
+        function filtrerProduits() {
+            afficherProduits();
+        }
+
+        function calculerQteTotal(produit) {
+            if (!produit.emplacements) return 0;
+            return produit.emplacements.reduce((sum, emp) => sum + (emp.quantite || 0), 0);
+        }
+
+        function calculerEtat(produit, qteTotal) {
+            const min = produit.qteMin || 0;
+            const max = produit.qteMax || 100;
+            
+            if (qteTotal <= 0) return { classe: 'rupture', texte: 'Rupture' };
+            if (qteTotal <= min) return { classe: 'faible', texte: 'Faible' };
+            if (qteTotal >= max) return { classe: 'surstock', texte: 'Surstock' };
+            return { classe: 'stock', texte: 'En stock' };
+        }
+
+        // ============================================
+        // FORMATS PRIX
+        // ============================================
+        function formaterPrix(montant, devise) {
+            if (affichagePrix === 'fc') {
+                const fc = devise === 'USD' ? montant * tauxChange : montant;
+                return formatNombre(fc) + ' FC';
+            } else if (affichagePrix === 'usd') {
+                const usd = devise === 'FC' ? montant / tauxChange : montant;
+                return '$' + formatNombre(usd);
+            } else {
+                const fc = devise === 'USD' ? montant * tauxChange : montant;
+                const usd = devise === 'FC' ? montant / tauxChange : montant;
+                return formatNombre(fc) + ' FC ($' + formatNombre(usd) + ')';
+            }
+        }
+
+        function formatNombre(n) {
+            return Math.round(n).toLocaleString('fr-FR');
+        }
+
+        // ============================================
+        // AJOUT PRODUIT
+        // ============================================
+        function ouvrirAjoutProduit(avecCode) {
+            modeEditionProduit = false;
+            document.getElementById('titre-modale-produit').textContent = traductions[langueActuelle].nouveau_produit;
+            
+            // Réinitialiser le formulaire
+            document.getElementById('produit-reference').value = '';
+            document.getElementById('produit-nom').value = '';
+            document.getElementById('produit-qte-min').value = '0';
+            document.getElementById('produit-qte-max').value = '100';
+            document.getElementById('produit-prix').value = '';
+            document.getElementById('equivalent-prix').textContent = '';
+            
+            // Réinitialiser les emplacements
+            document.getElementById('emplacements-liste').innerHTML = `
+                <div class="emplacement-item" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <input type="text" placeholder="Emplacement" style="flex: 2;" class="input-emplacement">
+                    <input type="number" placeholder="Qté" style="flex: 1;" min="0" value="0" class="input-qte">
+                </div>
+            `;
+            
+            // Générer une référence si sans code
+            if (!avecCode) {
+                genererReference();
+            }
+            
+            // Afficher le QR preview
+            document.getElementById('qr-preview').style.display = 'block';
+            genererQRPreview();
+            
+            ouvrirModale('modale-produit');
+        }
+
+        function genererReference() {
+            const ref = 'REF-' + Date.now().toString().slice(-6);
+            document.getElementById('produit-reference').value = ref;
+            genererQRPreview();
+        }
+
+        function ajouterEmplacement() {
+            const conteneur = document.getElementById('emplacements-liste');
+            const html = `
+                <div class="emplacement-item" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <input type="text" placeholder="Emplacement" style="flex: 2;" class="input-emplacement">
+                    <input type="number" placeholder="Qté" style="flex: 1;" min="0" value="0" class="input-qte">
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: var(--danger); cursor: pointer; padding: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            conteneur.insertAdjacentHTML('beforeend', html);
+        }
+
+        function calculerEquivalentPrix() {
+            const prix = parseFloat(document.getElementById('produit-prix').value) || 0;
+            const equivalent = document.getElementById('equivalent-prix');
+            
+            if (prix > 0) {
+                if (devisePrix === 'FC') {
+                    equivalent.textContent = `= $${formatNombre(prix / tauxChange)}`;
+                } else {
+                    equivalent.textContent = `= ${formatNombre(prix * tauxChange)} FC`;
+                }
+            } else {
+                equivalent.textContent = '';
+            }
+        }
+
+        function changerDevisePrix(devise) {
+            devisePrix = devise;
+            document.getElementById('devise-prix-actuelle').textContent = devise;
+            
+            document.querySelectorAll('#selecteur-devise-prix .selecteur-option').forEach(opt => {
+                opt.classList.remove('selectionne');
+                if (opt.textContent.trim() === devise) {
+                    opt.classList.add('selectionne');
+                }
+            });
+            
+            fermerSelecteur('selecteur-devise-prix');
+            calculerEquivalentPrix();
+        }
+
+        function sauvegarderProduit() {
+            const reference = document.getElementById('produit-reference').value.trim();
+            const nom = document.getElementById('produit-nom').value.trim();
+            const qteMin = parseInt(document.getElementById('produit-qte-min').value) || 0;
+            const qteMax = parseInt(document.getElementById('produit-qte-max').value) || 100;
+            const prix = parseFloat(document.getElementById('produit-prix').value) || 0;
+            
+            if (!nom) {
+                alert('Veuillez entrer un nom de produit');
+                return;
+            }
+            
+            // Récupérer les emplacements
+            const emplacements = [];
+            document.querySelectorAll('.emplacement-item').forEach(item => {
+                const emp = item.querySelector('.input-emplacement').value.trim();
+                const qte = parseInt(item.querySelector('.input-qte').value) || 0;
+                if (emp) {
+                    emplacements.push({ nom: emp, quantite: qte });
+                }
+            });
+            
+            if (modeEditionProduit && produitSelectionne) {
+                // Mode édition
+                const produit = depotActuel.produits.find(p => p.id === produitSelectionne.id);
+                if (produit) {
+                    produit.reference = reference || 'REF-' + Date.now().toString().slice(-6);
+                    produit.nom = nom;
+                    produit.emplacements = emplacements;
+                    produit.qteMin = qteMin;
+                    produit.qteMax = qteMax;
+                    produit.prix = prix;
+                    produit.devise = devisePrix;
+                    produit.dateModification = new Date().toISOString();
+                    
+                    // Ajouter à l'historique
+                    if (!produit.historique) produit.historique = [];
+                    produit.historique.unshift({
+                        action: 'modifie',
+                        date: new Date().toISOString()
+                    });
+                }
+            } else {
+                // Nouveau produit
+                const nouveauProduit = {
+                    id: Date.now().toString(),
+                    reference: reference || 'REF-' + Date.now().toString().slice(-6),
+                    nom: nom,
+                    emplacements: emplacements,
+                    qteMin: qteMin,
+                    qteMax: qteMax,
+                    prix: prix,
+                    devise: devisePrix,
+                    dateCreation: new Date().toISOString(),
+                    historique: [{
+                        action: 'cree',
+                        date: new Date().toISOString()
+                    }]
+                };
+                
+                if (!depotActuel.produits) depotActuel.produits = [];
+                depotActuel.produits.push(nouveauProduit);
+            }
+            
+            sauvegarderDonnees();
+            fermerModale('modale-produit');
+            mettreAJourInterface();
+        }
+
+        // ============================================
+        // DÉTAIL PRODUIT
+        // ============================================
+        function ouvrirDetailProduit(id) {
+            produitSelectionne = depotActuel.produits.find(p => p.id === id);
+            if (!produitSelectionne) return;
+            
+            // Header
+            document.getElementById('detail-avatar').textContent = produitSelectionne.nom.charAt(0).toUpperCase();
+            document.getElementById('detail-nom').textContent = produitSelectionne.nom;
+            document.getElementById('detail-reference').textContent = produitSelectionne.reference;
+            
+            // Stats
+            const qteTotal = calculerQteTotal(produitSelectionne);
+            const etat = calculerEtat(produitSelectionne, qteTotal);
+            const valeurStock = qteTotal * produitSelectionne.prix;
+            
+            document.getElementById('detail-qte-total').textContent = qteTotal;
+            document.getElementById('detail-prix').textContent = formaterPrix(produitSelectionne.prix, produitSelectionne.devise);
+            document.getElementById('detail-valeur').textContent = formaterPrix(valeurStock, produitSelectionne.devise);
+            document.getElementById('detail-etat').innerHTML = `<span class="badge-etat badge-${etat.classe}">${etat.texte}</span>`;
+            
+            // Emplacements
+            const empContainer = document.getElementById('detail-emplacements');
+            empContainer.innerHTML = '';
+            if (produitSelectionne.emplacements) {
+                produitSelectionne.emplacements.forEach(emp => {
+                    empContainer.innerHTML += `
+                        <div class="produit-ligne">
+                            <span class="label">${emp.nom}</span>
+                            <span class="valeur">${emp.quantite}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Seuils
+            document.getElementById('detail-qte-min').textContent = produitSelectionne.qteMin || 0;
+            document.getElementById('detail-qte-max').textContent = produitSelectionne.qteMax || 100;
+            
+            // Historique
+            const histContainer = document.getElementById('detail-historique');
+            histContainer.innerHTML = '';
+            if (produitSelectionne.historique) {
+                produitSelectionne.historique.forEach(h => {
+                    const date = new Date(h.date);
+                    histContainer.innerHTML += `
+                        <div class="historique-item">
+                            <div class="action">${h.action}</div>
+                            <div class="details">${h.details || ''}</div>
+                            <div class="date">${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR')}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // QR Code
+            genererQRDetail();
+            
+            ouvrirModale('modale-detail');
+        }
+
+        function modifierProduit() {
+            if (!produitSelectionne) return;
+            
+            modeEditionProduit = true;
+            document.getElementById('titre-modale-produit').textContent = traductions[langueActuelle].modifier_produit;
+            
+            // Remplir le formulaire
+            document.getElementById('produit-reference').value = produitSelectionne.reference;
+            document.getElementById('produit-nom').value = produitSelectionne.nom;
+            document.getElementById('produit-qte-min').value = produitSelectionne.qteMin || 0;
+            document.getElementById('produit-qte-max').value = produitSelectionne.qteMax || 100;
+            document.getElementById('produit-prix').value = produitSelectionne.prix || '';
+            devisePrix = produitSelectionne.devise || 'FC';
+            document.getElementById('devise-prix-actuelle').textContent = devisePrix;
+            
+            // Emplacements
+            const empContainer = document.getElementById('emplacements-liste');
+            empContainer.innerHTML = '';
+            if (produitSelectionne.emplacements) {
+                produitSelectionne.emplacements.forEach(emp => {
+                    empContainer.innerHTML += `
+                        <div class="emplacement-item" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" value="${emp.nom}" style="flex: 2;" class="input-emplacement">
+                            <input type="number" value="${emp.quantite}" style="flex: 1;" min="0" class="input-qte">
+                            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: var(--danger); cursor: pointer; padding: 8px;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('qr-preview').style.display = 'block';
+            genererQRPreview();
+            calculerEquivalentPrix();
+            
+            fermerModale('modale-detail');
+            ouvrirModale('modale-produit');
+        }
+
+        function supprimerProduit() {
+            if (!produitSelectionne) return;
+            
+            if (confirm('Supprimer ce produit ?')) {
+                depotActuel.produits = depotActuel.produits.filter(p => p.id !== produitSelectionne.id);
+                sauvegarderDonnees();
+                fermerModale('modale-detail');
+                mettreAJourInterface();
+            }
+        }
+
+        // ============================================
+        // MOUVEMENTS (ENTRÉE/SORTIE)
+        // ============================================
+        function ouvrirMouvement(type) {
+            typeMouvement = type;
+            document.getElementById('titre-mouvement').textContent = type === 'entree' ? 'Entrée' : 'Sortie';
+            document.getElementById('apres-label').textContent = type === 'entree' ? 'Après entrée' : 'Après sortie';
+            
+            // Remplir le prix actuel
+            document.getElementById('mouvement-prix').value = produitSelectionne.prix || '';
+            deviseMouvement = produitSelectionne.devise || 'FC';
+            document.getElementById('devise-mouvement-actuelle').textContent = deviseMouvement;
+            document.getElementById('mouvement-qte').value = 1;
+            
+            // Gérer la sélection d'emplacement si plusieurs
+            const groupeSelect = document.getElementById('groupe-select-emplacement');
+            const selectContainer = document.getElementById('selecteur-emplacement');
+            
+            if (produitSelectionne.emplacements && produitSelectionne.emplacements.length > 1) {
+                groupeSelect.style.display = 'block';
+                selectContainer.innerHTML = '';
+                produitSelectionne.emplacements.forEach((emp, index) => {
+                    const option = document.createElement('div');
+                    option.className = 'selecteur-option' + (index === 0 ? ' selectionne' : '');
+                    option.textContent = `${emp.nom} (${emp.quantite})`;
+                    option.onclick = () => selectionnerEmplacementMouvement(index, emp);
+                    selectContainer.appendChild(option);
+                });
+                emplacementMouvement = 0;
+                document.getElementById('emplacement-selectionne').textContent = 
+                    `${produitSelectionne.emplacements[0].nom} (${produitSelectionne.emplacements[0].quantite})`;
+            } else {
+                groupeSelect.style.display = 'none';
+                emplacementMouvement = 0;
+            }
+            
+            mettreAJourApercu();
+            calculerEquivalentMouvement();
+            
+            fermerModale('modale-detail');
+            ouvrirModale('modale-mouvement');
+        }
+
+        function selectionnerEmplacementMouvement(index, emp) {
+            emplacementMouvement = index;
+            document.getElementById('emplacement-selectionne').textContent = `${emp.nom} (${emp.quantite})`;
+            
+            document.querySelectorAll('#selecteur-emplacement .selecteur-option').forEach((opt, i) => {
+                opt.classList.toggle('selectionne', i === index);
+            });
+            
+            fermerSelecteur('selecteur-emplacement');
+            mettreAJourApercu();
+        }
+
+        function mettreAJourApercu() {
+            if (!produitSelectionne) return;
+            
+            const qte = parseInt(document.getElementById('mouvement-qte').value) || 0;
+            const emp = produitSelectionne.emplacements[emplacementMouvement] || { quantite: 0 };
+            const qteActuelle = emp.quantite;
+            
+            document.getElementById('apercu-qte-actuelle').textContent = qteActuelle;
+            
+            const nouvelleQte = typeMouvement === 'entree' ? qteActuelle + qte : qteActuelle - qte;
+            document.getElementById('apercu-qte-apres').textContent = Math.max(0, nouvelleQte);
+        }
+
+        function calculerEquivalentMouvement() {
+            const prix = parseFloat(document.getElementById('mouvement-prix').value) || 0;
+            const equivalent = document.getElementById('equivalent-mouvement');
+            
+            if (prix > 0) {
+                if (deviseMouvement === 'FC') {
+                    equivalent.textContent = `= $${formatNombre(prix / tauxChange)}`;
+                } else {
+                    equivalent.textContent = `= ${formatNombre(prix * tauxChange)} FC`;
+                }
+            } else {
+                equivalent.textContent = '';
+            }
+        }
+
+        function changerDeviseMouvement(devise) {
+            deviseMouvement = devise;
+            document.getElementById('devise-mouvement-actuelle').textContent = devise;
+            
+            document.querySelectorAll('#selecteur-devise-mouvement .selecteur-option').forEach(opt => {
+                opt.classList.remove('selectionne');
+                if (opt.textContent.trim() === devise) {
+                    opt.classList.add('selectionne');
+                }
+            });
+            
+            fermerSelecteur('selecteur-devise-mouvement');
+            calculerEquivalentMouvement();
+        }
+
+        function confirmerMouvement() {
+            const qte = parseInt(document.getElementById('mouvement-qte').value) || 0;
+            const prix = parseFloat(document.getElementById('mouvement-prix').value) || 0;
+            
+            if (qte <= 0) return;
+            
+            const emp = produitSelectionne.emplacements[emplacementMouvement];
+            const ancienneQte = emp.quantite;
+            
+            if (typeMouvement === 'entree') {
+                emp.quantite += qte;
+            } else {
+                emp.quantite = Math.max(0, emp.quantite - qte);
+            }
+            
+            // Mettre à jour le prix
+            produitSelectionne.prix = prix;
+            produitSelectionne.devise = deviseMouvement;
+            produitSelectionne.dateModification = new Date().toISOString();
+            
+            // Ajouter à l'historique
+            if (!produitSelectionne.historique) produitSelectionne.historique = [];
+            produitSelectionne.historique.unshift({
+                action: typeMouvement,
+                details: `${ancienneQte} → ${emp.quantite} (${emp.nom})`,
+                date: new Date().toISOString()
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-mouvement');
+            mettreAJourInterface();
+        }
+
+        // ============================================
+        // INVENTAIRE
+        // ============================================
+        function ouvrirInventaire() {
+            // Remplir le sélecteur d'emplacement
+            const selectContainer = document.getElementById('selecteur-emplacement-inv');
+            selectContainer.innerHTML = '';
+            
+            if (produitSelectionne.emplacements) {
+                produitSelectionne.emplacements.forEach((emp, index) => {
+                    const option = document.createElement('div');
+                    option.className = 'selecteur-option' + (index === 0 ? ' selectionne' : '');
+                    option.textContent = `${emp.nom} (${emp.quantite})`;
+                    option.onclick = () => selectionnerEmplacementInventaire(index, emp);
+                    selectContainer.appendChild(option);
+                });
+                emplacementInventaire = 0;
+                document.getElementById('emplacement-inv-selectionne').textContent = 
+                    `${produitSelectionne.emplacements[0].nom} (${produitSelectionne.emplacements[0].quantite})`;
+                document.getElementById('inv-theorique').value = produitSelectionne.emplacements[0].quantite;
+            }
+            
+            document.getElementById('inv-reel').value = 0;
+            document.getElementById('inv-ecart').textContent = '0';
+            
+            fermerModale('modale-detail');
+            ouvrirModale('modale-inventaire');
+        }
+
+        function selectionnerEmplacementInventaire(index, emp) {
+            emplacementInventaire = index;
+            document.getElementById('emplacement-inv-selectionne').textContent = `${emp.nom} (${emp.quantite})`;
+            document.getElementById('inv-theorique').value = emp.quantite;
+            
+            document.querySelectorAll('#selecteur-emplacement-inv .selecteur-option').forEach((opt, i) => {
+                opt.classList.toggle('selectionne', i === index);
+            });
+            
+            fermerSelecteur('selecteur-emplacement-inv');
+            calculerEcart();
+        }
+
+        function calculerEcart() {
+            const theorique = parseInt(document.getElementById('inv-theorique').value) || 0;
+            const reel = parseInt(document.getElementById('inv-reel').value) || 0;
+            const ecart = reel - theorique;
+            
+            const ecartEl = document.getElementById('inv-ecart');
+            ecartEl.textContent = (ecart >= 0 ? '+' : '') + ecart;
+            ecartEl.style.color = ecart < 0 ? 'var(--danger)' : ecart > 0 ? 'var(--succes)' : 'var(--texte)';
+        }
+
+        function regulariserInventaire() {
+            const reel = parseInt(document.getElementById('inv-reel').value) || 0;
+            const emp = produitSelectionne.emplacements[emplacementInventaire];
+            const ancienneQte = emp.quantite;
+            
+            emp.quantite = reel;
+            produitSelectionne.dateModification = new Date().toISOString();
+            
+            // Ajouter à l'historique
+            if (!produitSelectionne.historique) produitSelectionne.historique = [];
+            produitSelectionne.historique.unshift({
+                action: 'inventaire',
+                details: `${ancienneQte} → ${reel} (${emp.nom})`,
+                date: new Date().toISOString()
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-inventaire');
+            mettreAJourInterface();
+        }
+
+        // ============================================
+        // RAPPORT
+        // ============================================
+        function mettreAJourRapport() {
+            if (!depotActuel) return;
+            
+            document.getElementById('rapport-depot-nom').textContent = depotActuel.nom;
+            document.getElementById('rapport-date').textContent = new Date().toLocaleDateString('fr-FR') + ' ' + new Date().toLocaleTimeString('fr-FR');
+            
+            let valeurTotale = 0;
+            let nbArticles = depotActuel.produits ? depotActuel.produits.length : 0;
+            
+            const tbody = document.getElementById('rapport-tableau-corps');
+            tbody.innerHTML = '';
+            
+            if (depotActuel.produits) {
+                depotActuel.produits.forEach(produit => {
+                    const qteTotal = calculerQteTotal(produit);
+                    const etat = calculerEtat(produit, qteTotal);
+                    const valeur = qteTotal * produit.prix;
+                    
+                    // Convertir en FC pour le total
+                    const valeurFC = produit.devise === 'USD' ? valeur * tauxChange : valeur;
+                    valeurTotale += valeurFC;
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${produit.reference}</td>
+                            <td>${produit.nom}</td>
+                            <td>${qteTotal}</td>
+                            <td>${formaterPrix(produit.prix, produit.devise)}</td>
+                            <td>${formaterPrix(valeur, produit.devise)}</td>
+                            <td><span class="badge-etat badge-${etat.classe}">${etat.texte}</span></td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            document.getElementById('rapport-valeur-totale').textContent = formatNombre(valeurTotale) + ' FC';
+            document.getElementById('rapport-nb-articles').textContent = nbArticles;
+        }
+
+        // ============================================
+        // EXPORT PDF/EXCEL
+        // ============================================
+        function exporterRapportPDF() {
+            // Créer un contenu PDF basique
+            const contenu = genererContenuRapport();
+            
+            // Créer un blob
+            const blob = new Blob([contenu], { type: 'text/plain' });
+            const fichier = new File([blob], `rapport_${depotActuel.nom}_${Date.now()}.txt`, { type: 'text/plain' });
+            
+            // Utiliser l'API de partage
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Rapport de stock',
+                    text: `Rapport du dépôt ${depotActuel.nom}`
+                }).catch(err => console.log('Partage annulé'));
+            } else {
+                // Fallback: télécharger
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function exporterRapportExcel() {
+            // Créer un CSV basique (compatible Excel)
+            let csv = 'Référence,Article,Quantité,Prix unitaire,Valeur,État\n';
+            
+            if (depotActuel.produits) {
+                depotActuel.produits.forEach(produit => {
+                    const qteTotal = calculerQteTotal(produit);
+                    const etat = calculerEtat(produit, qteTotal);
+                    const valeur = qteTotal * produit.prix;
+                    
+                    csv += `"${produit.reference}","${produit.nom}",${qteTotal},"${formaterPrix(produit.prix, produit.devise)}","${formaterPrix(valeur, produit.devise)}","${etat.texte}"\n`;
+                });
+            }
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const fichier = new File([blob], `rapport_${depotActuel.nom}_${Date.now()}.csv`, { type: 'text/csv' });
+            
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Rapport Excel',
+                    text: `Rapport du dépôt ${depotActuel.nom}`
+                }).catch(err => console.log('Partage annulé'));
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function genererContenuRapport() {
+            let contenu = `RAPPORT DE STOCK - ${depotActuel.nom}\n`;
+            contenu += `Date: ${new Date().toLocaleDateString('fr-FR')}\n\n`;
+            contenu += 'RÉFÉRENCE | ARTICLE | QTÉ | PRIX | VALEUR | ÉTAT\n';
+            contenu += '-'.repeat(60) + '\n';
+            
+            if (depotActuel.produits) {
+                depotActuel.produits.forEach(produit => {
+                    const qteTotal = calculerQteTotal(produit);
+                    const etat = calculerEtat(produit, qteTotal);
+                    const valeur = qteTotal * produit.prix;
+                    
+                    contenu += `${produit.reference} | ${produit.nom} | ${qteTotal} | ${formaterPrix(produit.prix, produit.devise)} | ${formaterPrix(valeur, produit.devise)} | ${etat.texte}\n`;
+                });
+            }
+            
+            return contenu;
+        }
+
+        // ============================================
+        // SAUVEGARDE / RESTAURATION
+        // ============================================
+        function exporterSauvegarde() {
+            const donneesExport = JSON.stringify(donnees, null, 2);
+            const blob = new Blob([donneesExport], { type: 'application/json' });
+            const fichier = new File([blob], `sauvegarde_quincaillerie_${Date.now()}.json`, { type: 'application/json' });
+            
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Sauvegarde données',
+                    text: 'Sauvegarde des données Quincaillerie TOTAL'
+                }).catch(err => console.log('Partage annulé'));
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function importerSauvegarde() {
+            document.getElementById('input-fichier-import').click();
+        }
+
+        function traiterFichierImport(event) {
+            const fichier = event.target.files[0];
+            if (!fichier) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const nouvellesDonnees = JSON.parse(e.target.result);
+                    donnees = nouvellesDonnees;
+                    sauvegarderDonnees();
+                    
+                    // Recharger l'interface
+                    if (donnees.depotActifId) {
+                        depotActuel = donnees.depots.find(d => d.id === donnees.depotActifId);
+                    }
+                    
+                    mettreAJourInterface();
+                    alert('Données importées avec succès');
+                } catch (err) {
+                    alert('Erreur lors de l\'import: fichier invalide');
+                }
+            };
+            reader.readAsText(fichier);
+            
+            // Réinitialiser l'input
+            event.target.value = '';
+        }
+
+        // ============================================
+        // QR CODE (simulé)
+        // ============================================
+        function genererQRPreview() {
+            const ref = document.getElementById('produit-reference').value || 'REF-000000';
+            genererQRSVG('qr-svg', ref);
+        }
+
+        function genererQRDetail() {
+            if (!produitSelectionne) return;
+            genererQRSVG('detail-qr-svg', produitSelectionne.reference);
+        }
+
+        function genererQRSVG(elementId, texte) {
+            const svg = document.getElementById(elementId);
+            if (!svg) return;
+            
+            // QR Code simulé avec un pattern
+            let pattern = '';
+            const size = 200;
+            const cellSize = 10;
+            const cells = size / cellSize;
+            
+            for (let y = 0; y < cells; y++) {
+                for (let x = 0; x < cells; x++) {
+                    // Créer un pattern basé sur le hash du texte
+                    const hash = (texte.charCodeAt((x + y) % texte.length) || 65) + x * y;
+                    const filled = (hash % 3) !== 0;
+                    
+                    // Coins toujours remplis (repères)
+                    const isCorner = (x < 3 && y < 3) || (x >= cells - 3 && y < 3) || (x < 3 && y >= cells - 3);
+                    
+                    if (filled || isCorner) {
+                        pattern += `<rect x="${x * cellSize}" y="${y * cellSize}" width="${cellSize}" height="${cellSize}" fill="var(--primaire)"/>`;
+                    }
+                }
+            }
+            
+            svg.innerHTML = pattern;
+        }
+
+        function exporterQR() {
+            if (!produitSelectionne) return;
+            
+            // Créer une image du QR code
+            const svg = document.getElementById('detail-qr-svg');
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const fichier = new File([svgBlob], `qr_${produitSelectionne.nom}.svg`, { type: 'image/svg+xml' });
+            
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'QR Code',
+                    text: `QR Code pour ${produitSelectionne.nom}`
+                }).catch(err => console.log('Partage annulé'));
+            } else {
+                const url = URL.createObjectURL(svgBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // ============================================
+        // TAUX DE CHANGE
+        // ============================================
+        function sauvegarderTaux() {
+            tauxChange = parseFloat(document.getElementById('input-taux').value) || 2800;
+            donnees.parametres.tauxChange = tauxChange;
+            sauvegarderDonnees();
+        }
+
+        function changerAffichagePrix(mode) {
+            affichagePrix = mode;
+            donnees.parametres.affichagePrix = mode;
+            sauvegarderDonnees();
+            
+            const noms = { fc: 'Francs congolais', usd: 'Dollars', 'les deux': 'Les deux' };
+            document.getElementById('prix-actuel').textContent = noms[mode];
+            
+            document.querySelectorAll('#selecteur-prix .selecteur-option').forEach(opt => {
+                opt.classList.remove('selectionne');
+            });
+            event.target.classList.add('selectionne');
+            
+            fermerSelecteur('selecteur-prix');
+            mettreAJourInterface();
+        }
+
+        // ============================================
+        // CHANGEMENT LANGUE
+        // ============================================
+        function changerLangue(lang) {
+            langueActuelle = lang;
+            donnees.parametres.langue = lang;
+            sauvegarderDonnees();
+            
+            const noms = { fr: 'Français', en: 'English', hi: 'हिन्दी', ln: 'Lingala', sw: 'Swahili' };
+            document.getElementById('langue-actuelle').textContent = noms[lang];
+            
+            document.querySelectorAll('#selecteur-langue .selecteur-option').forEach(opt => {
+                opt.classList.remove('selectionne');
+            });
+            event.target.classList.add('selectionne');
+            
+            fermerSelecteur('selecteur-langue');
+            traduireInterface();
+        }
+
+        // ============================================
+        // UTILITAIRES
+        // ============================================
+        function simulerScan() {
+            // Simuler un scan de code-barres
+            const codeSimule = 'SCAN-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+            document.getElementById('recherche-produit').value = codeSimule;
+            filtrerProduits();
+        }
+
+        // ============================================
+        // GESTION MODALES
+        // ============================================
+        function ouvrirModale(id) {
+            document.getElementById(id).classList.add('actif');
+        }
+
+        function fermerModale(id) {
+            document.getElementById(id).classList.remove('actif');
+        }
+
+        // Fermer modale en cliquant sur l'overlay
+        document.querySelectorAll('.modale-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('actif');
+                }
+            });
+        });
+
+        // ============================================
+        // GESTION SÉLECTEURS
+        // ============================================
+        function toggleSelecteur(id) {
+            const options = document.getElementById(id);
+            const btn = options.previousElementSibling;
+            const estOuvert = options.classList.contains('ouvert');
+            
+            // Fermer tous les autres
+            document.querySelectorAll('.selecteur-options').forEach(el => el.classList.remove('ouvert'));
+            document.querySelectorAll('.selecteur-btn').forEach(el => el.classList.remove('ouvert'));
+            
+            if (!estOuvert) {
+                options.classList.add('ouvert');
+                btn.classList.add('ouvert');
+            }
+        }
+
+        function fermerSelecteur(id) {
+            document.getElementById(id).classList.remove('ouvert');
+            document.getElementById(id).previousElementSibling.classList.remove('ouvert');
+        }
+
+        // ============================================
+        // GESTION BOUTON FLOTTANT
+        // ============================================
+        function toggleFlottant() {
+            const btn = document.getElementById('btn-flottant');
+            const options = document.getElementById('flottant-options');
+            
+            btn.classList.toggle('ouvert');
+            options.classList.toggle('ouvert');
+        }
+
+        // Fermer le bouton flottant en cliquant ailleurs
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#btn-flottant') && !e.target.closest('#flottant-options')) {
+                document.getElementById('btn-flottant').classList.remove('ouvert');
+                document.getElementById('flottant-options').classList.remove('ouvert');
+            }
+        });
+
+        // ============================================
+        // PARAMÈTRES
+        // ============================================
+        function ouvrirParametres() {
+            // Mettre à jour les valeurs actuelles
+            document.getElementById('langue-actuelle').textContent = 
+                { fr: 'Français', en: 'English', hi: 'हिन्दी', ln: 'Lingala', sw: 'Swahili' }[langueActuelle];
+            document.getElementById('theme-actuel').textContent = 
+                { systeme: 'Système', sombre: 'Sombre', clair: 'Clair' }[themeActuel];
+            document.getElementById('prix-actuel').textContent = 
+                { fc: 'Francs congolais', usd: 'Dollars', 'les deux': 'Les deux' }[affichagePrix];
+            document.getElementById('input-taux').value = tauxChange;
+            
+            ouvrirModale('modale-parametres');
+        }
+
+        function ouvrirGestionDepots() {
+            mettreAJourListeDepots();
+            fermerModale('modale-parametres');
+            ouvrirModale('modale-depots');
+        }
+    </script>
+</body>
+</html>
