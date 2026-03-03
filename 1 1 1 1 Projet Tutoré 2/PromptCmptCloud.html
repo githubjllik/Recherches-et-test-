@@ -1,0 +1,1335 @@
+Je veux que tu changes complètement la zone de connexion cloud car ça ne correspond pas  exactement à ce je voulais : modal,...etc
+
+Je veux qu'il y ait une zone de connexion et à côté une zone de créer un compte 
+
+Dans la zone de connexion :
+Dans nom : je veux que ça soit une zone où on peut soit directement tapez le nom soit sélectionné parmi les noms des comptes existants 
+
+Car l'utilisateur peut toute fois oublier le nom à laquelle il avait créé son nom 
+
+On aura aussi : mot de passe oublié :
+Car l'utilisateur peut toutefois oublier son mot de passe ainsi faut lui proposer : 
+De scanner ou importer le QR code de son compte 
+
+Car un compte cloud, une fois créer aura un QR code unique, comme on l'a fait avec nos produits 
+
+Ou De scanner ou importer le QR code de la carte d'identité ou d'électeur comme on l'a fait avec celui de sécurité 
+
+Une fois cela fait , ça va donc proposer à l'utilisateur d'entrer un nouveau mot de passe et de confirmer, ok voilà 
+
+Et n'oublie pas il faut toujours avoir l'icône "eye" dans un champ mot de passe 
+
+Pour la création de compte :
+Dans nom : faut un indicateur pour éviter des noms doubles/identiques car cela peut compliqué lors de la sélection, ainsi éviter des conflits avec des noms qui existe déjà 
+
+Je veux aussi que tu montres ce à quoi ça peut ressembler si on se connecte ou qu'on crée un compte 
+
+Montre le qr code du compte
+La zone pour ajouter le QR code de la carte d'identité
+Je veux aussi avoir la possibilité de se déconnecter 
+
+Note : il ne faut plus préciser si nom personnel ou d'entreprise, ici c'est le nom que va porter le compte cloud, peu importe ce que l'utilisateur peut mettre, ça ne dépend que de lui, une fois que ce nom est unique 
+
+Voici les zones concernées :
+        <!-- Écran des paramètres -->
+        <div class="ecran" id="ecran-parametres">
+            <header class="en-tete-simple" style="background-color: var(--fond);">
+                <div class="flex items-center gap-4">
+                    <button class="btn-icone" style="background-color: var(--fond-carte); border: 1px solid var(--bordure);" onclick="changerOnglet('accueil')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                            <line x1="19" y1="12" x2="5" y2="12"/>
+                            <polyline points="12 19 5 12 12 5"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 class="text-lg font-bold" style="color: var(--texte);" data-traduction="parametres">Parametres</h1>
+                        <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="configuration_app">Configuration de l'application</p>
+                    </div>
+                </div>
+            </header>
+
+
+                <!-- Stockage Cloud -->
+                <div class="carte mb-3">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="ouvrirModal('modal-cloud')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-medium" style="color: var(--texte);" data-traduction="stockage_cloud">Stockage cloud</p>
+                                <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="non_configure">Non configure</p>
+                            </div>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+
+....
+        <!-- Modal stockage cloud -->
+        <div class="fond-modal" id="modal-cloud">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="stockage_cloud">Stockage cloud</h2>
+                
+                <div class="carte mb-4 text-center" style="background-color: rgba(0, 111, 120, 0.05);">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);" class="mx-auto mb-2">
+                        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                    </svg>
+                    <p class="font-medium" style="color: var(--texte);" data-traduction="sauvegarde_automatique">Sauvegarde automatique</p>
+                    <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="cloud_description">Protegez vos donnees avec une sauvegarde en ligne</p>
+                </div>
+                
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="nom_entreprise">Nom ou entreprise</label>
+                    <input type="text" class="champ-saisie" placeholder="Quincaillerie TOTAL">
+                </div>
+                
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="mot_de_passe">Mot de passe</label>
+                    <input type="password" class="champ-saisie" placeholder="Votre mot de passe">
+                </div>
+                
+                <div class="flex gap-3 mt-4">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-cloud')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="creerCompteCloud()" data-traduction="creer_compte">Creer un compte</button>
+                </div>
+                
+                <div class="mt-4 pt-4" style="border-top: 1px solid var(--bordure);">
+                    <p class="text-sm text-center" style="color: var(--texte-secondaire);" data-traduction="deja_compte">Deja un compte ?</p>
+                    <button class="btn btn-outline w-full mt-2" onclick="afficherToast('Connexion cloud')" data-traduction="se_connecter">Se connecter</button>
+                </div>
+            </div>
+        </div>
+
+
+Voici certains zones dont j'ai fait référence :
+
+        <!-- Modal détail produit -->
+        <div class="fond-modal" id="modal-detail">
+            <div class="contenu-modal" style="max-height: 95vh;">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="detail_produit">Detail du produit</h2>
+                
+                <div class="overflow-y-auto" style="max-height: 70vh;">
+                    <!-- QR Code du produit -->
+                    <div class="carte mb-4 text-center">
+                        <p class="text-sm mb-3" style="color: var(--texte-secondaire);" data-traduction="qr_code">QR Code du produit</p>
+                        <div class="w-40 h-40 mx-auto rounded-xl flex items-center justify-center" style="background-color: var(--bordure);">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                            </svg>
+                        </div>
+                        <button class="btn btn-outline btn-petit mt-3" onclick="afficherToast('Export QR Code')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span data-traduction="exporter">Exporter</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Informations -->
+                    <div class="carte mb-4">
+                        <h3 class="font-semibold mb-3" style="color: var(--texte);" data-traduction="informations">Informations</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="reference">Reference</span>
+                                <span class="font-medium" style="color: var(--texte);" id="detail-ref">REF-001</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="nom">Nom</span>
+                                <span class="font-medium" style="color: var(--texte);" id="detail-nom">Marteau 500g</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="prix_unitaire">Prix unitaire</span>
+                                <span class="font-medium" style="color: var(--texte);" id="detail-prix">15 000 FC</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Emplacements -->
+                    <div class="carte mb-4">
+                        <h3 class="font-semibold mb-3" style="color: var(--texte);" data-traduction="emplacements">Emplacements</h3>
+                        <div class="space-y-2" id="detail-emplacements">
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg" style="background-color: var(--bordure);">
+                                <span style="color: var(--texte);">Rayon A, Etagere 2</span>
+                                <span class="font-bold" style="color: var(--primaire);">25</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg" style="background-color: var(--bordure);">
+                                <span style="color: var(--texte);">Rayon B, Etagere 1</span>
+                                <span class="font-bold" style="color: var(--primaire);">10</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alertes -->
+                    <div class="carte">
+                        <h3 class="font-semibold mb-3" style="color: var(--texte);" data-traduction="alertes">Alertes</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="qte_min">Quantite min.</span>
+                                <span class="font-medium" style="color: var(--texte);">5</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="qte_max">Quantite max.</span>
+                                <span class="font-medium" style="color: var(--texte);">100</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span style="color: var(--texte-secondaire);" data-traduction="niveau_stock">Niveau de stock</span>
+                                <span style="color: var(--texte);">35 / 100</span>
+                            </div>
+                            <div class="barre-progression">
+                                <div class="barre-progression-remplissage" style="width: 35%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primaire w-full mt-4" onclick="ouvrirModal('modal-modifier-produit')" data-traduction="modifier">Modifier</button>
+                <button class="btn btn-outline w-full mt-2" onclick="fermerModal('modal-detail')" data-traduction="fermer">Fermer</button>
+            </div>
+        </div>
+
+
+....
+                    <!-- Carte identité -->
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex items-center gap-3">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <line x1="2" y1="10" x2="22" y2="10"/>
+                            </svg>
+                            <span data-traduction="carte_identite">Carte d'identite (QR)</span>
+                        </div>
+                        <button class="btn btn-petit btn-outline" onclick="ouvrirModal('modal-carte-id')" data-traduction="configurer">Configurer</button>
+                    </div>
+
+...
+
+
+
+        <!-- Modal carte identité -->
+        <div class="fond-modal" id="modal-carte-id">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="carte_identite">Carte d'identite</h2>
+                <p class="text-sm mb-4" style="color: var(--texte-secondaire);" data-traduction="carte_description">Scannez le QR code de votre carte d'identite ou electeur pour l'utiliser comme methode de recuperation</p>
+                
+                <div class="aspect-square rounded-2xl flex items-center justify-center mb-4" style="background-color: var(--bordure);">
+                    <div class="text-center">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <line x1="2" y1="10" x2="22" y2="10"/>
+                        </svg>
+                        <p class="mt-2" style="color: var(--texte-secondaire);" data-traduction="scanner_carte">Scanner votre carte</p>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline w-full" onclick="fermerModal('modal-carte-id')" data-traduction="annuler">Annuler</button>
+            </div>
+        </div>
+
+
+
+Certains CSS :
+
+        /* Variables CSS pour les thèmes */
+        :root {
+            --primaire: #006f78;
+            --primaire-clair: #008a96;
+            --primaire-fonce: #00545b;
+            --secondaire: #e62311;
+            --secondaire-clair: #ff3b28;
+            --secondaire-fonce: #b81c0d;
+            --fond: #f8fafb;
+            --fond-carte: #ffffff;
+            --texte: #1a1a1a;
+            --texte-secondaire: #6b7280;
+            --bordure: #e5e7eb;
+            --succes: #10b981;
+            --attention: #f59e0b;
+            --erreur: #ef4444;
+        }
+        
+        /* Thème sombre */
+        [data-theme="sombre"] {
+            --fond: #121212;
+            --fond-carte: #1e1e1e;
+            --texte: #f5f5f5;
+            --texte-secondaire: #9ca3af;
+            --bordure: #374151;
+        }
+        
+        /* Thème clair (blanc) */
+        [data-theme="blanc"] {
+            --fond: #ffffff;
+            --fond-carte: #ffffff;
+            --texte: #1a1a1a;
+            --texte-secondaire: #6b7280;
+            --bordure: #e5e7eb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Conteneur principal mobile */
+        .conteneur-app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            min-height: 100dvh;
+            position: relative;
+            background-color: var(--fond);
+        }
+        
+        /* Écrans */
+        .ecran {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
+            animation: fonduEntree 0.3s ease;
+        }
+        
+        .ecran.actif {
+            display: flex;
+        }
+        
+        @keyframes fonduEntree {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* En-tête */
+        .en-tete {
+            background-color: var(--primaire);
+            color: white;
+            padding: 16px 20px;
+            padding-top: max(16px, env(safe-area-inset-top));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .en-tete-simple {
+            background-color: transparent;
+            color: var(--texte);
+            padding: 16px 20px;
+            padding-top: max(16px, env(safe-area-inset-top));
+        }
+        
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-primaire {
+            background-color: var(--primaire);
+            color: white;
+        }
+        
+        .btn-primaire:active {
+            background-color: var(--primaire-fonce);
+        }
+        
+        .btn-secondaire {
+            background-color: var(--secondaire);
+            color: white;
+        }
+        
+        .btn-secondaire:active {
+            background-color: var(--secondaire-fonce);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primaire);
+            color: var(--primaire);
+        }
+        
+        .btn-outline:active {
+            background-color: var(--primaire);
+            color: white;
+        }
+        
+        .btn-icone {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 50%;
+        }
+        
+        .btn-petit {
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+        
+        /* Cartes */
+        .carte {
+            background-color: var(--fond-carte);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--bordure);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .carte-cliquable {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .carte-cliquable:active {
+            transform: scale(0.98);
+        }
+        
+        /* Champs de saisie */
+        .groupe-saisie {
+            margin-bottom: 16px;
+        }
+        
+        .label-saisie {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+        
+        .champ-saisie {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: var(--fond-carte);
+            color: var(--texte);
+            transition: border-color 0.2s ease, background-color 0.3s ease;
+            outline: none;
+        }
+        
+        .champ-saisie:focus {
+            border-color: var(--primaire);
+        }
+        
+        .champ-saisie::placeholder {
+            color: var(--texte-secondaire);
+        }
+        
+        /* Sélecteur personnalisé */
+        .selecteur-personnalise {
+            position: relative;
+        }
+        
+        .selecteur-valeur {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: var(--fond-carte);
+            color: var(--texte);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.2s ease;
+        }
+        
+        .selecteur-valeur:focus {
+            border-color: var(--primaire);
+            outline: none;
+        }
+        
+        .selecteur-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background-color: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            z-index: 200;
+            display: none;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        
+        .selecteur-options.ouvert {
+            display: block;
+            animation: glisseHaut 0.2s ease;
+        }
+        
+        @keyframes glisseHaut {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .selecteur-option {
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background-color 0.15s ease;
+        }
+        
+        .selecteur-option:active {
+            background-color: var(--bordure);
+        }
+        
+        .selecteur-option.selectionne {
+            background-color: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+
+
+Certains JavaScript :
+
+
+// =============================================
+// CHARGEMENT DES TRADUCTIONS
+// =============================================
+let traductions = {};
+
+async function chargerTraductions(langue) {
+    try {
+        const response = await fetch(`lang/${langue}.json`);
+        if (!response.ok) {
+            throw new Error(`Erreur lors du chargement de ${langue}.json`);
+        }
+        traductions = await response.json();
+        appliquerTraductions();
+    } catch (error) {
+        console.error('Erreur de chargement des traductions:', error);
+        if (langue !== 'fr') {
+            chargerTraductions('fr');
+        }
+    }
+}
+
+function appliquerTraductions() {
+    document.querySelectorAll('[data-traduction]').forEach(function(element) {
+        const cle = element.getAttribute('data-traduction');
+        if (traductions[cle]) {
+            if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                element.placeholder = traductions[cle];
+            } else {
+                element.textContent = traductions[cle];
+            }
+        }
+    });
+    
+    genererSlidesOnboarding();
+    genererListeProduits();
+    genererTableauRapport();
+    genererListeThemes();
+}
+
+// =============================================
+// DONNEES DE L'APPLICATION
+// =============================================
+
+const languesDisponibles = [
+    { code: 'fr', nom: 'Français', drapeau: '🇫🇷' },
+    { code: 'en', nom: 'English', drapeau: '🇬🇧' },
+    { code: 'hi', nom: 'हिंदी', drapeau: '🇮🇳' },
+    { code: 'ln', nom: 'Lingala', drapeau: '🇨🇩' },
+    { code: 'sw', nom: 'Kiswahili', drapeau: '🇨🇩' }
+];
+
+const themesDisponibles = [
+    { code: 'systeme', nom: 'theme_systeme', icone: 'systeme' },
+    { code: 'sombre', nom: 'theme_sombre', icone: 'sombre' },
+    { code: 'blanc', nom: 'theme_blanc', icone: 'blanc' }
+];
+
+const produitsDemo = [
+    { id: 1, ref: 'REF-001', nom: 'Marteau 500g', emplacement: 'Rayon A, Etagere 2', quantite: 25, prix: 15000, etat: 'en_stock' },
+    { id: 2, ref: 'REF-002', nom: 'Tournevis plat', emplacement: 'Rayon A, Etagere 1', quantite: 50, prix: 5000, etat: 'en_stock' },
+    { id: 3, ref: 'REF-003', nom: 'Pince coupante', emplacement: 'Rayon B, Etagere 3', quantite: 3, prix: 12000, etat: 'stock_faible' },
+    { id: 4, ref: 'REF-004', nom: 'Clef a molette', emplacement: 'Rayon B, Etagere 2', quantite: 0, prix: 8500, etat: 'rupture_stock' },
+    { id: 5, ref: 'REF-005', nom: 'Scie metallique', emplacement: 'Rayon C, Etagere 1', quantite: 150, prix: 25000, etat: 'surstock' },
+    { id: 6, ref: 'REF-006', nom: 'Ciseaux a bois', emplacement: 'Rayon A, Etagere 3', quantite: 18, prix: 18000, etat: 'en_stock' }
+];
+
+const slidesOnboarding = [
+    {
+        titre: "onboarding_1_titre",
+        texte: "onboarding_1_texte",
+        icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>`
+    },
+    {
+        titre: "onboarding_2_titre",
+        texte: "onboarding_2_texte",
+        icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+        </svg>`
+    },
+    {
+        titre: "onboarding_3_titre",
+        texte: "onboarding_3_texte",
+        icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>`
+    },
+    {
+        titre: "onboarding_4_titre",
+        texte: "onboarding_4_texte",
+        icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+        </svg>`
+    }
+];
+
+// =============================================
+// VARIABLES GLOBALES
+// =============================================
+let langueActuelle = 'fr';
+let themeActuel = 'systeme';
+let slideActuel = 0;
+let tauxChange = 2800;
+let monnaieChoisie = 'fc';
+let produitSelectionne = null;
+let menuFlottantOuvert = false;
+
+// =============================================
+// INITIALISATION
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+    chargerTraductions(langueActuelle).then(function() {
+        genererListeLangues();
+        genererSlidesOnboarding();
+        genererListeThemes();
+        genererListeProduits();
+        genererTableauRapport();
+        appliquerThemeSysteme();
+    });
+    document.addEventListener('click', gererClicExterne);
+});
+
+// =============================================
+// GENERATION DES ELEMENTS DYNAMIQUES
+// =============================================
+
+function genererListeLangues() {
+    const conteneur = document.getElementById('liste-langues');
+    if (!conteneur) return;
+    
+    let html = '';
+    languesDisponibles.forEach(function(langue) {
+        html += `
+            <button class="carte carte-cliquable flex items-center gap-4 w-full" onclick="selectionnerLangue('${langue.code}')">
+                <span class="text-3xl">${langue.drapeau}</span>
+                <span class="font-medium" style="color: var(--texte);">${langue.nom}</span>
+            </button>
+        `;
+    });
+    conteneur.innerHTML = html;
+}
+
+function genererSlidesOnboarding() {
+    const conteneur = document.getElementById('onboarding-slides');
+    const dots = document.getElementById('onboarding-dots');
+    if (!conteneur || !dots) return;
+    
+    let htmlSlides = '';
+    let htmlDots = '';
+    
+    slidesOnboarding.forEach(function(slide, index) {
+        htmlSlides += `
+            <div class="text-center ${index !== 0 ? 'hidden' : ''}" id="slide-${index}">
+                <div class="w-32 h-32 rounded-3xl mx-auto mb-8 flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1); color: var(--primaire);">
+                    ${slide.icone}
+                </div>
+                <h2 class="text-xl font-bold mb-3" style="color: var(--texte);" data-traduction="${slide.titre}">${traductions[slide.titre] || slide.titre}</h2>
+                <p class="text-base" style="color: var(--texte-secondaire);" data-traduction="${slide.texte}">${traductions[slide.texte] || slide.texte}</p>
+            </div>
+        `;
+        htmlDots += `<div class="dot-onboarding ${index === 0 ? 'actif' : ''}" data-index="${index}"></div>`;
+    });
+    
+    conteneur.innerHTML = htmlSlides;
+    dots.innerHTML = htmlDots;
+}
+
+function genererListeThemes() {
+    const conteneur = document.getElementById('liste-themes');
+    const conteneurModal = document.getElementById('liste-themes-modal');
+    if (!conteneur) return;
+    
+    let html = '';
+    themesDisponibles.forEach(function(theme) {
+        const nomTheme = traductions[theme.nom] || theme.nom;
+        html += `
+            <div class="flex items-center justify-between py-3 px-4 rounded-xl cursor-pointer ${themeActuel === theme.code ? 'border-2' : 'border'}" 
+                 style="border-color: ${themeActuel === theme.code ? 'var(--primaire)' : 'var(--bordure)'}; background-color: ${themeActuel === theme.code ? 'rgba(0, 111, 120, 0.05)' : 'transparent'};"
+                 onclick="selectionnerTheme('${theme.code}')">
+                <span class="font-medium" style="color: var(--texte);" data-traduction="${theme.nom}">${nomTheme}</span>
+                ${themeActuel === theme.code ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+            </div>
+        `;
+    });
+    conteneur.innerHTML = html;
+    
+    if (conteneurModal) {
+        let htmlModal = '';
+        themesDisponibles.forEach(function(theme) {
+            const nomTheme = traductions[theme.nom] || theme.nom;
+            htmlModal += `
+                <div class="selecteur-option ${themeActuel === theme.code ? 'selectionne' : ''}" onclick="selectionnerTheme('${theme.code}'); fermerModal('modal-theme');">
+                    <span class="font-medium" data-traduction="${theme.nom}">${nomTheme}</span>
+                    ${themeActuel === theme.code ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                </div>
+            `;
+        });
+        conteneurModal.innerHTML = htmlModal;
+    }
+}
+
+function genererListeProduits(produits) {
+    const conteneur = document.getElementById('liste-produits');
+    if (!conteneur) return;
+    
+    const listeProduits = produits || produitsDemo;
+    
+    let html = '';
+    listeProduits.forEach(function(produit) {
+        const badgeClass = obtenirBadgeEtat(produit.etat);
+        html += `
+            <div class="produit-item" onclick="ouvrirActionsProduit(${produit.id})">
+                <div class="produit-icone">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <p class="produit-nom">${produit.nom}</p>
+                    <p class="produit-ref">${produit.ref} - ${produit.emplacement}</p>
+                </div>
+                <div class="produit-quantite">
+                    <p class="produit-qte-valeur">${produit.quantite}</p>
+                    <span class="badge ${badgeClass.class}">${badgeClass.texte}</span>
+                </div>
+            </div>
+        `;
+    });
+    conteneur.innerHTML = html;
+}
+
+function genererTableauRapport() {
+    const conteneur = document.getElementById('tableau-rapport');
+    if (!conteneur) return;
+    
+    let html = '';
+    produitsDemo.forEach(function(produit) {
+        const badgeClass = obtenirBadgeEtat(produit.etat);
+        html += `
+            <tr>
+                <td style="color: var(--texte-secondaire);">${produit.ref}</td>
+                <td style="color: var(--texte);">${produit.nom}</td>
+                <td style="color: var(--texte);">${produit.quantite}</td>
+                <td style="color: var(--texte);">${formaterNombre(produit.prix)} FC</td>
+                <td><span class="badge ${badgeClass.class}">${badgeClass.texte}</span></td>
+            </tr>
+        `;
+    });
+    conteneur.innerHTML = html;
+}
+
+function genererListeLanguesModal() {
+    const conteneur = document.getElementById('liste-langues-modal');
+    if (!conteneur) return;
+    
+    let html = '';
+    languesDisponibles.forEach(function(langue) {
+        html += `
+            <div class="selecteur-option ${langueActuelle === langue.code ? 'selectionne' : ''}" onclick="selectionnerLangue('${langue.code}'); fermerModal('modal-langue');">
+                <span class="text-2xl">${langue.drapeau}</span>
+                <span class="font-medium">${langue.nom}</span>
+                ${langueActuelle === langue.code ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+            </div>
+        `;
+    });
+    conteneur.innerHTML = html;
+}
+
+// =============================================
+// NAVIGATION ET CHANGEMENT D'ECRANS
+// =============================================
+
+function ouvrirEcran(idEcran) {
+    document.querySelectorAll('.ecran').forEach(function(ecran) {
+        ecran.classList.remove('actif');
+    });
+    const ecran = document.getElementById(idEcran);
+    if (ecran) {
+        ecran.classList.add('actif');
+    }
+}
+
+function changerOnglet(onglet) {
+    document.querySelectorAll('.nav-item').forEach(function(item) {
+        item.classList.remove('actif');
+    });
+    if (onglet === 'accueil') {
+        ouvrirEcran('ecran-accueil');
+    } else if (onglet === 'rapport') {
+        ouvrirEcran('ecran-rapport');
+    } else if (onglet === 'parametres') {
+        ouvrirEcran('ecran-parametres');
+    }
+}
+
+// =============================================
+// SELECTION DE LANGUE
+// =============================================
+
+function selectionnerLangue(code) {
+    langueActuelle = code;
+    chargerTraductions(code).then(function() {
+        ouvrirEcran('ecran-onboarding');
+        const langue = languesDisponibles.find(function(l) { return l.code === code; });
+        const elementLangue = document.getElementById('langue-actuelle');
+        if (elementLangue && langue) {
+            elementLangue.textContent = langue.nom;
+        }
+        genererListeLanguesModal();
+    });
+}
+
+// =============================================
+// ONBOARDING
+// =============================================
+
+function onboardingSuivant() {
+    if (slideActuel < slidesOnboarding.length - 1) {
+        const slideActuelEl = document.getElementById('slide-' + slideActuel);
+        if (slideActuelEl) {
+            slideActuelEl.classList.add('hidden');
+        }
+        slideActuel++;
+        const slideSuivant = document.getElementById('slide-' + slideActuel);
+        if (slideSuivant) {
+            slideSuivant.classList.remove('hidden');
+        }
+        mettreAJourDotsOnboarding();
+        const compteur = document.getElementById('onboarding-compteur');
+        if (compteur) {
+            compteur.textContent = (slideActuel + 1) + '/' + slidesOnboarding.length;
+        }
+    } else {
+        ouvrirEcran('ecran-config');
+    }
+}
+
+function mettreAJourDotsOnboarding() {
+    document.querySelectorAll('.dot-onboarding').forEach(function(dot, index) {
+        if (index === slideActuel) {
+            dot.classList.add('actif');
+        } else {
+            dot.classList.remove('actif');
+        }
+    });
+}
+
+function passerOnboarding() {
+    ouvrirEcran('ecran-config');
+}
+
+// =============================================
+// DEMARRAGE DE L'APPLICATION
+// =============================================
+
+function demarrerApplication() {
+    const tauxInput = document.getElementById('taux-dollar');
+    if (tauxInput) {
+        tauxChange = parseInt(tauxInput.value) || 2800;
+    }
+    ouvrirEcran('ecran-accueil');
+}
+
+// =============================================
+// GESTION DES THEMES
+// =============================================
+
+function appliquerThemeSysteme() {
+    if (themeActuel === 'systeme') {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'sombre');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    }
+}
+
+function selectionnerTheme(code) {
+    themeActuel = code;
+    if (code === 'systeme') {
+        appliquerThemeSysteme();
+    } else {
+        document.documentElement.setAttribute('data-theme', code);
+    }
+    const theme = themesDisponibles.find(function(t) { return t.code === code; });
+    const elementTheme = document.getElementById('theme-actuel');
+    if (elementTheme && theme) {
+        elementTheme.textContent = traductions[theme.nom] || theme.nom;
+    }
+    genererListeThemes();
+}
+
+// =============================================
+// GESTION DES MODALES
+// =============================================
+
+function ouvrirModal(idModal) {
+    const modal = document.getElementById(idModal);
+    if (modal) {
+        modal.classList.add('ouvert');
+    }
+    fermerMenuFlottant();
+    if (idModal === 'modal-langue') {
+        genererListeLanguesModal();
+    }
+}
+
+function fermerModal(idModal) {
+    const modal = document.getElementById(idModal);
+    if (modal) {
+        modal.classList.remove('ouvert');
+    }
+}
+
+// =============================================
+// MENU FLOTTANT
+// =============================================
+
+function basculerMenuFlottant() {
+    const menu = document.getElementById('menu-flottant');
+    const bouton = document.getElementById('btn-flottant-add');
+    if (!menu || !bouton) return;
+    
+    menuFlottantOuvert = !menuFlottantOuvert;
+    
+    if (menuFlottantOuvert) {
+        menu.classList.add('ouvert');
+        bouton.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        `;
+    } else {
+        fermerMenuFlottant();
+    }
+}
+
+function fermerMenuFlottant() {
+    const menu = document.getElementById('menu-flottant');
+    const bouton = document.getElementById('btn-flottant-add');
+    if (!menu || !bouton) return;
+    
+    menuFlottantOuvert = false;
+    menu.classList.remove('ouvert');
+    bouton.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    `;
+}
+
+// =============================================
+// ACTIONS SUR LES PRODUITS
+// =============================================
+
+function ouvrirActionsProduit(id) {
+    produitSelectionne = produitsDemo.find(function(p) { return p.id === id; });
+    if (produitSelectionne) {
+        document.getElementById('modal-produit-nom').textContent = produitSelectionne.nom;
+        document.getElementById('modal-produit-ref').textContent = produitSelectionne.ref;
+        ouvrirModal('modal-actions-produit');
+    }
+}
+
+function ouvrirEntree() {
+    fermerModal('modal-actions-produit');
+    if (produitSelectionne) {
+        document.getElementById('entree-produit-nom').textContent = produitSelectionne.nom;
+        document.getElementById('entree-qte-actuelle').textContent = produitSelectionne.quantite;
+        document.getElementById('entree-qte-nouvelle').textContent = produitSelectionne.quantite;
+        document.getElementById('entree-quantite').value = 0;
+    }
+    ouvrirModal('modal-entree');
+}
+
+function ouvrirSortie() {
+    fermerModal('modal-actions-produit');
+    if (produitSelectionne) {
+        document.getElementById('sortie-produit-nom').textContent = produitSelectionne.nom;
+        document.getElementById('sortie-qte-actuelle').textContent = produitSelectionne.quantite;
+        document.getElementById('sortie-qte-nouvelle').textContent = produitSelectionne.quantite;
+        document.getElementById('sortie-quantite').value = 0;
+    }
+    ouvrirModal('modal-sortie');
+}
+
+function ouvrirInventaire() {
+    fermerModal('modal-actions-produit');
+    if (produitSelectionne) {
+        document.getElementById('inventaire-produit-nom').textContent = produitSelectionne.nom;
+        document.getElementById('inventaire-theorique').textContent = produitSelectionne.quantite;
+        document.getElementById('inventaire-reel').value = produitSelectionne.quantite;
+        calculerEcart();
+    }
+    ouvrirModal('modal-inventaire');
+}
+
+function ouvrirDetail() {
+    fermerModal('modal-actions-produit');
+    if (produitSelectionne) {
+        document.getElementById('detail-ref').textContent = produitSelectionne.ref;
+        document.getElementById('detail-nom').textContent = produitSelectionne.nom;
+        document.getElementById('detail-prix').textContent = formaterNombre(produitSelectionne.prix) + ' FC';
+    }
+    ouvrirModal('modal-detail');
+}
+
+function confirmerSuppression() {
+    if (confirm(traductions['confirmer_suppression'])) {
+        fermerModal('modal-actions-produit');
+        afficherToast(traductions['produit_supprime'] || 'Produit supprime');
+    }
+}
+
+// =============================================
+// MISE A JOUR DES APERCUS
+// =============================================
+
+function mettreAJourApercu(type) {
+    if (!produitSelectionne) return;
+    
+    const inputQuantite = document.getElementById(type + '-quantite');
+    const qteNouvelle = document.getElementById(type + '-qte-nouvelle');
+    
+    if (inputQuantite && qteNouvelle) {
+        const quantite = parseInt(inputQuantite.value) || 0;
+        const nouvelleQte = type === 'entree' 
+            ? produitSelectionne.quantite + quantite 
+            : produitSelectionne.quantite - quantite;
+        qteNouvelle.textContent = Math.max(0, nouvelleQte);
+    }
+}
+
+function calculerEcart() {
+    const stockTheorique = parseInt(document.getElementById('inventaire-theorique').textContent) || 0;
+    const stockReel = parseInt(document.getElementById('inventaire-reel').value) || 0;
+    const ecart = stockReel - stockTheorique;
+    
+    const elementEcart = document.getElementById('inventaire-ecart');
+    const badgeEcart = document.getElementById('badge-ecart');
+    
+    if (elementEcart) {
+        elementEcart.textContent = ecart > 0 ? '+' + ecart : ecart;
+    }
+    
+    if (badgeEcart) {
+        if (ecart === 0) {
+            badgeEcart.className = 'badge badge-stock';
+            badgeEcart.textContent = traductions['conforme'];
+            elementEcart.style.color = 'var(--texte)';
+        } else if (ecart > 0) {
+            badgeEcart.className = 'badge badge-surstock';
+            badgeEcart.textContent = traductions['surplus'];
+            elementEcart.style.color = '#2563eb';
+        } else {
+            badgeEcart.className = 'badge badge-rupture';
+            badgeEcart.textContent = traductions['manquant'];
+            elementEcart.style.color = '#dc2626';
+        }
+    }
+}
+
+// =============================================
+// VALIDATION DES OPERATIONS
+// =============================================
+
+function validerEntree() {
+    fermerModal('modal-entree');
+    afficherToast(traductions['entree_validee']);
+}
+
+function validerSortie() {
+    fermerModal('modal-sortie');
+    afficherToast(traductions['sortie_validee']);
+}
+
+function validerInventaire() {
+    fermerModal('modal-inventaire');
+    afficherToast(traductions['inventaire_valide']);
+}
+
+// =============================================
+// AJOUT ET MODIFICATION DE PRODUITS
+// =============================================
+
+function ajouterProduit() {
+    fermerModal('modal-ajout-produit');
+    afficherToast(traductions['produit_ajoute']);
+}
+
+function sauvegarderModification() {
+    fermerModal('modal-modifier-produit');
+    fermerModal('modal-detail');
+    afficherToast(traductions['modification_sauvegardee']);
+}
+
+function sauvegarderTaux() {
+    const nouveauTaux = document.getElementById('nouveau-taux');
+    if (nouveauTaux) {
+        tauxChange = parseInt(nouveauTaux.value) || 2800;
+        document.getElementById('taux-affiche').textContent = tauxChange;
+    }
+    fermerModal('modal-taux');
+    afficherToast(traductions['taux_mis_a_jour'] || 'Taux mis a jour');
+}
+
+// =============================================
+// CONVERSION DE MONNAIE
+// =============================================
+
+function choisirMonnaie(monnaie) {
+    monnaieChoisie = monnaie;
+    const btnFc = document.getElementById('btn-monnaie-fc');
+    const btnUsd = document.getElementById('btn-monnaie-usd');
+    
+    if (monnaie === 'fc') {
+        btnFc.classList.remove('btn-outline');
+        btnFc.classList.add('btn-primaire');
+        btnUsd.classList.remove('btn-primaire');
+        btnUsd.classList.add('btn-outline');
+    } else {
+        btnUsd.classList.remove('btn-outline');
+        btnUsd.classList.add('btn-primaire');
+        btnFc.classList.remove('btn-primaire');
+        btnFc.classList.add('btn-outline');
+    }
+    convertirPrix();
+}
+
+function convertirPrix() {
+    const inputPrix = document.getElementById('produit-prix');
+    const prixConverti = document.getElementById('prix-converti');
+    
+    if (inputPrix && prixConverti) {
+        const prix = parseFloat(inputPrix.value) || 0;
+        if (monnaieChoisie === 'fc') {
+            const usd = (prix / tauxChange).toFixed(2);
+            prixConverti.textContent = traductions['equivalent'] + ' : ' + usd + ' $';
+        } else {
+            const fc = Math.round(prix * tauxChange);
+            prixConverti.textContent = traductions['equivalent'] + ' : ' + formaterNombre(fc) + ' FC';
+        }
+    }
+}
+
+// =============================================
+// SELECTEURS PERSONNALISES
+// =============================================
+
+function basculerSelecteur(idSelecteur) {
+    const options = document.querySelector('#' + idSelecteur + ' .selecteur-options');
+    if (options) {
+        options.classList.toggle('ouvert');
+    }
+}
+
+function selectionnerOption(idSelecteur, valeur) {
+    const selecteur = document.getElementById(idSelecteur);
+    if (!selecteur) return;
+    
+    let elementValeur = null;
+    if (idSelecteur === 'selecteur-emplacement-entree') {
+        elementValeur = document.getElementById('emplacement-selectionne');
+    } else if (idSelecteur === 'selecteur-emplacement-sortie') {
+        elementValeur = document.getElementById('emplacement-selectionne-sortie');
+    } else if (idSelecteur === 'selecteur-emplacement-inventaire') {
+        elementValeur = document.getElementById('emplacement-selectionne-inventaire');
+    }
+    
+    if (elementValeur) {
+        elementValeur.textContent = valeur;
+    }
+    
+    const options = selecteur.querySelector('.selecteur-options');
+    if (options) {
+        options.classList.remove('ouvert');
+    }
+}
+
+function gererClicExterne(evenement) {
+    if (!evenement.target.closest('.selecteur-personnalise')) {
+        document.querySelectorAll('.selecteur-options.ouvert').forEach(function(options) {
+            options.classList.remove('ouvert');
+        });
+    }
+}
+
+// =============================================
+// TOGGLES
+// =============================================
+
+function basculerToggle(element) {
+    element.classList.toggle('actif');
+}
+
+// =============================================
+// RECHERCHE DE PRODUITS
+// =============================================
+
+function rechercherProduit(recherche) {
+    const terme = recherche.toLowerCase().trim();
+    if (terme === '') {
+        genererListeProduits();
+    } else {
+        const produitsFiltres = produitsDemo.filter(function(produit) {
+            return produit.nom.toLowerCase().includes(terme) || 
+                   produit.ref.toLowerCase().includes(terme);
+        });
+        genererListeProduits(produitsFiltres);
+    }
+}
+
+// =============================================
+// STOCKAGE CLOUD
+// =============================================
+
+function creerCompteCloud() {
+    fermerModal('modal-cloud');
+    afficherToast(traductions['compte_cree'] || 'Compte cloud cree');
+}
+
+// =============================================
+// UTILITAIRES
+// =============================================
+
+function formaterNombre(nombre) {
+    return nombre.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function obtenirBadgeEtat(etat) {
+    const badges = {
+        'en_stock': { class: 'badge-stock', texte: traductions['en_stock'] || 'En stock' },
+        'stock_faible': { class: 'badge-faible', texte: traductions['stock_faible'] || 'Stock faible' },
+        'rupture_stock': { class: 'badge-rupture', texte: traductions['rupture_stock'] || 'Rupture' },
+        'surstock': { class: 'badge-surstock', texte: traductions['surstock'] || 'Surstock' }
+    };
+    return badges[etat] || badges['en_stock'];
+}
+
+function afficherToast(message) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.textContent = message;
+        toast.classList.add('visible');
+        setTimeout(function() {
+            toast.classList.remove('visible');
+        }, 3000);
+    }
+}
+
+// =============================================
+// ECOUTEUR D'EVENT SYSTEME
+// =============================================
+
+if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (themeActuel === 'systeme') {
+            appliquerThemeSysteme();
+        }
+    });
+}
+
+J'utilise aussi :
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+J'ai 5 langues, dans des fichiers Json :
+- français 
+- anglais 
+- hindi 
+- lingala 
+- swahili 
+
+Pour les nouveaux ajouts que ce soit des éléments d'interface ou des messages, faut me donner les traductions à mettre dans mes fichiers Json pour chacun de ses langues 
+
+NOTE : tous les éléments déjà présents ont déjà leur traduction, faut plus répéter ça 
+
+NOTE: le cloud ici fait juste référence que les données seront sauvegarder dans une bd comme supabase, mais pour l'instant je veux juste voir à quoi ça va ressembler si un utilisateur se connecte ou crée un compte, je ne demande pas trop des logiques, juste l'aperçu quand l'utilisateur va se connecter ou créer un compte 
+
+Note: on ne demande pas email, c'est le nom et le mot de passe uniquement qui nous intéresse
+
+NOTE: C'est une application simple, minimaliste, facile à comprendre, à utiliser , conçu pour un utilisateur qui ne se sent pas à l'aise avec les technologies, donc tout est simple, on ne demande pas beaucoup à l'utilisateur, tout est clair, simple, facile d'utilisation
+
+NOTE: Je ne demande pas trop des logiques, ici on fait juste des éléments visuels avec quelques interactions, je n'ai pas demandé à créer des fonctionnalités
+
+Donne-moi les codes à modifier ou à ajouter avec précision, tu dois me dire quoi modifier, quoi ajouter, où le placer, faut être précis

@@ -1,0 +1,208 @@
+Crée une application mobile simpliste, minimaliste, facile à manipuler
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css JavaScript 
+Je compte utiliser Capacitor plus tard pour utiliser des fonctionnalités natives dont j'aurai à citer, pour l'instant c'est le rendue qui m'intéresse et des fonctionnalités basiques 
+
+C'est une application totalement hors-ligne qu'on conçoit, on utilise donc  une bd locale,
+Pour l'instant on utilise le navigateur mais je compte passer à Capacitor afin de ne pas être indépendant d'un navigateur 
+C'est Pour une entreprise : Quincaillerie TOTAL 
+On est en RDC : on utilise le franc congolais (FC)
+
+C'est pour gérer les mouvements
+
+Voici  mes idées :
+
+"""
+Premièrement proposer à l'utilisateur de choisir une langue, on aura 5 propositions :
+- français 
+- anglais 
+- hindi
+- Lingala (RDC)
+- Swahili (RDC)
+
+Tu peux utiliser des emojis drapeau pour représenter la langue correspond au pays  
+
+On peut faire plusieurs fichiers Json ou JavaScript pour chaque langue que le HTML pourrait lire facilement et traduire automatiquement.
+
+Pour l'instant on fait juste pour une langue, qui à partir du fichier cette langue, je pourrais facilement traduire les autres et créer les fichiers des autres langues 
+
+Après avoir choisis une langue, il y'aura un onboarding avec des icônes 
+
+L'utilisateur pourrait aussi choisir un thème :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc  
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+on peut toujours avoir le choix de choisir une langue, ou un thème dans une zone dédiée 
+
+Il faut aussi demander le nom du dépôt, car un stock est toujours lié à un dépôt, on peut avoir plusieurs dépôts 
+
+ Un dépot c'est un comme un compte auquel on est connecter(il a ses propres donnés), on aura une zone pour voir le dépôt actuel , on peut renommer si le nom avait été mal saisi mais pas le supprimer 
+On aura une zone pour ajouter d'autres dépôts/créer des nouveaux dépôts, afficher les autres dépôts pour : ouvrir, renommer, supprimer un dépôt 
+un dépôt c'est comme repartir de zéro, avoir une nouvelle espace de travail, 
+C'est important car on peut bien bien organiser nos stock liés aux dépôts
+Donc on peut créer d'autres dépôts et accèder, une fois accéder, tout devient neuf dans les interfaces 
+Un dépôt c'est comme avoir un repository sur github 
+
+On aura une zone pour mettre taux de change , car en RDC, on utilise 2 monnaies : Le franc congolais et le dollars 
+
+Donc on aura une zone où : l'utisateur peut mettre : combien vaut 1$ en franc congolais
+
+et on peut toujours configurer entre :
+- afficher toujours les prix en franc
+- afficher toujours les prix en dollars
+- afficher tous les 2 
+
+> Si prix en franc est sélectionné, ça afficher partout sur tous les prix unitaires, les prix total (valeurs du stock) en Franc, même s'il était tous en dollars 
+> Si prix en dollars est sélectionné, ça afficher partout sur tous les prix unitaires, les prix total (valeurs du stock) en dollars, même s'il était tous en était en dollars 
+> Si les deux (Franc et dollars), ça afficher partout sur tous les prix unitaires, les prix total (valeurs du stock) la valeur en Franc et en dollars , même s'il était tous en était en franc uniquement ou dollars uniquement 
+
+Je tiens à ce que cette fonctionnalité marche parfaitement 
+
+On aura la liste de tous les produits 
+On peut soit rechercher, soit scanner un code-barres/Qr
+
+NOTE : La fonctionnalité de recherche doit fonctionner par texte doit fonctionner, le qr code on c'est juste pour le visuel, pas trop de logiques
+ 
+On peut ajouter un nouveau produit un cliquant sur le bouton + du bouton flottant
+qui aura 2 options :
+- Produit avec code : scan code 
+- sans code : référence
+
+demandant des informations comme :
+
+- référence produit/code-barres :
+ça affiche le code-barre qui été scanner ou vide : on peut tapez manuellement ou générer un référence type interne simple
+- nom 
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+=> Il faut Montre la quatite total car un produit peut avoir plusieurs quantités dans divers emplacements, il faut donc montrer le total de tout
+Ensuite il faut définir les quantités critiques (alertes) liés au total global :
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock) : on doit sélectionner entre : franc et dollars 
+ -> lorsqu'on entre un prix en franc, ça nous affiche aussi son équivalent en dollars 
+ -> si on choisit dollars, ça nous affiche aussi équivalent franc
+- le QR code généré (Note: pas de logique, juste pour le visuel)
+
+Un produit créé obtient un QR code, ça servirait comme référence pour un produit sans code-barres , sera générer dans l'ajout d'un produit et sera aussi visible dans le détail 
+
+Lorsqu'on cliquera sur un produit ça nous propose :
+- entrée  
+- sortie 
+- inventaire 
+- détail 
+- supprimer 
+
+Pour entré faut demander la quantité et montrer la prix unitaire et son équivalent, car cela peut toute fois changer 
+Pour la sortie faut demander la quantité aussi 
+
+Faut aussi montrer l'indicateur dans les 2 cas, au moment de la saisie on peut avoir un aperçu en direct de l'incrémentation ou de la décrémentation de la quantité actuel de l'emplacement actuel:
+Quantité actuel (Quantité initial dans un emplacement sélectionné)...
+Après entrée (sortie)...
+
+Note : une quantité est toujours lié à un emplacement, car un produit peut être stocké dans plusieurs emplacements, donc l'emplacement est à sélectionner lors de l'entrée ou sortie, si est seulement si un produit a été enregistré sur plusieurs emplacements
+
+Pour l'inventaire , il faut aussi montrer :
+- D'abord choisir l'emplacement
+- le stock théorique, la quantité est lié à un emplacement 
+- demander le stock réel, la quantité compté 
+- montrer le résultat/ l'écart 
+Demander à régulariser 
+
+Dans le détail du produit :
+Faut montrer tous les informations liés à ce produit  
+Date dernière modification :
+- action/opération : créé/entrée/sortie/inventaire
+- quantités : avant et après 
+
+Il pourra aura la possibilité :
+- modifier les informations sur ce produit 
+- exporter le QR du produit (image qr code avec nom de ce produit)
+Exporter c'est comme partager/ouvrir avec, ça nous présentera les applications de l'appareil qui peut le recevoir 
+NOTE: Pas des logiques, pas des fonctionnalités complexes, juste pour le visuel 
+
+on aura une zone rapport
+On peut exporter aussi un rapport sur le stock actuel :
+ On verra :
+- Dépôt 
+- valeur de stock totale 
+- nombre d'articles totale 
+- Date et heure
+
+Une table de tous les produits avec :
+- référence 
+- article 
+- qté : quantité total actuel (total de tous les emplacements )
+-pu :  prix unitaire 
+- valeur stock (prix total)
+- état (en stock, faible, rupture, surstock)
+
+On peut exporter en pdf, excel (xlsx)
+Exporter c'est comme partager/ouvrir avec, ça nous présentera les applications de l'appareil qui peut le recevoir
+NOTE : Pour l'instant pas de logique, pas de code sur ça, juste la présence dans l'interface car c'est hyper complexe à mettre à place, on fait juste un petit JavaScript pour les évènements, les interfaces, les interactions. 
+
+On aura aussi une zone sauvegarde (backup)/restauration, où l'utilisateur peut exporter un fichier pour sauvegarder ses données à un instant t, et aussi peut importer pour restaurer ses données pendant un instant T 
+On peut exporter/importer un fichier un fichier CSV
+NOTE : ça aussi, c'est juste à concevoir l'interface, pas la logique, pas des codes complexes, on doit avoir juste l'aperçu des interfaces, le JavaScript sera juste pour les évènements, les interactions,...
+Car c'est un peu complexe.
+
+Voilà 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+Note :-  n'utilise jamais des emojis : à l'exception des langues
+- n'utilise jamais des balises select/option car ça ne prend pas de style vu que le système affiche à la place 
+
+ NOTE : Ne suis pas l'ordre à laquelle je dis les choses, je dis les choses de façon désorganisé, c'est à toi de tout organiser correctement comme il faut , origanise tout proprement pour que tout soit clair pour l'utilisateur , propre, une bonne expérience utilisateur.
+ 
+ REMARQUE : Faut toujours commenter les codes, des commentaires simples, monolignes qui définit le rôle d'un code, d'un bloc de code, d'une logique complexe , d'un élément,... exemple :
+ - ce code permet de faire ceci ....
+ - ce code lie ceci... à ceci...
+ - ce code permet de récupérer cet/ces éléments... et de faire ceci ...
+ - ce code permet d'afficher ...
+ - ce code masque ...
+ NOTE : il ne faut pas seulement dire à chaque fois "ce code", ça peut aussi être :
+ - le nom de l'élément manipulé 
+ - le nom de la technologie utilisé
+ - l'outil utilisé 
+ - la technique qu'on emploie 
+ exemple : 
+ - > capacitor c'est l'outil qui nous permet de ...
+
+Note : utilise des icônes svg pour une bonne expérience utilisateur 
+""""
+
+NOTE: Tout doit être proprement stylé même les messages, toutes sortes des messages doit être stylés et traduits.
+-> n'utilise jamais un style par défaut
+voilà pourquoi je dis toujours de ne jamais utiliser les balises select et option du html
+
+NOTE : Il ne faut pas tout concevoir à la main from scratch, non, je ne veux pas trop lignes de codes, ça c'est une application hyper simpliste, facile d'utilisation, il faut aussi avoir trop peu des lignes de codes, tu peux utiliser des solutions comme :
+- icône svg 
+...etc
+Des outils accessibles 100% hors-ligne 
+NOTE: pas des outils accessibles en ligne 
+
+je veux vraiment que tout soit minimaliste, petit, simple :
+- peu de code 
+- application simpliste
+
+NOTE: Simpliste, Minimaliste, facile à comprendre, trop simple d'utilisation, ne veut pas dire une interface moche, tout doit être beau voir moderne et simple 
+
+La plus grande fonctionnalités à mettre en place pour le moment, c'est juste la traduction, on prend juste une langue, on fait son fichier Json ou dans le JavaScript 
+Pour l'instant fait juste une langue pas tous les 5, les 4 autres je peux les traduires ensuite après.
+
+Ça serait mieux mettre tout les codes (CSS, JavaScript) dans un seul fichier HTML, je peux ensuite séparer moi-même après si je veux
+
+Je veux une application simple, banale, conçu pour un utilisateur qui ne se sent pas à l'aise avec la technologie, tout être facile à comprendre, facile à manipuler, tout doit être clair pour l'utilisateur, pas des mises en forme compliqué, je veux que sans même une formation, l'utilisateur utilise facilement l'application car tout est simple, tout semble simple, tout est facile à manipuler, tout est déjà présenter à l'utilisateur

@@ -1,0 +1,158 @@
+ Crée une application mobile 
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css JavaScript 
+Je compte utiliser Capacitor plus tard pour utiliser des fonctionnalités natives dont j'aurai à citer, pour l'instant c'est le rendue qui m'intéresse et des fonctionnalités basiques 
+
+C'est une application totalement hors-ligne qu'on conçoit, on utilise donc  une bd locale,
+Pour l'instant on utilise le navigateur mais je compte passer à Capacitor afin de ne pas être indépendant d'un navigateur 
+C'est Pour une entreprise : Quincaillerie TOTAL 
+On est en RDC : on utilise le franc congolais (FC)
+
+C'est pour gérer les mouvements
+
+Voici  mes idées :
+
+"""
+Premièrement je veux que l'utilisateur choisissent sa langue , on aura 5 propositions :
+- français 
+- anglais 
+- hindi
+- Lingala (RDC)
+- Swahili (RDC)
+
+Je peux dire que c'est base même de cette application 
+
+Tout doit être choisis, on peut faire plusieurs fichiers Json ou JavaScript pour chaque langue que le HTML pourrait lire facilement et traduire automatiquement.
+
+Pour l'instant on fait juste pour une langue, qui à partir du fichier cette langue, je pourrais facilement traduire les autres et créer les fichiers des autres langues 
+
+Après avoir choisis une langue, il y'aura un onboarding, bien accompagné avec des icônes/images illustratives avec des personnages, on comprend directement ce dont on doit faire 
+
+L'utilisateur pourrait aussi choisir un thème :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc  
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+
+Dans l'interface de l'application, on peut toujours avoir le choix de choisir une langue, ou un thème
+
+Dans cette application le produit créé  obtient un QR code : produit
+
+Pour identifier un produit on peut soit chercher ou scanner son qr code 
+
+On peut ajouter un nouveau produit, demandant des informations comme :
+
+- référence produit/code-barres 
+- nom 
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock)
+
+Tout ce qui se créer obtient un QR code
+
+Lorsqu'on cliquera pour voir le détail de ce produit, on verra son qr code
+
+Pour faire entrée :
+L'utilisateur pourra mettre une quantité 
+Et l'emplacement vu qu'une quantité et lié à son emplacement 
+De même pour la sortie 
+Pour l'entrée il faut montré la zone du prix car le prix peut toute fois changer, comme ça on met à jour automatiquement 
+
+Concernant le produit/article :
+On peut donc :
+- créer un nouveau produit 
+- modifier ses informations 
+- ajouter ou supprimer un emplacement avec la quantité lié 
+- supprimer un produit 
+
+On peut aussi faire l'inventaire (correction ), la feuille d'inventaire :
+- produit 
+- stock informatique/théorique 
+- stock réel 
+Car il peut toujours y avoir des écarts entre les 2 
+Comment ça on pourra ainsi rester en harmonie 
+- Sélectionner l'emplacement, car un produit peut avoir plusieurs emplacements/ zone à laquelle une quantité a été attribué
+
+Ici l'inventaire sert juste a ajuster, corriger afin d'avoir les quantités réelles
+
+On aura une zone sécurité où l'utilisateur pourra :
+- mettre un mot de passe (qui à la fermeture de l'application, et lors de l'ouverture ça peut demander un mot de passe que l'utilisateur pourrait entrer)
+- permettre l'accès via son empreinte vu que l'appareil appartient à l'utilisateur 
+- s'il a une carte d'identité/carte d'électeur possédant un qr code, il peut scanner et enregistrer ce code, afin d'accéder à l'application en cas d'oubli de mot de passe 
+- l'utilisateur une fois dans l'application il peut toujours changer son mot de passe 
+
+On peut aussi générer un rapport 
+l'utilisateur pourra aussi générer un rapport de stocks 
+Qui montrera le contenu comme :
+- valeur de stock totale 
+- nombre d'articles totale 
+- Date et heure
+
+Une table de tous les produits avec :
+- référence 
+- article 
+- qté : quantité actuel 
+-pu :  prix unitaire 
+-valeur stock 
+- état (en stock, faible, rupture, surstock)
+
+Ce rapport sera accessible en pdf, et l'utilisateur pourrait le trouver dans son stockage interne (fonctionnalités Capacitor), par exemple le fichier pourrait s'enregistrer avec nom+ date + heure...
+
+Ce rapport générer peut être ouverte directement depuis l'application, ou partager directement sur autre application :
+- WhatsApp 
+- Gmail 
+
+On aura une zone qui permettre à l'utilisateur de créer un compte, pour avoir sauvegarder ses données , cela fera maintenant des synchronisation et servira de backup si l'application a été désinstallé par erreur, perdu des données ou l'appareil:
+si l'utilisateur n'a pas encore un compte de sauvegarde en ligne/ compte cloud 
+lui proposer d'en créer pour le sauvegarde en ligne, car celui permettrait de ne pas perdre ses données
+-> son nom ou nom de l'entreprise + mot de passe peut être demandé pour créer ce compte 
+
+-> si l'utilisateur avait déjà un compte, il pourrait mettre juste son mot de passe ... 
+s'il avait perdu ses données, il pourrait le récupérer par ce compte 
+
+Cette espace va nécessite que j'utilise soit Supabase soit firebase : c'est juste une préparation
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+Note :-  n'utilise jamais des emojis 
+- n'utilise jamais des balises select/option car ça ne prend pas de style vu que le système affiche à la place 
+
+ NOTE : Ne suis pas l'ordre à laquelle je dis les choses, je dis les choses de façon désorganisé, c'est à toi de tout organiser correctement comme il faut , origanise tout proprement pour que tout soit clair pour l'utilisateur , propre, une bonne expérience utilisateur.
+ 
+ REMARQUE : Faut toujours commenter les codes, des commentaires simples, monolignes qui définit le rôle d'un code, d'un bloc de code, d'une logique complexe , d'un élément,... exemple :
+ - ce code permet de faire ceci ....
+ - ce code lie ceci... à ceci...
+ - ce code permet de récupérer cet/ces éléments... et de faire ceci ...
+ - ce code permet d'afficher ...
+ - ce code masque ...
+ NOTE : il ne faut pas seulement dire à chaque fois "ce code", ça peut aussi être :
+ - le nom de l'élément manipulé 
+ - le nom de la technologie utilisé
+ - l'outil utilisé 
+ - la technique qu'on emploie 
+ exemple : 
+ - > capacitor c'est l'outil qui nous permet de ...
+ - > Supabase c'est la plateforme où on fait ...
+
+""""
+
+Priorité :
+- > Traduction langue 
+
+à ignorer pour l'instant :
+- générer un pdf 
+- cloud : supabase/Firebase 
+pour eux, on ne peut faire que des simultations pour l'instant, donc on prépare, c'est déjà prévue

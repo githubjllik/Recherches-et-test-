@@ -1,0 +1,836 @@
+Crée une maquette mobile 
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css
+Le JavaScript sera juste pour les interactions, on clic a un résultat, juste des évènements, rien ne va fonctionner réellement 
+Pour une entreprise 
+C'est pour gérer les mouvements, faire les suivis, garder la traçabilité de tout ce qui se passe :
+- qui a fait quoi ? Quand ? 
+- qu'est-ce qu'on a ? Qu'est-ce qui reste ?
+
+Dans cette application tout ce qui se créer obtient un QR code : produit, utilisateur
+
+À la connexion l'utilisateur peut soit taper son mot de passe ou scanner son qr code ou importer l'image de ce qr code
+
+Pour identifier un produit on peut soit chercher ou scanner son qr code
+
+Cette application peut avoir plusieurs utilisateurs 
+
+Je veux que l'application propose 4 langues :
+- français 
+- anglais 
+- hindi 
+- lingala
+
+Que l'utilisateur pourrait choisir depuis la première connexion et même changer depuis son profil 
+
+Mais pour l'instant faisons uniquement le fichier Json ou JavaScript pour le : Français 
+
+Les autres je peux traduire après à partir du fichier de celui de français 
+
+L'utilisateur pourrait aussi choisir un thème dans son depuis la première connexion et modifiable sur son profil :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc 
+
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+
+Le premier utilisateur à utiliser l'application est automatiquement l'administrateur principal 
+
+Un admin gère tout ce qui se passe :
+- C'est lui qui choisit qui utilise l'application ou pas , lorsqu'un nouveau compte est créer, ce nouveau compte n'aura accès à rien, jusqu'à ce que l'administrateur clique dans ajouter un membre et que celui-ci est sélectionné, c'est là qu'il pourrait aussi voir et participer 
+
+- les membres peuvent être aussi promu admin si l'admin le décide, même en étant admin l'administrateur principal on ne peut pas le supprimer comme les autres, c'est lui seul qui peut décider de se retirer de ce poste 
+
+
+On peut ajouter un nouveau produit, demandant des informations comme :
+- photo 
+- sku/code-barres 
+- nom
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock)
+
+Tout ce qui se créer obtient un code-barres 
+
+Lorsqu'on cliquera pour voir le détail de ce produit, on verra son code barre
+
+On pourra recevoir des notifications : entrée, sortie, seuil critique, surstock, ...
+
+Pour faire entrée :
+L'utilisateur pourra mettre une quantité 
+On peut aussi demander un commentaire, ou preuve photo 
+De même pour la sortie 
+Pour l'entrée il faut montré la zone du prix car le prix peut toute fois changer, comme ça on met à jour automatiquement 
+
+On peut aussi faire l'inventaire :
+- produit 
+- stock informatique/théorique 
+- stock réel 
+Car il peut toujours y avoir des écarts entre les 2 
+Comment ça on pourra ainsi rester en harmonie 
+- Sélectionner l'emplacement, car un produit peut avoir plusieurs emplacements/ zone à laquelle une quantité a été attribué 
+
+Avoir des rapports accessibles directement en pdf :
+- stock actuel 
+- à commander
+- inventaire 
+
+On pourra recevoir des notifications : entrée, sortie, seuil critique, surstock, produit ajouter, supprimer, modifier, inventorier ...
+Qui vient de faire quoi ? Quand ? Pourquoi ? On a quoi ? Il nous reste quoi ?
+
+Dans le profil utilisateur :
+Il pourra voir :
+- sa photo et le modifier 
+- son nom et le modifier 
+- thème et le changer
+- langue et le changer 
+- son qr code (il pourra le télécharger)
+Il pourra aussi se déconnecter 
+
+De même dans le détail d'un produit on pourra voir :
+- photo et le modifier 
+- nom et le modifier 
+- sku/code-barres
+...
+- date de création 
+- date de la dernière modification (entrée, sortie, ajustement lié à l'inventaire, ...)
+- son qr code
+
+Dans la listes des produits : 
+On pourra tirer :
+- tous
+- stock faible 
+- en rupture 
+- surstock 
+-...
+
+On pourra faire des sélections multiples : 
+- pour supprimer plusieurs produits à la fois 
+
+Je ne peux pas parler de tout, ajoute ce qu'il y'a à ajouter, fait en sorte que tout soit cohérent, et surtout professionnelle car c'est pour une entreprise 
+
+Attention : on ne fait qu'une simulation, la base de données n'est pas nécessaire 
+
+N'utilisez pas trop des trucs accessibles, non, utilisons des ressources que même hors-ligne ils seront toujours accessibles et fonctionnel 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+
+Voilà
+
+<div>
+  Crée une maquette mobile 
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css
+Le JavaScript sera juste pour les interactions, on clic a un résultat, juste des évènements, rien ne va fonctionner réellement 
+Pour une entreprise 
+C'est pour gérer les mouvements, faire les suivis, garder la traçabilité de tout ce qui se passe :
+- qui a fait quoi ? Quand ? 
+- qu'est-ce qu'on a ? Qu'est-ce qui reste ?
+
+Dans cette application tout ce qui se créer obtient un QR code : produit, utilisateur
+
+À la connexion l'utilisateur peut soit taper son mot de passe ou scanner son qr code ou importer l'image de ce qr code
+
+Pour l'inscription faut demander juste son nom complet et un mot de passe, pas d'email ça ne servirait à rien 
+
+Pour identifier un produit on peut soit chercher ou scanner son qr code
+
+Cette application peut avoir plusieurs utilisateurs 
+
+Je veux que l'application propose 4 langues :
+- français 
+- anglais 
+- hindi 
+- lingala
+
+Que l'utilisateur pourrait choisir depuis la première connexion et même changer depuis son profil 
+
+Mais pour l'instant faisons uniquement le fichier Json ou JavaScript pour le : Français 
+
+Les autres je peux traduire après à partir du fichier de celui de français 
+
+L'utilisateur pourrait aussi choisir un thème dans son depuis la première connexion et modifiable sur son profil :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc 
+
+Le thème et la langue doivent être choisi dès la première fois sur l'application car on ne peut rien comprendre si ce n'est pas sa langue, ni se sentir à l'aise si ce n'est pas son thème préféré dans cette application 
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+
+Le premier utilisateur à utiliser l'application est automatiquement l'administrateur principal 
+
+Un admin gère tout ce qui se passe :
+- C'est lui qui choisit qui utilise l'application ou pas , lorsqu'un nouveau compte est créer, ce nouveau compte n'aura accès à rien, jusqu'à ce que l'administrateur clique dans ajouter un membre et que celui-ci est sélectionné, c'est là qu'il pourrait aussi voir et participer 
+
+- les membres peuvent être aussi promu admin si l'admin le décide, même en étant admin l'administrateur principal on ne peut pas le supprimer comme les autres, c'est lui seul qui peut décider de se retirer de ce poste 
+
+
+On peut ajouter un nouveau produit, demandant des informations comme :
+- photo 
+- sku/code-barres 
+- nom
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock)
+
+Tout ce qui se créer obtient un code-barres 
+
+Lorsqu'on cliquera pour voir le détail de ce produit, on verra son code barre
+
+On pourra recevoir des notifications : entrée, sortie, seuil critique, surstock, ...
+
+Pour faire entrée :
+L'utilisateur pourra mettre une quantité 
+On peut aussi demander un commentaire, ou preuve photo 
+De même pour la sortie 
+Pour l'entrée il faut montré la zone du prix car le prix peut toute fois changer, comme ça on met à jour automatiquement 
+
+On peut aussi faire l'inventaire :
+- produit 
+- stock informatique/théorique 
+- stock réel 
+Car il peut toujours y avoir des écarts entre les 2 
+Comment ça on pourra ainsi rester en harmonie 
+- Sélectionner l'emplacement, car un produit peut avoir plusieurs emplacements/ zone à laquelle une quantité a été attribué  
+
+On pourra recevoir des messages comme sms : entrée, sortie, seuil critique, surstock, produit ajouter, supprimer, modifier, inventorier ...
+Qui vient de faire quoi ? Quand ? Pourquoi ? On a quoi ? Il nous reste quoi ?
+
+Ça serra comme sms/Messenger, on peut cliquer par exemple sur :
+- entrée : on verra tous les messages liés à l'entré 
+- sortie : tous les messages liés aux sorties  
+- inventaire : tous les messages liés aux produits inventoriés 
+- stock faible , 
+Rupture, surstock,
+supprimer, 
+Ajouter ,
+Modifier, compte...
+Etc ..
+
+C'est dans cette espace qu'on verra des commentaires justificatifs aussi, des photos justificatifs, des personnes ayant fait les mouvements...etc
+On pourra trier par date , choisir une date, et voir les messages liés, ou rechercher par texte, approuver une demande....
+
+On aura aussi avoir un petit bot qui fera des rapports : - stock , ...etc
+Par exemple tu tapes 1 ou tu écris Mon stock il envoie un fichier pdf  bien nommé avec la date et l'heure 
+
+Dans le profil utilisateur :
+Il pourra voir :
+- sa photo et le modifier 
+- son nom et le modifier 
+- thème et le changer
+- langue et le changer 
+- son qr code (il pourra le télécharger)
+Il pourra aussi se déconnecter 
+
+
+Il y'aura zone équipe/membre: 
+L'administrateur pourra :
+- sélectionner et ajouter un compte qui a été créer 
+- retirer un membre de l'équipe 
+...etc
+
+Il y'aura aussi une zone pour verrouiller l'application et que seules les administrateurs pourront y accéder : mesure de sécurité 
+
+De même dans le détail d'un produit on pourra voir :
+- photo et le modifier 
+- nom et le modifier 
+- sku/code-barres
+...
+- date de création 
+- date de la dernière modification (entrée, sortie, ajustement lié à l'inventaire, ...)
+- son qr code
+
+Dans la listes des produits : 
+On pourra tirer :
+- tous
+- stock faible 
+- en rupture 
+- surstock 
+-...
+
+On pourra faire des sélections multiples : 
+- pour supprimer plusieurs produits à la fois 
+
+Je ne peux pas parler de tout, ajoute ce qu'il y'a à ajouter, fait en sorte que tout soit cohérent, et surtout professionnelle car c'est pour une entreprise 
+
+Attention : on ne fait qu'une simulation, la base de données n'est pas nécessaire 
+
+N'utilisez pas trop des trucs accessibles, non, utilisons des ressources que même hors-ligne ils seront toujours accessibles et fonctionnel 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+L'application doit sembler tellement simple, facile, apaisant
+
+N'oublie pas on fait une maquette interactive 
+N'oublie pas fait en sorte que tout soit cohérent, logique, harmonieux, correct, je n'ai pas tout ça, le reste c'est à toi d'en décider, faire en sorte que tout soit cohérent, logique, fait les choses correctement en assurant de donner un environnement simpliste, minimaliste, facile..
+
+Voilà
+</div>
+
+<div>
+  Crée une maquette mobile 
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css
+Le JavaScript sera juste pour les interactions, on clic a un résultat, juste des évènements, rien ne va fonctionner réellement 
+Pour une entreprise : Quincaillerie TOTAL 
+On est en RDC : on utilise le franc congolais (FC)
+
+C'est pour gérer les mouvements, faire les suivis, garder la traçabilité de tout ce qui se passe :
+- qui a fait quoi ? Quand ? 
+- qu'est-ce qu'on a ? Qu'est-ce qui reste ?
+
+Dans cette application tout ce qui se créer obtient un QR code : produit, utilisateur
+
+À la connexion l'utilisateur peut soit taper son mot de passe ou scanner son qr code ou importer l'image de ce qr code
+
+Pour l'inscription faut demander juste son nom complet et un mot de passe, pas d'email ça ne servirait à rien 
+
+Pour identifier un produit on peut soit chercher ou scanner son qr code
+
+Cette application peut avoir plusieurs utilisateurs 
+
+Je veux que l'application propose 4 langues :
+- français 
+- anglais 
+- hindi 
+- lingala
+
+Que l'utilisateur pourrait choisir depuis la première connexion et même changer depuis son profil 
+
+Mais pour l'instant faisons uniquement le fichier Json ou JavaScript pour le : Français 
+
+Les autres je peux traduire après à partir du fichier de celui de français 
+
+L'utilisateur pourrait aussi choisir un thème dans son depuis la première connexion et modifiable sur son profil :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc 
+
+Le thème et la langue doivent être choisi dès la première fois sur l'application car on ne peut rien comprendre si ce n'est pas sa langue, ni se sentir à l'aise si ce n'est pas son thème préféré dans cette application 
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+
+Le premier utilisateur à utiliser l'application est automatiquement l'administrateur principal 
+
+Un admin gère tout ce qui se passe :
+- C'est lui qui choisit qui utilise l'application ou pas , lorsqu'un nouveau compte est créer, ce nouveau compte n'aura accès à rien, jusqu'à ce que l'administrateur clique dans ajouter un membre et que celui-ci est sélectionné, c'est là qu'il pourrait aussi voir et participer 
+
+- les membres peuvent être aussi promu admin si l'admin le décide, même en étant admin l'administrateur principal on ne peut pas le supprimer comme les autres, c'est lui seul qui peut décider de se retirer de ce poste 
+
+
+On peut ajouter un nouveau produit, demandant des informations comme :
+- photo 
+- sku/code-barres 
+- nom
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock)
+
+Tout ce qui se créer obtient un code-barres 
+
+Lorsqu'on cliquera pour voir le détail de ce produit, on verra son code barre
+
+On pourra recevoir des notifications : entrée, sortie, seuil critique, surstock, ...
+
+Pour faire entrée :
+L'utilisateur pourra mettre une quantité 
+On peut aussi demander un commentaire, ou preuve photo 
+De même pour la sortie 
+Pour l'entrée il faut montré la zone du prix car le prix peut toute fois changer, comme ça on met à jour automatiquement 
+
+On peut aussi faire l'inventaire :
+- produit 
+- stock informatique/théorique 
+- stock réel 
+Car il peut toujours y avoir des écarts entre les 2 
+Comment ça on pourra ainsi rester en harmonie 
+- Sélectionner l'emplacement, car un produit peut avoir plusieurs emplacements/ zone à laquelle une quantité a été attribué  
+
+On pourra recevoir des messages comme sms : entrée, sortie, seuil critique, surstock, produit ajouter, supprimer, modifier, inventorier ...
+Qui vient de faire quoi ? Quand ? Pourquoi ? On a quoi ? Il nous reste quoi ?
+
+Ça serra comme sms/Messenger, on peut cliquer par exemple sur :
+- entrée : on verra tous les messages liés à l'entré 
+- sortie : tous les messages liés aux sorties  
+- inventaire : tous les messages liés aux produits inventoriés 
+- stock faible , 
+Rupture, surstock,
+supprimer, 
+Ajouter ,
+Modifier, compte...
+Etc ..
+
+C'est dans cette espace qu'on verra des commentaires justificatifs aussi, des photos justificatifs, des personnes ayant fait les mouvements...etc
+On pourra trier par date , choisir une date, et voir les messages liés, ou rechercher par texte, approuver une demande....
+
+On aura aussi avoir un petit bot qui fera des rapports : - stock , ...etc
+Par exemple tu tapes 1 ou tu écris Mon stock il envoie un fichier pdf  bien nommé avec la date et l'heure 
+
+Dans le profil utilisateur :
+Il pourra voir :
+- sa photo et le modifier 
+- son nom et le modifier 
+- thème et le changer
+- langue et le changer 
+- son qr code (il pourra le télécharger)
+Il pourra aussi se déconnecter 
+
+
+Il y'aura zone équipe/membre: 
+L'administrateur pourra :
+- sélectionner et ajouter un compte qui a été créer 
+- retirer un membre de l'équipe 
+...etc
+
+Il y'aura aussi une zone pour verrouiller l'application et que seules les administrateurs pourront y accéder : mesure de sécurité 
+
+De même dans le détail d'un produit on pourra voir :
+- photo et le modifier 
+- nom et le modifier 
+- sku/code-barres
+...
+- date de création 
+- date de la dernière modification (entrée, sortie, ajustement lié à l'inventaire, ...)
+- son qr code
+
+Dans la listes des produits : 
+On pourra tirer :
+- tous
+- stock faible 
+- en rupture 
+- surstock 
+-...
+
+On pourra faire des sélections multiples : 
+- pour supprimer plusieurs produits à la fois 
+
+Je ne peux pas parler de tout, ajoute ce qu'il y'a à ajouter, fait en sorte que tout soit cohérent, et surtout professionnelle car c'est pour une entreprise 
+
+Attention : on ne fait qu'une simulation, la base de données n'est pas nécessaire 
+
+N'utilisez pas trop des trucs accessibles, non, utilisons des ressources que même hors-ligne ils seront toujours accessibles et fonctionnel 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+ NOTE : Ne suis pas l'ordre à laquelle je dis les choses, je dis les choses de façon désorganisé, c'est à toi de tout organiser correctement comme il faut , origanise tout proprement pour que tout soit clair pour l'utilisateur , propre, une bonne expérience utilisateur 
+
+Voilà
+</div>
+
+<div>
+  Crée une maquette mobile 
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css
+Le JavaScript sera juste pour les interactions, on clic a un résultat, juste des évènements, rien ne va fonctionner réellement 
+Pour une entreprise : Quincaillerie TOTAL 
+On est en RDC : on utilise le franc congolais (FC)
+
+C'est pour gérer les mouvements, faire les suivis, garder la traçabilité de tout ce qui se passe :
+- qui a fait quoi ? Quand ? 
+- qu'est-ce qu'on a ? Qu'est-ce qui reste ?
+
+
+Voici  mes idées :
+
+"""
+
+Dans cette application tout ce qui se créer obtient un QR code : produit, utilisateur
+
+À la connexion l'utilisateur peut soit taper son mot de passe ou scanner son qr code ou importer l'image de ce qr code
+
+Pour l'inscription faut demander juste son nom complet et un mot de passe, pas d'email ça ne servirait à rien 
+
+Pour identifier un produit on peut soit chercher ou scanner son qr code
+
+Cette application peut avoir plusieurs utilisateurs 
+
+Je veux que l'application propose 4 langues :
+- français 
+- anglais 
+- hindi 
+- lingala
+
+Que l'utilisateur pourrait choisir depuis la première connexion et même changer depuis son profil 
+
+Mais pour l'instant faisons uniquement le fichier Json ou JavaScript pour le : Français 
+
+Les autres je peux traduire après à partir du fichier de celui de français 
+
+L'utilisateur pourrait aussi choisir un thème dans son depuis la première connexion et modifiable sur son profil :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc 
+
+Le thème et la langue doivent être choisi dès la première fois sur l'application car on ne peut rien comprendre si ce n'est pas sa langue, ni se sentir à l'aise si ce n'est pas son thème préféré dans cette application 
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+
+Le premier utilisateur à utiliser l'application est automatiquement l'administrateur principal 
+
+Un admin gère tout ce qui se passe :
+- C'est lui qui choisit qui utilise l'application ou pas , lorsqu'un nouveau compte est créer, ce nouveau compte n'aura accès à rien, jusqu'à ce que l'administrateur clique dans ajouter un membre et que celui-ci est sélectionné, c'est là qu'il pourrait aussi voir et participer 
+
+- les membres peuvent être aussi promu admin si l'admin le décide, même en étant admin l'administrateur principal on ne peut pas le supprimer comme les autres, c'est lui seul qui peut décider de se retirer de ce poste 
+
+
+On peut ajouter un nouveau produit, demandant des informations comme :
+- photo 
+- sku/code-barres 
+- nom
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock)
+
+Tout ce qui se créer obtient un code-barres 
+
+Lorsqu'on cliquera pour voir le détail de ce produit, on verra son code barre
+
+On pourra recevoir des notifications : entrée, sortie, seuil critique, surstock, ...
+
+Pour faire entrée :
+L'utilisateur pourra mettre une quantité 
+On peut aussi demander un commentaire, ou preuve photo 
+De même pour la sortie 
+Pour l'entrée il faut montré la zone du prix car le prix peut toute fois changer, comme ça on met à jour automatiquement 
+
+On peut aussi faire l'inventaire :
+- produit 
+- stock informatique/théorique 
+- stock réel 
+Car il peut toujours y avoir des écarts entre les 2 
+Comment ça on pourra ainsi rester en harmonie 
+- Sélectionner l'emplacement, car un produit peut avoir plusieurs emplacements/ zone à laquelle une quantité a été attribué  
+
+On pourra recevoir des messages comme sms : entrée, sortie, seuil critique, surstock, produit ajouter, supprimer, modifier, inventorier ...
+Qui vient de faire quoi ? Quand ? Pourquoi ? On a quoi ? Il nous reste quoi ?
+
+Ça serra comme sms/Messenger, on peut cliquer par exemple sur :
+- entrée : on verra tous les messages liés à l'entré 
+- sortie : tous les messages liés aux sorties  
+- inventaire : tous les messages liés aux produits inventoriés 
+- stock faible , 
+Rupture, surstock,
+supprimer, 
+Ajouter ,
+Modifier, compte...
+Etc ..
+
+C'est dans cette espace qu'on verra des commentaires justificatifs aussi, des photos justificatifs, des personnes ayant fait les mouvements...etc
+On pourra trier par date , choisir une date, et voir les messages liés, ou rechercher par texte, approuver une demande....
+
+On aura aussi avoir un petit bot qui fera des rapports : - stock , ...etc
+Par exemple tu tapes 1 ou tu écris Mon stock il envoie un fichier pdf  bien nommé avec la date et l'heure 
+
+Dans le profil utilisateur :
+Il pourra voir :
+- sa photo et le modifier 
+- son nom et le modifier 
+- thème et le changer
+- langue et le changer 
+- son qr code (il pourra le télécharger)
+Il pourra aussi se déconnecter 
+
+
+Il y'aura zone équipe/membre: 
+L'administrateur pourra :
+- sélectionner et ajouter un compte qui a été créer 
+- retirer un membre de l'équipe 
+...etc
+
+Il y'aura aussi une zone pour verrouiller l'application et que seules les administrateurs pourront y accéder : mesure de sécurité 
+
+De même dans le détail d'un produit on pourra voir :
+- photo et le modifier 
+- nom et le modifier 
+- sku/code-barres
+...
+- date de création 
+- date de la dernière modification (entrée, sortie, ajustement lié à l'inventaire, ...)
+- son qr code
+
+Dans la listes des produits : 
+On pourra tirer :
+- tous
+- stock faible 
+- en rupture 
+- surstock 
+-...
+
+On pourra faire des sélections multiples : 
+- pour supprimer plusieurs produits à la fois 
+
+Je ne peux pas parler de tout, ajoute ce qu'il y'a à ajouter, fait en sorte que tout soit cohérent, et surtout professionnelle car c'est pour une entreprise 
+
+Attention : on ne fait qu'une simulation, la base de données n'est pas nécessaire 
+
+N'utilisez pas trop des trucs accessibles, non, utilisons des ressources que même hors-ligne ils seront toujours accessibles et fonctionnel 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+Note : n'utilise jamais des emojis 
+
+ NOTE : Ne suis pas l'ordre à laquelle je dis les choses, je dis les choses de façon désorganisé, c'est à toi de tout organiser correctement comme il faut , origanise tout proprement pour que tout soit clair pour l'utilisateur , propre, une bonne expérience utilisateur 
+
+""""
+
+
+Ça c'était juste mes idées :
+Moi je n'ai pas envie de tout ça, ce dont j'ai besoin, c'est d'une application ultra simpliste, minimaliste, avec trop peu de code
+
+Je t'ai donné mes idées, c'est à toi de les synthétiser, de trier, enfin grâce à cela me créer un truc qui avec peu de code, répond à tous les critères nécessaires 
+
+J'ai besoin d'une application rapide, simpliste, ...
+
+Voilà
+</div>
+
+
+<div>
+  Crée une maquette mobile 
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css
+Le JavaScript sera juste pour les interactions, on clic a un résultat, juste des évènements, rien ne va fonctionner réellement 
+Pour une entreprise : Quincaillerie TOTAL 
+On est en RDC : on utilise le franc congolais (FC)
+
+C'est pour gérer les mouvements, faire les suivis, garder la traçabilité de tout ce qui se passe :
+- qui a fait quoi ? Quand ? 
+- qu'est-ce qu'on a ? Qu'est-ce qui reste ?
+
+
+Voici  mes idées :
+
+"""
+
+Dans cette application tout ce qui se créer obtient un QR code : produit, utilisateur
+
+À la connexion l'utilisateur peut soit taper son mot de passe ou scanner son qr code ou importer l'image de ce qr code
+
+Pour l'inscription faut demander juste son nom complet et un mot de passe, pas d'email ça ne servirait à rien 
+
+À la connexion juste le mot de passe, ou scanner son qr code, ou importer une image, ça peut aussi marcher avec celui de sa carte d'identité ou sa carte de d'électeur, il peut soit scanner soit prendre une photo et l'importer 
+
+Pour identifier un produit on peut soit chercher ou scanner son qr code
+
+Cette application peut avoir plusieurs utilisateurs 
+
+Je veux que l'application propose 4 langues :
+- français 
+- anglais 
+- hindi 
+- lingala
+
+Que l'utilisateur pourrait choisir depuis la première connexion et même changer depuis son profil 
+
+Mais pour l'instant faisons uniquement le fichier Json ou JavaScript pour le : Français 
+
+Les autres je peux traduire après à partir du fichier de celui de français 
+
+L'utilisateur pourrait aussi choisir un thème dans son depuis la première connexion et modifiable sur son profil :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc 
+
+Le thème et la langue doivent être choisi dès la première fois sur l'application car on ne peut rien comprendre si ce n'est pas sa langue, ni se sentir à l'aise si ce n'est pas son thème préféré dans cette application 
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+
+Le premier utilisateur à utiliser l'application est automatiquement l'administrateur principal 
+
+Un admin gère tout ce qui se passe :
+- C'est lui qui choisit qui utilise l'application ou pas , lorsqu'un nouveau compte est créer, ce nouveau compte n'aura accès à rien, jusqu'à ce que l'administrateur clique dans ajouter un membre et que celui-ci est sélectionné, c'est là qu'il pourrait aussi voir et participer 
+
+- les membres peuvent être aussi promu admin si l'admin le décide, même en étant admin l'administrateur principal on ne peut pas le supprimer comme les autres, c'est lui seul qui peut décider de se retirer de ce poste 
+
+
+On peut ajouter un nouveau produit, demandant des informations comme :
+- photo 
+- sku/code-barres 
+- nom
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock)
+
+Tout ce qui se créer obtient un code-barres 
+
+Lorsqu'on cliquera pour voir le détail de ce produit, on verra son code barre
+
+On pourra recevoir des notifications : entrée, sortie, seuil critique, surstock, ...
+
+Pour faire entrée :
+L'utilisateur pourra mettre une quantité 
+On peut aussi demander un commentaire, ou preuve photo 
+De même pour la sortie 
+Pour l'entrée il faut montré la zone du prix car le prix peut toute fois changer, comme ça on met à jour automatiquement 
+
+On peut aussi faire l'inventaire :
+- produit 
+- stock informatique/théorique 
+- stock réel 
+Car il peut toujours y avoir des écarts entre les 2 
+Comment ça on pourra ainsi rester en harmonie 
+- Sélectionner l'emplacement, car un produit peut avoir plusieurs emplacements/ zone à laquelle une quantité a été attribué  
+
+On pourra recevoir des messages comme sms : entrée, sortie, seuil critique, surstock, produit ajouter, supprimer, modifier, inventorier ...
+Qui vient de faire quoi ? Quand ? Pourquoi ? On a quoi ? Il nous reste quoi ?
+
+Ça serra comme sms/Messenger, on peut cliquer par exemple sur :
+- entrée : on verra tous les messages liés à l'entré 
+- sortie : tous les messages liés aux sorties  
+- inventaire : tous les messages liés aux produits inventoriés 
+- stock faible , 
+Rupture, surstock,
+supprimer, 
+Ajouter ,
+Modifier, compte...
+Etc ..
+C'est AUSSI cette espace qu'on verra des commentaires justificatifs aussi, des photos justificatifs, des personnes ayant fait les mouvements...etc
+On pourra trier par date , choisir une date, et voir les messages liés, ou rechercher par texte, approuver une demande....
+
+Ça sera un peu comme le petit WhatsApp ou Messenger de l'application 
+
+Vu que je veux utiliser Capacitor, il y'aura fort possible des notifications push lié à tout ceci
+
+On aura aussi avoir un petit bot qui fera des rapports : - stock , ...etc
+Par exemple tu tapes 1 ou tu écris Mon stock il envoie un fichier pdf  bien nommé avec la date et l'heure 
+
+Dans le profil utilisateur :
+Il pourra voir :
+- sa photo et le modifier 
+- son nom et le modifier 
+- thème et le changer
+- langue et le changer 
+- son qr code (il pourra le télécharger)
+- il pourra aussi lier le QR code de sa carte d'identité ou d'électeur, c'est le moyen le plus sûr car ça ne se perd jamais 
+Il pourra aussi se déconnecter 
+
+
+Il y'aura zone équipe/membre/travailler à plusieurs, accroître la productivité, : 
+L'administrateur pourra :
+- sélectionner et ajouter un compte qui a été créer 
+- retirer un membre de l'équipe 
+...etc
+
+Il y'aura aussi une zone pour verrouiller l'application et que seules les administrateurs pourront y accéder : mesure de sécurité 
+
+De même dans le détail d'un produit on pourra voir :
+- photo et le modifier 
+- nom et le modifier 
+- sku/code-barres
+...
+- date de création 
+- date de la dernière modification (entrée, sortie, ajustement lié à l'inventaire, ...)
+- son qr code
+
+Dans la listes des produits : 
+On pourra tirer :
+- tous
+- stock faible 
+- en rupture 
+- surstock 
+-...
+
+On pourra faire des sélections multiples : 
+- pour supprimer plusieurs produits à la fois
+
+Je compte utiliser Capacitor, d'où on aura des fonctionnalités natifs
+
+Je veux donc avoir où ça peut nous montrer où sont stockés les fichiers pdf dans l'appareil, les QR code qu'on télécharger, des photos qu'on prend, les données qu'on enregistrer en hors-ligne 
+
+Je ne peux pas parler de tout, ajoute ce qu'il y'a à ajouter, fait en sorte que tout soit cohérent, et surtout professionnelle car c'est pour une entreprise 
+
+Attention : on ne fait qu'une simulation, la base de données n'est pas nécessaire 
+
+N'utilisez pas trop des trucs accessibles, non, utilisons des ressources que même hors-ligne ils seront toujours accessibles et fonctionnel 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+Note :-  n'utilise jamais des emojis 
+- n'utilise jamais des balises select/option car ça ne prend pas de style vu que le système affiche à la place 
+
+ NOTE : Ne suis pas l'ordre à laquelle je dis les choses, je dis les choses de façon désorganisé, c'est à toi de tout organiser correctement comme il faut , origanise tout proprement pour que tout soit clair pour l'utilisateur , propre, une bonne expérience utilisateur 
+
+Je compte utiliser Capacitor, s'il y'a des options ou zones supplémentaires par exemple lié à la synchronisation des données afin que tout, faut le faire 
+
+Dans cette application est conçue dans le but de permettre à l'entreprise, à l'utilisateur ou au responsable d'avoir toujours accès aux données, en étant hors-ligne ou en ligne depuis n'importe quel appareil appareil mobile, car si les données étaient uniquement hors-ligne, et que le téléphone a un problème : batterie faible, panne, vol,... Ça gâcherait tout le travail.
+
+""""
+
+
+Ça c'était juste mes idées :
+Moi je n'ai pas envie de tout ça, ce dont j'ai besoin, c'est d'une application ultra simpliste, minimaliste, avec trop peu de code
+
+Je t'ai donné mes idées, c'est à toi de les synthétiser, de trier, enfin grâce à cela me créer un truc qui avec peu de code, répond à tous les critères nécessaires 
+
+J'ai besoin d'une application rapide, simpliste, ...
+
+Attention : tout doit être cohérent, logique, je n'aime pas des applications incomplètes, ou incomplètes, illogique,... Tout doit avoir un sens 
+Un élément présent qui est sensé être cliquable doit l'être et montré un résultat même si c'est du maquette, on ne fait pas qu'une simple maquette, c'est plus loin que ça on fait aussi de la simulation 
+
+J'ai pensé cette application afin que tout fonctionne et les données peuvent être synchroniser 
+
+Voilà
+</div>

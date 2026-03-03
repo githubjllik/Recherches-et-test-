@@ -1,0 +1,179 @@
+Crée une application mobile simpliste, minimaliste, facile à manipuler
+On s'intéresse juste à l'interface mobile (smartphone - tablette) :
+En : html css JavaScript 
+Je compte utiliser Capacitor plus tard pour utiliser des fonctionnalités natives dont j'aurai à citer, pour l'instant c'est le rendue qui m'intéresse et des fonctionnalités basiques 
+
+C'est une application totalement hors-ligne qu'on conçoit, on utilise donc  une bd locale,
+Pour l'instant on utilise le navigateur mais je compte passer à Capacitor afin de ne pas être indépendant d'un navigateur 
+C'est Pour une entreprise : Quincaillerie TOTAL 
+On est en RDC : on utilise le franc congolais (FC)
+
+C'est pour gérer les mouvements
+
+Voici  mes idées :
+
+"""
+Premièrement proposer à l'utilisateur de choisir une langue, on aura 5 propositions :
+- français 
+- anglais 
+- hindi
+- Lingala (RDC)
+- Swahili (RDC)
+
+Tu peux utiliser des emojis drapeau pour représenter la langue correspond au pays  
+
+On peut faire plusieurs fichiers Json ou JavaScript pour chaque langue que le HTML pourrait lire facilement et traduire automatiquement.
+
+Pour l'instant on fait juste pour une langue, qui à partir du fichier cette langue, je pourrais facilement traduire les autres et créer les fichiers des autres langues 
+
+Après avoir choisis une langue, il y'aura un onboarding avec des icônes 
+
+L'utilisateur pourrait aussi choisir un thème :
+Des thèmes proposés sont :
+- système (celui que le système utilise actuellement)
+- sombre 
+- blanc  
+
+Concernant la couleur de l'application voici les couleurs:
+Primaire :
+- #006f78 / Skobeloff / R:0 G: 111 B: 120
+
+Secondaire :
+- #e62311/ Rouge maximum/ R:230 G: 35 B: 17
+
+Troisième on a : le blanc 
+
+on peut toujours avoir le choix de choisir une langue, ou un thème dans une zone dédiée 
+
+On aura une zone pour mettre taux de change , car en RDC, on utilise 2 monnaies : Le franc congolais et le dollars 
+
+Donc on aura une zone où : l'utisateur peut mettre : combien vaut 1$ en franc congolais
+
+On aura un tableaux 
+On aura la liste de tous les produits 
+On peut soit rechercher, soit scanner un code-barres, un étiquette qr code (le qr code que possède un produit)
+ 
+On peut ajouter un nouveau produit un cliquant sur le bouton + du bouton flottant, demandant des informations comme :
+
+- référence produit/code-barres (taper une référence ou scanner un code-barres)
+- nom 
+- localisation/adresse/zone et quantité
+Un produit peut être placé dans plusieurs endroits à la fois 
+Donc  la zone est lié à une quantité 
+- quantité minimum 
+- quantité maximale 
+- prix d'achat unitaire (pour calculer la valeur du stock) : on aura : franc et dollars, mais le franc sera par défaut 
+ -> lorsqu'on entre un prix en franc, ça nous affiche aussi son équivalent en dollars 
+ -> si on choisit dollars, ça nous affiche aussi équivalent franc
+
+Un produit créé obtient un QR code, ça servirait comme référence pour un produit sans code-barres , sera générer dans l'ajout d'un produit et sera aussi visible dans le détail 
+
+Lorsqu'on cliquera sur un produit ça nous propose :
+- entrée  
+- sortie 
+- inventaire 
+- détail 
+- supprimer 
+
+Pour entré faut demander la quantité et montrer la prix unitaire, car cela peut toute fois changer 
+Pour la sortie faut demander la quantité aussi 
+
+Faut aussi montrer l'indicateur dans les 2 cas, au moment de la saisie on peut avoir un aperçu en direct de l'incrémentation ou de la décrémentation de la quantité actuel de l'emplacement actuel
+
+Note : une quantité est toujours lié à un emplacement, car un produit peut être stocké dans plusieurs emplacements, donc l'emplacement est à sélectionner lors de l'entrée ou sortie, si est seulement si un produit a été enregistré sur plusieurs emplacements
+
+Pour l'inventaire , il faut aussi montrer :
+- le stock théorique, la quantité est lié à un emplacement 
+- demander le stock réel, la quantité compté 
+- montrer le résultat/ l'écart 
+Demander à régulariser 
+
+Dans le détail du produit :
+Il pourra aura la possibilité :
+- modifier les informations sur ce produit 
+- exporter le QR du produit 
+Exporter c'est comme partager/ouvrir avec, ça nous présentera les applications de l'appareil qui peut le recevoir 
+
+On peut exporter aussi un rapport sur le stock actuel :
+ On verra :
+- valeur de stock totale en franc, dollars
+- nombre d'articles totale 
+- Date et heure
+
+Une table de tous les produits avec :
+- référence 
+- article 
+- qté : quantité actuel 
+-pu :  prix unitaire 
+-valeur stock 
+- état (en stock, faible, rupture, surstock)
+
+On peut exporter en pdf, csv, excel (xlsx)
+Exporter c'est comme partager/ouvrir avec, ça nous présentera les applications de l'appareil qui peut le recevoir
+NOTE : Pour l'instant pas de logique, pas de code sur ça, juste la présence dans l'interface car c'est hyper complexe à mettre à place, on fait juste un petit JavaScript pour les évènements, les interfaces, les interactions.
+
+On peut aussi sécuriser l'application :
+- mettre un mot de passe pour le verrouiller
+- permettre l'accès via son empreinte vu que l'appareil appartient à l'utilisateur : proposer cet option si est seulement si l'appareil a un système biométrique et qu'au moins 1 empreinte est déjà enregistré dans l'appareil.
+- s'il a une carte d'identité/carte d'électeur possédant un qr code, il peut scanner et enregistrer ce code, afin d'accéder à l'application en cas d'oubli de mot de passe 
+- l'utilisateur une fois dans l'application il peut toujours changer son mot de passe, le retirer
+NOTE: Tout ce que je viens de citer concernant la sécurité, on ne conçoit pas la logique, mais juste l'interface, pas de code car c'est hyper complexe à mettre à place, on fait juste un petit JavaScript pour les évènements, les interfaces, les interactions 
+
+Ça serait mieux de ne pas dépendre que des données local, d'où je compte avoir une base de données en ligne (supabase/firebase), c'est une proposition que l'utilisateur pourrait choisir en créer un juste un compte de sauvegarde dans l'application : Stockage Cloud 
+
+On aura une zone qui permettre à l'utilisateur de créer un compte, pour avoir sauvegarder ses données , une fois le compte créer , et commencer le processus de synchronisation, de restauration ,.
+
+cela fera maintenant des synchronisations, et permettrait à l'application de récupérer ses informations si l'application a été désinstallé par erreur, perdu des données ou l'appareil:
+si l'utilisateur n'a pas encore un compte de sauvegarde en ligne/ compte cloud 
+lui proposer d'en créer pour le sauvegarde en ligne, car celui permettrait de ne pas perdre ses données
+-> son nom ou nom de l'entreprise + mot de passe peut être demandé pour créer ce compte 
+
+-> si l'utilisateur avait déjà un compte, il pourrait mettre juste son mot de passe ... 
+s'il avait perdu ses données, il pourrait le récupérer par ce compte 
+
+- C'est à ce compte de récupérer les données local et de mettre à jour dans la base de données en ligne : cloud 
+- L'utilisateur peut cliquer dans restaurer pour récupérer ses données qu'il avait perdue 
+
+NOTE : Tout va aussi, c'est juste à concevoir l'interface, pas la logique, pas des codes complexes, on doit avoir juste l'aperçu des interfaces, le JavaScript sera juste pour les évènements, les interactions,...
+Car c'est hyper complexe.
+
+Je crois que je vais utiliser supabase pour ça.
+
+Voilà 
+
+Tout doit être en français : class, id, fonction, variable,... Tout ce qui possède un nom, ce nom doit être donner en français 
+
+Note :-  n'utilise jamais des emojis : à l'exception des langues
+- n'utilise jamais des balises select/option car ça ne prend pas de style vu que le système affiche à la place 
+
+ NOTE : Ne suis pas l'ordre à laquelle je dis les choses, je dis les choses de façon désorganisé, c'est à toi de tout organiser correctement comme il faut , origanise tout proprement pour que tout soit clair pour l'utilisateur , propre, une bonne expérience utilisateur.
+ 
+ REMARQUE : Faut toujours commenter les codes, des commentaires simples, monolignes qui définit le rôle d'un code, d'un bloc de code, d'une logique complexe , d'un élément,... exemple :
+ - ce code permet de faire ceci ....
+ - ce code lie ceci... à ceci...
+ - ce code permet de récupérer cet/ces éléments... et de faire ceci ...
+ - ce code permet d'afficher ...
+ - ce code masque ...
+ NOTE : il ne faut pas seulement dire à chaque fois "ce code", ça peut aussi être :
+ - le nom de l'élément manipulé 
+ - le nom de la technologie utilisé
+ - l'outil utilisé 
+ - la technique qu'on emploie 
+ exemple : 
+ - > capacitor c'est l'outil qui nous permet de ...
+ - > Supabase c'est la plateforme où on fait ...
+
+Note : utilise des icônes svg pour une bonne expérience utilisateur 
+""""
+
+NOTE: Tout doit être proprement stylé même les messages, toutes sortes des messages doit être stylés et traduits.
+-> n'utilise jamais un style par défaut
+voilà pourquoi je dis toujours de ne jamais utiliser les balises select et option du html
+
+Voilà 
+
+La plus grande fonctionnalités à mettre en place pour le moment, c'est juste la traduction, on prend juste une langue, on fait son fichier Json ou JavaScript, on prend que celui dont HMTL peut lire facilement, les fichiers langues doivent se mettre dans leur propre dossier nommé : pages
+Pour l'instant fait juste une langue pas tous les 5, les 4 autres je peux les traduires ensuite après.
+
+
+Je veux une application simple, banale, conçu pour un utilisateur qui ne se sent pas à l'aise avec la technologie, tout être facile à comprendre, facile à manipuler, tout doit être clair pour l'utilisateur, pas des mises en forme compliqué, je veux que sans même une formation, l'utilisateur utilise facilement l'application car tout est simple, tout semble simple, tout est facile à manipuler, tout est déjà présenter à l'utilisateur
