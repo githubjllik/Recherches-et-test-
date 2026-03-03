@@ -1,0 +1,2981 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quincaillerie TOTAL</title>
+    
+    <!-- Google Fonts - Poppins pour une lisibilité optimale -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           VARIABLES CSS - THÈMES ET COULEURS
+           ============================================ */
+        :root {
+            --primaire: #006f78;
+            --secondaire: #e62311;
+            --blanc: #ffffff;
+            
+            --fond: #ffffff;
+            --fond-carte: #f8fafa;
+            --texte: #1a1a1a;
+            --texte-secondaire: #5a5a5a;
+            --bordure: #e0e0e0;
+            --ombre: rgba(0, 111, 120, 0.1);
+            --succes: #2e7d32;
+            --attention: #f57c00;
+            --erreur: #d32f2f;
+        }
+        
+        [data-theme="sombre"] {
+            --fond: #121212;
+            --fond-carte: #1e1e1e;
+            --texte: #ffffff;
+            --texte-secondaire: #a0a0a0;
+            --bordure: #333333;
+            --ombre: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* ============================================
+           RESET ET BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        /* ============================================
+           ÉCRANS - GESTION DES VUES
+           ============================================ */
+        .ecran {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+            animation: fondu 0.3s ease;
+        }
+        
+        .ecran.actif {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes fondu {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ============================================
+           ÉCRAN LANGUE - SÉLECTION INITIALE
+           ============================================ */
+        .ecran-langue {
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            background: linear-gradient(135deg, var(--primaire) 0%, #004d54 100%);
+        }
+        
+        .logo-accueil {
+            text-align: center;
+            color: var(--blanc);
+        }
+        
+        .logo-accueil h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .logo-accueil p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .liste-langues {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 280px;
+        }
+        
+        .btn-langue {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: var(--blanc);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-langue:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px var(--ombre);
+        }
+        
+        .btn-langue:active {
+            transform: scale(0.98);
+        }
+        
+        .drapeau {
+            font-size: 24px;
+        }
+        
+        /* ============================================
+           ÉCRAN ONBOARDING - PRÉSENTATION
+           ============================================ */
+        .ecran-onboarding {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 40px;
+        }
+        
+        .onboarding-icone {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primaire) 0%, #004d54 100%);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px var(--ombre);
+        }
+        
+        .onboarding-icone svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--blanc);
+        }
+        
+        .onboarding-texte h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .onboarding-texte p {
+            font-size: 15px;
+            color: var(--texte-secondaire);
+            line-height: 1.6;
+        }
+        
+        .indicateurs {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .point {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--bordure);
+            transition: background 0.3s;
+        }
+        
+        .point.actif {
+            background: var(--primaire);
+            width: 24px;
+            border-radius: 4px;
+        }
+        
+        /* ============================================
+           ÉCRAN DÉPÔT - CRÉATION/SÉLECTION
+           ============================================ */
+        .ecran-depot {
+            gap: 24px;
+        }
+        
+        .en-tete {
+            text-align: center;
+        }
+        
+        .en-tete h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .en-tete p {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+        
+        .champ-saisie {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background: var(--fond);
+            color: var(--texte);
+            transition: border-color 0.3s;
+        }
+        
+        .champ-saisie:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+        
+        .liste-depots {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .item-depot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        
+        .item-depot:hover {
+            transform: translateX(5px);
+        }
+        
+        .item-depot.actif {
+            border: 2px solid var(--primaire);
+        }
+        
+        .info-depot h3 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .info-depot p {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           ÉCRAN CONFIGURATION - TAUX ET AFFICHAGE
+           ============================================ */
+        .ecran-config {
+            gap: 24px;
+        }
+        
+        .section-config {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        .section-config h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-config h3 svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primaire);
+        }
+        
+        .ligne-config {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .ligne-config:last-child {
+            border-bottom: none;
+        }
+        
+        .ligne-config span {
+            font-size: 14px;
+        }
+        
+        .entree-nombre {
+            width: 100px;
+            padding: 10px;
+            border: 2px solid var(--bordure);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            background: var(--fond);
+            color: var(--texte);
+        }
+        
+        .entree-nombre:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+        
+        /* Boutons de sélection personnalisés */
+        .groupe-choix {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-choix {
+            padding: 8px 14px;
+            border: 2px solid var(--bordure);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--fond);
+            color: var(--texte);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-choix.actif {
+            background: var(--primaire);
+            border-color: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        /* ============================================
+           ÉCRAN PRINCIPAL - APPLICATION
+           ============================================ */
+        .ecran-app {
+            gap: 16px;
+            padding-bottom: 100px;
+        }
+        
+        .barre-haute {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+        
+        .nom-depot {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .actions-haut {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icone {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: var(--fond-carte);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .btn-icone svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--texte);
+        }
+        
+        .btn-icone:hover {
+            background: var(--primaire);
+        }
+        
+        .btn-icone:hover svg {
+            fill: var(--blanc);
+        }
+        
+        /* Barre de recherche */
+        .barre-recherche {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--fond-carte);
+            border-radius: 12px;
+        }
+        
+        .barre-recherche svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--texte-secondaire);
+        }
+        
+        .barre-recherche input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--texte);
+        }
+        
+        .barre-recherche input:focus {
+            outline: none;
+        }
+        
+        .barre-recherche input::placeholder {
+            color: var(--texte-secondaire);
+        }
+        
+        /* Statistiques rapides */
+        .stats-rapides {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .carte-stat {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .carte-stat.valeur {
+            grid-column: span 2;
+            background: linear-gradient(135deg, var(--primaire) 0%, #004d54 100%);
+            color: var(--blanc);
+        }
+        
+        .carte-stat h4 {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .carte-stat .nombre {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .carte-stat.valeur .nombre {
+            font-size: 20px;
+        }
+        
+        /* Liste des produits */
+        .section-produits h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .liste-produits {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .item-produit {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .item-produit:hover {
+            transform: translateX(5px);
+        }
+        
+        .produit-icone {
+            width: 44px;
+            height: 44px;
+            background: var(--primaire);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .produit-icone svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--blanc);
+        }
+        
+        .produit-info {
+            flex: 1;
+        }
+        
+        .produit-info h4 {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .produit-info p {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        .produit-qte {
+            text-align: right;
+        }
+        
+        .produit-qte .nombre {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .produit-qte .unite {
+            font-size: 11px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* États du stock */
+        .badge-etat {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .badge-etat.stock { background: #e8f5e9; color: #2e7d32; }
+        .badge-etat.faible { background: #fff3e0; color: #f57c00; }
+        .badge-etat.rupture { background: #ffebee; color: #d32f2f; }
+        .badge-etat.surstock { background: #e3f2fd; color: #1976d2; }
+        
+        [data-theme="sombre"] .badge-etat.stock { background: #1b5e20; color: #a5d6a7; }
+        [data-theme="sombre"] .badge-etat.faible { background: #e65100; color: #ffcc80; }
+        [data-theme="sombre"] .badge-etat.rupture { background: #b71c1c; color: #ef9a9a; }
+        [data-theme="sombre"] .badge-etat.surstock { background: #0d47a1; color: #90caf9; }
+        
+        /* ============================================
+           BOUTON FLOTTANT - ACTIONS RAPIDES
+           ============================================ */
+        .btn-flottant {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--primaire);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px var(--ombre);
+            transition: transform 0.2s, background 0.2s;
+            z-index: 100;
+        }
+        
+        .btn-flottant svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--blanc);
+            transition: transform 0.3s;
+        }
+        
+        .btn-flottant.ouvert svg {
+            transform: rotate(45deg);
+        }
+        
+        .btn-flottant:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Menu flottant */
+        .menu-flottant {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 99;
+        }
+        
+        .menu-flottant.ouvert {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .option-flottante {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--ombre);
+            white-space: nowrap;
+            transition: transform 0.2s;
+        }
+        
+        .option-flottante:hover {
+            transform: translateX(-5px);
+        }
+        
+        .option-flottante svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primaire);
+        }
+        
+        .option-flottante span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* ============================================
+           MODALES - DIALOGUES
+           ============================================ */
+        .modale {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+            animation: fondu 0.2s ease;
+        }
+        
+        .modale.ouverte {
+            display: flex;
+        }
+        
+        .contenu-modale {
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            overflow-y: auto;
+            animation: glisseHaut 0.3s ease;
+        }
+        
+        @keyframes glisseHaut {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modale-en-tete {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .modale-en-tete h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .btn-fermer {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: var(--fond-carte);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-fermer svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--texte);
+        }
+        
+        /* Formulaire */
+        .groupe-champ {
+            margin-bottom: 16px;
+        }
+        
+        .groupe-champ label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--texte-secondaire);
+        }
+        
+        .ligne-double {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        /* Boutons d'action */
+        .btn-principal {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--primaire);
+            color: var(--blanc);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .btn-principal:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-secondaire {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: inherit;
+            background: transparent;
+            color: var(--texte);
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* Liste d'actions */
+        .liste-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--fond-carte);
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s;
+        }
+        
+        .btn-action:hover {
+            background: var(--bordure);
+        }
+        
+        .btn-action.entree { border-left: 4px solid var(--succes); }
+        .btn-action.sortie { border-left: 4px solid var(--secondaire); }
+        .btn-action.inventaire { border-left: 4px solid var(--attention); }
+        .btn-action.detail { border-left: 4px solid var(--primaire); }
+        .btn-action.supprimer { border-left: 4px solid var(--erreur); }
+        
+        .btn-action svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--texte);
+        }
+        
+        .btn-action span {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        /* ============================================
+           PANNEAU - NAVIGATION LATÉRALE
+           ============================================ */
+        .panneau {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--fond);
+            box-shadow: 4px 0 20px var(--ombre);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panneau.ouvert {
+            transform: translateX(0);
+        }
+        
+        .panneau-en-tete {
+            padding: 24px;
+            background: linear-gradient(135deg, var(--primaire) 0%, #004d54 100%);
+            color: var(--blanc);
+        }
+        
+        .panneau-en-tete h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .panneau-en-tete p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .panneau-menu {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .panneau-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .panneau-item:hover {
+            background: var(--fond-carte);
+        }
+        
+        .panneau-item svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--texte-secondaire);
+        }
+        
+        .panneau-item span {
+            font-size: 14px;
+        }
+        
+        .panneau-section {
+            padding: 16px;
+            border-top: 1px solid var(--bordure);
+        }
+        
+        .panneau-section h4 {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+        }
+        
+        /* Overlay pour fermer le panneau */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+            z-index: 250;
+        }
+        
+        .overlay.ouvert {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ============================================
+           MESSAGES - NOTIFICATIONS
+           ============================================ */
+        .message {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 24px;
+            background: var(--texte);
+            color: var(--fond);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 400;
+        }
+        
+        .message.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .message.succes { background: var(--succes); color: var(--blanc); }
+        .message.erreur { background: var(--erreur); color: var(--blanc); }
+        
+        /* ============================================
+           QR CODE - AFFICHAGE
+           ============================================ */
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: var(--blanc);
+            border-radius: 16px;
+            margin: 16px 0;
+        }
+        
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            background: var(--fond-carte);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .qr-code svg {
+            width: 160px;
+            height: 160px;
+        }
+        
+        .qr-nom {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        /* ============================================
+           VIDE - ÉTAT INITIAL
+           ============================================ */
+        .etat-vide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .etat-vide svg {
+            width: 80px;
+            height: 80px;
+            fill: var(--bordure);
+            margin-bottom: 20px;
+        }
+        
+        .etat-vide h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .etat-vide p {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           DÉTAIL PRODUIT
+           ============================================ */
+        .detail-produit {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .detail-section {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .detail-section h4 {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+        }
+        
+        .detail-ligne {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .detail-ligne:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-ligne span:first-child {
+            color: var(--texte-secondaire);
+            font-size: 14px;
+        }
+        
+        .detail-ligne span:last-child {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        /* ============================================
+           HISTORIQUE
+           ============================================ */
+        .item-historique {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .item-historique:last-child {
+            border-bottom: none;
+        }
+        
+        .historique-icone {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .historique-icone.entree { background: #e8f5e9; }
+        .historique-icone.sortie { background: #ffebee; }
+        .historique-icone.inventaire { background: #fff3e0; }
+        .historique-icone.creation { background: #e3f2fd; }
+        
+        .historique-icone svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .historique-info {
+            flex: 1;
+        }
+        
+        .historique-info h5 {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .historique-info p {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           RESPONSIVE - TABLETTE
+           ============================================ */
+        @media (min-width: 768px) {
+            .ecran {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .contenu-modale {
+                max-width: 500px;
+                border-radius: 24px;
+                margin: auto;
+            }
+            
+            .panneau {
+                width: 320px;
+            }
+        }
+        
+        /* ============================================
+           ANIMATIONS REDUITES
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         ÉCRAN 1: SÉLECTION DE LANGUE
+         ============================================ -->
+    <div id="ecran-langue" class="ecran ecran-langue actif">
+        <div class="logo-accueil">
+            <h1>Quincaillerie TOTAL</h1>
+            <p>Gestion de stock simplifiee</p>
+        </div>
+        
+        <div class="liste-langues">
+            <button class="btn-langue" onclick="choisirLangue('fr')">
+                <span class="drapeau">🇫🇷</span>
+                <span>Francais</span>
+            </button>
+            <button class="btn-langue" onclick="choisirLangue('en')">
+                <span class="drapeau">🇬🇧</span>
+                <span>English</span>
+            </button>
+            <button class="btn-langue" onclick="choisirLangue('hi')">
+                <span class="drapeau">🇮🇳</span>
+                <span>Hindi</span>
+            </button>
+            <button class="btn-langue" onclick="choisirLangue('ln')">
+                <span class="drapeau">🇨🇩</span>
+                <span>Lingala</span>
+            </button>
+            <button class="btn-langue" onclick="choisirLangue('sw')">
+                <span class="drapeau">🇨🇩</span>
+                <span>Swahili</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN 2: ONBOARDING
+         ============================================ -->
+    <div id="ecran-onboarding" class="ecran ecran-onboarding">
+        <div class="onboarding-icone">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+        </div>
+        
+        <div class="onboarding-texte">
+            <h2 id="onboarding-titre">Bienvenue</h2>
+            <p id="onboarding-texte">Gerez votre stock en toute simplicite</p>
+        </div>
+        
+        <div class="indicateurs">
+            <div class="point actif"></div>
+            <div class="point"></div>
+            <div class="point"></div>
+        </div>
+        
+        <button class="btn-principal" onclick="passerEtapeSuivante()" id="btn-suivant">Suivant</button>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN 3: CRÉATION/SÉLECTION DÉPÔT
+         ============================================ -->
+    <div id="ecran-depot" class="ecran ecran-depot">
+        <div class="en-tete">
+            <h2 id="depot-titre">Votre depot</h2>
+            <p id="depot-soustitre">Creer ou selectionner un depot</p>
+        </div>
+        
+        <div class="groupe-champ">
+            <label id="depot-label">Nom du depot</label>
+            <input type="text" class="champ-saisie" id="entree-nom-depot" placeholder="Ex: Depot principal">
+        </div>
+        
+        <button class="btn-principal" onclick="creerDepot()" id="btn-creer-depot">Creer le depot</button>
+        
+        <div class="liste-depots" id="liste-depots">
+            <!-- Les depots existants s'afficheront ici -->
+        </div>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN 4: CONFIGURATION
+         ============================================ -->
+    <div id="ecran-config" class="ecran ecran-config">
+        <div class="en-tete">
+            <h2 id="config-titre">Configuration</h2>
+            <p id="config-soustitre">Parametres initiaux</p>
+        </div>
+        
+        <div class="section-config">
+            <h3>
+                <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                <span id="config-taux-titre">Taux de change</span>
+            </h3>
+            <div class="ligne-config">
+                <span id="config-taux-label">1 USD =</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="number" class="entree-nombre" id="entree-taux" value="2800">
+                    <span>FC</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-config">
+            <h3>
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+                <span id="config-affichage-titre">Affichage des prix</span>
+            </h3>
+            <div class="groupe-choix">
+                <button class="btn-choix actif" data-affichage="fc" onclick="choisirAffichage('fc')">FC</button>
+                <button class="btn-choix" data-affichage="usd" onclick="choisirAffichage('usd')">USD</button>
+                <button class="btn-choix" data-affichage="les deux" onclick="choisirAffichage('les deux')">Les deux</button>
+            </div>
+        </div>
+        
+        <div class="section-config">
+            <h3>
+                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                <span id="config-theme-titre">Theme</span>
+            </h3>
+            <div class="groupe-choix">
+                <button class="btn-choix" data-theme-btn="systeme" onclick="choisirTheme('systeme')" id="theme-systeme">Systeme</button>
+                <button class="btn-choix actif" data-theme-btn="sombre" onclick="choisirTheme('sombre')" id="theme-sombre">Sombre</button>
+                <button class="btn-choix" data-theme-btn="blanc" onclick="choisirTheme('blanc')" id="theme-blanc">Blanc</button>
+            </div>
+        </div>
+        
+        <button class="btn-principal" onclick="terminerConfiguration()" id="btn-terminer-config">Commencer</button>
+    </div>
+
+    <!-- ============================================
+         ÉCRAN PRINCIPAL: APPLICATION
+         ============================================ -->
+    <div id="ecran-app" class="ecran ecran-app">
+        <!-- Barre supérieure -->
+        <div class="barre-haute">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn-icone" onclick="ouvrirPanneau()">
+                    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                </button>
+                <span class="nom-depot" id="nom-depot-actuel">Depot principal</span>
+            </div>
+            <div class="actions-haut">
+                <button class="btn-icone" onclick="ouvrirModaleConfig()">
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Barre de recherche -->
+        <div class="barre-recherche">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" placeholder="Rechercher un produit..." id="champ-recherche" oninput="rechercherProduit()">
+        </div>
+        
+        <!-- Statistiques rapides -->
+        <div class="stats-rapides">
+            <div class="carte-stat">
+                <h4>Articles</h4>
+                <div class="nombre" id="stat-articles">0</div>
+            </div>
+            <div class="carte-stat">
+                <h4>Alertes</h4>
+                <div class="nombre" id="stat-alertes">0</div>
+            </div>
+            <div class="carte-stat valeur">
+                <h4>Valeur du stock</h4>
+                <div class="nombre" id="stat-valeur">0 FC</div>
+            </div>
+        </div>
+        
+        <!-- Liste des produits -->
+        <div class="section-produits">
+            <h3>Produits</h3>
+            <div class="liste-produits" id="liste-produits">
+                <!-- Les produits s'afficheront ici -->
+                <div class="etat-vide" id="etat-vide-produits">
+                    <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+                    <h4>Aucun produit</h4>
+                    <p>Appuyez sur + pour ajouter</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         PANNEAU LATÉRAL
+         ============================================ -->
+    <div class="overlay" id="overlay" onclick="fermerPanneau()"></div>
+    <div class="panneau" id="panneau">
+        <div class="panneau-en-tete">
+            <h3>Quincaillerie TOTAL</h3>
+            <p id="panneau-nom-depot">Depot principal</p>
+        </div>
+        
+        <div class="panneau-menu">
+            <div class="panneau-item" onclick="ouvrirModaleDepots()">
+                <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm0 12H4V8h16v10z"/></svg>
+                <span>Gerer les depots</span>
+            </div>
+            <div class="panneau-item" onclick="ouvrirModaleRapport()">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                <span>Rapport</span>
+            </div>
+            <div class="panneau-item" onclick="ouvrirModaleSauvegarde()">
+                <svg viewBox="0 0 24 24"><path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/></svg>
+                <span>Sauvegarde</span>
+            </div>
+        </div>
+        
+        <div class="panneau-section">
+            <h4>Parametres</h4>
+            <div class="panneau-item" onclick="changerLangue()">
+                <svg viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+                <span>Langue</span>
+            </div>
+            <div class="panneau-item" onclick="ouvrirModaleConfig()">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Configuration</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         BOUTON FLOTTANT
+         ============================================ -->
+    <button class="btn-flottant" id="btn-flottant" onclick="toggleMenuFlottant()">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    </button>
+    
+    <div class="menu-flottant" id="menu-flottant">
+        <button class="option-flottante" onclick="ouvrirModaleProduit('code')">
+            <svg viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+            <span>Produit avec code</span>
+        </button>
+        <button class="option-flottante" onclick="ouvrirModaleProduit('reference')">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2z"/></svg>
+            <span>Produit sans code</span>
+        </button>
+    </div>
+
+    <!-- ============================================
+         MODALE: AJOUT PRODUIT
+         ============================================ -->
+    <div class="modale" id="modale-produit">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3 id="modale-produit-titre">Nouveau produit</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-produit')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Reference / Code-barres</label>
+                <input type="text" class="champ-saisie" id="produit-reference" placeholder="Entrez ou scannez">
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Nom du produit</label>
+                <input type="text" class="champ-saisie" id="produit-nom" placeholder="Ex: Marteau">
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Emplacement</label>
+                <input type="text" class="champ-saisie" id="produit-emplacement" placeholder="Ex: Rayon A1">
+            </div>
+            
+            <div class="ligne-double">
+                <div class="groupe-champ">
+                    <label>Quantite</label>
+                    <input type="number" class="champ-saisie" id="produit-quantite" placeholder="0" value="0">
+                </div>
+                <div class="groupe-champ">
+                    <label>Quantite min</label>
+                    <input type="number" class="champ-saisie" id="produit-qte-min" placeholder="0" value="0">
+                </div>
+            </div>
+            
+            <div class="ligne-double">
+                <div class="groupe-champ">
+                    <label>Quantite max</label>
+                    <input type="number" class="champ-saisie" id="produit-qte-max" placeholder="0" value="0">
+                </div>
+                <div class="groupe-champ">
+                    <label>Prix unitaire</label>
+                    <input type="number" class="champ-saisie" id="produit-prix" placeholder="0" value="0">
+                </div>
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Devise du prix</label>
+                <div class="groupe-choix">
+                    <button class="btn-choix actif" data-devise="fc" onclick="choisirDevise('fc')">FC</button>
+                    <button class="btn-choix" data-devise="usd" onclick="choisirDevise('usd')">USD</button>
+                </div>
+            </div>
+            
+            <div class="groupe-champ" id="equivalent-prix" style="background:var(--fond-carte);padding:12px;border-radius:8px;">
+                <span style="font-size:13px;color:var(--texte-secondaire);">Equivalent: <strong id="valeur-equivalent">0 USD</strong></span>
+            </div>
+            
+            <button class="btn-principal" onclick="sauvegarderProduit()">Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: ACTIONS PRODUIT
+         ============================================ -->
+    <div class="modale" id="modale-actions">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3 id="actions-produit-nom">Produit</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-actions')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="liste-actions">
+                <button class="btn-action entree" onclick="ouvrirModaleEntree()">
+                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    <span>Entree</span>
+                </button>
+                <button class="btn-action sortie" onclick="ouvrirModaleSortie()">
+                    <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+                    <span>Sortie</span>
+                </button>
+                <button class="btn-action inventaire" onclick="ouvrirModaleInventaire()">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+                    <span>Inventaire</span>
+                </button>
+                <button class="btn-action detail" onclick="ouvrirModaleDetail()">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <span>Details</span>
+                </button>
+                <button class="btn-action supprimer" onclick="supprimerProduit()">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    <span>Supprimer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: ENTRÉE STOCK
+         ============================================ -->
+    <div class="modale" id="modale-entree">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Entree de stock</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-entree')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Emplacement</label>
+                <input type="text" class="champ-saisie" id="entree-emplacement" placeholder="Selectionner emplacement">
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Quantite a ajouter</label>
+                <input type="number" class="champ-saisie" id="entree-quantite" placeholder="0" value="0" oninput="calculerApercuEntree()">
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Prix unitaire</label>
+                <input type="number" class="champ-saisie" id="entree-prix" placeholder="0">
+            </div>
+            
+            <div style="background:var(--fond-carte);padding:16px;border-radius:12px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <span style="color:var(--texte-secondaire);">Quantite actuelle</span>
+                    <strong id="entree-qte-actuelle">0</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                    <span style="color:var(--succes);">Apres entree</span>
+                    <strong id="entree-qte-apres" style="color:var(--succes);">0</strong>
+                </div>
+            </div>
+            
+            <button class="btn-principal" onclick="confirmerEntree()">Confirmer</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: SORTIE STOCK
+         ============================================ -->
+    <div class="modale" id="modale-sortie">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Sortie de stock</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-sortie')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Emplacement</label>
+                <input type="text" class="champ-saisie" id="sortie-emplacement" placeholder="Selectionner emplacement">
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Quantite a retirer</label>
+                <input type="number" class="champ-saisie" id="sortie-quantite" placeholder="0" value="0" oninput="calculerApercuSortie()">
+            </div>
+            
+            <div style="background:var(--fond-carte);padding:16px;border-radius:12px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <span style="color:var(--texte-secondaire);">Quantite actuelle</span>
+                    <strong id="sortie-qte-actuelle">0</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                    <span style="color:var(--secondaire);">Apres sortie</span>
+                    <strong id="sortie-qte-apres" style="color:var(--secondaire);">0</strong>
+                </div>
+            </div>
+            
+            <button class="btn-principal" onclick="confirmerSortie()">Confirmer</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: INVENTAIRE
+         ============================================ -->
+    <div class="modale" id="modale-inventaire">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Inventaire</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-inventaire')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Emplacement</label>
+                <input type="text" class="champ-saisie" id="inventaire-emplacement" placeholder="Selectionner">
+            </div>
+            
+            <div style="background:var(--fond-carte);padding:16px;border-radius:12px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                    <span>Stock theorique</span>
+                    <strong id="inventaire-theorique">0</strong>
+                </div>
+                <div class="groupe-champ" style="margin-bottom:0;">
+                    <label>Stock reel (compte)</label>
+                    <input type="number" class="champ-saisie" id="inventaire-reel" placeholder="0" value="0" oninput="calculerEcart()">
+                </div>
+            </div>
+            
+            <div style="background:var(--fond-carte);padding:16px;border-radius:12px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;">
+                    <span>Ecart</span>
+                    <strong id="inventaire-ecart">0</strong>
+                </div>
+            </div>
+            
+            <button class="btn-principal" onclick="confirmerInventaire()">Regulariser</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: DÉTAIL PRODUIT
+         ============================================ -->
+    <div class="modale" id="modale-detail">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Details du produit</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-detail')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="detail-produit" id="contenu-detail">
+                <!-- Contenu dynamique -->
+            </div>
+            
+            <button class="btn-secondaire" onclick="exporterQR()">Exporter QR Code</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: CONFIGURATION
+         ============================================ -->
+    <div class="modale" id="modale-config">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Configuration</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-config')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="section-config">
+                <h3>Taux de change</h3>
+                <div class="ligne-config">
+                    <span>1 USD =</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="number" class="entree-nombre" id="config-taux" value="2800">
+                        <span>FC</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-config">
+                <h3>Affichage des prix</h3>
+                <div class="groupe-choix" id="config-affichage-choix">
+                    <button class="btn-choix actif" data-affichage="fc" onclick="choisirAffichageConfig('fc')">FC</button>
+                    <button class="btn-choix" data-affichage="usd" onclick="choisirAffichageConfig('usd')">USD</button>
+                    <button class="btn-choix" data-affichage="les deux" onclick="choisirAffichageConfig('les deux')">Les deux</button>
+                </div>
+            </div>
+            
+            <div class="section-config">
+                <h3>Theme</h3>
+                <div class="groupe-choix" id="config-theme-choix">
+                    <button class="btn-choix" data-theme-btn="systeme" onclick="choisirThemeConfig('systeme')">Systeme</button>
+                    <button class="btn-choix actif" data-theme-btn="sombre" onclick="choisirThemeConfig('sombre')">Sombre</button>
+                    <button class="btn-choix" data-theme-btn="blanc" onclick="choisirThemeConfig('blanc')">Blanc</button>
+                </div>
+            </div>
+            
+            <button class="btn-principal" onclick="sauvegarderConfig()">Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: DÉPÔTS
+         ============================================ -->
+    <div class="modale" id="modale-depots">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Gerer les depots</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-depots')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="groupe-champ">
+                <label>Nom du nouveau depot</label>
+                <input type="text" class="champ-saisie" id="nouveau-depot-nom" placeholder="Ex: Depot secondaire">
+            </div>
+            
+            <button class="btn-principal" onclick="ajouterDepot()">Ajouter</button>
+            
+            <div class="liste-depots" id="liste-depots-modal" style="margin-top:20px;">
+                <!-- Liste dynamique -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: RAPPORT
+         ============================================ -->
+    <div class="modale" id="modale-rapport">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Rapport du stock</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-rapport')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-ligne">
+                    <span>Depot</span>
+                    <span id="rapport-depot">Principal</span>
+                </div>
+                <div class="detail-ligne">
+                    <span>Valeur totale</span>
+                    <span id="rapport-valeur">0 FC</span>
+                </div>
+                <div class="detail-ligne">
+                    <span>Nombre d'articles</span>
+                    <span id="rapport-articles">0</span>
+                </div>
+                <div class="detail-ligne">
+                    <span>Date</span>
+                    <span id="rapport-date">-</span>
+                </div>
+            </div>
+            
+            <button class="btn-principal" onclick="exporterPDF()">Exporter en PDF</button>
+            <button class="btn-secondaire" onclick="exporterExcel()">Exporter en Excel</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALE: SAUVEGARDE
+         ============================================ -->
+    <div class="modale" id="modale-sauvegarde">
+        <div class="contenu-modale">
+            <div class="modale-en-tete">
+                <h3>Sauvegarde et restauration</h3>
+                <button class="btn-fermer" onclick="fermerModale('modale-sauvegarde')">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div style="text-align:center;padding:20px 0;">
+                <svg viewBox="0 0 24 24" style="width:60px;height:60px;fill:var(--primaire);margin-bottom:16px;"><path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/></svg>
+                <p style="font-size:14px;color:var(--texte-secondaire);margin-bottom:20px;">Exportez vos donnees pour les sauvegarder ou restaurez a partir d'un fichier</p>
+            </div>
+            
+            <button class="btn-principal" onclick="exporterSauvegarde()">Exporter les donnees</button>
+            <button class="btn-secondaire" onclick="importerSauvegarde()">Importer les donnees</button>
+            <input type="file" id="fichier-import" accept=".csv" style="display:none;" onchange="traiterImport(event)">
+        </div>
+    </div>
+
+    <!-- ============================================
+         MESSAGE NOTIFICATION
+         ============================================ -->
+    <div class="message" id="message"></div>
+
+    <script>
+        // ============================================
+        // FICHIER LANGUE FRANCAIS (Structure pour traduction)
+        // Ce fichier peut être dupliqué et traduit pour les autres langues
+        // ============================================
+        const LANGUE_FR = {
+            // Langues
+            "langue_fr": "Francais",
+            "langue_en": "English",
+            "langue_hi": "Hindi",
+            "langue_ln": "Lingala",
+            "langue_sw": "Swahili",
+            
+            // Accueil
+            "app_nom": "Quincaillerie TOTAL",
+            "app_slogan": "Gestion de stock simplifiee",
+            
+            // Onboarding
+            "bienvenue": "Bienvenue",
+            "onboarding_texte": "Gerez votre stock en toute simplicite",
+            "suivant": "Suivant",
+            "commencer": "Commencer",
+            
+            // Depot
+            "votre_depot": "Votre depot",
+            "creer_selectionner_depot": "Creer ou selectionner un depot",
+            "nom_depot": "Nom du depot",
+            "creer_depot": "Creer le depot",
+            "depot_principal": "Depot principal",
+            
+            // Configuration
+            "configuration": "Configuration",
+            "parametres_initiaux": "Parametres initiaux",
+            "taux_change": "Taux de change",
+            "affichage_prix": "Affichage des prix",
+            "theme": "Theme",
+            "systeme": "Systeme",
+            "sombre": "Sombre",
+            "blanc": "Blanc",
+            "les_deux": "Les deux",
+            
+            // Produits
+            "produits": "Produits",
+            "rechercher_produit": "Rechercher un produit...",
+            "articles": "Articles",
+            "alertes": "Alertes",
+            "valeur_stock": "Valeur du stock",
+            "aucun_produit": "Aucun produit",
+            "ajouter_produit": "Appuyez sur + pour ajouter",
+            
+            // Nouveau produit
+            "nouveau_produit": "Nouveau produit",
+            "reference_code": "Reference / Code-barres",
+            "entrez_scanner": "Entrez ou scannez",
+            "nom_produit": "Nom du produit",
+            "emplacement": "Emplacement",
+            "quantite": "Quantite",
+            "quantite_min": "Quantite min",
+            "quantite_max": "Quantite max",
+            "prix_unitaire": "Prix unitaire",
+            "devise_prix": "Devise du prix",
+            "equivalent": "Equivalent",
+            "sauvegarder": "Sauvegarder",
+            
+            // Actions
+            "entree": "Entree",
+            "sortie": "Sortie",
+            "inventaire": "Inventaire",
+            "details": "Details",
+            "supprimer": "Supprimer",
+            
+            // Mouvements
+            "entree_stock": "Entree de stock",
+            "sortie_stock": "Sortie de stock",
+            "quantite_ajouter": "Quantite a ajouter",
+            "quantite_retirer": "Quantite a retirer",
+            "quantite_actuelle": "Quantite actuelle",
+            "apres_entree": "Apres entree",
+            "apres_sortie": "Apres sortie",
+            "confirmer": "Confirmer",
+            
+            // Inventaire
+            "stock_theorique": "Stock theorique",
+            "stock_reel": "Stock reel (compte)",
+            "ecart": "Ecart",
+            "regulariser": "Regulariser",
+            
+            // Detail
+            "details_produit": "Details du produit",
+            "derniere_modification": "Derniere modification",
+            "historique": "Historique",
+            "creer": "Cree",
+            "exporter_qr": "Exporter QR Code",
+            
+            // Etats
+            "en_stock": "En stock",
+            "stock_faible": "Stock faible",
+            "rupture_stock": "Rupture",
+            "surstock": "Surstock",
+            
+            // Menu
+            "gerer_depots": "Gerer les depots",
+            "rapport": "Rapport",
+            "sauvegarde": "Sauvegarde",
+            "langue": "Langue",
+            
+            // Rapport
+            "rapport_stock": "Rapport du stock",
+            "valeur_totale": "Valeur totale",
+            "nombre_articles": "Nombre d'articles",
+            "date": "Date",
+            "exporter_pdf": "Exporter en PDF",
+            "exporter_excel": "Exporter en Excel",
+            
+            // Sauvegarde
+            "sauvegarde_restauration": "Sauvegarde et restauration",
+            "exporter_donnees": "Exporter les donnees",
+            "importer_donnees": "Importer les donnees",
+            
+            // Messages
+            "produit_ajoute": "Produit ajoute avec succes",
+            "produit_supprime": "Produit supprime",
+            "entree_confirme": "Entree confirmee",
+            "sortie_confirme": "Sortie confirmee",
+            "inventaire_confirme": "Inventaire regularise",
+            "configuration_sauvegarde": "Configuration sauvegardee",
+            "depot_cree": "Depot cree",
+            "export_reussi": "Export reussi",
+            "import_reussi": "Import reussi",
+            "erreur": "Une erreur s'est produite",
+            
+            // Produit avec/sans code
+            "produit_avec_code": "Produit avec code",
+            "produit_sans_code": "Produit sans code"
+        };
+
+        // ============================================
+        // VARIABLES GLOBALES - État de l'application
+        // ============================================
+        let langue = LANGUE_FR; // Langue active
+        let etapeOnboarding = 0; // Étape actuelle de l'onboarding
+        let depotActuel = null; // Dépôt sélectionné
+        let produitSelectionne = null; // Produit sélectionné pour actions
+        let modeProduit = 'reference'; // Mode d'ajout de produit
+        let deviseProduit = 'fc'; // Devise sélectionnée pour nouveau produit
+        
+        // Configuration
+        let config = {
+            taux: 2800,
+            affichage: 'fc',
+            theme: 'sombre'
+        };
+
+        // Base de données locale (IndexedDB simulée avec localStorage)
+        let baseDonnees = {
+            depots: [],
+            produits: {},
+            historique: {}
+        };
+
+        // ============================================
+        // INITIALISATION - Chargement au démarrage
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données depuis localStorage
+            chargerDonnees();
+            
+            // Vérifier si un dépôt existe déjà
+            if (baseDonnees.depots.length > 0) {
+                depotActuel = baseDonnees.depots[0];
+            }
+            
+            // Appliquer le thème
+            appliquerTheme(config.theme);
+            
+            // Initialiser les textes
+            initialiserTextes();
+        });
+
+        // ============================================
+        // GESTION DES DONNÉES - LocalStorage
+        // ============================================
+        function chargerDonnees() {
+            // Récupère les données depuis localStorage
+            const donnees = localStorage.getItem('quincaillerie_total');
+            if (donnees) {
+                baseDonnees = JSON.parse(donnees);
+            }
+            
+            // Récupère la configuration
+            const configSauvegarde = localStorage.getItem('quincaillerie_config');
+            if (configSauvegarde) {
+                config = JSON.parse(configSauvegarde);
+            }
+        }
+
+        function sauvegarderDonnees() {
+            // Sauvegarde les données dans localStorage
+            localStorage.setItem('quincaillerie_total', JSON.stringify(baseDonnees));
+            localStorage.setItem('quincaillerie_config', JSON.stringify(config));
+        }
+
+        // ============================================
+        // NAVIGATION - Changement d'écrans
+        // ============================================
+        function afficherEcran(idEcran) {
+            // Masque tous les écrans
+            document.querySelectorAll('.ecran').forEach(function(ecran) {
+                ecran.classList.remove('actif');
+            });
+            // Affiche l'écran spécifié
+            document.getElementById(idEcran).classList.add('actif');
+        }
+
+        // ============================================
+        // LANGUE - Sélection et changement
+        // ============================================
+        function choisirLangue(code) {
+            // Pour l'instant, seule le français est implémenté
+            // Les autres langues peuvent être ajoutées en créant d'autres fichiers
+            afficherEcran('ecran-onboarding');
+        }
+
+        function changerLangue() {
+            fermerPanneau();
+            afficherEcran('ecran-langue');
+        }
+
+        // ============================================
+        // ONBOARDING - Présentation initiale
+        // ============================================
+        const etapesOnboarding = [
+            { titre: "Bienvenue", texte: "Gerez votre stock en toute simplicite" },
+            { titre: "Organisez", texte: "Creez des depots pour organiser vos stocks" },
+            { titre: "Suivez", texte: "Suivez les entrees, sorties et inventaires" }
+        ];
+
+        function passerEtapeSuivante() {
+            etapeOnboarding++;
+            
+            if (etapeOnboarding >= etapesOnboarding.length) {
+                afficherEcran('ecran-depot');
+                return;
+            }
+            
+            // Met à jour le contenu
+            document.getElementById('onboarding-titre').textContent = etapesOnboarding[etapeOnboarding].titre;
+            document.getElementById('onboarding-texte').textContent = etapesOnboarding[etapeOnboarding].texte;
+            
+            // Met à jour les indicateurs
+            document.querySelectorAll('.point').forEach(function(point, index) {
+                point.classList.toggle('actif', index === etapeOnboarding);
+            });
+            
+            // Change le bouton à la dernière étape
+            if (etapeOnboarding === etapesOnboarding.length - 1) {
+                document.getElementById('btn-suivant').textContent = 'Commencer';
+            }
+        }
+
+        // ============================================
+        // DÉPÔT - Création et gestion
+        // ============================================
+        function creerDepot() {
+            const nom = document.getElementById('entree-nom-depot').value.trim();
+            
+            if (!nom) {
+                afficherMessage("Veuillez entrer un nom", "erreur");
+                return;
+            }
+            
+            // Crée un nouveau dépôt
+            const nouveauDepot = {
+                id: Date.now().toString(),
+                nom: nom,
+                dateCreation: new Date().toISOString()
+            };
+            
+            baseDonnees.depots.push(nouveauDepot);
+            baseDonnees.produits[nouveauDepot.id] = [];
+            baseDonnees.historique[nouveauDepot.id] = [];
+            
+            depotActuel = nouveauDepot;
+            sauvegarderDonnees();
+            
+            afficherEcran('ecran-config');
+        }
+
+        function selectionnerDepot(id) {
+            // Sélectionne un dépôt existant
+            depotActuel = baseDonnees.depots.find(function(d) { return d.id === id; });
+            sauvegarderDonnees();
+            
+            // Met à jour l'interface
+            document.getElementById('nom-depot-actuel').textContent = depotActuel.nom;
+            document.getElementById('panneau-nom-depot').textContent = depotActuel.nom;
+            
+            afficherEcran('ecran-app');
+            afficherProduits();
+            fermerModale('modale-depots');
+        }
+
+        function ajouterDepot() {
+            const nom = document.getElementById('nouveau-depot-nom').value.trim();
+            
+            if (!nom) {
+                afficherMessage("Veuillez entrer un nom", "erreur");
+                return;
+            }
+            
+            const nouveauDepot = {
+                id: Date.now().toString(),
+                nom: nom,
+                dateCreation: new Date().toISOString()
+            };
+            
+            baseDonnees.depots.push(nouveauDepot);
+            baseDonnees.produits[nouveauDepot.id] = [];
+            baseDonnees.historique[nouveauDepot.id] = [];
+            
+            sauvegarderDonnees();
+            afficherListeDepots();
+            
+            document.getElementById('nouveau-depot-nom').value = '';
+            afficherMessage("Depot cree", "succes");
+        }
+
+        function supprimerDepot(id) {
+            // Supprime un dépôt (sauf le dépôt actuel)
+            if (depotActuel && depotActuel.id === id) {
+                afficherMessage("Impossible de supprimer le depot actuel", "erreur");
+                return;
+            }
+            
+            baseDonnees.depots = baseDonnees.depots.filter(function(d) { return d.id !== id; });
+            delete baseDonnees.produits[id];
+            delete baseDonnees.historique[id];
+            
+            sauvegarderDonnees();
+            afficherListeDepots();
+        }
+
+        function afficherListeDepots() {
+            const conteneur = document.getElementById('liste-depots-modal');
+            conteneur.innerHTML = '';
+            
+            baseDonnees.depots.forEach(function(depot) {
+                const estActif = depotActuel && depotActuel.id === depot.id;
+                const html = '<div class="item-depot ' + (estActif ? 'actif' : '') + '" onclick="selectionnerDepot(\'' + depot.id + '\')">' +
+                    '<div class="info-depot">' +
+                        '<h3>' + depot.nom + '</h3>' +
+                        '<p>' + (baseDonnees.produits[depot.id] ? baseDonnees.produits[depot.id].length : 0) + ' articles</p>' +
+                    '</div>' +
+                    (estActif ? '' : '<button class="btn-icone" onclick="event.stopPropagation(); supprimerDepot(\'' + depot.id + '\')"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>') +
+                '</div>';
+                conteneur.innerHTML += html;
+            });
+        }
+
+        // ============================================
+        // CONFIGURATION - Taux et affichage
+        // ============================================
+        function choisirAffichage(valeur) {
+            config.affichage = valeur;
+            
+            // Met à jour les boutons
+            document.querySelectorAll('#ecran-config .btn-choix[data-affichage]').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.affichage === valeur);
+            });
+        }
+
+        function choisirAffichageConfig(valeur) {
+            config.affichage = valeur;
+            
+            document.querySelectorAll('#config-affichage-choix .btn-choix').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.affichage === valeur);
+            });
+        }
+
+        function choisirTheme(valeur) {
+            config.theme = valeur;
+            appliquerTheme(valeur);
+            
+            document.querySelectorAll('#ecran-config .btn-choix[data-theme-btn]').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.themeBtn === valeur);
+            });
+        }
+
+        function choisirThemeConfig(valeur) {
+            config.theme = valeur;
+            appliquerTheme(valeur);
+            
+            document.querySelectorAll('#config-theme-choix .btn-choix').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.themeBtn === valeur);
+            });
+        }
+
+        function appliquerTheme(theme) {
+            if (theme === 'systeme') {
+                // Détecte le thème système
+                const prefereSombre = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', prefereSombre ? 'sombre' : 'blanc');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        }
+
+        function terminerConfiguration() {
+            config.taux = parseFloat(document.getElementById('entree-taux').value) || 2800;
+            sauvegarderDonnees();
+            
+            // Met à jour le nom du dépôt dans l'interface
+            if (depotActuel) {
+                document.getElementById('nom-depot-actuel').textContent = depotActuel.nom;
+                document.getElementById('panneau-nom-depot').textContent = depotActuel.nom;
+            }
+            
+            afficherEcran('ecran-app');
+            afficherProduits();
+        }
+
+        function sauvegarderConfig() {
+            config.taux = parseFloat(document.getElementById('config-taux').value) || 2800;
+            sauvegarderDonnees();
+            
+            fermerModale('modale-config');
+            afficherMessage("Configuration sauvegardee", "succes");
+            afficherProduits();
+        }
+
+        // ============================================
+        // CONVERSION MONÉTAIRE
+        // ============================================
+        function convertirPrix(montant, deviseSource) {
+            // Convertit un prix selon l'affichage configuré
+            if (config.affichage === 'les deux') {
+                if (deviseSource === 'fc') {
+                    return formatPrix(montant, 'fc') + ' / ' + formatPrix(montant / config.taux, 'usd');
+                } else {
+                    return formatPrix(montant, 'usd') + ' / ' + formatPrix(montant * config.taux, 'fc');
+                }
+            }
+            
+            if (config.affichage === 'fc') {
+                if (deviseSource === 'fc') {
+                    return formatPrix(montant, 'fc');
+                }
+                return formatPrix(montant * config.taux, 'fc');
+            }
+            
+            // USD
+            if (deviseSource === 'usd') {
+                return formatPrix(montant, 'usd');
+            }
+            return formatPrix(montant / config.taux, 'usd');
+        }
+
+        function formatPrix(montant, devise) {
+            // Formate un prix avec séparateur de milliers
+            const nombre = Math.round(montant);
+            const formate = nombre.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            return formate + ' ' + (devise === 'fc' ? 'FC' : 'USD');
+        }
+
+        // ============================================
+        // PRODUITS - Affichage et gestion
+        // ============================================
+        function afficherProduits() {
+            if (!depotActuel) return;
+            
+            const produits = baseDonnees.produits[depotActuel.id] || [];
+            const conteneur = document.getElementById('liste-produits');
+            const etatVide = document.getElementById('etat-vide-produits');
+            
+            // Met à jour les statistiques
+            document.getElementById('stat-articles').textContent = produits.length;
+            
+            let valeurTotale = 0;
+            let alertes = 0;
+            
+            produits.forEach(function(p) {
+                valeurTotale += (p.prix * p.quantite);
+                if (p.quantite <= p.qteMin) alertes++;
+            });
+            
+            document.getElementById('stat-alertes').textContent = alertes;
+            document.getElementById('stat-valeur').textContent = convertirPrix(valeurTotale, 'fc');
+            
+            if (produits.length === 0) {
+                etatVide.style.display = 'flex';
+                return;
+            }
+            
+            etatVide.style.display = 'none';
+            conteneur.innerHTML = '';
+            
+            produits.forEach(function(produit) {
+                const etat = getEtatStock(produit);
+                const html = '<div class="item-produit" onclick="ouvrirActionsProduit(\'' + produit.id + '\')">' +
+                    '<div class="produit-icone">' +
+                        '<svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg>' +
+                    '</div>' +
+                    '<div class="produit-info">' +
+                        '<h4>' + produit.nom + '</h4>' +
+                        '<p>' + produit.reference + '</p>' +
+                    '</div>' +
+                    '<div class="produit-qte">' +
+                        '<div class="nombre">' + produit.quantite + '</div>' +
+                        '<span class="badge-etat ' + etat.classe + '">' + etat.texte + '</span>' +
+                    '</div>' +
+                '</div>';
+                conteneur.innerHTML += html;
+            });
+        }
+
+        function getEtatStock(produit) {
+            // Détermine l'état du stock
+            if (produit.quantite === 0) {
+                return { classe: 'rupture', texte: 'Rupture' };
+            }
+            if (produit.quantite <= produit.qteMin) {
+                return { classe: 'faible', texte: 'Faible' };
+            }
+            if (produit.qteMax > 0 && produit.quantite >= produit.qteMax) {
+                return { classe: 'surstock', texte: 'Surstock' };
+            }
+            return { classe: 'stock', texte: 'En stock' };
+        }
+
+        function rechercherProduit() {
+            const terme = document.getElementById('champ-recherche').value.toLowerCase();
+            const produits = baseDonnees.produits[depotActuel.id] || [];
+            
+            if (!terme) {
+                afficherProduits();
+                return;
+            }
+            
+            const filtres = produits.filter(function(p) {
+                return p.nom.toLowerCase().includes(terme) || p.reference.toLowerCase().includes(terme);
+            });
+            
+            // Affiche les résultats filtrés
+            const conteneur = document.getElementById('liste-produits');
+            conteneur.innerHTML = '';
+            
+            filtres.forEach(function(produit) {
+                const etat = getEtatStock(produit);
+                const html = '<div class="item-produit" onclick="ouvrirActionsProduit(\'' + produit.id + '\')">' +
+                    '<div class="produit-icone">' +
+                        '<svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg>' +
+                    '</div>' +
+                    '<div class="produit-info">' +
+                        '<h4>' + produit.nom + '</h4>' +
+                        '<p>' + produit.reference + '</p>' +
+                    '</div>' +
+                    '<div class="produit-qte">' +
+                        '<div class="nombre">' + produit.quantite + '</div>' +
+                        '<span class="badge-etat ' + etat.classe + '">' + etat.texte + '</span>' +
+                    '</div>' +
+                '</div>';
+                conteneur.innerHTML += html;
+            });
+        }
+
+        // ============================================
+        // NOUVEAU PRODUIT
+        // ============================================
+        function ouvrirModaleProduit(type) {
+            modeProduit = type;
+            toggleMenuFlottant();
+            
+            // Réinitialise le formulaire
+            document.getElementById('produit-reference').value = '';
+            document.getElementById('produit-nom').value = '';
+            document.getElementById('produit-emplacement').value = '';
+            document.getElementById('produit-quantite').value = '0';
+            document.getElementById('produit-qte-min').value = '0';
+            document.getElementById('produit-qte-max').value = '0';
+            document.getElementById('produit-prix').value = '0';
+            
+            // Génère une référence si sans code
+            if (type === 'reference') {
+                document.getElementById('produit-reference').value = 'REF-' + Date.now().toString().slice(-6);
+            }
+            
+            document.getElementById('modale-produit-titre').textContent = type === 'code' ? 'Produit avec code' : 'Produit sans code';
+            
+            ouvrirModale('modale-produit');
+        }
+
+        function choisirDevise(devise) {
+            deviseProduit = devise;
+            
+            document.querySelectorAll('[data-devise]').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.devise === devise);
+            });
+            
+            calculerEquivalent();
+        }
+
+        function calculerEquivalent() {
+            const prix = parseFloat(document.getElementById('produit-prix').value) || 0;
+            const equivalent = document.getElementById('valeur-equivalent');
+            
+            if (deviseProduit === 'fc') {
+                equivalent.textContent = formatPrix(prix / config.taux, 'usd');
+            } else {
+                equivalent.textContent = formatPrix(prix * config.taux, 'fc');
+            }
+        }
+
+        // Écoute les changements de prix
+        document.getElementById('produit-prix').addEventListener('input', calculerEquivalent);
+
+        function sauvegarderProduit() {
+            const reference = document.getElementById('produit-reference').value.trim();
+            const nom = document.getElementById('produit-nom').value.trim();
+            const emplacement = document.getElementById('produit-emplacement').value.trim();
+            const quantite = parseInt(document.getElementById('produit-quantite').value) || 0;
+            const qteMin = parseInt(document.getElementById('produit-qte-min').value) || 0;
+            const qteMax = parseInt(document.getElementById('produit-qte-max').value) || 0;
+            const prix = parseFloat(document.getElementById('produit-prix').value) || 0;
+            
+            if (!nom) {
+                afficherMessage("Veuillez entrer un nom", "erreur");
+                return;
+            }
+            
+            const produit = {
+                id: Date.now().toString(),
+                reference: reference || 'REF-' + Date.now().toString().slice(-6),
+                nom: nom,
+                emplacements: [{ nom: emplacement || 'Principal', quantite: quantite }],
+                quantite: quantite,
+                qteMin: qteMin,
+                qteMax: qteMax,
+                prix: prix,
+                devise: deviseProduit,
+                dateCreation: new Date().toISOString(),
+                dateModification: new Date().toISOString()
+            };
+            
+            baseDonnees.produits[depotActuel.id].push(produit);
+            
+            // Ajoute à l'historique
+            baseDonnees.historique[depotActuel.id].push({
+                id: Date.now().toString(),
+                produitId: produit.id,
+                type: 'creation',
+                quantiteAvant: 0,
+                quantiteApres: quantite,
+                date: new Date().toISOString()
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-produit');
+            afficherProduits();
+            afficherMessage("Produit ajoute", "succes");
+        }
+
+        // ============================================
+        // ACTIONS PRODUIT
+        // ============================================
+        function ouvrirActionsProduit(id) {
+            const produits = baseDonnees.produits[depotActuel.id];
+            produitSelectionne = produits.find(function(p) { return p.id === id; });
+            
+            if (!produitSelectionne) return;
+            
+            document.getElementById('actions-produit-nom').textContent = produitSelectionne.nom;
+            ouvrirModale('modale-actions');
+        }
+
+        // ============================================
+        // ENTRÉE STOCK
+        // ============================================
+        function ouvrirModaleEntree() {
+            fermerModale('modale-actions');
+            
+            // Remplit les emplacements disponibles
+            const emplacement = produitSelectionne.emplacements[0];
+            document.getElementById('entree-emplacement').value = emplacement ? emplacement.nom : 'Principal';
+            document.getElementById('entree-quantite').value = '0';
+            document.getElementById('entree-prix').value = produitSelectionne.prix;
+            document.getElementById('entree-qte-actuelle').textContent = produitSelectionne.quantite;
+            document.getElementById('entree-qte-apres').textContent = produitSelectionne.quantite;
+            
+            ouvrirModale('modale-entree');
+        }
+
+        function calculerApercuEntree() {
+            const qte = parseInt(document.getElementById('entree-quantite').value) || 0;
+            const actuelle = produitSelectionne.quantite;
+            document.getElementById('entree-qte-apres').textContent = actuelle + qte;
+        }
+
+        function confirmerEntree() {
+            const quantite = parseInt(document.getElementById('entree-quantite').value) || 0;
+            
+            if (quantite <= 0) {
+                afficherMessage("Entrez une quantite valide", "erreur");
+                return;
+            }
+            
+            const ancienneQte = produitSelectionne.quantite;
+            produitSelectionne.quantite += quantite;
+            produitSelectionne.emplacements[0].quantite += quantite;
+            produitSelectionne.dateModification = new Date().toISOString();
+            
+            // Met à jour le prix si modifié
+            const nouveauPrix = parseFloat(document.getElementById('entree-prix').value);
+            if (nouveauPrix > 0) {
+                produitSelectionne.prix = nouveauPrix;
+            }
+            
+            // Ajoute à l'historique
+            baseDonnees.historique[depotActuel.id].push({
+                id: Date.now().toString(),
+                produitId: produitSelectionne.id,
+                type: 'entree',
+                quantiteAvant: ancienneQte,
+                quantiteApres: produitSelectionne.quantite,
+                date: new Date().toISOString()
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-entree');
+            afficherProduits();
+            afficherMessage("Entree confirmee", "succes");
+        }
+
+        // ============================================
+        // SORTIE STOCK
+        // ============================================
+        function ouvrirModaleSortie() {
+            fermerModale('modale-actions');
+            
+            const emplacement = produitSelectionne.emplacements[0];
+            document.getElementById('sortie-emplacement').value = emplacement ? emplacement.nom : 'Principal';
+            document.getElementById('sortie-quantite').value = '0';
+            document.getElementById('sortie-qte-actuelle').textContent = produitSelectionne.quantite;
+            document.getElementById('sortie-qte-apres').textContent = produitSelectionne.quantite;
+            
+            ouvrirModale('modale-sortie');
+        }
+
+        function calculerApercuSortie() {
+            const qte = parseInt(document.getElementById('sortie-quantite').value) || 0;
+            const actuelle = produitSelectionne.quantite;
+            document.getElementById('sortie-qte-apres').textContent = Math.max(0, actuelle - qte);
+        }
+
+        function confirmerSortie() {
+            const quantite = parseInt(document.getElementById('sortie-quantite').value) || 0;
+            
+            if (quantite <= 0) {
+                afficherMessage("Entrez une quantite valide", "erreur");
+                return;
+            }
+            
+            if (quantite > produitSelectionne.quantite) {
+                afficherMessage("Quantite insuffisante", "erreur");
+                return;
+            }
+            
+            const ancienneQte = produitSelectionne.quantite;
+            produitSelectionne.quantite -= quantite;
+            produitSelectionne.emplacements[0].quantite -= quantite;
+            produitSelectionne.dateModification = new Date().toISOString();
+            
+            baseDonnees.historique[depotActuel.id].push({
+                id: Date.now().toString(),
+                produitId: produitSelectionne.id,
+                type: 'sortie',
+                quantiteAvant: ancienneQte,
+                quantiteApres: produitSelectionne.quantite,
+                date: new Date().toISOString()
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-sortie');
+            afficherProduits();
+            afficherMessage("Sortie confirmee", "succes");
+        }
+
+        // ============================================
+        // INVENTAIRE
+        // ============================================
+        function ouvrirModaleInventaire() {
+            fermerModale('modale-actions');
+            
+            const emplacement = produitSelectionne.emplacements[0];
+            document.getElementById('inventaire-emplacement').value = emplacement ? emplacement.nom : 'Principal';
+            document.getElementById('inventaire-theorique').textContent = produitSelectionne.quantite;
+            document.getElementById('inventaire-reel').value = produitSelectionne.quantite;
+            document.getElementById('inventaire-ecart').textContent = '0';
+            
+            ouvrirModale('modale-inventaire');
+        }
+
+        function calculerEcart() {
+            const reel = parseInt(document.getElementById('inventaire-reel').value) || 0;
+            const theorique = produitSelectionne.quantite;
+            const ecart = reel - theorique;
+            
+            document.getElementById('inventaire-ecart').textContent = (ecart >= 0 ? '+' : '') + ecart;
+        }
+
+        function confirmerInventaire() {
+            const reel = parseInt(document.getElementById('inventaire-reel').value) || 0;
+            const ancienneQte = produitSelectionne.quantite;
+            
+            produitSelectionne.quantite = reel;
+            produitSelectionne.emplacements[0].quantite = reel;
+            produitSelectionne.dateModification = new Date().toISOString();
+            
+            baseDonnees.historique[depotActuel.id].push({
+                id: Date.now().toString(),
+                produitId: produitSelectionne.id,
+                type: 'inventaire',
+                quantiteAvant: ancienneQte,
+                quantiteApres: reel,
+                date: new Date().toISOString()
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-inventaire');
+            afficherProduits();
+            afficherMessage("Inventaire regularise", "succes");
+        }
+
+        // ============================================
+        // DÉTAIL PRODUIT
+        // ============================================
+        function ouvrirModaleDetail() {
+            fermerModale('modale-actions');
+            
+            const p = produitSelectionne;
+            const historique = baseDonnees.historique[depotActuel.id].filter(function(h) {
+                return h.produitId === p.id;
+            });
+            
+            // Génère un QR Code simple (placeholder)
+            const qrHtml = '<div class="qr-container">' +
+                '<div class="qr-code">' +
+                    '<svg viewBox="0 0 100 100">' +
+                        '<rect x="10" y="10" width="25" height="25" fill="#006f78"/>' +
+                        '<rect x="65" y="10" width="25" height="25" fill="#006f78"/>' +
+                        '<rect x="10" y="65" width="25" height="25" fill="#006f78"/>' +
+                        '<rect x="40" y="40" width="20" height="20" fill="#006f78"/>' +
+                        '<rect x="15" y="15" width="15" height="15" fill="white"/>' +
+                        '<rect x="70" y="15" width="15" height="15" fill="white"/>' +
+                        '<rect x="15" y="70" width="15" height="15" fill="white"/>' +
+                    '</svg>' +
+                '</div>' +
+                '<div class="qr-nom">' + p.nom + '</div>' +
+            '</div>';
+            
+            let html = '<div class="detail-section">' +
+                '<h4>Informations</h4>' +
+                '<div class="detail-ligne"><span>Reference</span><span>' + p.reference + '</span></div>' +
+                '<div class="detail-ligne"><span>Nom</span><span>' + p.nom + '</span></div>' +
+                '<div class="detail-ligne"><span>Quantite</span><span>' + p.quantite + '</span></div>' +
+                '<div class="detail-ligne"><span>Prix unitaire</span><span>' + convertirPrix(p.prix, p.devise) + '</span></div>' +
+                '<div class="detail-ligne"><span>Valeur stock</span><span>' + convertirPrix(p.prix * p.quantite, p.devise) + '</span></div>' +
+            '</div>';
+            
+            html += qrHtml;
+            
+            // Historique
+            if (historique.length > 0) {
+                html += '<div class="detail-section">' +
+                    '<h4>Historique recent</h4>';
+                
+                historique.slice(-5).reverse().forEach(function(h) {
+                    const date = new Date(h.date);
+                    html += '<div class="item-historique">' +
+                        '<div class="historique-icone ' + h.type + '">' +
+                            '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>' +
+                        '</div>' +
+                        '<div class="historique-info">' +
+                            '<h5>' + h.type.charAt(0).toUpperCase() + h.type.slice(1) + '</h5>' +
+                            '<p>' + date.toLocaleDateString() + ' - ' + h.quantiteAvant + ' -> ' + h.quantiteApres + '</p>' +
+                        '</div>' +
+                    '</div>';
+                });
+                
+                html += '</div>';
+            }
+            
+            document.getElementById('contenu-detail').innerHTML = html;
+            ouvrirModale('modale-detail');
+        }
+
+        function supprimerProduit() {
+            if (!confirm("Supprimer ce produit ?")) return;
+            
+            baseDonnees.produits[depotActuel.id] = baseDonnees.produits[depotActuel.id].filter(function(p) {
+                return p.id !== produitSelectionne.id;
+            });
+            
+            sauvegarderDonnees();
+            fermerModale('modale-actions');
+            afficherProduits();
+            afficherMessage("Produit supprime", "succes");
+        }
+
+        // ============================================
+        // EXPORT QR CODE
+        // ============================================
+        function exporterQR() {
+            // Crée un canvas avec le QR code
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            
+            // Fond blanc
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 200, 200);
+            
+            // Dessine un QR code simplifié
+            ctx.fillStyle = '#006f78';
+            ctx.fillRect(20, 20, 50, 50);
+            ctx.fillRect(130, 20, 50, 50);
+            ctx.fillRect(20, 130, 50, 50);
+            ctx.fillRect(80, 80, 40, 40);
+            
+            // Cases blanches
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(30, 30, 30, 30);
+            ctx.fillRect(140, 30, 30, 30);
+            ctx.fillRect(30, 140, 30, 30);
+            
+            // Nom du produit
+            ctx.fillStyle = '#006f78';
+            ctx.font = '12px Poppins';
+            ctx.textAlign = 'center';
+            ctx.fillText(produitSelectionne.nom, 100, 190);
+            
+            // Convertit en blob et partage
+            canvas.toBlob(function(blob) {
+                const fichier = new File([blob], produitSelectionne.nom + '_qr.png', { type: 'image/png' });
+                
+                if (navigator.share && navigator.canShare({ files: [fichier] })) {
+                    navigator.share({
+                        files: [fichier],
+                        title: 'QR Code - ' + produitSelectionne.nom
+                    });
+                } else {
+                    // Fallback: télécharge
+                    const lien = document.createElement('a');
+                    lien.href = URL.createObjectURL(blob);
+                    lien.download = produitSelectionne.nom + '_qr.png';
+                    lien.click();
+                }
+            });
+            
+            fermerModale('modale-detail');
+            afficherMessage("QR Code exporte", "succes");
+        }
+
+        // ============================================
+        // RAPPORT
+        // ============================================
+        function ouvrirModaleRapport() {
+            fermerPanneau();
+            
+            const produits = baseDonnees.produits[depotActuel.id] || [];
+            let valeurTotale = 0;
+            
+            produits.forEach(function(p) {
+                valeurTotale += p.prix * p.quantite;
+            });
+            
+            document.getElementById('rapport-depot').textContent = depotActuel.nom;
+            document.getElementById('rapport-valeur').textContent = convertirPrix(valeurTotale, 'fc');
+            document.getElementById('rapport-articles').textContent = produits.length;
+            document.getElementById('rapport-date').textContent = new Date().toLocaleString();
+            
+            ouvrirModale('modale-rapport');
+        }
+
+        function exporterPDF() {
+            // Crée un contenu PDF simple
+            const produits = baseDonnees.produits[depotActuel.id] || [];
+            let contenu = 'RAPPORT DE STOCK\n';
+            contenu += '================\n\n';
+            contenu += 'Depot: ' + depotActuel.nom + '\n';
+            contenu += 'Date: ' + new Date().toLocaleString() + '\n\n';
+            contenu += 'PRODUITS:\n';
+            contenu += '---------\n';
+            
+            produits.forEach(function(p) {
+                contenu += p.nom + ' | Qte: ' + p.quantite + ' | PU: ' + convertirPrix(p.prix, p.devise) + '\n';
+            });
+            
+            const blob = new Blob([contenu], { type: 'text/plain' });
+            const fichier = new File([blob], 'rapport_stock.txt', { type: 'text/plain' });
+            
+            if (navigator.share && navigator.canShare({ files: [fichier] })) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Rapport de stock'
+                });
+            } else {
+                const lien = document.createElement('a');
+                lien.href = URL.createObjectURL(blob);
+                lien.download = 'rapport_stock.txt';
+                lien.click();
+            }
+            
+            afficherMessage("Rapport exporte", "succes");
+        }
+
+        function exporterExcel() {
+            // Crée un CSV simple (compatible Excel)
+            const produits = baseDonnees.produits[depotActuel.id] || [];
+            let csv = 'Reference,Article,Quantite,Prix Unitaire,Valeur Stock,Etat\n';
+            
+            produits.forEach(function(p) {
+                const etat = getEtatStock(p);
+                const valeur = p.prix * p.quantite;
+                csv += p.reference + ',' + p.nom + ',' + p.quantite + ',' + p.prix + ',' + valeur + ',' + etat.texte + '\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const fichier = new File([blob], 'rapport_stock.csv', { type: 'text/csv' });
+            
+            if (navigator.share && navigator.canShare({ files: [fichier] })) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Rapport de stock'
+                });
+            } else {
+                const lien = document.createElement('a');
+                lien.href = URL.createObjectURL(blob);
+                lien.download = 'rapport_stock.csv';
+                lien.click();
+            }
+            
+            afficherMessage("Excel exporte", "succes");
+        }
+
+        // ============================================
+        // SAUVEGARDE ET RESTAURATION
+        // ============================================
+        function ouvrirModaleSauvegarde() {
+            fermerPanneau();
+            ouvrirModale('modale-sauvegarde');
+        }
+
+        function exporterSauvegarde() {
+            // Exporte toutes les données en CSV
+            let csv = 'type,id,nom,reference,quantite,prix,devise,date\n';
+            
+            // Dépôts
+            baseDonnees.depots.forEach(function(d) {
+                csv += 'depot,' + d.id + ',' + d.nom + ',,' + ',,,,' + d.dateCreation + '\n';
+            });
+            
+            // Produits
+            Object.keys(baseDonnees.produits).forEach(function(depotId) {
+                baseDonnees.produits[depotId].forEach(function(p) {
+                    csv += 'produit,' + p.id + ',' + p.nom + ',' + p.reference + ',' + p.quantite + ',' + p.prix + ',' + p.devise + ',' + p.dateCreation + '\n';
+                });
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const fichier = new File([blob], 'sauvegarde_quincaillerie.csv', { type: 'text/csv' });
+            
+            if (navigator.share && navigator.canShare({ files: [fichier] })) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Sauvegarde Quincaillerie TOTAL'
+                });
+            } else {
+                const lien = document.createElement('a');
+                lien.href = URL.createObjectURL(blob);
+                lien.download = 'sauvegarde_quincaillerie.csv';
+                lien.click();
+            }
+            
+            afficherMessage("Sauvegarde exportee", "succes");
+        }
+
+        function importerSauvegarde() {
+            document.getElementById('fichier-import').click();
+        }
+
+        function traiterImport(event) {
+            const fichier = event.target.files[0];
+            if (!fichier) return;
+            
+            const lecteur = new FileReader();
+            lecteur.onload = function(e) {
+                try {
+                    const lignes = e.target.result.split('\n');
+                    
+                    // Réinitialise les données
+                    baseDonnees = { depots: [], produits: {}, historique: {} };
+                    
+                    lignes.forEach(function(ligne, index) {
+                        if (index === 0 || !ligne.trim()) return;
+                        
+                        const colonnes = ligne.split(',');
+                        const type = colonnes[0];
+                        
+                        if (type === 'depot') {
+                            const depot = {
+                                id: colonnes[1],
+                                nom: colonnes[2],
+                                dateCreation: colonnes[6]
+                            };
+                            baseDonnees.depots.push(depot);
+                            baseDonnees.produits[depot.id] = [];
+                            baseDonnees.historique[depot.id] = [];
+                        } else if (type === 'produit') {
+                            const produit = {
+                                id: colonnes[1],
+                                nom: colonnes[2],
+                                reference: colonnes[3],
+                                quantite: parseInt(colonnes[4]) || 0,
+                                prix: parseFloat(colonnes[5]) || 0,
+                                devise: colonnes[6] || 'fc',
+                                emplacements: [{ nom: 'Principal', quantite: parseInt(colonnes[4]) || 0 }],
+                                qteMin: 0,
+                                qteMax: 0,
+                                dateCreation: colonnes[7],
+                                dateModification: colonnes[7]
+                            };
+                            
+                            // Trouve le dépôt correspondant
+                            if (baseDonnees.depots.length > 0) {
+                                const depotId = baseDonnees.depots[baseDonnees.depots.length - 1].id;
+                                baseDonnees.produits[depotId].push(produit);
+                            }
+                        }
+                    });
+                    
+                    if (baseDonnees.depots.length > 0) {
+                        depotActuel = baseDonnees.depots[0];
+                    }
+                    
+                    sauvegarderDonnees();
+                    afficherProduits();
+                    fermerModale('modale-sauvegarde');
+                    afficherMessage("Donnees importees", "succes");
+                } catch (erreur) {
+                    afficherMessage("Erreur lors de l'import", "erreur");
+                }
+            };
+            
+            lecteur.readAsText(fichier);
+        }
+
+        // ============================================
+        // INTERFACE - Modales et panneaux
+        // ============================================
+        function ouvrirModale(id) {
+            document.getElementById(id).classList.add('ouverte');
+        }
+
+        function fermerModale(id) {
+            document.getElementById(id).classList.remove('ouverte');
+        }
+
+        function ouvrirPanneau() {
+            document.getElementById('panneau').classList.add('ouvert');
+            document.getElementById('overlay').classList.add('ouvert');
+        }
+
+        function fermerPanneau() {
+            document.getElementById('panneau').classList.remove('ouvert');
+            document.getElementById('overlay').classList.remove('ouvert');
+        }
+
+        function ouvrirModaleConfig() {
+            fermerPanneau();
+            document.getElementById('config-taux').value = config.taux;
+            
+            // Met à jour les boutons d'affichage
+            document.querySelectorAll('#config-affichage-choix .btn-choix').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.affichage === config.affichage);
+            });
+            
+            // Met à jour les boutons de thème
+            document.querySelectorAll('#config-theme-choix .btn-choix').forEach(function(btn) {
+                btn.classList.toggle('actif', btn.dataset.themeBtn === config.theme);
+            });
+            
+            ouvrirModale('modale-config');
+        }
+
+        function ouvrirModaleDepots() {
+            fermerPanneau();
+            afficherListeDepots();
+            ouvrirModale('modale-depots');
+        }
+
+        // ============================================
+        // BOUTON FLOTTANT
+        // ============================================
+        function toggleMenuFlottant() {
+            const btn = document.getElementById('btn-flottant');
+            const menu = document.getElementById('menu-flottant');
+            
+            btn.classList.toggle('ouvert');
+            menu.classList.toggle('ouvert');
+        }
+
+        // Ferme le menu flottant en cliquant ailleurs
+        document.addEventListener('click', function(e) {
+            const btn = document.getElementById('btn-flottant');
+            const menu = document.getElementById('menu-flottant');
+            
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                btn.classList.remove('ouvert');
+                menu.classList.remove('ouvert');
+            }
+        });
+
+        // ============================================
+        // MESSAGES - Notifications
+        // ============================================
+        function afficherMessage(texte, type) {
+            const message = document.getElementById('message');
+            message.textContent = texte;
+            message.className = 'message ' + (type || '');
+            message.classList.add('visible');
+            
+            setTimeout(function() {
+                message.classList.remove('visible');
+            }, 3000);
+        }
+
+        // ============================================
+        // INITIALISATION DES TEXTES
+        // ============================================
+        function initialiserTextes() {
+            // Cette fonction peut être étendue pour appliquer les traductions
+            // Pour l'instant, les textes sont en dur dans le HTML
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,4136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quincaillerie TOTAL</title>
+    
+    <!-- Police locale : Poppins pour une lisibilité optimale -->
+    <style>
+        @font-face {
+            font-family: 'Poppins';
+            src: local('Poppins'), local('Poppins-Regular');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            src: local('Poppins-Medium');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            src: local('Poppins-SemiBold');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            src: local('Poppins-Bold');
+            font-weight: 700;
+            font-style: normal;
+        }
+    </style>
+    
+    <style>
+        /* ============================================
+           VARIABLES CSS - THÈMES ET COULEURS
+           Les couleurs principales de l'application
+        ============================================ */
+        :root {
+            --primaire: #006f78;
+            --primaire-clair: #008a96;
+            --primaire-fonce: #005459;
+            --secondaire: #e62311;
+            --secondaire-clair: #ff3b28;
+            --blanc: #ffffff;
+            --noir: #1a1a1a;
+            
+            --fond: #ffffff;
+            --fond-carte: #f8fafa;
+            --texte: #1a1a1a;
+            --texte-secondaire: #666666;
+            --bordure: #e0e4e4;
+            --ombre: rgba(0, 111, 120, 0.1);
+            
+            --succes: #22c55e;
+            --attention: #f59e0b;
+            --danger: #ef4444;
+            
+            --rayon: 12px;
+            --rayon-petit: 8px;
+            --transition: 0.25s ease;
+        }
+        
+        /* Thème sombre */
+        [data-theme="sombre"] {
+            --fond: #0f1419;
+            --fond-carte: #1a2028;
+            --texte: #f0f0f0;
+            --texte-secondaire: #a0a0a0;
+            --bordure: #2a3441;
+            --ombre: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Thème clair (identique au défaut) */
+        [data-theme="clair"] {
+            --fond: #ffffff;
+            --fond-carte: #f8fafa;
+            --texte: #1a1a1a;
+            --texte-secondaire: #666666;
+            --bordure: #e0e4e4;
+            --ombre: rgba(0, 111, 120, 0.1);
+        }
+        
+        /* ============================================
+           RESET ET STYLES DE BASE
+        ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            font-size: 16px;
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+        }
+        
+        /* Conteneur principal simulant un écran mobile */
+        #application {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background: var(--fond);
+            overflow: hidden;
+        }
+        
+        /* ============================================
+           ÉCRANS - Gestion de la navigation
+           Chaque écran est une page distincte
+        ============================================ */
+        .ecran {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: var(--fond);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(100%);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-bottom: 90px;
+        }
+        
+        .ecran.actif {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        
+        .ecran.precedent {
+            transform: translateX(-30%);
+        }
+        
+        /* ============================================
+           ÉCRAN DE SÉLECTION DE LANGUE
+           Premier écran visible au lancement
+        ============================================ */
+        #ecran-langue {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            background: linear-gradient(160deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+        }
+        
+        .langue-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--blanc);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .langue-logo svg {
+            width: 48px;
+            height: 48px;
+            color: var(--primaire);
+        }
+        
+        .langue-titre {
+            color: var(--blanc);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .langue-sous-titre {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .langue-liste {
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .langue-option {
+            background: var(--blanc);
+            border: none;
+            border-radius: var(--rayon);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .langue-option:hover, .langue-option:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            outline: none;
+        }
+        
+        .langue-option:active {
+            transform: scale(0.98);
+        }
+        
+        .langue-drapeau {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--fond-carte);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primaire);
+            flex-shrink: 0;
+        }
+        
+        .langue-nom {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+        
+        .langue-local {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           ÉCRAN D'ONBOARDING
+           Guide d'introduction pour l'utilisateur
+        ============================================ */
+        #ecran-onboarding {
+            background: var(--fond);
+            padding: 0;
+        }
+        
+        .onboarding-conteneur {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .onboarding-slides {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .onboarding-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.4s ease;
+        }
+        
+        .onboarding-slide.actif {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .onboarding-illustration {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primaire-clair) 0%, var(--primaire) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        
+        .onboarding-illustration svg {
+            width: 80px;
+            height: 80px;
+            color: var(--blanc);
+        }
+        
+        .onboarding-illustration::before {
+            content: '';
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            border: 2px dashed var(--primaire);
+            opacity: 0.3;
+            animation: rotation 20s linear infinite;
+        }
+        
+        @keyframes rotation {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .onboarding-titre {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--texte);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .onboarding-description {
+            font-size: 15px;
+            color: var(--texte-secondaire);
+            text-align: center;
+            max-width: 280px;
+            line-height: 1.6;
+        }
+        
+        .onboarding-indicateurs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .onboarding-indicateur {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--bordure);
+            transition: all var(--transition);
+        }
+        
+        .onboarding-indicateur.actif {
+            width: 24px;
+            border-radius: 4px;
+            background: var(--primaire);
+        }
+        
+        .onboarding-actions {
+            padding: 20px 24px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .onboarding-bouton-suivant {
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: var(--rayon);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .onboarding-bouton-suivant:hover {
+            background: var(--primaire-clair);
+        }
+        
+        .onboarding-bouton-passer {
+            background: transparent;
+            color: var(--texte-secondaire);
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+        
+        .onboarding-bouton-passer:hover {
+            color: var(--primaire);
+        }
+        
+        /* ============================================
+           ÉCRAN DE SÉLECTION DE THÈME
+        ============================================ */
+        #ecran-theme {
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        .theme-entete {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px;
+        }
+        
+        .theme-icone {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .theme-icone svg {
+            width: 36px;
+            height: 36px;
+            color: var(--blanc);
+        }
+        
+        .theme-titre {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+        
+        .theme-description {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+        
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .theme-option {
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .theme-option:hover {
+            border-color: var(--primaire);
+        }
+        
+        .theme-option.selectionne {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+        
+        .theme-option-icone {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--rayon-petit);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .theme-option-icone.systeme {
+            background: linear-gradient(135deg, #f0f0f0 50%, #1a1a1a 50%);
+        }
+        
+        .theme-option-icone.sombre {
+            background: #1a1a1a;
+        }
+        
+        .theme-option-icone.clair {
+            background: #f8f8f8;
+            border: 1px solid var(--bordure);
+        }
+        
+        .theme-option-icone svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .theme-option-icone.sombre svg,
+        .theme-option-icone.systeme svg {
+            color: var(--blanc);
+        }
+        
+        .theme-option-icone.clair svg {
+            color: var(--texte);
+        }
+        
+        .theme-option-texte {
+            flex: 1;
+        }
+        
+        .theme-option-nom {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .theme-option-detail {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+        
+        .theme-selection {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--bordure);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+        }
+        
+        .theme-option.selectionne .theme-selection {
+            border-color: var(--primaire);
+            background: var(--primaire);
+        }
+        
+        .theme-selection svg {
+            width: 14px;
+            height: 14px;
+            color: var(--blanc);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        
+        .theme-option.selectionne .theme-selection svg {
+            opacity: 1;
+        }
+        
+        /* ============================================
+           ÉCRAN DE SÉCURITÉ (mot de passe)
+        ============================================ */
+        #ecran-securite {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        .securite-entete {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .securite-icone {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--secondaire) 0%, #c41d0e 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .securite-icone svg {
+            width: 40px;
+            height: 40px;
+            color: var(--blanc);
+        }
+        
+        .securite-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+        
+        .securite-description {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+            text-align: center;
+        }
+        
+        .securite-formulaire {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .securite-input {
+            width: 100%;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon);
+            padding: 16px;
+            font-size: 16px;
+            color: var(--texte);
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+        
+        .securite-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+        
+        .securite-input::placeholder {
+            letter-spacing: normal;
+            color: var(--texte-secondaire);
+        }
+        
+        .securite-bouton {
+            width: 100%;
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: var(--rayon);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .securite-bouton:hover {
+            background: var(--primaire-clair);
+        }
+        
+        .securite-alternative {
+            margin-top: 24px;
+            text-align: center;
+        }
+        
+        .securite-alternative-texte {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+        }
+        
+        .securite-alternative-boutons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .securite-alternative-btn {
+            width: 56px;
+            height: 56px;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .securite-alternative-btn:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+        
+        .securite-alternative-btn svg {
+            width: 24px;
+            height: 24px;
+            color: var(--texte);
+        }
+        
+        /* ============================================
+           ÉCRAN PRINCIPAL (ACCUEIL)
+        ============================================ */
+        #ecran-accueil {
+            padding: 0;
+        }
+        
+        .accueil-entete {
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+            padding: 24px 20px 80px;
+            position: relative;
+        }
+        
+        .accueil-entete-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .accueil-entreprise {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .accueil-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--blanc);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .accueil-logo svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primaire);
+        }
+        
+        .accueil-nom-entreprise {
+            color: var(--blanc);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .accueil-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .accueil-action-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .accueil-action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .accueil-action-btn svg {
+            width: 20px;
+            height: 20px;
+            color: var(--blanc);
+        }
+        
+        .accueil-bienvenue {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .accueil-titre {
+            color: var(--blanc);
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .accueil-recherche {
+            position: relative;
+            margin: -40px 20px 20px;
+            z-index: 10;
+        }
+        
+        .accueil-recherche-input {
+            width: 100%;
+            background: var(--blanc);
+            border: none;
+            border-radius: var(--rayon);
+            padding: 16px 16px 16px 48px;
+            font-size: 15px;
+            color: var(--texte);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: box-shadow var(--transition);
+        }
+        
+        .accueil-recherche-input:focus {
+            outline: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .accueil-recherche-input::placeholder {
+            color: var(--texte-secondaire);
+        }
+        
+        .accueil-recherche-icone {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--texte-secondaire);
+        }
+        
+        .accueil-recherche-icone svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .accueil-recherche-scan {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .accueil-recherche-scan:hover {
+            background: var(--primaire-clair);
+        }
+        
+        .accueil-recherche-scan svg {
+            width: 20px;
+            height: 20px;
+            color: var(--blanc);
+        }
+        
+        /* Statistiques rapides */
+        .accueil-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 20px;
+            margin-bottom: 24px;
+        }
+        
+        .accueil-stat {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .accueil-stat-valeur {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primaire);
+            margin-bottom: 4px;
+        }
+        
+        .accueil-stat-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* Actions rapides */
+        .accueil-section {
+            padding: 0 20px;
+            margin-bottom: 24px;
+        }
+        
+        .accueil-section-titre {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 12px;
+        }
+        
+        .accueil-actions-rapides {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .accueil-rapide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 8px;
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            cursor: pointer;
+            transition: all var(--transition);
+            border: none;
+        }
+        
+        .accueil-rapide:hover {
+            background: rgba(0, 111, 120, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .accueil-rapide-icone {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .accueil-rapide-icone.entree {
+            background: rgba(34, 197, 94, 0.15);
+        }
+        
+        .accueil-rapide-icone.entree svg { color: var(--succes); }
+        
+        .accueil-rapide-icone.sortie {
+            background: rgba(230, 35, 17, 0.15);
+        }
+        
+        .accueil-rapide-icone.sortie svg { color: var(--secondaire); }
+        
+        .accueil-rapide-icone.produit {
+            background: rgba(0, 111, 120, 0.15);
+        }
+        
+        .accueil-rapide-icone.produit svg { color: var(--primaire); }
+        
+        .accueil-rapide-icone.inventaire {
+            background: rgba(245, 158, 11, 0.15);
+        }
+        
+        .accueil-rapide-icone.inventaire svg { color: var(--attention); }
+        
+        .accueil-rapide-icone svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .accueil-rapide-texte {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--texte);
+            text-align: center;
+        }
+        
+        /* Derniers produits */
+        .accueil-produits-liste {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .accueil-produit {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .accueil-produit:hover {
+            background: rgba(0, 111, 120, 0.08);
+        }
+        
+        .accueil-produit-icone {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 111, 120, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .accueil-produit-icone svg {
+            width: 22px;
+            height: 22px;
+            color: var(--primaire);
+        }
+        
+        .accueil-produit-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .accueil-produit-nom {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .accueil-produit-ref {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        .accueil-produit-stock {
+            text-align: right;
+        }
+        
+        .accueil-produit-qte {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+        
+        .accueil-produit-etat {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .accueil-produit-etat.en-stock {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--succes);
+        }
+        
+        .accueil-produit-etat.faible {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--attention);
+        }
+        
+        .accueil-produit-etat.rupture {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+        
+        /* ============================================
+           BARRE DE NAVIGATION INFÉRIEURE
+        ============================================ */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: var(--fond);
+            border-top: 1px solid var(--bordure);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+        
+        .navigation-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--texte-secondaire);
+            transition: color var(--transition);
+        }
+        
+        .navigation-item.actif {
+            color: var(--primaire);
+        }
+        
+        .navigation-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .navigation-item span {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        /* ============================================
+           ÉCRAN PRODUITS
+        ============================================ */
+        .produits-entete {
+            padding: 20px;
+            background: var(--fond);
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .produits-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 16px;
+        }
+        
+        .produits-filtres {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        
+        .produits-filtre {
+            padding: 8px 16px;
+            background: var(--fond-carte);
+            border: 1px solid var(--bordure);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--texte);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .produits-filtre.actif {
+            background: var(--primaire);
+            border-color: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        .produits-liste {
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* Bouton flottant pour ajouter */
+        .bouton-flottant {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--secondaire);
+            border: none;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(230, 35, 17, 0.3);
+            transition: all var(--transition);
+            z-index: 50;
+        }
+        
+        .bouton-flottant:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(230, 35, 17, 0.4);
+        }
+        
+        .bouton-flottant svg {
+            width: 28px;
+            height: 28px;
+            color: var(--blanc);
+        }
+        
+        /* ============================================
+           ÉCRAN MOUVEMENTS (ENTRÉE/SORTIE)
+        ============================================ */
+        .mouvement-conteneur {
+            padding: 20px;
+        }
+        
+        .mouvement-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 20px;
+        }
+        
+        .mouvement-type {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .mouvement-type-btn {
+            flex: 1;
+            padding: 16px;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .mouvement-type-btn.actif.entree {
+            border-color: var(--succes);
+            background: rgba(34, 197, 94, 0.1);
+        }
+        
+        .mouvement-type-btn.actif.sortie {
+            border-color: var(--secondaire);
+            background: rgba(230, 35, 17, 0.1);
+        }
+        
+        .mouvement-type-btn svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .mouvement-type-btn.entree svg { color: var(--succes); }
+        .mouvement-type-btn.sortie svg { color: var(--secondaire); }
+        
+        .mouvement-type-btn span {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .mouvement-formulaire {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .mouvement-champ {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .mouvement-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .mouvement-input {
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon-petit);
+            padding: 14px;
+            font-size: 15px;
+            color: var(--texte);
+            transition: border-color var(--transition);
+        }
+        
+        .mouvement-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+        
+        .mouvement-bouton {
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: var(--rayon);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background var(--transition);
+        }
+        
+        .mouvement-bouton:hover {
+            background: var(--primaire-clair);
+        }
+        
+        /* ============================================
+           ÉCRAN INVENTAIRE
+        ============================================ */
+        .inventaire-conteneur {
+            padding: 20px;
+        }
+        
+        .inventaire-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+        
+        .inventaire-description {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+            margin-bottom: 20px;
+        }
+        
+        .inventaire-liste {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .inventaire-item {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            padding: 16px;
+        }
+        
+        .inventaire-item-entete {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .inventaire-item-nom {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .inventaire-item-ref {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        .inventaire-item-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .inventaire-zone {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--fond);
+            border-radius: var(--rayon-petit);
+        }
+        
+        .inventaire-zone-nom {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+        
+        .inventaire-zone-valeurs {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .inventaire-zone-theorique {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+        
+        .inventaire-zone-input {
+            width: 70px;
+            background: var(--fond-carte);
+            border: 2px solid var(--primaire);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primaire);
+            text-align: center;
+        }
+        
+        .inventaire-zone-input:focus {
+            outline: none;
+        }
+        
+        /* ============================================
+           ÉCRAN RAPPORT
+        ============================================ */
+        .rapport-conteneur {
+            padding: 20px;
+        }
+        
+        .rapport-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 20px;
+        }
+        
+        .rapport-resume {
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+            border-radius: var(--rayon);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .rapport-resume-ligne {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .rapport-resume-ligne:last-child {
+            border-bottom: none;
+        }
+        
+        .rapport-resume-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+        
+        .rapport-resume-valeur {
+            color: var(--blanc);
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .rapport-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .rapport-action-btn {
+            flex: 1;
+            padding: 14px;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .rapport-action-btn:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+        
+        .rapport-action-btn svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primaire);
+        }
+        
+        .rapport-action-btn span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+        
+        .rapport-tableau {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            overflow: hidden;
+        }
+        
+        .rapport-tableau-entete {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0, 111, 120, 0.1);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primaire);
+            text-transform: uppercase;
+        }
+        
+        .rapport-tableau-ligne {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 12px;
+            border-bottom: 1px solid var(--bordure);
+            font-size: 13px;
+        }
+        
+        .rapport-tableau-ligne:last-child {
+            border-bottom: none;
+        }
+        
+        .rapport-tableau-cellule {
+            color: var(--texte);
+        }
+        
+        .rapport-tableau-cellule.petit {
+            font-size: 11px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           ÉCRAN PARAMÈTRES
+        ============================================ */
+        .parametres-conteneur {
+            padding: 20px;
+        }
+        
+        .parametres-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 20px;
+        }
+        
+        .parametres-section {
+            margin-bottom: 24px;
+        }
+        
+        .parametres-section-titre {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .parametres-liste {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            overflow: hidden;
+        }
+        
+        .parametres-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid var(--bordure);
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .parametres-item:last-child {
+            border-bottom: none;
+        }
+        
+        .parametres-item:hover {
+            background: rgba(0, 111, 120, 0.05);
+        }
+        
+        .parametres-item-gauche {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .parametres-item-icone {
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 111, 120, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .parametres-item-icone svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primaire);
+        }
+        
+        .parametres-item-texte {
+            font-size: 15px;
+            color: var(--texte);
+        }
+        
+        .parametres-item-valeur {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .parametres-item-valeur svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* ============================================
+           MODALES
+        ============================================ */
+        .modale-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+        }
+        
+        .modale-overlay.actif {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modale {
+            width: 100%;
+            max-width: 430px;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modale-overlay.actif .modale {
+            transform: translateY(0);
+        }
+        
+        .modale-poignee {
+            width: 40px;
+            height: 4px;
+            background: var(--bordure);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+        
+        .modale-titre {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 20px;
+        }
+        
+        .modale-fermer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: var(--fond-carte);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .modale-fermer:hover {
+            background: var(--bordure);
+        }
+        
+        .modale-fermer svg {
+            width: 18px;
+            height: 18px;
+            color: var(--texte);
+        }
+        
+        /* ============================================
+           FORMULAIRE PRODUIT
+        ============================================ */
+        .formulaire-groupe {
+            margin-bottom: 16px;
+        }
+        
+        .formulaire-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 6px;
+        }
+        
+        .formulaire-input {
+            width: 100%;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon-petit);
+            padding: 12px;
+            font-size: 15px;
+            color: var(--texte);
+            transition: border-color var(--transition);
+        }
+        
+        .formulaire-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+        
+        .formulaire-ligne {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .formulaire-bouton {
+            width: 100%;
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: var(--rayon);
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition);
+            margin-top: 8px;
+        }
+        
+        .formulaire-bouton:hover {
+            background: var(--primaire-clair);
+        }
+        
+        .formulaire-bouton.secondaire {
+            background: transparent;
+            color: var(--secondaire);
+            border: 2px solid var(--secondaire);
+        }
+        
+        .formulaire-bouton.secondaire:hover {
+            background: rgba(230, 35, 17, 0.1);
+        }
+        
+        /* Zone d'emplacement */
+        .emplacement-liste {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .emplacement-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .emplacement-item input {
+            flex: 1;
+        }
+        
+        .emplacement-supprimer {
+            width: 36px;
+            height: 36px;
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .emplacement-supprimer:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .emplacement-supprimer svg {
+            width: 18px;
+            height: 18px;
+            color: var(--danger);
+        }
+        
+        .emplacement-ajouter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(0, 111, 120, 0.05);
+            border: 2px dashed var(--primaire);
+            border-radius: var(--rayon-petit);
+            color: var(--primaire);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-top: 8px;
+        }
+        
+        .emplacement-ajouter:hover {
+            background: rgba(0, 111, 120, 0.1);
+        }
+        
+        .emplacement-ajouter svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* ============================================
+           DÉTAIL PRODUIT AVEC QR CODE
+        ============================================ */
+        .produit-detail-entete {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+            margin: -24px -24px 24px;
+        }
+        
+        .produit-detail-nom {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--blanc);
+            margin-bottom: 4px;
+        }
+        
+        .produit-detail-ref {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .produit-qr {
+            background: var(--blanc);
+            padding: 20px;
+            border-radius: var(--rayon);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .produit-qr-code {
+            width: 160px;
+            height: 160px;
+            background: var(--fond-carte);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        /* Style du QR code généré */
+        .produit-qr-code svg {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .produit-qr-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        .produit-detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .produit-detail-section-titre {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .produit-detail-grille {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .produit-detail-carte {
+            background: var(--fond-carte);
+            border-radius: var(--rayon-petit);
+            padding: 14px;
+        }
+        
+        .produit-detail-carte-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-bottom: 4px;
+        }
+        
+        .produit-detail-carte-valeur {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+        
+        .produit-detail-carte-valeur.fc::after {
+            content: ' FC';
+            font-size: 12px;
+            font-weight: 400;
+        }
+        
+        .produit-emplacements {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .produit-emplacement {
+            background: var(--fond-carte);
+            border-radius: var(--rayon-petit);
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .produit-emplacement-zone {
+            font-size: 14px;
+            color: var(--texte);
+        }
+        
+        .produit-emplacement-qte {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primaire);
+        }
+        
+        .produit-detail-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .produit-detail-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--rayon);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .produit-detail-btn.principal {
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+        }
+        
+        .produit-detail-btn.principal:hover {
+            background: var(--primaire-clair);
+        }
+        
+        .produit-detail-btn.danger {
+            background: transparent;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+        
+        .produit-detail-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .produit-detail-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* ============================================
+           MODALE DE CHOIX DE LANGUE
+        ============================================ */
+        .langue-modal-liste {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .langue-modal-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: var(--rayon-petit);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .langue-modal-option:hover {
+            border-color: var(--primaire);
+        }
+        
+        .langue-modal-option.selectionne {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+        
+        .langue-modal-drapeau {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primaire);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blanc);
+        }
+        
+        .langue-modal-nom {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+        
+        .langue-modal-check {
+            width: 20px;
+            height: 20px;
+            color: var(--primaire);
+            opacity: 0;
+        }
+        
+        .langue-modal-option.selectionne .langue-modal-check {
+            opacity: 1;
+        }
+        
+        /* ============================================
+           TOAST NOTIFICATIONS
+        ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--noir);
+            color: var(--blanc);
+            padding: 14px 24px;
+            border-radius: var(--rayon);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        .toast.actif {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* ============================================
+           ANIMATIONS
+        ============================================ */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes glissement {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animation-glissement {
+            animation: glissement 0.4s ease forwards;
+        }
+        
+        /* ============================================
+           RESPONSIVE - TABLETTE
+        ============================================ */
+        @media (min-width: 768px) {
+            #application {
+                margin-top: 20px;
+                margin-bottom: 20px;
+                border-radius: 24px;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            
+            .navigation {
+                border-radius: 0 0 24px 24px;
+            }
+        }
+        
+        /* Respect de la préférence de mouvement réduit */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Conteneur principal de l'application -->
+    <div id="application">
+        
+        <!-- ==========================================
+             ÉCRAN 1: SÉLECTION DE LANGUE
+             Premier écran affiché au lancement
+        ========================================== -->
+        <section id="ecran-langue" class="ecran actif">
+            <div class="langue-logo">
+                <!-- Icône de l'entreprise -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                    <polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+            </div>
+            <h1 class="langue-titre" data-traduction="bienvenue">Bienvenue</h1>
+            <p class="langue-sous-titre" data-traduction="choisir_langue">Choisissez votre langue</p>
+            
+            <div class="langue-liste">
+                <!-- Option Français -->
+                <button class="langue-option" data-langue="fr" onclick="selectionnerLangue('fr')">
+                    <div class="langue-drapeau">FR</div>
+                    <div>
+                        <div class="langue-nom">Francais</div>
+                        <div class="langue-local">France</div>
+                    </div>
+                </button>
+                
+                <!-- Option Anglais -->
+                <button class="langue-option" data-langue="en" onclick="selectionnerLangue('en')">
+                    <div class="langue-drapeau">EN</div>
+                    <div>
+                        <div class="langue-nom">English</div>
+                        <div class="langue-local">United Kingdom</div>
+                    </div>
+                </button>
+                
+                <!-- Option Hindi -->
+                <button class="langue-option" data-langue="hi" onclick="selectionnerLangue('hi')">
+                    <div class="langue-drapeau">HI</div>
+                    <div>
+                        <div class="langue-nom" data-traduction="hindi">Hindi</div>
+                        <div class="langue-local" data-traduction="inde">Inde</div>
+                    </div>
+                </button>
+                
+                <!-- Option Lingala -->
+                <button class="langue-option" data-langue="ln" onclick="selectionnerLangue('ln')">
+                    <div class="langue-drapeau">LN</div>
+                    <div>
+                        <div class="langue-nom">Lingala</div>
+                        <div class="langue-local" data-traduction="rdc">RDC</div>
+                    </div>
+                </button>
+                
+                <!-- Option Swahili -->
+                <button class="langue-option" data-langue="sw" onclick="selectionnerLangue('sw')">
+                    <div class="langue-drapeau">SW</div>
+                    <div>
+                        <div class="langue-nom">Swahili</div>
+                        <div class="langue-local" data-traduction="rdc">RDC</div>
+                    </div>
+                </button>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 2: ONBOARDING
+             Guide d'introduction pour l'utilisateur
+        ========================================== -->
+        <section id="ecran-onboarding" class="ecran">
+            <div class="onboarding-conteneur">
+                <div class="onboarding-slides">
+                    <!-- Slide 1: Gestion des produits -->
+                    <div class="onboarding-slide actif" data-slide="0">
+                        <div class="onboarding-illustration">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <h2 class="onboarding-titre" data-traduction="onboarding_produits_titre">Gerez vos produits</h2>
+                        <p class="onboarding-description" data-traduction="onboarding_produits_desc">Ajoutez vos articles, definissez les emplacements et suivez les quantites en toute simplicite.</p>
+                    </div>
+                    
+                    <!-- Slide 2: Mouvements de stock -->
+                    <div class="onboarding-slide" data-slide="1">
+                        <div class="onboarding-illustration">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                            </svg>
+                        </div>
+                        <h2 class="onboarding-titre" data-traduction="onboarding_mouvements_titre">Entrees et sorties</h2>
+                        <p class="onboarding-description" data-traduction="onboarding_mouvements_desc">Enregistrez facilement les entrees et sorties de stock. Les mises a jour sont automatiques.</p>
+                    </div>
+                    
+                    <!-- Slide 3: Inventaire -->
+                    <div class="onboarding-slide" data-slide="2">
+                        <div class="onboarding-illustration">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <h2 class="onboarding-titre" data-traduction="onboarding_inventaire_titre">Inventaire precise</h2>
+                        <p class="onboarding-description" data-traduction="onboarding_inventaire_desc">Corrigez les ecarts entre le stock theorique et reel. Gardez votre stock toujours a jour.</p>
+                    </div>
+                    
+                    <!-- Slide 4: Rapports -->
+                    <div class="onboarding-slide" data-slide="3">
+                        <div class="onboarding-illustration">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="onboarding-titre" data-traduction="onboarding_rapports_titre">Rapports detailles</h2>
+                        <p class="onboarding-description" data-traduction="onboarding_rapports_desc">Generez des rapports de stock, exportez en PDF et partagez facilement via WhatsApp ou Gmail.</p>
+                    </div>
+                </div>
+                
+                <!-- Indicateurs de progression -->
+                <div class="onboarding-indicateurs">
+                    <div class="onboarding-indicateur actif" data-indicateur="0"></div>
+                    <div class="onboarding-indicateur" data-indicateur="1"></div>
+                    <div class="onboarding-indicateur" data-indicateur="2"></div>
+                    <div class="onboarding-indicateur" data-indicateur="3"></div>
+                </div>
+                
+                <!-- Boutons de navigation -->
+                <div class="onboarding-actions">
+                    <button class="onboarding-bouton-suivant" data-traduction="suivant" onclick="onboardingSuivant()">Suivant</button>
+                    <button class="onboarding-bouton-passer" data-traduction="passer" onclick="passerOnboarding()">Passer</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 3: SÉLECTION DE THÈME
+        ========================================== -->
+        <section id="ecran-theme" class="ecran">
+            <div class="theme-entete">
+                <div class="theme-icone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </div>
+                <h2 class="theme-titre" data-traduction="choisir_theme">Choisissez un theme</h2>
+                <p class="theme-description" data-traduction="theme_desc">Vous pourrez le changer plus tard dans les parametres</p>
+            </div>
+            
+            <div class="theme-options">
+                <!-- Option Système -->
+                <div class="theme-option selectionne" data-theme-valeur="systeme" onclick="selectionnerThemeOption(this)">
+                    <div class="theme-option-icone systeme">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <path d="M8 21h8M12 17v4"/>
+                        </svg>
+                    </div>
+                    <div class="theme-option-texte">
+                        <div class="theme-option-nom" data-traduction="theme_systeme">Systeme</div>
+                        <div class="theme-option-detail" data-traduction="theme_systeme_desc">Suit les parametres de votre appareil</div>
+                    </div>
+                    <div class="theme-selection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Option Sombre -->
+                <div class="theme-option" data-theme-valeur="sombre" onclick="selectionnerThemeOption(this)">
+                    <div class="theme-option-icone sombre">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                        </svg>
+                    </div>
+                    <div class="theme-option-texte">
+                        <div class="theme-option-nom" data-traduction="theme_sombre">Sombre</div>
+                        <div class="theme-option-detail" data-traduction="theme_sombre_desc">Ideal pour une utilisation nocturne</div>
+                    </div>
+                    <div class="theme-selection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Option Clair -->
+                <div class="theme-option" data-theme-valeur="clair" onclick="selectionnerThemeOption(this)">
+                    <div class="theme-option-icone clair">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                    </div>
+                    <div class="theme-option-texte">
+                        <div class="theme-option-nom" data-traduction="theme_clair">Clair</div>
+                        <div class="theme-option-detail" data-traduction="theme_clair_desc">Apparence classique et lumineuse</div>
+                    </div>
+                    <div class="theme-selection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="formulaire-bouton" data-traduction="continuer" onclick="confirmerTheme()">Continuer</button>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 4: SÉCURITÉ (mot de passe)
+        ========================================== -->
+        <section id="ecran-securite" class="ecran">
+            <div class="securite-entete">
+                <div class="securite-icone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                </div>
+                <h2 class="securite-titre" data-traduction="securite_titre">Securisez votre application</h2>
+                <p class="securite-description" data-traduction="securite_desc">Definissez un mot de passe pour proteger vos donnees</p>
+            </div>
+            
+            <div class="securite-formulaire">
+                <input type="password" class="securite-input" id="mot-de-passe-input" placeholder="Mot de passe" data-traduction-placeholder="mot_de_passe">
+                <button class="securite-bouton" data-traduction="commencer" onclick="definirMotDePasse()">Commencer</button>
+            </div>
+            
+            <div class="securite-alternative">
+                <p class="securite-alternative-texte" data-traduction="ou_continuer">Ou continuer avec</p>
+                <div class="securite-alternative-boutons">
+                    <!-- Empreinte digitale -->
+                    <button class="securite-alternative-btn" onclick="utiliserEmpreinte()" aria-label="Empreinte digitale">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 10a2 2 0 00-2 2c0 1.02-.1 2.51-.26 4M14 13a12.02 12.02 0 00-.34 3.42M10 21c1.5 0 3-1 3-3a3 3 0 00-3-3 3 3 0 00-3 3c0 2 1.5 3 3 3zM12 2a10 10 0 00-6.88 17.23"/>
+                            <path d="M12 6a6 6 0 00-6 6c0 2.5.5 5 2 7M12 6a6 6 0 016 6c0 2-.5 4-1.5 6"/>
+                        </svg>
+                    </button>
+                    <!-- QR Code carte d'identité -->
+                    <button class="securite-alternative-btn" onclick="scannerCarte()" aria-label="Scanner carte">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 5: ACCUEIL (écran principal)
+        ========================================== -->
+        <section id="ecran-accueil" class="ecran">
+            <div class="accueil-entete">
+                <div class="accueil-entete-top">
+                    <div class="accueil-entreprise">
+                        <div class="accueil-logo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                <polyline points="9,22 9,12 15,12 15,22"/>
+                            </svg>
+                        </div>
+                        <span class="accueil-nom-entreprise">Quincaillerie TOTAL</span>
+                    </div>
+                    <div class="accueil-actions">
+                        <button class="accueil-action-btn" onclick="ouvrirModaleLangue()" aria-label="Changer langue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                            </svg>
+                        </button>
+                        <button class="accueil-action-btn" onclick="naviguer('parametres')" aria-label="Parametres">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <p class="accueil-bienvenue" data-traduction="bonjour">Bonjour</p>
+                <h1 class="accueil-titre" data-traduction="bienvenue_accueil">Bienvenue</h1>
+            </div>
+            
+            <!-- Barre de recherche -->
+            <div class="accueil-recherche">
+                <div class="accueil-recherche-icone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </div>
+                <input type="text" class="accueil-recherche-input" data-traduction-placeholder="rechercher_produit" placeholder="Rechercher un produit..." id="recherche-input" oninput="rechercherProduit(this.value)">
+                <button class="accueil-recherche-scan" onclick="ouvrirScanner()" aria-label="Scanner QR">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 01-2 2h-3M23 5a2 2 0 00-2-2h-3M1 19a2 2 0 002 2h3M1 5a2 2 0 012-2h3"/>
+                        <line x1="4" y1="9" x2="20" y2="9"/>
+                        <line x1="4" y1="15" x2="20" y2="15"/>
+                        <line x1="9" y1="4" x2="9" y2="20"/>
+                        <line x1="15" y1="4" x2="15" y2="20"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Statistiques rapides -->
+            <div class="accueil-stats">
+                <div class="accueil-stat">
+                    <div class="accueil-stat-valeur" id="stat-produits">0</div>
+                    <div class="accueil-stat-label" data-traduction="produits">Produits</div>
+                </div>
+                <div class="accueil-stat">
+                    <div class="accueil-stat-valeur" id="stat-valeur">0 FC</div>
+                    <div class="accueil-stat-label" data-traduction="valeur_stock">Valeur stock</div>
+                </div>
+            </div>
+            
+            <!-- Actions rapides -->
+            <div class="accueil-section">
+                <h3 class="accueil-section-titre" data-traduction="actions_rapides">Actions rapides</h3>
+                <div class="accueil-actions-rapides">
+                    <button class="accueil-rapide" onclick="ouvrirModaleEntree()">
+                        <div class="accueil-rapide-icone entree">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 19V5M5 12l7-7 7 7"/>
+                            </svg>
+                        </div>
+                        <span class="accueil-rapide-texte" data-traduction="entree">Entree</span>
+                    </button>
+                    <button class="accueil-rapide" onclick="ouvrirModaleSortie()">
+                        <div class="accueil-rapide-icone sortie">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12l7 7 7-7"/>
+                            </svg>
+                        </div>
+                        <span class="accueil-rapide-texte" data-traduction="sortie">Sortie</span>
+                    </button>
+                    <button class="accueil-rapide" onclick="ouvrirModaleProduit()">
+                        <div class="accueil-rapide-icone produit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="accueil-rapide-texte" data-traduction="produit">Produit</span>
+                    </button>
+                    <button class="accueil-rapide" onclick="naviguer('inventaire')">
+                        <div class="accueil-rapide-icone inventaire">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                            </svg>
+                        </div>
+                        <span class="accueil-rapide-texte" data-traduction="inventaire">Inventaire</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Derniers produits -->
+            <div class="accueil-section">
+                <h3 class="accueil-section-titre" data-traduction="derniers_produits">Derniers produits</h3>
+                <div class="accueil-produits-liste" id="liste-produits-accueil">
+                    <!-- Les produits seront injectés ici par JavaScript -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 6: LISTE DES PRODUITS
+        ========================================== -->
+        <section id="ecran-produits" class="ecran">
+            <div class="produits-entete">
+                <h1 class="produits-titre" data-traduction="tous_produits">Tous les produits</h1>
+                <div class="produits-filtres">
+                    <button class="produits-filtre actif" data-traduction="tous" onclick="filtrerProduits('tous', this)">Tous</button>
+                    <button class="produits-filtre" data-traduction="en_stock" onclick="filtrerProduits('en-stock', this)">En stock</button>
+                    <button class="produits-filtre" data-traduction="stock_faible" onclick="filtrerProduits('faible', this)">Stock faible</button>
+                    <button class="produits-filtre" data-traduction="rupture" onclick="filtrerProduits('rupture', this)">Rupture</button>
+                </div>
+            </div>
+            
+            <div class="produits-liste" id="liste-produits">
+                <!-- Les produits seront injectés ici -->
+            </div>
+            
+            <!-- Bouton flottant pour ajouter -->
+            <button class="bouton-flottant" onclick="ouvrirModaleProduit()" aria-label="Ajouter produit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </button>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 7: MOUVEMENTS
+        ========================================== -->
+        <section id="ecran-mouvements" class="ecran">
+            <div class="mouvement-conteneur">
+                <h1 class="mouvement-titre" data-traduction="mouvements_stock">Mouvements de stock</h1>
+                
+                <div class="mouvement-type">
+                    <button class="mouvement-type-btn entree actif" id="btn-type-entree" onclick="selectionnerTypeMouvement('entree')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 19V5M5 12l7-7 7 7"/>
+                        </svg>
+                        <span data-traduction="entree">Entree</span>
+                    </button>
+                    <button class="mouvement-type-btn sortie" id="btn-type-sortie" onclick="selectionnerTypeMouvement('sortie')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12l7 7 7-7"/>
+                        </svg>
+                        <span data-traduction="sortie">Sortie</span>
+                    </button>
+                </div>
+                
+                <div class="mouvement-formulaire">
+                    <div class="mouvement-champ">
+                        <label class="mouvement-label" data-traduction="produit">Produit</label>
+                        <input type="text" class="mouvement-input" data-traduction-placeholder="selectionner_produit" placeholder="Selectionner un produit..." id="mouvement-produit" onclick="ouvrirSelectionProduit()" readonly>
+                    </div>
+                    
+                    <div class="mouvement-champ" id="champ-prix">
+                        <label class="mouvement-label" data-traduction="prix_unitaire">Prix unitaire (FC)</label>
+                        <input type="number" class="mouvement-input" data-traduction-placeholder="prix_achat" placeholder="Prix d'achat" id="mouvement-prix">
+                    </div>
+                    
+                    <div class="mouvement-champ">
+                        <label class="mouvement-label" data-traduction="quantite">Quantite</label>
+                        <input type="number" class="mouvement-input" data-traduction-placeholder="entrer_quantite" placeholder="Entrer la quantite" id="mouvement-quantite">
+                    </div>
+                    
+                    <div class="mouvement-champ">
+                        <label class="mouvement-label" data-traduction="emplacement">Emplacement</label>
+                        <input type="text" class="mouvement-input" data-traduction-placeholder="entrer_emplacement" placeholder="Entrer l'emplacement" id="mouvement-emplacement">
+                    </div>
+                    
+                    <button class="mouvement-bouton" data-traduction="enregistrer" onclick="enregistrerMouvement()">Enregistrer</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 8: INVENTAIRE
+        ========================================== -->
+        <section id="ecran-inventaire" class="ecran">
+            <div class="inventaire-conteneur">
+                <h1 class="inventaire-titre" data-traduction="inventaire">Inventaire</h1>
+                <p class="inventaire-description" data-traduction="inventaire_desc">Ajustez les quantites reelles pour chaque produit</p>
+                
+                <div class="inventaire-liste" id="liste-inventaire">
+                    <!-- Les produits pour l'inventaire seront injectés ici -->
+                </div>
+                
+                <button class="formulaire-bouton" data-traduction="valider_inventaire" onclick="validerInventaire()" style="margin-top: 20px;">Valider l'inventaire</button>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 9: RAPPORT
+        ========================================== -->
+        <section id="ecran-rapport" class="ecran">
+            <div class="rapport-conteneur">
+                <h1 class="rapport-titre" data-traduction="rapport_stock">Rapport de stock</h1>
+                
+                <!-- Résumé -->
+                <div class="rapport-resume">
+                    <div class="rapport-resume-ligne">
+                        <span class="rapport-resume-label" data-traduction="valeur_totale">Valeur totale</span>
+                        <span class="rapport-resume-valeur" id="rapport-valeur-totale">0 FC</span>
+                    </div>
+                    <div class="rapport-resume-ligne">
+                        <span class="rapport-resume-label" data-traduction="nombre_articles">Nombre d'articles</span>
+                        <span class="rapport-resume-valeur" id="rapport-nombre-articles">0</span>
+                    </div>
+                    <div class="rapport-resume-ligne">
+                        <span class="rapport-resume-label" data-traduction="date_heure">Date et heure</span>
+                        <span class="rapport-resume-valeur" id="rapport-date">--/--/----</span>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="rapport-actions">
+                    <button class="rapport-action-btn" onclick="genererPDF()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="12" y1="18" x2="12" y2="12"/>
+                            <line x1="9" y1="15" x2="15" y2="15"/>
+                        </svg>
+                        <span data-traduction="pdf">PDF</span>
+                    </button>
+                    <button class="rapport-action-btn" onclick="partagerWhatsApp()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+                        </svg>
+                        <span>WhatsApp</span>
+                    </button>
+                    <button class="rapport-action-btn" onclick="partagerGmail()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <span>Gmail</span>
+                    </button>
+                </div>
+                
+                <!-- Tableau -->
+                <div class="rapport-tableau">
+                    <div class="rapport-tableau-entete">
+                        <span data-traduction="article">Article</span>
+                        <span data-traduction="qte">Qte</span>
+                        <span data-traduction="pu">PU</span>
+                        <span data-traduction="etat">Etat</span>
+                    </div>
+                    <div id="rapport-tableau-corps">
+                        <!-- Lignes du tableau injectées par JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             ÉCRAN 10: PARAMÈTRES
+        ========================================== -->
+        <section id="ecran-parametres" class="ecran">
+            <div class="parametres-conteneur">
+                <h1 class="parametres-titre" data-traduction="parametres">Parametres</h1>
+                
+                <!-- Section Apparence -->
+                <div class="parametres-section">
+                    <h3 class="parametres-section-titre" data-traduction="apparence">Apparence</h3>
+                    <div class="parametres-liste">
+                        <div class="parametres-item" onclick="ouvrirModaleLangue()">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="langue">Langue</span>
+                            </div>
+                            <div class="parametres-item-valeur">
+                                <span id="langue-actuelle">Francais</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="parametres-item" onclick="ouvrirModaleTheme()">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="5"/>
+                                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="theme">Theme</span>
+                            </div>
+                            <div class="parametres-item-valeur">
+                                <span id="theme-actuel" data-traduction="theme_systeme">Systeme</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section Sécurité -->
+                <div class="parametres-section">
+                    <h3 class="parametres-section-titre" data-traduction="securite">Securite</h3>
+                    <div class="parametres-liste">
+                        <div class="parametres-item" onclick="ouvrirModaleMotDePasse()">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="changer_mot_passe">Changer le mot de passe</span>
+                            </div>
+                            <div class="parametres-item-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="parametres-item" onclick="configurerEmpreinte()">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 10a2 2 0 00-2 2c0 1.02-.1 2.51-.26 4M14 13a12.02 12.02 0 00-.34 3.42M10 21c1.5 0 3-1 3-3a3 3 0 00-3-3 3 3 0 00-3 3c0 2 1.5 3 3 3z"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="empreinte_digitale">Empreinte digitale</span>
+                            </div>
+                            <div class="parametres-item-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="parametres-item" onclick="configurerCarteIdentite()">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                        <circle cx="9" cy="10" r="2"/>
+                                        <path d="M15 8h2M15 12h2M7 16h10"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="carte_identite">Carte d'identite (QR)</span>
+                            </div>
+                            <div class="parametres-item-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section Sauvegarde -->
+                <div class="parametres-section">
+                    <h3 class="parametres-section-titre" data-traduction="sauvegarde">Sauvegarde</h3>
+                    <div class="parametres-liste">
+                        <div class="parametres-item" onclick="creerCompteCloud()">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="compte_cloud">Compte cloud</span>
+                            </div>
+                            <div class="parametres-item-valeur">
+                                <span data-traduction="non_configure">Non configure</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section Informations -->
+                <div class="parametres-section">
+                    <h3 class="parametres-section-titre" data-traduction="informations">Informations</h3>
+                    <div class="parametres-liste">
+                        <div class="parametres-item">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 16v-4M12 8h.01"/>
+                                    </svg>
+                                </div>
+                                <span class="parametres-item-texte" data-traduction="version">Version</span>
+                            </div>
+                            <div class="parametres-item-valeur">1.0.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==========================================
+             BARRE DE NAVIGATION INFÉRIEURE
+        ========================================== -->
+        <nav class="navigation" id="navigation">
+            <button class="navigation-item actif" data-ecran="accueil" onclick="naviguer('accueil')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                    <polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+                <span data-traduction="accueil">Accueil</span>
+            </button>
+            <button class="navigation-item" data-ecran="produits" onclick="naviguer('produits')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                <span data-traduction="produits">Produits</span>
+            </button>
+            <button class="navigation-item" data-ecran="mouvements" onclick="naviguer('mouvements')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+                <span data-traduction="mouvements">Mvt</span>
+            </button>
+            <button class="navigation-item" data-ecran="rapport" onclick="naviguer('rapport')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span data-traduction="rapport">Rapport</span>
+            </button>
+        </nav>
+    </div>
+    
+    <!-- ==========================================
+         MODALES
+    ========================================== -->
+    
+    <!-- Modale pour ajouter/modifier un produit -->
+    <div class="modale-overlay" id="modale-produit">
+        <div class="modale">
+            <div class="modale-poignee"></div>
+            <h2 class="modale-titre" data-traduction="nouveau_produit">Nouveau produit</h2>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="reference">Reference / Code-barres</label>
+                <input type="text" class="formulaire-input" id="produit-reference" data-traduction-placeholder="entrer_reference" placeholder="Entrer la reference">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="nom_produit">Nom du produit</label>
+                <input type="text" class="formulaire-input" id="produit-nom" data-traduction-placeholder="entrer_nom" placeholder="Entrer le nom">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="emplacements_quantites">Emplacements et quantites</label>
+                <div class="emplacement-liste" id="liste-emplacements">
+                    <div class="emplacement-item">
+                        <input type="text" class="formulaire-input" placeholder="Emplacement" data-traduction-placeholder="emplacement" style="flex:1">
+                        <input type="number" class="formulaire-input" placeholder="Qte" data-traduction-placeholder="qte" style="width:80px">
+                    </div>
+                </div>
+                <button class="emplacement-ajouter" onclick="ajouterEmplacement()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span data-traduction="ajouter_emplacement">Ajouter un emplacement</span>
+                </button>
+            </div>
+            
+            <div class="formulaire-ligne">
+                <div class="formulaire-groupe">
+                    <label class="formulaire-label" data-traduction="qte_min">Quantite min.</label>
+                    <input type="number" class="formulaire-input" id="produit-qte-min" placeholder="0">
+                </div>
+                <div class="formulaire-groupe">
+                    <label class="formulaire-label" data-traduction="qte_max">Quantite max.</label>
+                    <input type="number" class="formulaire-input" id="produit-qte-max" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="prix_achat_unitaire">Prix d'achat unitaire (FC)</label>
+                <input type="number" class="formulaire-input" id="produit-prix" placeholder="0">
+            </div>
+            
+            <button class="formulaire-bouton" data-traduction="enregistrer" onclick="enregistrerProduit()">Enregistrer</button>
+            <button class="formulaire-bouton secondaire" data-traduction="annuler" onclick="fermerModale('modale-produit')">Annuler</button>
+        </div>
+    </div>
+    
+    <!-- Modale détail produit avec QR code -->
+    <div class="modale-overlay" id="modale-detail-produit">
+        <div class="modale">
+            <div class="modale-poignee"></div>
+            
+            <div class="produit-detail-entete">
+                <h2 class="produit-detail-nom" id="detail-nom">Nom du produit</h2>
+                <p class="produit-detail-ref" id="detail-reference">REF-001</p>
+            </div>
+            
+            <div class="produit-qr">
+                <div class="produit-qr-code" id="qr-code-container">
+                    <!-- QR code généré ici -->
+                </div>
+                <span class="produit-qr-label" data-traduction="scanner_qr">Scannez pour identifier</span>
+            </div>
+            
+            <div class="produit-detail-section">
+                <h4 class="produit-detail-section-titre" data-traduction="informations_produit">Informations</h4>
+                <div class="produit-detail-grille">
+                    <div class="produit-detail-carte">
+                        <div class="produit-detail-carte-label" data-traduction="stock_total">Stock total</div>
+                        <div class="produit-detail-carte-valeur" id="detail-stock">0</div>
+                    </div>
+                    <div class="produit-detail-carte">
+                        <div class="produit-detail-carte-label" data-traduction="prix_unitaire">Prix unitaire</div>
+                        <div class="produit-detail-carte-valeur fc" id="detail-prix">0</div>
+                    </div>
+                    <div class="produit-detail-carte">
+                        <div class="produit-detail-carte-label" data-traduction="valeur_stock">Valeur stock</div>
+                        <div class="produit-detail-carte-valeur fc" id="detail-valeur">0</div>
+                    </div>
+                    <div class="produit-detail-carte">
+                        <div class="produit-detail-carte-label" data-traduction="etat">Etat</div>
+                        <div class="produit-detail-carte-valeur" id="detail-etat">--</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="produit-detail-section">
+                <h4 class="produit-detail-section-titre" data-traduction="emplacements">Emplacements</h4>
+                <div class="produit-emplacements" id="detail-emplacements">
+                    <!-- Emplacements injectés ici -->
+                </div>
+            </div>
+            
+            <div class="produit-detail-actions">
+                <button class="produit-detail-btn principal" onclick="modifierProduit()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    <span data-traduction="modifier">Modifier</span>
+                </button>
+                <button class="produit-detail-btn danger" onclick="supprimerProduit()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3,6 5,6 21,6"/>
+                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                    <span data-traduction="supprimer">Supprimer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modale sélection langue -->
+    <div class="modale-overlay" id="modale-langue">
+        <div class="modale">
+            <div class="modale-poignee"></div>
+            <h2 class="modale-titre" data-traduction="choisir_langue">Choisir une langue</h2>
+            
+            <div class="langue-modal-liste">
+                <div class="langue-modal-option" data-langue="fr" onclick="changerLangue('fr')">
+                    <div class="langue-modal-drapeau">FR</div>
+                    <span class="langue-modal-nom">Francais</span>
+                    <svg class="langue-modal-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                </div>
+                <div class="langue-modal-option" data-langue="en" onclick="changerLangue('en')">
+                    <div class="langue-modal-drapeau">EN</div>
+                    <span class="langue-modal-nom">English</span>
+                    <svg class="langue-modal-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                </div>
+                <div class="langue-modal-option" data-langue="hi" onclick="changerLangue('hi')">
+                    <div class="langue-modal-drapeau">HI</div>
+                    <span class="langue-modal-nom">Hindi</span>
+                    <svg class="langue-modal-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                </div>
+                <div class="langue-modal-option" data-langue="ln" onclick="changerLangue('ln')">
+                    <div class="langue-modal-drapeau">LN</div>
+                    <span class="langue-modal-nom">Lingala</span>
+                    <svg class="langue-modal-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                </div>
+                <div class="langue-modal-option" data-langue="sw" onclick="changerLangue('sw')">
+                    <div class="langue-modal-drapeau">SW</div>
+                    <span class="langue-modal-nom">Swahili</span>
+                    <svg class="langue-modal-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <button class="formulaire-bouton secondaire" data-traduction="fermer" onclick="fermerModale('modale-langue')" style="margin-top: 16px;">Fermer</button>
+        </div>
+    </div>
+    
+    <!-- Modale entrée stock -->
+    <div class="modale-overlay" id="modale-entree">
+        <div class="modale">
+            <div class="modale-poignee"></div>
+            <h2 class="modale-titre" data-traduction="entree_stock">Entree de stock</h2>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="produit">Produit</label>
+                <input type="text" class="formulaire-input" data-traduction-placeholder="selectionner_produit" placeholder="Selectionner un produit" onclick="ouvrirSelectionProduitPourEntree()" readonly id="entree-produit">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="quantite">Quantite</label>
+                <input type="number" class="formulaire-input" placeholder="0" id="entree-quantite">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="emplacement">Emplacement</label>
+                <input type="text" class="formulaire-input" data-traduction-placeholder="entrer_emplacement" placeholder="Entrer l'emplacement" id="entree-emplacement">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="prix_achat">Prix d'achat unitaire (FC)</label>
+                <input type="number" class="formulaire-input" placeholder="0" id="entree-prix">
+            </div>
+            
+            <button class="formulaire-bouton" data-traduction="enregistrer" onclick="enregistrerEntree()">Enregistrer</button>
+            <button class="formulaire-bouton secondaire" data-traduction="annuler" onclick="fermerModale('modale-entree')">Annuler</button>
+        </div>
+    </div>
+    
+    <!-- Modale sortie stock -->
+    <div class="modale-overlay" id="modale-sortie">
+        <div class="modale">
+            <div class="modale-poignee"></div>
+            <h2 class="modale-titre" data-traduction="sortie_stock">Sortie de stock</h2>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="produit">Produit</label>
+                <input type="text" class="formulaire-input" data-traduction-placeholder="selectionner_produit" placeholder="Selectionner un produit" onclick="ouvrirSelectionProduitPourSortie()" readonly id="sortie-produit">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="quantite">Quantite</label>
+                <input type="number" class="formulaire-input" placeholder="0" id="sortie-quantite">
+            </div>
+            
+            <div class="formulaire-groupe">
+                <label class="formulaire-label" data-traduction="emplacement">Emplacement</label>
+                <input type="text" class="formulaire-input" data-traduction-placeholder="entrer_emplacement" placeholder="Entrer l'emplacement" id="sortie-emplacement">
+            </div>
+            
+            <button class="formulaire-bouton" data-traduction="enregistrer" onclick="enregistrerSortie()">Enregistrer</button>
+            <button class="formulaire-bouton secondaire" data-traduction="annuler" onclick="fermerModale('modale-sortie')">Annuler</button>
+        </div>
+    </div>
+    
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- ==========================================
+         JAVASCRIPT
+    ========================================== -->
+    <script>
+        // ============================================
+        // FICHIER DE TRADUCTION - FRANÇAIS
+        // Ce fichier contient toutes les traductions françaises
+        // Les autres langues pourront être créées sur ce modèle
+        // ============================================
+        const traductions = {
+            fr: {
+                // Écran langue
+                bienvenue: "Bienvenue",
+                choisir_langue: "Choisissez votre langue",
+                hindi: "Hindi",
+                inde: "Inde",
+                rdc: "RDC",
+                
+                // Onboarding
+                onboarding_produits_titre: "Gerez vos produits",
+                onboarding_produits_desc: "Ajoutez vos articles, definissez les emplacements et suivez les quantites en toute simplicite.",
+                onboarding_mouvements_titre: "Entrees et sorties",
+                onboarding_mouvements_desc: "Enregistrez facilement les entrees et sorties de stock. Les mises a jour sont automatiques.",
+                onboarding_inventaire_titre: "Inventaire precise",
+                onboarding_inventaire_desc: "Corrigez les ecarts entre le stock theorique et reel. Gardez votre stock toujours a jour.",
+                onboarding_rapports_titre: "Rapports detailles",
+                onboarding_rapports_desc: "Generez des rapports de stock, exportez en PDF et partagez facilement via WhatsApp ou Gmail.",
+                suivant: "Suivant",
+                passer: "Passer",
+                
+                // Thème
+                choisir_theme: "Choisissez un theme",
+                theme_desc: "Vous pourrez le changer plus tard dans les parametres",
+                theme_systeme: "Systeme",
+                theme_systeme_desc: "Suit les parametres de votre appareil",
+                theme_sombre: "Sombre",
+                theme_sombre_desc: "Ideal pour une utilisation nocturne",
+                theme_clair: "Clair",
+                theme_clair_desc: "Apparence classique et lumineuse",
+                continuer: "Continuer",
+                
+                // Sécurité
+                securite_titre: "Securisez votre application",
+                securite_desc: "Definissez un mot de passe pour proteger vos donnees",
+                mot_de_passe: "Mot de passe",
+                commencer: "Commencer",
+                ou_continuer: "Ou continuer avec",
+                
+                // Accueil
+                bonjour: "Bonjour",
+                bienvenue_accueil: "Bienvenue",
+                rechercher_produit: "Rechercher un produit...",
+                produits: "Produits",
+                valeur_stock: "Valeur stock",
+                actions_rapides: "Actions rapides",
+                entree: "Entree",
+                sortie: "Sortie",
+                produit: "Produit",
+                inventaire: "Inventaire",
+                derniers_produits: "Derniers produits",
+                
+                // Navigation
+                accueil: "Accueil",
+                mouvements: "Mvt",
+                rapport: "Rapport",
+                
+                // Produits
+                tous_produits: "Tous les produits",
+                tous: "Tous",
+                en_stock: "En stock",
+                stock_faible: "Stock faible",
+                rupture: "Rupture",
+                
+                // Formulaire produit
+                nouveau_produit: "Nouveau produit",
+                reference: "Reference / Code-barres",
+                entrer_reference: "Entrer la reference",
+                nom_produit: "Nom du produit",
+                entrer_nom: "Entrer le nom",
+                emplacements_quantites: "Emplacements et quantites",
+                emplacement: "Emplacement",
+                qte: "Qte",
+                ajouter_emplacement: "Ajouter un emplacement",
+                qte_min: "Quantite min.",
+                qte_max: "Quantite max.",
+                prix_achat_unitaire: "Prix d'achat unitaire (FC)",
+                enregistrer: "Enregistrer",
+                annuler: "Annuler",
+                
+                // Mouvements
+                mouvements_stock: "Mouvements de stock",
+                selectionner_produit: "Selectionner un produit...",
+                prix_unitaire: "Prix unitaire (FC)",
+                prix_achat: "Prix d'achat",
+                quantite: "Quantite",
+                entrer_quantite: "Entrer la quantite",
+                entrer_emplacement: "Entrer l'emplacement",
+                
+                // Inventaire
+                inventaire_desc: "Ajustez les quantites reelles pour chaque produit",
+                valider_inventaire: "Valider l'inventaire",
+                
+                // Rapport
+                rapport_stock: "Rapport de stock",
+                valeur_totale: "Valeur totale",
+                nombre_articles: "Nombre d'articles",
+                date_heure: "Date et heure",
+                pdf: "PDF",
+                article: "Article",
+                pu: "PU",
+                etat: "Etat",
+                
+                // Paramètres
+                parametres: "Parametres",
+                apparence: "Apparence",
+                langue: "Langue",
+                theme: "Theme",
+                securite: "Securite",
+                changer_mot_passe: "Changer le mot de passe",
+                empreinte_digitale: "Empreinte digitale",
+                carte_identite: "Carte d'identite (QR)",
+                sauvegarde: "Sauvegarde",
+                compte_cloud: "Compte cloud",
+                non_configure: "Non configure",
+                informations: "Informations",
+                version: "Version",
+                
+                // Détail produit
+                scanner_qr: "Scannez pour identifier",
+                informations_produit: "Informations",
+                stock_total: "Stock total",
+                emplacements: "Emplacements",
+                modifier: "Modifier",
+                supprimer: "Supprimer",
+                
+                // Entrée/Sortie
+                entree_stock: "Entree de stock",
+                sortie_stock: "Sortie de stock",
+                
+                // États
+                surstock: "Surstock",
+                
+                // Messages
+                produit_ajoute: "Produit ajoute avec succes",
+                produit_modifie: "Produit modifie",
+                produit_supprime: "Produit supprime",
+                entree_enregistree: "Entree enregistree",
+                sortie_enregistree: "Sortie enregistree",
+                inventaire_valide: "Inventaire valide",
+                champ_requis: "Ce champ est requis",
+                quantite_insuffisante: "Quantite insuffisante en stock",
+                fermer: "Fermer"
+            }
+        };
+        
+        // ============================================
+        // VARIABLES GLOBALES
+        // État de l'application
+        // ============================================
+        let langueActuelle = 'fr'; // Langue par défaut
+        let themeActuel = 'systeme'; // Thème par défaut
+        let slideOnboarding = 0; // Slide actuel de l'onboarding
+        let produitSelectionne = null; // Produit sélectionné pour les opérations
+        let produits = []; // Liste des produits (stockage local)
+        let produitEnModification = null; // Produit en cours de modification
+        
+        // ============================================
+        // INITIALISATION
+        // Se lance au chargement de la page
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données sauvegardées
+            chargerDonnees();
+            
+            // Vérifier si l'utilisateur a déjà fait l'onboarding
+            verifierEtatApplication();
+            
+            // Initialiser le thème système
+            initialiserThemeSysteme();
+            
+            // Mettre à jour l'affichage
+            mettreAJourStatistiques();
+            afficherProduits();
+            afficherInventaire();
+            mettreAJourRapport();
+        });
+        
+        // ============================================
+        // GESTION DE LA LANGUE
+        // Permet de changer la langue de l'interface
+        // ============================================
+        function selectionnerLangue(langue) {
+            langueActuelle = langue;
+            localStorage.setItem('langue', langue);
+            traduireInterface();
+            
+            // Passer à l'écran d'onboarding
+            naviguerVersEcran('ecran-onboarding');
+        }
+        
+        // Cette fonction traduit tous les éléments avec data-traduction
+        function traduireInterface() {
+            const elements = document.querySelectorAll('[data-traduction]');
+            elements.forEach(function(element) {
+                const cle = element.getAttribute('data-traduction');
+                if (traductions[langueActuelle] && traductions[langueActuelle][cle]) {
+                    element.textContent = traductions[langueActuelle][cle];
+                }
+            });
+            
+            // Traduire les placeholders
+            const inputs = document.querySelectorAll('[data-traduction-placeholder]');
+            inputs.forEach(function(input) {
+                const cle = input.getAttribute('data-traduction-placeholder');
+                if (traductions[langueActuelle] && traductions[langueActuelle][cle]) {
+                    input.placeholder = traductions[langueActuelle][cle];
+                }
+            });
+        }
+        
+        // Changer la langue depuis les paramètres
+        function changerLangue(langue) {
+            langueActuelle = langue;
+            localStorage.setItem('langue', langue);
+            traduireInterface();
+            
+            // Mettre à jour l'affichage de la langue actuelle
+            const nomsLangues = {
+                fr: 'Francais',
+                en: 'English',
+                hi: 'Hindi',
+                ln: 'Lingala',
+                sw: 'Swahili'
+            };
+            document.getElementById('langue-actuelle').textContent = nomsLangues[langue];
+            
+            // Mettre à jour la sélection visuelle
+            document.querySelectorAll('.langue-modal-option').forEach(function(option) {
+                option.classList.remove('selectionne');
+                if (option.getAttribute('data-langue') === langue) {
+                    option.classList.add('selectionne');
+                }
+            });
+            
+            fermerModale('modale-langue');
+            afficherToast(traductions[fr].langue + ' changee');
+        }
+        
+        // ============================================
+        // GESTION DU THÈME
+        // ============================================
+        function selectionnerThemeOption(element) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.theme-option').forEach(function(opt) {
+                opt.classList.remove('selectionne');
+            });
+            
+            // Ajouter la sélection
+            element.classList.add('selectionne');
+            themeActuel = element.getAttribute('data-theme-valeur');
+        }
+        
+        function confirmerTheme() {
+            appliquerTheme(themeActuel);
+            localStorage.setItem('theme', themeActuel);
+            
+            // Passer à l'écran de sécurité
+            naviguerVersEcran('ecran-securite');
+        }
+        
+        function appliquerTheme(theme) {
+            if (theme === 'systeme') {
+                // Détecter le thème système
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'sombre');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'clair');
+                }
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            
+            // Mettre à jour l'affichage dans les paramètres
+            const themeActuelElement = document.getElementById('theme-actuel');
+            if (themeActuelElement) {
+                themeActuelElement.textContent = traductions[fr]['theme_' + theme] || theme;
+            }
+        }
+        
+        function initialiserThemeSysteme() {
+            // Écouter les changements de thème système
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                    if (themeActuel === 'systeme') {
+                        appliquerTheme('systeme');
+                    }
+                });
+            }
+        }
+        
+        // ============================================
+        // NAVIGATION ENTRE ÉCRANS
+        // ============================================
+        function naviguerVersEcran(idEcran) {
+            const ecranActuel = document.querySelector('.ecran.actif');
+            const nouvelEcran = document.getElementById(idEcran);
+            
+            if (ecranActuel && nouvelEcran && ecranActuel !== nouvelEcran) {
+                ecranActuel.classList.remove('actif');
+                ecranActuel.classList.add('precedent');
+                
+                nouvelEcran.classList.add('actif');
+                
+                // Retirer la classe précédent après l'animation
+                setTimeout(function() {
+                    ecranActuel.classList.remove('precedent');
+                }, 350);
+            }
+        }
+        
+        // Navigation depuis la barre inférieure
+        function naviguer(ecran) {
+            // Mettre à jour la navigation
+            document.querySelectorAll('.navigation-item').forEach(function(item) {
+                item.classList.remove('actif');
+                if (item.getAttribute('data-ecran') === ecran) {
+                    item.classList.add('actif');
+                }
+            });
+            
+            naviguerVersEcran('ecran-' + ecran);
+        }
+        
+        // ============================================
+        // ONBOARDING
+        // ============================================
+        function onboardingSuivant() {
+            const slides = document.querySelectorAll('.onboarding-slide');
+            const indicateurs = document.querySelectorAll('.onboarding-indicateur');
+            
+            if (slideOnboarding < slides.length - 1) {
+                slides[slideOnboarding].classList.remove('actif');
+                indicateurs[slideOnboarding].classList.remove('actif');
+                
+                slideOnboarding++;
+                
+                slides[slideOnboarding].classList.add('actif');
+                indicateurs[slideOnboarding].classList.add('actif');
+            } else {
+                // Dernier slide, passer au thème
+                naviguerVersEcran('ecran-theme');
+            }
+        }
+        
+        function passerOnboarding() {
+            naviguerVersEcran('ecran-theme');
+        }
+        
+        // ============================================
+        // SÉCURITÉ
+        // ============================================
+        function definirMotDePasse() {
+            const motDePasse = document.getElementById('mot-de-passe-input').value;
+            
+            if (motDePasse.length >= 4) {
+                localStorage.setItem('mot_de_passe', motDePasse);
+                localStorage.setItem('onboarding_complete', 'true');
+                
+                // Afficher la navigation et aller à l'accueil
+                document.getElementById('navigation').style.display = 'flex';
+                naviguerVersEcran('ecran-accueil');
+            } else {
+                afficherToast('Le mot de passe doit contenir au moins 4 caracteres');
+            }
+        }
+        
+        function utiliserEmpreinte() {
+            // Simulation - Capacitor permettra d'utiliser l'API biométrique
+            afficherToast('Empreinte digitale configuree');
+            localStorage.setItem('empreinte_active', 'true');
+            localStorage.setItem('onboarding_complete', 'true');
+            document.getElementById('navigation').style.display = 'flex';
+            naviguerVersEcran('ecran-accueil');
+        }
+        
+        function scannerCarte() {
+            // Simulation - Capacitor permettra de scanner un QR code
+            afficherToast('Fonctionnalite disponible avec Capacitor');
+        }
+        
+        // ============================================
+        // VÉRIFICATION ÉTAT APPLICATION
+        // ============================================
+        function verifierEtatApplication() {
+            const onboardingComplete = localStorage.getItem('onboarding_complete');
+            const langueSauvegardee = localStorage.getItem('langue');
+            const themeSauvegarde = localStorage.getItem('theme');
+            
+            if (langueSauvegardee) {
+                langueActuelle = langueSauvegardee;
+                traduireInterface();
+            }
+            
+            if (themeSauvegarde) {
+                themeActuel = themeSauvegarde;
+                appliquerTheme(themeActuel);
+            }
+            
+            if (onboardingComplete === 'true') {
+                // L'utilisateur a déjà fait l'onboarding
+                document.getElementById('navigation').style.display = 'flex';
+                naviguerVersEcran('ecran-accueil');
+            } else {
+                // Masquer la navigation pendant l'onboarding
+                document.getElementById('navigation').style.display = 'none';
+            }
+        }
+        
+        // ============================================
+        // GESTION DES PRODUITS
+        // ============================================
+        function ouvrirModaleProduit() {
+            produitEnModification = null;
+            document.getElementById('produit-reference').value = '';
+            document.getElementById('produit-nom').value = '';
+            document.getElementById('produit-qte-min').value = '';
+            document.getElementById('produit-qte-max').value = '';
+            document.getElementById('produit-prix').value = '';
+            
+            // Réinitialiser les emplacements
+            const listeEmplacements = document.getElementById('liste-emplacements');
+            listeEmplacements.innerHTML = '<div class="emplacement-item"><input type="text" class="formulaire-input" placeholder="Emplacement" style="flex:1"><input type="number" class="formulaire-input" placeholder="Qte" style="width:80px"></div>';
+            
+            ouvrirModale('modale-produit');
+        }
+        
+        function ajouterEmplacement() {
+            const listeEmplacements = document.getElementById('liste-emplacements');
+            const nouvelEmplacement = document.createElement('div');
+            nouvelEmplacement.className = 'emplacement-item';
+            nouvelEmplacement.innerHTML = '<input type="text" class="formulaire-input" placeholder="Emplacement" style="flex:1"><input type="number" class="formulaire-input" placeholder="Qte" style="width:80px"><button class="emplacement-supprimer" onclick="this.parentElement.remove()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+            listeEmplacements.appendChild(nouvelEmplacement);
+        }
+        
+        function enregistrerProduit() {
+            const reference = document.getElementById('produit-reference').value.trim();
+            const nom = document.getElementById('produit-nom').value.trim();
+            const qteMin = parseInt(document.getElementById('produit-qte-min').value) || 0;
+            const qteMax = parseInt(document.getElementById('produit-qte-max').value) || 0;
+            const prix = parseFloat(document.getElementById('produit-prix').value) || 0;
+            
+            // Récupérer les emplacements
+            const emplacements = [];
+            const itemsEmplacements = document.querySelectorAll('#liste-emplacements .emplacement-item');
+            itemsEmplacements.forEach(function(item) {
+                const inputs = item.querySelectorAll('input');
+                const zone = inputs[0].value.trim();
+                const qte = parseInt(inputs[1].value) || 0;
+                if (zone) {
+                    emplacements.push({ zone: zone, quantite: qte });
+                }
+            });
+            
+            // Calculer la quantité totale
+            const quantiteTotale = emplacements.reduce(function(total, emp) {
+                return total + emp.quantite;
+            }, 0);
+            
+            if (!nom) {
+                afficherToast('Le nom du produit est requis');
+                return;
+            }
+            
+            const produit = {
+                id: produitEnModification ? produitEnModification.id : Date.now().toString(),
+                reference: reference,
+                nom: nom,
+                emplacements: emplacements,
+                quantiteTotale: quantiteTotale,
+                qteMin: qteMin,
+                qteMax: qteMax,
+                prix: prix,
+                dateCreation: produitEnModification ? produitEnModification.dateCreation : new Date().toISOString()
+            };
+            
+            if (produitEnModification) {
+                // Modifier le produit existant
+                const index = produits.findIndex(function(p) { return p.id === produit.id; });
+                if (index !== -1) {
+                    produits[index] = produit;
+                }
+            } else {
+                // Ajouter le nouveau produit
+                produits.unshift(produit);
+            }
+            
+            // Sauvegarder et mettre à jour l'affichage
+            sauvegarderDonnees();
+            mettreAJourStatistiques();
+            afficherProduits();
+            afficherInventaire();
+            mettreAJourRapport();
+            
+            fermerModale('modale-produit');
+            afficherToast(traductions[fr].produit_ajoute);
+        }
+        
+        function afficherProduits() {
+            const listeAccueil = document.getElementById('liste-produits-accueil');
+            const listeComplete = document.getElementById('liste-produits');
+            
+            // Trier par date de création (plus récent d'abord)
+            const produitsTries = produits.slice().sort(function(a, b) {
+                return new Date(b.dateCreation) - new Date(a.dateCreation);
+            });
+            
+            // Afficher dans l'accueil (max 5)
+            if (listeAccueil) {
+                listeAccueil.innerHTML = '';
+                produitsTries.slice(0, 5).forEach(function(produit) {
+                    listeAccueil.appendChild(creerElementProduit(produit));
+                });
+                
+                if (produits.length === 0) {
+                    listeAccueil.innerHTML = '<p style="text-align:center;color:var(--texte-secondaire);padding:20px;">Aucun produit</p>';
+                }
+            }
+            
+            // Afficher dans la liste complète
+            if (listeComplete) {
+                listeComplete.innerHTML = '';
+                produitsTries.forEach(function(produit) {
+                    listeComplete.appendChild(creerElementProduit(produit));
+                });
+                
+                if (produits.length === 0) {
+                    listeComplete.innerHTML = '<p style="text-align:center;color:var(--texte-secondaire);padding:40px;">Aucun produit. Appuyez sur + pour ajouter.</p>';
+                }
+            }
+        }
+        
+        function creerElementProduit(produit) {
+            const div = document.createElement('div');
+            div.className = 'accueil-produit';
+            div.onclick = function() { ouvrirDetailProduit(produit.id); };
+            
+            // Déterminer l'état du stock
+            let etat = 'en-stock';
+            let texteEtat = 'En stock';
+            
+            if (produit.quantiteTotale <= 0) {
+                etat = 'rupture';
+                texteEtat = 'Rupture';
+            } else if (produit.quantiteTotale <= produit.qteMin) {
+                etat = 'faible';
+                texteEtat = 'Faible';
+            } else if (produit.qteMax > 0 && produit.quantiteTotale >= produit.qteMax) {
+                etat = 'surstock';
+                texteEtat = 'Surstock';
+            }
+            
+            div.innerHTML = '<div class="accueil-produit-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div><div class="accueil-produit-info"><div class="accueil-produit-nom">' + produit.nom + '</div><div class="accueil-produit-ref">' + (produit.reference || 'N/A') + '</div></div><div class="accueil-produit-stock"><div class="accueil-produit-qte">' + produit.quantiteTotale + '</div><span class="accueil-produit-etat ' + etat + '">' + texteEtat + '</span></div>';
+            
+            return div;
+        }
+        
+        function filtrerProduits(filtre, bouton) {
+            // Mettre à jour les boutons
+            document.querySelectorAll('.produits-filtre').forEach(function(btn) {
+                btn.classList.remove('actif');
+            });
+            bouton.classList.add('actif');
+            
+            // Filtrer et afficher
+            const listeComplete = document.getElementById('liste-produits');
+            listeComplete.innerHTML = '';
+            
+            let produitsFiltres = produits;
+            
+            if (filtre === 'en-stock') {
+                produitsFiltres = produits.filter(function(p) { return p.quantiteTotale > p.qteMin; });
+            } else if (filtre === 'faible') {
+                produitsFiltres = produits.filter(function(p) { return p.quantiteTotale > 0 && p.quantiteTotale <= p.qteMin; });
+            } else if (filtre === 'rupture') {
+                produitsFiltres = produits.filter(function(p) { return p.quantiteTotale <= 0; });
+            }
+            
+            produitsFiltres.forEach(function(produit) {
+                listeComplete.appendChild(creerElementProduit(produit));
+            });
+            
+            if (produitsFiltres.length === 0) {
+                listeComplete.innerHTML = '<p style="text-align:center;color:var(--texte-secondaire);padding:40px;">Aucun produit dans cette categorie</p>';
+            }
+        }
+        
+        function rechercherProduit(recherche) {
+            const terme = recherche.toLowerCase().trim();
+            
+            if (!terme) {
+                afficherProduits();
+                return;
+            }
+            
+            const resultats = produits.filter(function(p) {
+                return p.nom.toLowerCase().includes(terme) || (p.reference && p.reference.toLowerCase().includes(terme));
+            });
+            
+            const listeAccueil = document.getElementById('liste-produits-accueil');
+            listeAccueil.innerHTML = '';
+            
+            resultats.forEach(function(produit) {
+                listeAccueil.appendChild(creerElementProduit(produit));
+            });
+            
+            if (resultats.length === 0) {
+                listeAccueil.innerHTML = '<p style="text-align:center;color:var(--texte-secondaire);padding:20px;">Aucun resultat</p>';
+            }
+        }
+        
+        // ============================================
+        // DÉTAIL PRODUIT AVEC QR CODE
+        // ============================================
+        function ouvrirDetailProduit(id) {
+            const produit = produits.find(function(p) { return p.id === id; });
+            if (!produit) return;
+            
+            produitSelectionne = produit;
+            
+            // Remplir les informations
+            document.getElementById('detail-nom').textContent = produit.nom;
+            document.getElementById('detail-reference').textContent = produit.reference || 'N/A';
+            document.getElementById('detail-stock').textContent = produit.quantiteTotale;
+            document.getElementById('detail-prix').textContent = formatNombre(produit.prix);
+            document.getElementById('detail-valeur').textContent = formatNombre(produit.quantiteTotale * produit.prix);
+            
+            // Déterminer l'état
+            let etat = 'En stock';
+            if (produit.quantiteTotale <= 0) {
+                etat = 'Rupture';
+            } else if (produit.quantiteTotale <= produit.qteMin) {
+                etat = 'Faible';
+            } else if (produit.qteMax > 0 && produit.quantiteTotale >= produit.qteMax) {
+                etat = 'Surstock';
+            }
+            document.getElementById('detail-etat').textContent = etat;
+            
+            // Afficher les emplacements
+            const conteneurEmplacements = document.getElementById('detail-emplacements');
+            conteneurEmplacements.innerHTML = '';
+            produit.emplacements.forEach(function(emp) {
+                const div = document.createElement('div');
+                div.className = 'produit-emplacement';
+                div.innerHTML = '<span class="produit-emplacement-zone">' + emp.zone + '</span><span class="produit-emplacement-qte">' + emp.quantite + '</span>';
+                conteneurEmplacements.appendChild(div);
+            });
+            
+            // Générer le QR code
+            genererQRCode(produit);
+            
+            ouvrirModale('modale-detail-produit');
+        }
+        
+        // Génère un QR code simple en SVG
+        function genererQRCode(produit) {
+            const conteneur = document.getElementById('qr-code-container');
+            
+            // Créer un QR code visuel basique (pattern représentant l'ID)
+            const id = produit.id;
+            const taille = 140;
+            const cellules = 21;
+            const tailleCellule = taille / cellules;
+            
+            let svg = '<svg width="' + taille + '" height="' + taille + '" viewBox="0 0 ' + taille + ' ' + taille + '">';
+            
+            // Fond blanc
+            svg += '<rect width="' + taille + '" height="' + taille + '" fill="white"/>';
+            
+            // Générer un pattern basé sur l'ID du produit
+            const seed = id.split('').reduce(function(a, b) { return a + b.charCodeAt(0); }, 0);
+            
+            // Carrés de positionnement (coins)
+            const positions = [[0, 0], [cellules - 7, 0], [0, cellules - 7]];
+            positions.forEach(function(pos) {
+                // Carré extérieur
+                svg += '<rect x="' + (pos[0] * tailleCellule) + '" y="' + (pos[1] * tailleCellule) + '" width="' + (7 * tailleCellule) + '" height="' + (7 * tailleCellule) + '" fill="#006f78"/>';
+                // Carré blanc intérieur
+                svg += '<rect x="' + ((pos[0] + 1) * tailleCellule) + '" y="' + ((pos[1] + 1) * tailleCellule) + '" width="' + (5 * tailleCellule) + '" height="' + (5 * tailleCellule) + '" fill="white"/>';
+                // Carré central
+                svg += '<rect x="' + ((pos[0] + 2) * tailleCellule) + '" y="' + ((pos[1] + 2) * tailleCellule) + '" width="' + (3 * tailleCellule) + '" height="' + (3 * tailleCellule) + '" fill="#006f78"/>';
+            });
+            
+            // Remplir le reste avec un pattern pseudo-aléatoire
+            for (let i = 0; i < cellules; i++) {
+                for (let j = 0; j < cellules; j++) {
+                    // Éviter les zones de positionnement
+                    if ((i < 8 && j < 8) || (i < 8 && j > cellules - 9) || (i > cellules - 9 && j < 8)) continue;
+                    
+                    // Pattern pseudo-aléatoire basé sur l'ID
+                    const hash = ((seed * (i + 1) * (j + 1)) % 100);
+                    if (hash > 50) {
+                        svg += '<rect x="' + (i * tailleCellule) + '" y="' + (j * tailleCellule) + '" width="' + tailleCellule + '" height="' + tailleCellule + '" fill="#006f78"/>';
+                    }
+                }
+            }
+            
+            svg += '</svg>';
+            conteneur.innerHTML = svg;
+        }
+        
+        function modifierProduit() {
+            if (!produitSelectionne) return;
+            
+            fermerModale('modale-detail-produit');
+            
+            // Pré-remplir le formulaire
+            produitEnModification = produitSelectionne;
+            
+            document.getElementById('produit-reference').value = produitSelectionne.reference || '';
+            document.getElementById('produit-nom').value = produitSelectionne.nom;
+            document.getElementById('produit-qte-min').value = produitSelectionne.qteMin || '';
+            document.getElementById('produit-qte-max').value = produitSelectionne.qteMax || '';
+            document.getElementById('produit-prix').value = produitSelectionne.prix || '';
+            
+            // Remplir les emplacements
+            const listeEmplacements = document.getElementById('liste-emplacements');
+            listeEmplacements.innerHTML = '';
+            produitSelectionne.emplacements.forEach(function(emp) {
+                const div = document.createElement('div');
+                div.className = 'emplacement-item';
+                div.innerHTML = '<input type="text" class="formulaire-input" placeholder="Emplacement" style="flex:1" value="' + emp.zone + '"><input type="number" class="formulaire-input" placeholder="Qte" style="width:80px" value="' + emp.quantite + '"><button class="emplacement-supprimer" onclick="this.parentElement.remove()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+                listeEmplacements.appendChild(div);
+            });
+            
+            ouvrirModale('modale-produit');
+        }
+        
+        function supprimerProduit() {
+            if (!produitSelectionne) return;
+            
+            // Confirmer et supprimer
+            if (confirm('Supprimer ce produit ?')) {
+                produits = produits.filter(function(p) { return p.id !== produitSelectionne.id; });
+                sauvegarderDonnees();
+                mettreAJourStatistiques();
+                afficherProduits();
+                afficherInventaire();
+                mettreAJourRapport();
+                fermerModale('modale-detail-produit');
+                afficherToast(traductions[fr].produit_supprime);
+            }
+        }
+        
+        // ============================================
+        // MOUVEMENTS (ENTRÉE/SORTIE)
+        // ============================================
+        let typeMouvementActuel = 'entree';
+        
+        function selectionnerTypeMouvement(type) {
+            typeMouvementActuel = type;
+            
+            // Mettre à jour les boutons
+            document.getElementById('btn-type-entree').classList.remove('actif');
+            document.getElementById('btn-type-sortie').classList.remove('actif');
+            
+            if (type === 'entree') {
+                document.getElementById('btn-type-entree').classList.add('actif');
+                document.getElementById('champ-prix').style.display = 'block';
+            } else {
+                document.getElementById('btn-type-sortie').classList.add('actif');
+                document.getElementById('champ-prix').style.display = 'none';
+            }
+        }
+        
+        function ouvrirModaleEntree() {
+            typeMouvementActuel = 'entree';
+            document.getElementById('entree-produit').value = '';
+            document.getElementById('entree-quantite').value = '';
+            document.getElementById('entree-emplacement').value = '';
+            document.getElementById('entree-prix').value = '';
+            ouvrirModale('modale-entree');
+        }
+        
+        function ouvrirModaleSortie() {
+            typeMouvementActuel = 'sortie';
+            document.getElementById('sortie-produit').value = '';
+            document.getElementById('sortie-quantite').value = '';
+            document.getElementById('sortie-emplacement').value = '';
+            ouvrirModale('modale-sortie');
+        }
+        
+        function ouvrirSelectionProduitPourEntree() {
+            // Simulation - dans la vraie app, ouvrirait un sélecteur
+            afficherToast('Selectionnez un produit depuis la liste');
+        }
+        
+        function ouvrirSelectionProduitPourSortie() {
+            afficherToast('Selectionnez un produit depuis la liste');
+        }
+        
+        function enregistrerEntree() {
+            const nomProduit = document.getElementById('entree-produit').value.trim();
+            const quantite = parseInt(document.getElementById('entree-quantite').value) || 0;
+            const emplacement = document.getElementById('entree-emplacement').value.trim();
+            const prix = parseFloat(document.getElementById('entree-prix').value) || 0;
+            
+            if (!nomProduit || quantite <= 0 || !emplacement) {
+                afficherToast('Veuillez remplir tous les champs');
+                return;
+            }
+            
+            // Chercher ou créer le produit
+            let produit = produits.find(function(p) { return p.nom.toLowerCase() === nomProduit.toLowerCase(); });
+            
+            if (produit) {
+                // Mettre à jour l'emplacement existant ou en ajouter un
+                const empExistant = produit.emplacements.find(function(e) { return e.zone.toLowerCase() === emplacement.toLowerCase(); });
+                if (empExistant) {
+                    empExistant.quantite += quantite;
+                } else {
+                    produit.emplacements.push({ zone: emplacement, quantite: quantite });
+                }
+                produit.quantiteTotale += quantite;
+                if (prix > 0) produit.prix = prix;
+            } else {
+                // Créer un nouveau produit
+                produit = {
+                    id: Date.now().toString(),
+                    reference: '',
+                    nom: nomProduit,
+                    emplacements: [{ zone: emplacement, quantite: quantite }],
+                    quantiteTotale: quantite,
+                    qteMin: 0,
+                    qteMax: 0,
+                    prix: prix,
+                    dateCreation: new Date().toISOString()
+                };
+                produits.unshift(produit);
+            }
+            
+            sauvegarderDonnees();
+            mettreAJourStatistiques();
+            afficherProduits();
+            afficherInventaire();
+            mettreAJourRapport();
+            
+            fermerModale('modale-entree');
+            afficherToast(traductions[fr].entree_enregistree);
+        }
+        
+        function enregistrerSortie() {
+            const nomProduit = document.getElementById('sortie-produit').value.trim();
+            const quantite = parseInt(document.getElementById('sortie-quantite').value) || 0;
+            const emplacement = document.getElementById('sortie-emplacement').value.trim();
+            
+            if (!nomProduit || quantite <= 0 || !emplacement) {
+                afficherToast('Veuillez remplir tous les champs');
+                return;
+            }
+            
+            // Chercher le produit
+            const produit = produits.find(function(p) { return p.nom.toLowerCase() === nomProduit.toLowerCase(); });
+            
+            if (!produit) {
+                afficherToast('Produit non trouve');
+                return;
+            }
+            
+            // Vérifier la disponibilité dans l'emplacement
+            const emp = produit.emplacements.find(function(e) { return e.zone.toLowerCase() === emplacement.toLowerCase(); });
+            
+            if (!emp || emp.quantite < quantite) {
+                afficherToast(traductions[fr].quantite_insuffisante);
+                return;
+            }
+            
+            // Effectuer la sortie
+            emp.quantite -= quantite;
+            produit.quantiteTotale -= quantite;
+            
+            // Supprimer l'emplacement si quantité à 0
+            if (emp.quantite <= 0) {
+                produit.emplacements = produit.emplacements.filter(function(e) { return e.zone.toLowerCase() !== emplacement.toLowerCase(); });
+            }
+            
+            sauvegarderDonnees();
+            mettreAJourStatistiques();
+            afficherProduits();
+            afficherInventaire();
+            mettreAJourRapport();
+            
+            fermerModale('modale-sortie');
+            afficherToast(traductions[fr].sortie_enregistree);
+        }
+        
+        // ============================================
+        // INVENTAIRE
+        // ============================================
+        function afficherInventaire() {
+            const liste = document.getElementById('liste-inventaire');
+            if (!liste) return;
+            
+            liste.innerHTML = '';
+            
+            produits.forEach(function(produit) {
+                const div = document.createElement('div');
+                div.className = 'inventaire-item';
+                
+                let emplacementsHTML = '';
+                produit.emplacements.forEach(function(emp) {
+                    emplacementsHTML += '<div class="inventaire-zone"><span class="inventaire-zone-nom">' + emp.zone + '</span><div class="inventaire-zone-valeurs"><span class="inventaire-zone-theorique">' + emp.quantite + '</span><input type="number" class="inventaire-zone-input" data-produit="' + produit.id + '" data-zone="' + emp.zone + '" value="' + emp.quantite + '"></div></div>';
+                });
+                
+                div.innerHTML = '<div class="inventaire-item-entete"><div><div class="inventaire-item-nom">' + produit.nom + '</div><div class="inventaire-item-ref">' + (produit.reference || 'N/A') + '</div></div></div><div class="inventaire-item-zones">' + emplacementsHTML + '</div>';
+                
+                liste.appendChild(div);
+            });
+            
+            if (produits.length === 0) {
+                liste.innerHTML = '<p style="text-align:center;color:var(--texte-secondaire);padding:40px;">Aucun produit a inventorier</p>';
+            }
+        }
+        
+        function validerInventaire() {
+            // Récupérer toutes les modifications
+            const inputs = document.querySelectorAll('.inventaire-zone-input');
+            
+            inputs.forEach(function(input) {
+                const produitId = input.getAttribute('data-produit');
+                const zone = input.getAttribute('data-zone');
+                const nouvelleQte = parseInt(input.value) || 0;
+                
+                const produit = produits.find(function(p) { return p.id === produitId; });
+                if (produit) {
+                    const emp = produit.emplacements.find(function(e) { return e.zone === zone; });
+                    if (emp) {
+                        emp.quantite = nouvelleQte;
+                    }
+                }
+            });
+            
+            // Recalculer les totaux
+            produits.forEach(function(produit) {
+                produit.quantiteTotale = produit.emplacements.reduce(function(total, emp) {
+                    return total + emp.quantite;
+                }, 0);
+            });
+            
+            sauvegarderDonnees();
+            mettreAJourStatistiques();
+            afficherProduits();
+            mettreAJourRapport();
+            
+            afficherToast(traductions[fr].inventaire_valide);
+        }
+        
+        // ============================================
+        // RAPPORT
+        // ============================================
+        function mettreAJourRapport() {
+            // Calculer les totaux
+            let valeurTotale = 0;
+            let nombreArticles = produits.length;
+            
+            produits.forEach(function(p) {
+                valeurTotale += p.quantiteTotale * p.prix;
+            });
+            
+            // Mettre à jour l'affichage
+            document.getElementById('rapport-valeur-totale').textContent = formatNombre(valeurTotale) + ' FC';
+            document.getElementById('rapport-nombre-articles').textContent = nombreArticles;
+            document.getElementById('rapport-date').textContent = new Date().toLocaleString('fr-FR');
+            
+            // Remplir le tableau
+            const corps = document.getElementById('rapport-tableau-corps');
+            if (!corps) return;
+            
+            corps.innerHTML = '';
+            
+            produits.forEach(function(produit) {
+                // Déterminer l'état
+                let etat = 'En stock';
+                if (produit.quantiteTotale <= 0) {
+                    etat = 'Rupture';
+                } else if (produit.quantiteTotale <= produit.qteMin) {
+                    etat = 'Faible';
+                } else if (produit.qteMax > 0 && produit.quantiteTotale >= produit.qteMax) {
+                    etat = 'Surstock';
+                }
+                
+                const div = document.createElement('div');
+                div.className = 'rapport-tableau-ligne';
+                div.innerHTML = '<span class="rapport-tableau-cellule">' + produit.nom + '<br><span class="rapport-tableau-cellule petit">' + (produit.reference || '-') + '</span></span><span class="rapport-tableau-cellule">' + produit.quantiteTotale + '</span><span class="rapport-tableau-cellule">' + formatNombre(produit.prix) + '</span><span class="rapport-tableau-cellule">' + etat + '</span>';
+                corps.appendChild(div);
+            });
+        }
+        
+        function genererPDF() {
+            // Simulation - Capacitor permettra de générer un vrai PDF
+            afficherToast('Generation PDF - Fonctionnalite Capacitor');
+        }
+        
+        function partagerWhatsApp() {
+            // Simulation - Capacitor permettra le partage
+            afficherToast('Partage WhatsApp - Fonctionnalite Capacitor');
+        }
+        
+        function partagerGmail() {
+            // Simulation - Capacitor permettra le partage
+            afficherToast('Partage Gmail - Fonctionnalite Capacitor');
+        }
+        
+        // ============================================
+        // STATISTIQUES
+        // ============================================
+        function mettreAJourStatistiques() {
+            let valeurTotale = 0;
+            
+            produits.forEach(function(p) {
+                valeurTotale += p.quantiteTotale * p.prix;
+            });
+            
+            document.getElementById('stat-produits').textContent = produits.length;
+            document.getElementById('stat-valeur').textContent = formatNombre(valeurTotale) + ' FC';
+        }
+        
+        // ============================================
+        // MODALES
+        // ============================================
+        function ouvrirModale(id) {
+            document.getElementById(id).classList.add('actif');
+        }
+        
+        function fermerModale(id) {
+            document.getElementById(id).classList.remove('actif');
+        }
+        
+        // Fermer la modale en cliquant sur l'overlay
+        document.querySelectorAll('.modale-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('actif');
+                }
+            });
+        });
+        
+        function ouvrirModaleLangue() {
+            ouvrirModale('modale-langue');
+        }
+        
+        function ouvrirModaleTheme() {
+            afficherToast('Selection du theme');
+            // Pour l'instant, on peut rediriger vers l'écran thème
+        }
+        
+        function ouvrirModaleMotDePasse() {
+            afficherToast('Changement de mot de passe');
+        }
+        
+        function configurerEmpreinte() {
+            afficherToast('Configuration empreinte - Capacitor');
+        }
+        
+        function configurerCarteIdentite() {
+            afficherToast('Configuration carte - Capacitor');
+        }
+        
+        function creerCompteCloud() {
+            afficherToast('Compte cloud - Supabase/Firebase');
+        }
+        
+        function ouvrirScanner() {
+            afficherToast('Scanner QR - Capacitor');
+        }
+        
+        function ouvrirSelectionProduit() {
+            afficherToast('Selectionnez un produit');
+        }
+        
+        // ============================================
+        // STOCKAGE LOCAL
+        // Simulation d'une base de données locale
+        // ============================================
+        function sauvegarderDonnees() {
+            localStorage.setItem('produits', JSON.stringify(produits));
+        }
+        
+        function chargerDonnees() {
+            const donnees = localStorage.getItem('produits');
+            if (donnees) {
+                produits = JSON.parse(donnees);
+            }
+        }
+        
+        // ============================================
+        // UTILITAIRES
+        // ============================================
+        function formatNombre(nombre) {
+            return nombre.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+        
+        function afficherToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('actif');
+            
+            setTimeout(function() {
+                toast.classList.remove('actif');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

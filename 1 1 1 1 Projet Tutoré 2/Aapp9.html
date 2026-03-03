@@ -1,0 +1,3487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quincaillerie TOTAL</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           VARIABLES CSS - THÈMES ET COULEURS
+           ============================================ */
+        :root {
+            --primaire: #006f78;
+            --secondaire: #e62311;
+            --blanc: #ffffff;
+            
+            --fond: #ffffff;
+            --fond-carte: #f8fafa;
+            --fond-saisie: #f0f2f3;
+            --texte: #1a1a1a;
+            --texte-secondaire: #5c6366;
+            --texte-tertiaire: #8a9193;
+            --bordure: #e0e4e5;
+            --succes: #10b981;
+            --attention: #f59e0b;
+            --erreur: #ef4444;
+            
+            --ombre: 0 2px 8px rgba(0, 111, 120, 0.08);
+            --ombre-bouton: 0 4px 12px rgba(0, 111, 120, 0.2);
+            --rayon: 12px;
+            --rayon-petit: 8px;
+            
+            --transition: 0.25s ease;
+        }
+        
+        /* Thème sombre */
+        [data-theme="sombre"] {
+            --fond: #0f1419;
+            --fond-carte: #1a2128;
+            --fond-saisie: #242d35;
+            --texte: #f0f2f3;
+            --texte-secondaire: #a0a8ab;
+            --texte-tertiaire: #6b7376;
+            --bordure: #2f3940;
+            --ombre: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* ============================================
+           RESET ET BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            line-height: 1.5;
+            transition: background var(--transition), color var(--transition);
+        }
+        
+        /* ============================================
+           CONTENEUR PRINCIPAL MOBILE
+           ============================================ */
+        .application {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--fond);
+        }
+        
+        /* ============================================
+           ÉCRANS - GESTION AFFICHAGE
+           ============================================ */
+        .ecran {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            animation: fonduEntree 0.3s ease;
+        }
+        
+        .ecran.actif {
+            display: flex;
+        }
+        
+        @keyframes fonduEntree {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ============================================
+           EN-TÊTE
+           ============================================ */
+        .entete {
+            padding: 16px 20px;
+            background: var(--primaire);
+            color: var(--blanc);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .entete-titre {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .entete-sous-titre {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        
+        .entete-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        /* ============================================
+           BOUTONS
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--rayon-petit);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-principal {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        .btn-principal:hover {
+            background: #005a62;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondaire {
+            background: var(--fond-saisie);
+            color: var(--texte);
+        }
+        
+        .btn-secondaire:hover {
+            background: var(--bordure);
+        }
+        
+        .btn-danger {
+            background: var(--secondaire);
+            color: var(--blanc);
+        }
+        
+        .btn-danger:hover {
+            background: #c91d0e;
+        }
+        
+        .btn-icone {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 50%;
+        }
+        
+        .btn-petit {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+        
+        .btn-plein {
+            width: 100%;
+        }
+        
+        /* ============================================
+           CONTENU PRINCIPAL
+           ============================================ */
+        .contenu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        /* ============================================
+           ÉCRAN LANGUE
+           ============================================ */
+        .ecran-langue {
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, var(--primaire) 0%, #004f56 100%);
+        }
+        
+        .langue-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--blanc);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        
+        .langue-logo svg {
+            width: 48px;
+            height: 48px;
+            color: var(--primaire);
+        }
+        
+        .langue-titre {
+            color: var(--blanc);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .langue-sous-titre {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        
+        .langue-liste {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .langue-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: var(--rayon);
+            color: var(--blanc);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .langue-option:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .langue-option.selectionne {
+            background: var(--blanc);
+            color: var(--primaire);
+            border-color: var(--blanc);
+        }
+        
+        .langue-drapeau {
+            font-size: 28px;
+        }
+        
+        .langue-nom {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        /* ============================================
+           ÉCRAN ONBOARDING
+           ============================================ */
+        .onboarding-slides {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .onboarding-icone {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primaire), #00909c);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        
+        .onboarding-icone svg {
+            width: 60px;
+            height: 60px;
+            color: var(--blanc);
+        }
+        
+        .onboarding-titre {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .onboarding-texte {
+            color: var(--texte-secondaire);
+            font-size: 15px;
+            max-width: 280px;
+        }
+        
+        .onboarding-indicateurs {
+            display: flex;
+            gap: 8px;
+            margin: 32px 0;
+        }
+        
+        .onboarding-point {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--bordure);
+            transition: all var(--transition);
+        }
+        
+        .onboarding-point.actif {
+            width: 24px;
+            border-radius: 4px;
+            background: var(--primaire);
+        }
+        
+        .onboarding-navigation {
+            padding: 20px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* ============================================
+           ÉCRAN DÉPÔT
+           ============================================ */
+        .depot-entete {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .depot-icone {
+            width: 72px;
+            height: 72px;
+            background: var(--fond-carte);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .depot-icone svg {
+            width: 36px;
+            height: 36px;
+            color: var(--primaire);
+        }
+        
+        .depot-titre {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .depot-description {
+            color: var(--texte-secondaire);
+            font-size: 14px;
+        }
+        
+        .depot-form {
+            padding: 0 20px;
+        }
+        
+        .depot-liste {
+            padding: 20px;
+        }
+        
+        .depot-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .depot-item:hover {
+            background: var(--fond-saisie);
+        }
+        
+        .depot-item-icone {
+            width: 44px;
+            height: 44px;
+            background: var(--primaire);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .depot-item-icone svg {
+            width: 22px;
+            height: 22px;
+            color: var(--blanc);
+        }
+        
+        .depot-item-info {
+            flex: 1;
+        }
+        
+        .depot-item-nom {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .depot-item-date {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+        }
+        
+        .depot-item-action {
+            padding: 8px;
+            color: var(--secondaire);
+            cursor: pointer;
+        }
+        
+        /* ============================================
+           FORMULAIRES
+           ============================================ */
+        .groupe-form {
+            margin-bottom: 20px;
+        }
+        
+        .form-etiquette {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+        
+        .form-saisie {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--fond-saisie);
+            border: 2px solid transparent;
+            border-radius: var(--rayon-petit);
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--texte);
+            transition: all var(--transition);
+        }
+        
+        .form-saisie:focus {
+            outline: none;
+            border-color: var(--primaire);
+            background: var(--fond);
+        }
+        
+        .form-saisie::placeholder {
+            color: var(--texte-tertiaire);
+        }
+        
+        .form-ligne {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .form-ligne .groupe-form {
+            flex: 1;
+        }
+        
+        /* Sélecteur personnalisé */
+        .selecteur {
+            position: relative;
+        }
+        
+        .selecteur-valeur {
+            width: 100%;
+            padding: 14px 16px;
+            padding-right: 44px;
+            background: var(--fond-saisie);
+            border: 2px solid transparent;
+            border-radius: var(--rayon-petit);
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--texte);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .selecteur-valeur:hover {
+            background: var(--bordure);
+        }
+        
+        .selecteur-fleche {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--texte-tertiaire);
+        }
+        
+        .selecteur-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            box-shadow: var(--ombre);
+            z-index: 50;
+            display: none;
+            overflow: hidden;
+        }
+        
+        .selecteur-options.ouvert {
+            display: block;
+            animation: glisseHaut 0.2s ease;
+        }
+        
+        @keyframes glisseHaut {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .selecteur-option {
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .selecteur-option:hover {
+            background: var(--fond-saisie);
+        }
+        
+        .selecteur-option.actif {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+        
+        /* ============================================
+           NAVIGATION PRINCIPALE
+           ============================================ */
+        .nav-principale {
+            display: flex;
+            background: var(--fond-carte);
+            border-top: 1px solid var(--bordure);
+            padding: 8px 0;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 10px;
+            color: var(--texte-tertiaire);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .nav-item.actif {
+            color: var(--primaire);
+        }
+        
+        /* ============================================
+           LISTE PRODUITS
+           ============================================ */
+        .recherche-barre {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .recherche-input {
+            flex: 1;
+            position: relative;
+        }
+        
+        .recherche-input input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: var(--fond-saisie);
+            border: none;
+            border-radius: var(--rayon);
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--texte);
+        }
+        
+        .recherche-input input:focus {
+            outline: none;
+            background: var(--fond-carte);
+        }
+        
+        .recherche-input svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--texte-tertiaire);
+        }
+        
+        .produit-carte {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .produit-carte:hover {
+            background: var(--fond-saisie);
+        }
+        
+        .produit-entete {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .produit-reference {
+            font-size: 12px;
+            color: var(--texte-tertiaire);
+            background: var(--fond-saisie);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .produit-etat {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        
+        .produit-etat.stock {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--succes);
+        }
+        
+        .produit-etat.faible {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--attention);
+        }
+        
+        .produit-etat.rupture {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--erreur);
+        }
+        
+        .produit-etat.surstock {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+        
+        .produit-nom {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .produit-details {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+        
+        .produit-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Bouton flottant */
+        .btn-flottant {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--primaire);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanc);
+            box-shadow: var(--ombre-bouton);
+            cursor: pointer;
+            z-index: 50;
+            transition: all var(--transition);
+        }
+        
+        .btn-flottant:hover {
+            transform: scale(1.05);
+            background: #005a62;
+        }
+        
+        .btn-flottant svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        /* Menu flottant */
+        .menu-flottant {
+            position: fixed;
+            bottom: 160px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 50;
+        }
+        
+        .menu-flottant.ouvert {
+            display: flex;
+            animation: glisseHaut 0.2s ease;
+        }
+        
+        .menu-flottant-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            box-shadow: var(--ombre);
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* ============================================
+           MODALES
+           ============================================ */
+        .modale-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+        }
+        
+        .modale-overlay.ouvert {
+            display: flex;
+        }
+        
+        .modale {
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+            overflow: hidden;
+            animation: modaleMontee 0.3s ease;
+        }
+        
+        @keyframes modaleMontee {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modale-entete {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .modale-titre {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .modale-fermer {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fond-saisie);
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--texte-secondaire);
+        }
+        
+        .modale-contenu {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+        
+        .modale-actions {
+            padding: 20px;
+            border-top: 1px solid var(--bordure);
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* ============================================
+           PARAMÈTRES
+           ============================================ */
+        .parametres-section {
+            margin-bottom: 28px;
+        }
+        
+        .parametres-titre {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--texte-tertiaire);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        
+        .parametres-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .parametres-item:hover {
+            background: var(--fond-saisie);
+        }
+        
+        .parametres-item-gauche {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .parametres-item-icone {
+            width: 40px;
+            height: 40px;
+            background: var(--fond-saisie);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primaire);
+        }
+        
+        .parametres-item-texte {
+            font-weight: 500;
+        }
+        
+        .parametres-item-valeur {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* Toggle */
+        .toggle {
+            width: 48px;
+            height: 28px;
+            background: var(--bordure);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .toggle.actif {
+            background: var(--primaire);
+        }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: var(--blanc);
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform var(--transition);
+        }
+        
+        .toggle.actif::after {
+            transform: translateX(20px);
+        }
+        
+        /* ============================================
+           RAPPORTS
+           ============================================ */
+        .rapport-carte {
+            background: linear-gradient(135deg, var(--primaire), #00909c);
+            border-radius: var(--rayon);
+            padding: 24px;
+            color: var(--blanc);
+            margin-bottom: 20px;
+        }
+        
+        .rapport-valeur {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .rapport-label {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .rapport-grille {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .rapport-stat {
+            background: var(--fond-carte);
+            border-radius: var(--rayon);
+            padding: 16px;
+        }
+        
+        .rapport-stat-valeur {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+        
+        .rapport-stat-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* ============================================
+           ALERTES
+           ============================================ */
+        .alerte {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: var(--rayon-petit);
+            margin-bottom: 16px;
+        }
+        
+        .alerte-info {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+        
+        .alerte-succes {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--succes);
+        }
+        
+        .alerte-attention {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--attention);
+        }
+        
+        .alerte-erreur {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--erreur);
+        }
+        
+        /* ============================================
+           NOTIFICATIONS TOAST
+           ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 24px;
+            background: var(--texte);
+            color: var(--blanc);
+            border-radius: var(--rayon);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* ============================================
+           EMPLACEMENTS
+           ============================================ */
+        .emplacement-liste {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .emplacement-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--fond-saisie);
+            border-radius: var(--rayon-petit);
+        }
+        
+        .emplacement-nom {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .emplacement-qte {
+            font-weight: 700;
+            color: var(--primaire);
+        }
+        
+        /* ============================================
+           VIDE
+           ============================================ */
+        .vide {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--texte-tertiaire);
+        }
+        
+        .vide-icone {
+            width: 80px;
+            height: 80px;
+            background: var(--fond-carte);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .vide-texte {
+            font-size: 15px;
+        }
+        
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="application" id="application">
+        
+        <!-- ==========================================
+             ÉCRAN 1: SÉLECTION LANGUE
+             ========================================== -->
+        <div class="ecran ecran-langue actif" id="ecran-langue">
+            <div class="langue-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+            </div>
+            <h1 class="langue-titre">Quincaillerie TOTAL</h1>
+            <p class="langue-sous-titre" data-trad="selection_langue">Selectionnez votre langue</p>
+            
+            <div class="langue-liste">
+                <div class="langue-option selectionne" data-lang="fr">
+                    <span class="langue-drapeau">🇫🇷</span>
+                    <span class="langue-nom">Francais</span>
+                </div>
+                <div class="langue-option" data-lang="en">
+                    <span class="langue-drapeau">🇬🇧</span>
+                    <span class="langue-nom">English</span>
+                </div>
+                <div class="langue-option" data-lang="hi">
+                    <span class="langue-drapeau">🇮🇳</span>
+                    <span class="langue-nom">Hindi</span>
+                </div>
+                <div class="langue-option" data-lang="ln">
+                    <span class="langue-drapeau">🇨🇩</span>
+                    <span class="langue-nom">Lingala</span>
+                </div>
+                <div class="langue-option" data-lang="sw">
+                    <span class="langue-drapeau">🇨🇩</span>
+                    <span class="langue-nom">Swahili</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-principal btn-plein" style="margin-top: 24px; max-width: 320px;" id="btn-confirmer-langue" data-trad="continuer">
+                Continuer
+            </button>
+        </div>
+        
+        <!-- ==========================================
+             ÉCRAN 2: ONBOARDING
+             ========================================== -->
+        <div class="ecran" id="ecran-onboarding">
+            <div class="onboarding-slides">
+                <div class="onboarding-slide" id="onboarding-slide">
+                    <div class="onboarding-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <h2 class="onboarding-titre" data-trad="onboarding1_titre">Gerez votre stock</h2>
+                    <p class="onboarding-texte" data-trad="onboarding1_texte">Suivez facilement vos entrees et sorties de marchandises</p>
+                </div>
+                
+                <div class="onboarding-indicateurs">
+                    <div class="onboarding-point actif" data-slide="0"></div>
+                    <div class="onboarding-point" data-slide="1"></div>
+                    <div class="onboarding-point" data-slide="2"></div>
+                </div>
+            </div>
+            
+            <div class="onboarding-navigation">
+                <button class="btn btn-secondaire btn-plein" id="btn-passer-onboarding" data-trad="passer">Passer</button>
+                <button class="btn btn-principal btn-plein" id="btn-suivant-onboarding" data-trad="suivant">Suivant</button>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             ÉCRAN 3: CRÉATION DÉPÔT
+             ========================================== -->
+        <div class="ecran" id="ecran-depot">
+            <div class="entete">
+                <h1 class="entete-titre" data-trad="nouveau_depot">Nouveau depot</h1>
+                <p class="entete-sous-titre" data-trad="depot_description">Creer votre espace de travail</p>
+            </div>
+            
+            <div class="contenu">
+                <div class="depot-entete">
+                    <div class="depot-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="depot-form">
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="nom_depot">Nom du depot</label>
+                        <input type="text" class="form-saisie" id="input-nom-depot" placeholder="Ex: Depot principal">
+                    </div>
+                    
+                    <button class="btn btn-principal btn-plein" id="btn-creer-depot" data-trad="creer_depot">Creer le depot</button>
+                </div>
+                
+                <div class="depot-liste" id="liste-depots-existants" style="display: none;">
+                    <p class="parametres-titre" data-trad="depots_existants">Depots existants</p>
+                    <div id="depots-liste"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             ÉCRAN 4: APPLICATION PRINCIPALE
+             ========================================== -->
+        <div class="ecran" id="ecran-principal">
+            <!-- En-tête principal -->
+            <div class="entete">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 class="entete-titre" id="nom-depot-actif">Depot Principal</h1>
+                        <p class="entete-sous-titre" id="date-actuelle"></p>
+                    </div>
+                    <button class="btn btn-icone" style="background: rgba(255,255,255,0.15);" id="btn-parametres">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenu principal avec vues -->
+            <div class="contenu" id="contenu-principal">
+                <!-- VUE: Produits -->
+                <div class="vue actif" id="vue-produits">
+                    <div class="recherche-barre">
+                        <div class="recherche-input">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" id="input-recherche" data-placeholder="rechercher_produit" placeholder="Rechercher un produit...">
+                        </div>
+                        <button class="btn btn-icone btn-secondaire" id="btn-scanner" title="Scanner">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div id="liste-produits"></div>
+                </div>
+                
+                <!-- VUE: Rapports -->
+                <div class="vue" id="vue-rapports">
+                    <div class="rapport-carte">
+                        <p class="rapport-label" data-trad="valeur_totale">Valeur totale du stock</p>
+                        <p class="rapport-valeur" id="rapport-valeur-totale">0 FC</p>
+                    </div>
+                    
+                    <div class="rapport-grille">
+                        <div class="rapport-stat">
+                            <p class="rapport-stat-valeur" id="rapport-nb-articles">0</p>
+                            <p class="rapport-stat-label" data-trad="articles_total">Articles au total</p>
+                        </div>
+                        <div class="rapport-stat">
+                            <p class="rapport-stat-valeur" id="rapport-nb-faible">0</p>
+                            <p class="rapport-stat-label" data-trad="stock_faible">Stock faible</p>
+                        </div>
+                        <div class="rapport-stat">
+                            <p class="rapport-stat-valeur" id="rapport-nb-rupture">0</p>
+                            <p class="rapport-stat-label" data-trad="rupture_stock">En rupture</p>
+                        </div>
+                        <div class="rapport-stat">
+                            <p class="rapport-stat-valeur" id="rapport-nb-surstock">0</p>
+                            <p class="rapport-stat-label" data-trad="surstock">Surstock</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-principal btn-plein" id="btn-exporter-rapport">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <span data-trad="exporter_rapport">Exporter le rapport</span>
+                    </button>
+                </div>
+                
+                <!-- VUE: Sauvegarde -->
+                <div class="vue" id="vue-sauvegarde">
+                    <div class="parametres-section">
+                        <p class="parametres-titre" data-trad="sauvegarde">Sauvegarde</p>
+                        <div class="parametres-item" id="btn-exporter-sauvegarde">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="parametres-item-texte" data-trad="exporter_donnees">Exporter les donnees</p>
+                                    <p class="parametres-item-valeur" data-trad="format_csv">Format CSV</p>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="parametres-section">
+                        <p class="parametres-titre" data-trad="restauration">Restauration</p>
+                        <div class="parametres-item" id="btn-importer-sauvegarde">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="parametres-item-texte" data-trad="importer_donnees">Importer les donnees</p>
+                                    <p class="parametres-item-valeur" data-trad="format_csv">Format CSV</p>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <input type="file" id="input-import-csv" accept=".csv" style="display: none;">
+                </div>
+            </div>
+            
+            <!-- Bouton flottant -->
+            <div class="btn-flottant" id="btn-flottant">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </div>
+            
+            <!-- Menu flottant -->
+            <div class="menu-flottant" id="menu-flottant">
+                <div class="menu-flottant-item" id="btn-ajouter-scan">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span data-trad="produit_scan">Produit avec code</span>
+                </div>
+                <div class="menu-flottant-item" id="btn-ajouter-manuel">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                    </svg>
+                    <span data-trad="produit_manuel">Produit sans code</span>
+                </div>
+            </div>
+            
+            <!-- Navigation principale -->
+            <nav class="nav-principale">
+                <div class="nav-item actif" data-vue="produits">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                    <span data-trad="produits">Produits</span>
+                </div>
+                <div class="nav-item" data-vue="rapports">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                    <span data-trad="rapports">Rapports</span>
+                </div>
+                <div class="nav-item" data-vue="sauvegarde">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    <span data-trad="sauvegarde">Sauvegarde</span>
+                </div>
+            </nav>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: PARAMÈTRES
+             ========================================== -->
+        <div class="modale-overlay" id="modale-parametres">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="parametres">Parametres</h3>
+                    <div class="modale-fermer" data-ferme-modale="parametres">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <!-- Section Dépôt -->
+                    <div class="parametres-section">
+                        <p class="parametres-titre" data-trad="depot">Depot</p>
+                        <div class="parametres-item" id="btn-renommer-depot">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="parametres-item-texte" data-trad="renommer_depot">Renommer le depot</p>
+                                    <p class="parametres-item-valeur" id="param-nom-depot">Depot Principal</p>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                        <div class="parametres-item" id="btn-changer-depot">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="7" height="7"/>
+                                        <rect x="14" y="3" width="7" height="7"/>
+                                        <rect x="14" y="14" width="7" height="7"/>
+                                        <rect x="3" y="14" width="7" height="7"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="parametres-item-texte" data-trad="changer_depot">Changer de depot</p>
+                                    <p class="parametres-item-valeur" id="param-nb-depots">1 depot</p>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Taux de change -->
+                    <div class="parametres-section">
+                        <p class="parametres-titre" data-trad="taux_change">Taux de change</p>
+                        <div class="groupe-form">
+                            <label class="form-etiquette" data-trad="valeur_dollar">Valeur de 1$ en FC</label>
+                            <input type="number" class="form-saisie" id="input-taux-change" value="2800" min="1">
+                        </div>
+                    </div>
+                    
+                    <!-- Section Affichage prix -->
+                    <div class="parametres-section">
+                        <p class="parametres-titre" data-trad="affichage_prix">Affichage des prix</p>
+                        <div class="selecteur">
+                            <div class="selecteur-valeur" id="selecteur-prix-valeur" data-valeur="fc">
+                                Franc congolais (FC)
+                            </div>
+                            <svg class="selecteur-fleche" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                            <div class="selecteur-options" id="selecteur-prix-options">
+                                <div class="selecteur-option actif" data-valeur="fc">Franc congolais (FC)</div>
+                                <div class="selecteur-option" data-valeur="usd">Dollar americain ($)</div>
+                                <div class="selecteur-option" data-valeur="les_deux">Les deux (FC et $)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Apparence -->
+                    <div class="parametres-section">
+                        <p class="parametres-titre" data-trad="apparence">Apparence</p>
+                        <div class="parametres-item" id="btn-theme">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="5"/>
+                                        <line x1="12" y1="1" x2="12" y2="3"/>
+                                        <line x1="12" y1="21" x2="12" y2="23"/>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                        <line x1="1" y1="12" x2="3" y2="12"/>
+                                        <line x1="21" y1="12" x2="23" y2="12"/>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="parametres-item-texte" data-trad="theme">Theme</p>
+                                    <p class="parametres-item-valeur" id="param-theme-actuel">Clair</p>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                        <div class="parametres-item" id="btn-langue">
+                            <div class="parametres-item-gauche">
+                                <div class="parametres-item-icone">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="2" y1="12" x2="22" y2="12"/>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="parametres-item-texte" data-trad="langue">Langue</p>
+                                    <p class="parametres-item-valeur" id="param-langue-actuelle">Francais</p>
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: AJOUT PRODUIT
+             ========================================== -->
+        <div class="modale-overlay" id="modale-produit">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" id="titre-modale-produit" data-trad="nouveau_produit">Nouveau produit</h3>
+                    <div class="modale-fermer" data-ferme-modale="produit">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="reference">Reference / Code-barres</label>
+                        <input type="text" class="form-saisie" id="input-reference" placeholder="Scannez ou saisissez">
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="nom_produit">Nom du produit</label>
+                        <input type="text" class="form-saisie" id="input-nom-produit" placeholder="Ex: Marteau 500g">
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="emplacements">Emplacements et quantites</label>
+                        <div class="emplacement-liste" id="liste-emplacements">
+                            <div class="emplacement-item">
+                                <input type="text" class="form-saisie" style="flex:1" placeholder="Zone A" data-emplacement="nom">
+                                <input type="number" class="form-saisie" style="width:80px" placeholder="Qte" data-emplacement="qte" value="0" min="0">
+                                <button class="btn btn-icone btn-secondaire btn-supprimer-emplacement" style="width:36px;height:36px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondaire btn-petit" id="btn-ajouter-emplacement" style="margin-top: 10px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span data-trad="ajouter_emplacement">Ajouter un emplacement</span>
+                        </button>
+                    </div>
+                    
+                    <div class="form-ligne">
+                        <div class="groupe-form">
+                            <label class="form-etiquette" data-trad="qte_min">Quantite min.</label>
+                            <input type="number" class="form-saisie" id="input-qte-min" value="0" min="0">
+                        </div>
+                        <div class="groupe-form">
+                            <label class="form-etiquette" data-trad="qte_max">Quantite max.</label>
+                            <input type="number" class="form-saisie" id="input-qte-max" value="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="prix_achat">Prix d'achat unitaire</label>
+                        <div class="form-ligne">
+                            <input type="number" class="form-saisie" id="input-prix" placeholder="0" min="0" step="0.01">
+                            <div class="selecteur" style="width: 120px;">
+                                <div class="selecteur-valeur" id="selecteur-monnaie-valeur" data-valeur="fc">FC</div>
+                                <svg class="selecteur-fleche" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                                <div class="selecteur-options" id="selecteur-monnaie-options">
+                                    <div class="selecteur-option actif" data-valeur="fc">FC</div>
+                                    <div class="selecteur-option" data-valeur="usd">$ USD</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="font-size: 13px; color: var(--texte-tertiaire); margin-top: 8px;" id="equivalent-prix">Equivalent: 0 $</p>
+                    </div>
+                    
+                    <!-- QR Code simulé -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div style="width: 120px; height: 120px; background: var(--fond-saisie); border-radius: 12px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" style="color: var(--texte-tertiaire);">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                                <rect x="14" y="14" width="3" height="3"/>
+                                <rect x="18" y="14" width="3" height="3"/>
+                                <rect x="14" y="18" width="3" height="3"/>
+                                <rect x="18" y="18" width="3" height="3"/>
+                            </svg>
+                        </div>
+                        <p style="font-size: 12px; color: var(--texte-tertiaire); margin-top: 8px;" data-trad="qr_genere">QR Code genere</p>
+                    </div>
+                </div>
+                
+                <div class="modale-actions">
+                    <button class="btn btn-secondaire btn-plein" data-ferme-modale="produit" data-trad="annuler">Annuler</button>
+                    <button class="btn btn-principal btn-plein" id="btn-sauvegarder-produit" data-trad="sauvegarder">Sauvegarder</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: ACTIONS PRODUIT
+             ========================================== -->
+        <div class="modale-overlay" id="modale-actions">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" id="titre-actions-produit">Produit</h3>
+                    <div class="modale-fermer" data-ferme-modale="actions">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <div class="parametres-item" id="action-entree">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone" style="background: rgba(16, 185, 129, 0.1); color: var(--succes);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <polyline points="19 12 12 19 5 12"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="entree_stock">Entree en stock</p>
+                        </div>
+                    </div>
+                    <div class="parametres-item" id="action-sortie">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone" style="background: rgba(239, 68, 68, 0.1); color: var(--erreur);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="19" x2="12" y2="5"/>
+                                    <polyline points="5 12 12 5 19 12"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="sortie_stock">Sortie de stock</p>
+                        </div>
+                    </div>
+                    <div class="parametres-item" id="action-inventaire">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone" style="background: rgba(245, 158, 11, 0.1); color: var(--attention);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="inventaire">Inventaire</p>
+                        </div>
+                    </div>
+                    <div class="parametres-item" id="action-detail">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="16" x2="12" y2="12"/>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="details">Details</p>
+                        </div>
+                    </div>
+                    <div class="parametres-item" id="action-supprimer">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone" style="background: rgba(230, 35, 17, 0.1); color: var(--secondaire);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" style="color: var(--secondaire);" data-trad="supprimer">Supprimer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: ENTRÉE STOCK
+             ========================================== -->
+        <div class="modale-overlay" id="modale-entree">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="entree_stock">Entree en stock</h3>
+                    <div class="modale-fermer" data-ferme-modale="entree">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <div class="alerte alerte-info">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span id="entree-produit-nom">Produit</span>
+                    </div>
+                    
+                    <div class="groupe-form" id="groupe-selection-emplacement-entree">
+                        <label class="form-etiquette" data-trad="selectionner_emplacement">Selectionner l'emplacement</label>
+                        <div class="selecteur">
+                            <div class="selecteur-valeur" id="selecteur-emplacement-entree-valeur" data-valeur="">Choisir...</div>
+                            <svg class="selecteur-fleche" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                            <div class="selecteur-options" id="selecteur-emplacement-entree-options"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="quantite_ajouter">Quantite a ajouter</label>
+                        <input type="number" class="form-saisie" id="input-qte-entree" value="1" min="1">
+                    </div>
+                    
+                    <div class="alerte alerte-succes" id="apercu-entree" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <div>
+                            <span data-trad="quantite_actuelle">Quantite actuelle</span>: <strong id="qte-actuelle-entree">0</strong><br>
+                            <span data-trad="apres_entree">Apres entree</span>: <strong id="qte-apres-entree" style="color: var(--succes);">0</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modale-actions">
+                    <button class="btn btn-secondaire btn-plein" data-ferme-modale="entree" data-trad="annuler">Annuler</button>
+                    <button class="btn btn-principal btn-plein" id="btn-confirmer-entree" data-trad="confirmer">Confirmer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: SORTIE STOCK
+             ========================================== -->
+        <div class="modale-overlay" id="modale-sortie">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="sortie_stock">Sortie de stock</h3>
+                    <div class="modale-fermer" data-ferme-modale="sortie">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <div class="alerte alerte-info">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span id="sortie-produit-nom">Produit</span>
+                    </div>
+                    
+                    <div class="groupe-form" id="groupe-selection-emplacement-sortie">
+                        <label class="form-etiquette" data-trad="selectionner_emplacement">Selectionner l'emplacement</label>
+                        <div class="selecteur">
+                            <div class="selecteur-valeur" id="selecteur-emplacement-sortie-valeur" data-valeur="">Choisir...</div>
+                            <svg class="selecteur-fleche" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                            <div class="selecteur-options" id="selecteur-emplacement-sortie-options"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="quantite_retirer">Quantite a retirer</label>
+                        <input type="number" class="form-saisie" id="input-qte-sortie" value="1" min="1">
+                    </div>
+                    
+                    <div class="alerte alerte-attention" id="apercu-sortie" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <div>
+                            <span data-trad="quantite_actuelle">Quantite actuelle</span>: <strong id="qte-actuelle-sortie">0</strong><br>
+                            <span data-trad="apres_sortie">Apres sortie</span>: <strong id="qte-apres-sortie" style="color: var(--attention);">0</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modale-actions">
+                    <button class="btn btn-secondaire btn-plein" data-ferme-modale="sortie" data-trad="annuler">Annuler</button>
+                    <button class="btn btn-principal btn-plein" id="btn-confirmer-sortie" data-trad="confirmer">Confirmer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: INVENTAIRE
+             ========================================== -->
+        <div class="modale-overlay" id="modale-inventaire">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="inventaire">Inventaire</h3>
+                    <div class="modale-fermer" data-ferme-modale="inventaire">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <div class="alerte alerte-info">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span id="inventaire-produit-nom">Produit</span>
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="selectionner_emplacement">Selectionner l'emplacement</label>
+                        <div class="selecteur">
+                            <div class="selecteur-valeur" id="selecteur-emplacement-inventaire-valeur" data-valeur="">Choisir...</div>
+                            <svg class="selecteur-fleche" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                            <div class="selecteur-options" id="selecteur-emplacement-inventaire-options"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="stock_theorique">Stock theorique</label>
+                        <input type="number" class="form-saisie" id="input-stock-theorique" readonly>
+                    </div>
+                    
+                    <div class="groupe-form">
+                        <label class="form-etiquette" data-trad="stock_reel">Stock reel compte</label>
+                        <input type="number" class="form-saisie" id="input-stock-reel" min="0">
+                    </div>
+                    
+                    <div class="alerte" id="resultat-ecart" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <div>
+                            <span data-trad="ecart">Ecart</span>: <strong id="valeur-ecart">0</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modale-actions">
+                    <button class="btn btn-secondaire btn-plein" data-ferme-modale="inventaire" data-trad="annuler">Annuler</button>
+                    <button class="btn btn-principal btn-plein" id="btn-regulariser" data-trad="regulariser">Regulariser</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: DÉTAILS PRODUIT
+             ========================================== -->
+        <div class="modale-overlay" id="modale-detail">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="details_produit">Details du produit</h3>
+                    <div class="modale-fermer" data-ferme-modale="detail">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu" id="contenu-detail">
+                    <!-- Contenu dynamique -->
+                </div>
+                
+                <div class="modale-actions">
+                    <button class="btn btn-secondaire btn-plein" id="btn-modifier-produit" data-trad="modifier">Modifier</button>
+                    <button class="btn btn-principal btn-plein" id="btn-exporter-qr" data-trad="exporter_qr">Exporter QR</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: SÉLECTION THÈME
+             ========================================== -->
+        <div class="modale-overlay" id="modale-theme">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="choisir_theme">Choisir le theme</h3>
+                    <div class="modale-fermer" data-ferme-modale="theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu">
+                    <div class="parametres-item" data-theme-choix="systeme">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="theme_systeme">Systeme</p>
+                        </div>
+                        <div class="theme-check" id="check-systeme"></div>
+                    </div>
+                    <div class="parametres-item" data-theme-choix="sombre">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="theme_sombre">Sombre</p>
+                        </div>
+                        <div class="theme-check" id="check-sombre"></div>
+                    </div>
+                    <div class="parametres-item" data-theme-choix="blanc">
+                        <div class="parametres-item-gauche">
+                            <div class="parametres-item-icone">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="5"/>
+                                    <line x1="12" y1="1" x2="12" y2="3"/>
+                                    <line x1="12" y1="21" x2="12" y2="23"/>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                    <line x1="1" y1="12" x2="3" y2="12"/>
+                                    <line x1="21" y1="12" x2="23" y2="12"/>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                                </svg>
+                            </div>
+                            <p class="parametres-item-texte" data-trad="theme_clair">Clair</p>
+                        </div>
+                        <div class="theme-check" id="check-blanc"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: SÉLECTION LANGUE
+             ========================================== -->
+        <div class="modale-overlay" id="modale-langue">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="choisir_langue">Choisir la langue</h3>
+                    <div class="modale-fermer" data-ferme-modale="langue">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu" id="liste-langues-modale">
+                    <!-- Dynamique -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             MODALE: GESTION DÉPÔTS
+             ========================================== -->
+        <div class="modale-overlay" id="modale-depots">
+            <div class="modale">
+                <div class="modale-entete">
+                    <h3 class="modale-titre" data-trad="gerer_depots">Gerer les depots</h3>
+                    <div class="modale-fermer" data-ferme-modale="depots">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="modale-contenu" id="liste-depots-modale">
+                    <!-- Dynamique -->
+                </div>
+                
+                <div class="modale-actions">
+                    <button class="btn btn-principal btn-plein" id="btn-nouveau-depot" data-trad="nouveau_depot">Nouveau depot</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast notification -->
+        <div class="toast" id="toast"></div>
+        
+    </div>
+
+    <script>
+        // ============================================
+        // FICHIER LANGUE FRANÇAIS (Intégré pour la démo)
+        // ============================================
+        const traductions = {
+            fr: {
+                selection_langue: "Selectionnez votre langue",
+                continuer: "Continuer",
+                passer: "Passer",
+                suivant: "Suivant",
+                onboarding1_titre: "Gerez votre stock",
+                onboarding1_texte: "Suivez facilement vos entrees et sorties de marchandises",
+                onboarding2_titre: "Plusieurs depots",
+                onboarding2_texte: "Organisez vos stocks par depot pour une meilleure gestion",
+                onboarding3_titre: "Rapports detailles",
+                onboarding3_texte: "Exportez vos rapports en PDF ou Excel a tout moment",
+                nouveau_depot: "Nouveau depot",
+                depot_description: "Creer votre espace de travail",
+                nom_depot: "Nom du depot",
+                creer_depot: "Creer le depot",
+                depots_existants: "Depots existants",
+                rechercher_produit: "Rechercher un produit...",
+                produits: "Produits",
+                rapports: "Rapports",
+                sauvegarde: "Sauvegarde",
+                valeur_totale: "Valeur totale du stock",
+                articles_total: "Articles au total",
+                stock_faible: "Stock faible",
+                rupture_stock: "En rupture",
+                surstock: "Surstock",
+                exporter_rapport: "Exporter le rapport",
+                exporter_donnees: "Exporter les donnees",
+                importer_donnees: "Importer les donnees",
+                format_csv: "Format CSV",
+                restauration: "Restauration",
+                parametres: "Parametres",
+                depot: "Depot",
+                renommer_depot: "Renommer le depot",
+                changer_depot: "Changer de depot",
+                taux_change: "Taux de change",
+                valeur_dollar: "Valeur de 1$ en FC",
+                affichage_prix: "Affichage des prix",
+                apparence: "Apparence",
+                theme: "Theme",
+                langue: "Langue",
+                produit_scan: "Produit avec code",
+                produit_manuel: "Produit sans code",
+                reference: "Reference / Code-barres",
+                nom_produit: "Nom du produit",
+                emplacements: "Emplacements et quantites",
+                ajouter_emplacement: "Ajouter un emplacement",
+                qte_min: "Quantite min.",
+                qte_max: "Quantite max.",
+                prix_achat: "Prix d'achat unitaire",
+                qr_genere: "QR Code genere",
+                annuler: "Annuler",
+                sauvegarder: "Sauvegarder",
+                modifier: "Modifier",
+                entree_stock: "Entree en stock",
+                sortie_stock: "Sortie de stock",
+                inventaire: "Inventaire",
+                details: "Details",
+                supprimer: "Supprimer",
+                quantite_ajouter: "Quantite a ajouter",
+                quantite_actuelle: "Quantite actuelle",
+                apres_entree: "Apres entree",
+                apres_sortie: "Apres sortie",
+                confirmer: "Confirmer",
+                quantite_retirer: "Quantite a retirer",
+                selectionner_emplacement: "Selectionner l'emplacement",
+                stock_theorique: "Stock theorique",
+                stock_reel: "Stock reel compte",
+                ecart: "Ecart",
+                regulariser: "Regulariser",
+                details_produit: "Details du produit",
+                exporter_qr: "Exporter QR",
+                choisir_theme: "Choisir le theme",
+                theme_systeme: "Systeme",
+                theme_sombre: "Sombre",
+                theme_clair: "Clair",
+                choisir_langue: "Choisir la langue",
+                gerer_depots: "Gerer les depots",
+                nouveau_produit: "Nouveau produit",
+                modifier_produit: "Modifier le produit",
+                en_stock: "En stock",
+                faible: "Faible",
+                rupture: "Rupture",
+                surstock_label: "Surstock",
+                dernier_modif: "Derniere modification",
+                creer: "Creer",
+                entree: "Entree",
+                sortie: "Sortie",
+                avant: "avant",
+                apres: "apres",
+                produit_cree: "Produit cree avec succes",
+                produit_modifie: "Produit modifie",
+                produit_supprime: "Produit supprime",
+                entree_confirme: "Entree confirmee",
+                sortie_confirme: "Sortie confirmee",
+                inventaire_confirme: "Inventaire regularise",
+                sauvegarde_exportee: "Sauvegarde exportee",
+                sauvegarde_importee: "Sauvegarde importee",
+                rapport_exporte: "Rapport exporte",
+                qr_exporte: "QR Code exporte",
+                depot_cree: "Depot cree",
+                depot_renomme: "Depot renomme",
+                erreur_saisie: "Veuillez remplir tous les champs",
+                erreur_qte: "Quantite insuffisante",
+                aucun_produit: "Aucun produit",
+                ajouter_premier: "Ajoutez votre premier produit",
+                fc: "FC",
+                usd: "$"
+            }
+        };
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        let langueActuelle = 'fr';
+        let themeActuel = 'systeme';
+        let depotActuel = null;
+        let produitSelectionne = null;
+        let modeModification = false;
+        let slideOnboarding = 0;
+        
+        // Base de données locale (localStorage)
+        let baseDonnees = {
+            depots: [],
+            tauxChange: 2800,
+            affichagePrix: 'fc'
+        };
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            chargerDonnees();
+            initialiserApplication();
+        });
+
+        // Cette fonction charge les données depuis localStorage
+        function chargerDonnees() {
+            const donnees = localStorage.getItem('quincaillerie_total');
+            if (donnees) {
+                baseDonnees = JSON.parse(donnees);
+            }
+        }
+
+        // Cette fonction sauvegarde les données dans localStorage
+        function sauvegarderDonnees() {
+            localStorage.setItem('quincaillerie_total', JSON.stringify(baseDonnees));
+        }
+
+        // ============================================
+        // TRADUCTION
+        // ============================================
+        function traduire(cle) {
+            return traductions[langueActuelle][cle] || cle;
+        }
+
+        // Cette fonction applique les traductions à tous les éléments
+        function appliquerTraductions() {
+            document.querySelectorAll('[data-trad]').forEach(el => {
+                const cle = el.getAttribute('data-trad');
+                el.textContent = traduire(cle);
+            });
+            document.querySelectorAll('[data-placeholder]').forEach(el => {
+                const cle = el.getAttribute('data-placeholder');
+                el.placeholder = traduire(cle);
+            });
+        }
+
+        // ============================================
+        // NAVIGATION ENTRE ÉCRANS
+        // ============================================
+        function afficherEcran(idEcran) {
+            document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
+            document.getElementById(idEcran).classList.add('actif');
+        }
+
+        // Cette fonction affiche une vue spécifique dans l'écran principal
+        function afficherVue(idVue) {
+            document.querySelectorAll('.vue').forEach(v => v.classList.remove('actif'));
+            document.getElementById('vue-' + idVue).classList.add('actif');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('actif'));
+            document.querySelector(`.nav-item[data-vue="${idVue}"]`).classList.add('actif');
+            
+            // Mettre à jour les rapports si on affiche cette vue
+            if (idVue === 'rapports') {
+                mettreAJourRapports();
+            }
+        }
+
+        // ============================================
+        // GESTION DES MODALES
+        // ============================================
+        function ouvrirModale(idModale) {
+            document.getElementById('modale-' + idModale).classList.add('ouvert');
+        }
+
+        function fermerModale(idModale) {
+            document.getElementById('modale-' + idModale).classList.remove('ouvert');
+        }
+
+        // ============================================
+        // NOTIFICATIONS TOAST
+        // ============================================
+        function afficherToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = traduire(message);
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+
+        // ============================================
+        // FORMATAGE PRIX
+        // ============================================
+        function formaterPrix(montant, monnaie = 'fc') {
+            const taux = baseDonnees.tauxChange || 2800;
+            
+            if (baseDonnees.affichagePrix === 'fc') {
+                const fc = monnaie === 'usd' ? montant * taux : montant;
+                return Math.round(fc).toLocaleString('fr-CD') + ' FC';
+            } else if (baseDonnees.affichagePrix === 'usd') {
+                const usd = monnaie === 'fc' ? montant / taux : montant;
+                return '$' + usd.toFixed(2);
+            } else {
+                const fc = monnaie === 'usd' ? montant * taux : montant;
+                const usd = monnaie === 'fc' ? montant / taux : montant;
+                return Math.round(fc).toLocaleString('fr-CD') + ' FC ($' + usd.toFixed(2) + ')';
+            }
+        }
+
+        // ============================================
+        // DÉTERMINATION ÉTAT STOCK
+        // ============================================
+        function determinerEtatStock(produit) {
+            const qteTotale = calculerQuantiteTotale(produit);
+            
+            if (qteTotale === 0) return { classe: 'rupture', texte: traduire('rupture') };
+            if (qteTotale <= produit.qteMin) return { classe: 'faible', texte: traduire('faible') };
+            if (produit.qteMax > 0 && qteTotale >= produit.qteMax) return { classe: 'surstock', texte: traduire('surstock_label') };
+            return { classe: 'stock', texte: traduire('en_stock') };
+        }
+
+        // Cette fonction calcule la quantité totale d'un produit
+        function calculerQuantiteTotale(produit) {
+            return produit.emplacements.reduce((sum, emp) => sum + (emp.quantite || 0), 0);
+        }
+
+        // ============================================
+        // INITIALISATION APPLICATION
+        // ============================================
+        function initialiserApplication() {
+            // Vérifier si premier lancement
+            const premierLancement = !localStorage.getItem('quincaillerie_config');
+            
+            if (premierLancement) {
+                afficherEcran('ecran-langue');
+            } else {
+                const config = JSON.parse(localStorage.getItem('quincaillerie_config'));
+                langueActuelle = config.langue || 'fr';
+                themeActuel = config.theme || 'systeme';
+                appliquerTheme(themeActuel);
+                
+                if (config.depotActuel && baseDonnees.depots.find(d => d.id === config.depotActuel)) {
+                    depotActuel = baseDonnees.depots.find(d => d.id === config.depotActuel);
+                    afficherEcran('ecran-principal');
+                    afficherListeProduits();
+                } else {
+                    afficherEcran('ecran-depot');
+                    afficherListeDepots();
+                }
+            }
+            
+            appliquerTraductions();
+            configurerEvenements();
+            mettreAJourDate();
+        }
+
+        // Cette fonction configure tous les événements de l'application
+        function configurerEvenements() {
+            // Sélection langue initiale
+            document.querySelectorAll('.langue-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.langue-option').forEach(o => o.classList.remove('selectionne'));
+                    option.classList.add('selectionne');
+                    langueActuelle = option.dataset.lang;
+                });
+            });
+            
+            // Confirmer langue
+            document.getElementById('btn-confirmer-langue').addEventListener('click', () => {
+                sauvegarderConfig();
+                appliquerTraductions();
+                afficherEcran('ecran-onboarding');
+            });
+            
+            // Onboarding
+            document.getElementById('btn-suivant-onboarding').addEventListener('click', () => {
+                slideOnboarding++;
+                if (slideOnboarding >= 3) {
+                    afficherEcran('ecran-depot');
+                } else {
+                    mettreAJourOnboarding();
+                }
+            });
+            
+            document.getElementById('btn-passer-onboarding').addEventListener('click', () => {
+                afficherEcran('ecran-depot');
+            });
+            
+            // Créer dépôt
+            document.getElementById('btn-creer-depot').addEventListener('click', creerDepot);
+            
+            // Navigation principale
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    afficherVue(item.dataset.vue);
+                });
+            });
+            
+            // Bouton flottant
+            document.getElementById('btn-flottant').addEventListener('click', () => {
+                document.getElementById('menu-flottant').classList.toggle('ouvert');
+            });
+            
+            // Ajouter produit
+            document.getElementById('btn-ajouter-scan').addEventListener('click', () => {
+                document.getElementById('menu-flottant').classList.remove('ouvert');
+                document.getElementById('input-reference').value = genererReference();
+                modeModification = false;
+                ouvrirModale('produit');
+            });
+            
+            document.getElementById('btn-ajouter-manuel').addEventListener('click', () => {
+                document.getElementById('menu-flottant').classList.remove('ouvert');
+                document.getElementById('input-reference').value = '';
+                modeModification = false;
+                ouvrirModale('produit');
+            });
+            
+            // Ajouter emplacement
+            document.getElementById('btn-ajouter-emplacement').addEventListener('click', ajouterEmplacement);
+            
+            // Sauvegarder produit
+            document.getElementById('btn-sauvegarder-produit').addEventListener('click', sauvegarderProduit);
+            
+            // Calcul équivalent prix
+            document.getElementById('input-prix').addEventListener('input', mettreAJourEquivalentPrix);
+            
+            // Sélecteur monnaie
+            configurerSelecteur('selecteur-monnaie', (valeur) => {
+                document.getElementById('selecteur-monnaie-valeur').textContent = valeur === 'fc' ? 'FC' : '$ USD';
+                mettreAJourEquivalentPrix();
+            });
+            
+            // Sélecteur affichage prix
+            configurerSelecteur('selecteur-prix', (valeur) => {
+                baseDonnees.affichagePrix = valeur;
+                sauvegarderDonnees();
+                afficherListeProduits();
+                mettreAJourRapports();
+            });
+            
+            // Paramètres
+            document.getElementById('btn-parametres').addEventListener('click', () => {
+                document.getElementById('param-nom-depot').textContent = depotActuel ? depotActuel.nom : '-';
+                document.getElementById('param-nb-depots').textContent = baseDonnees.depots.length + ' depot(s)';
+                document.getElementById('input-taux-change').value = baseDonnees.tauxChange;
+                ouvrirModale('parametres');
+            });
+            
+            // Taux de change
+            document.getElementById('input-taux-change').addEventListener('change', (e) => {
+                baseDonnees.tauxChange = parseFloat(e.target.value) || 2800;
+                sauvegarderDonnees();
+                afficherListeProduits();
+                mettreAJourRapports();
+            });
+            
+            // Thème
+            document.getElementById('btn-theme').addEventListener('click', () => {
+                fermerModale('parametres');
+                mettreAJourSelectionTheme();
+                ouvrirModale('theme');
+            });
+            
+            document.querySelectorAll('[data-theme-choix]').forEach(item => {
+                item.addEventListener('click', () => {
+                    themeActuel = item.dataset.themeChoix;
+                    appliquerTheme(themeActuel);
+                    sauvegarderConfig();
+                    fermerModale('theme');
+                });
+            });
+            
+            // Langue
+            document.getElementById('btn-langue').addEventListener('click', () => {
+                fermerModale('parametres');
+                afficherListeLangues();
+                ouvrirModale('langue');
+            });
+            
+            // Renommer dépôt
+            document.getElementById('btn-renommer-depot').addEventListener('click', () => {
+                fermerModale('parametres');
+                const nouveauNom = prompt(traduire('renommer_depot'), depotActuel.nom);
+                if (nouveauNom && nouveauNom.trim()) {
+                    depotActuel.nom = nouveauNom.trim();
+                    sauvegarderDonnees();
+                    document.getElementById('nom-depot-actif').textContent = depotActuel.nom;
+                    afficherToast('depot_renomme');
+                }
+            });
+            
+            // Changer dépôt
+            document.getElementById('btn-changer-depot').addEventListener('click', () => {
+                fermerModale('parametres');
+                afficherListeDepotsModale();
+                ouvrirModale('depots');
+            });
+            
+            // Nouveau dépôt depuis modale
+            document.getElementById('btn-nouveau-depot').addEventListener('click', () => {
+                fermerModale('depots');
+                document.getElementById('input-nom-depot').value = '';
+                afficherEcran('ecran-depot');
+            });
+            
+            // Actions produit
+            configurerActionsProduit();
+            
+            // Fermeture modales
+            document.querySelectorAll('[data-ferme-modale]').forEach(btn => {
+                btn.addEventListener('click', () => fermerModale(btn.dataset.fermeModale));
+            });
+            
+            // Recherche
+            document.getElementById('input-recherche').addEventListener('input', (e) => {
+                afficherListeProduits(e.target.value);
+            });
+            
+            // Export rapport
+            document.getElementById('btn-exporter-rapport').addEventListener('click', exporterRapport);
+            
+            // Export sauvegarde
+            document.getElementById('btn-exporter-sauvegarde').addEventListener('click', exporterSauvegarde);
+            
+            // Import sauvegarde
+            document.getElementById('btn-importer-sauvegarde').addEventListener('click', () => {
+                document.getElementById('input-import-csv').click();
+            });
+            
+            document.getElementById('input-import-csv').addEventListener('change', importerSauvegarde);
+            
+            // Export QR
+            document.getElementById('btn-exporter-qr').addEventListener('click', exporterQR);
+            
+            // Modifier produit
+            document.getElementById('btn-modifier-produit').addEventListener('click', modifierProduit);
+            
+            // Entrée stock - aperçu temps réel
+            document.getElementById('input-qte-entree').addEventListener('input', mettreAJourApercuEntree);
+            document.getElementById('input-qte-sortie').addEventListener('input', mettreAJourApercuSortie);
+            document.getElementById('input-stock-reel').addEventListener('input', mettreAJourEcart);
+            
+            // Confirmer entrée/sortie/inventaire
+            document.getElementById('btn-confirmer-entree').addEventListener('click', confirmerEntree);
+            document.getElementById('btn-confirmer-sortie').addEventListener('click', confirmerSortie);
+            document.getElementById('btn-regulariser').addEventListener('click', confirmerInventaire);
+            
+            // Clic extérieur pour fermer les sélecteurs
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.selecteur')) {
+                    document.querySelectorAll('.selecteur-options').forEach(s => s.classList.remove('ouvert'));
+                }
+            });
+        }
+
+        // ============================================
+        // CONFIGURATION SÉLECTEURS PERSONNALISÉS
+        // ============================================
+        function configurerSelecteur(idBase, callback) {
+            const valeur = document.getElementById(idBase + '-valeur');
+            const options = document.getElementById(idBase + '-options');
+            
+            valeur.addEventListener('click', () => {
+                options.classList.toggle('ouvert');
+            });
+            
+            options.querySelectorAll('.selecteur-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    options.querySelectorAll('.selecteur-option').forEach(o => o.classList.remove('actif'));
+                    opt.classList.add('actif');
+                    valeur.dataset.valeur = opt.dataset.valeur;
+                    valeur.textContent = opt.textContent;
+                    options.classList.remove('ouvert');
+                    callback(opt.dataset.valeur);
+                });
+            });
+        }
+
+        // ============================================
+        // GESTION THÈME
+        // ============================================
+        function appliquerTheme(theme) {
+            const app = document.getElementById('application');
+            
+            if (theme === 'sombre') {
+                app.setAttribute('data-theme', 'sombre');
+            } else if (theme === 'blanc') {
+                app.removeAttribute('data-theme');
+            } else {
+                // Système
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    app.setAttribute('data-theme', 'sombre');
+                } else {
+                    app.removeAttribute('data-theme');
+                }
+            }
+            
+            mettreAJourSelectionTheme();
+            document.getElementById('param-theme-actuel').textContent = 
+                theme === 'sombre' ? traduire('theme_sombre') : 
+                theme === 'blanc' ? traduire('theme_clair') : traduire('theme_systeme');
+        }
+
+        function mettreAJourSelectionTheme() {
+            document.querySelectorAll('.theme-check').forEach(c => {
+                c.innerHTML = '';
+                c.style.width = '20px';
+                c.style.height = '20px';
+                c.style.borderRadius = '50%';
+                c.style.border = '2px solid var(--bordure)';
+            });
+            
+            const checkId = themeActuel === 'sombre' ? 'check-sombre' : 
+                           themeActuel === 'blanc' ? 'check-blanc' : 'check-systeme';
+            const check = document.getElementById(checkId);
+            check.style.background = 'var(--primaire)';
+            check.style.borderColor = 'var(--primaire)';
+            check.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+            check.style.display = 'flex';
+            check.style.alignItems = 'center';
+            check.style.justifyContent = 'center';
+        }
+
+        // ============================================
+        // GESTION DÉPÔTS
+        // ============================================
+        function creerDepot() {
+            const nom = document.getElementById('input-nom-depot').value.trim();
+            if (!nom) {
+                afficherToast('erreur_saisie');
+                return;
+            }
+            
+            const nouveauDepot = {
+                id: Date.now().toString(),
+                nom: nom,
+                produits: [],
+                dateCreation: new Date().toISOString()
+            };
+            
+            baseDonnees.depots.push(nouveauDepot);
+            depotActuel = nouveauDepot;
+            sauvegarderDonnees();
+            sauvegarderConfig();
+            
+            document.getElementById('nom-depot-actif').textContent = depotActuel.nom;
+            afficherEcran('ecran-principal');
+            afficherListeProduits();
+            afficherToast('depot_cree');
+        }
+
+        function afficherListeDepots() {
+            const liste = document.getElementById('depots-liste');
+            const section = document.getElementById('liste-depots-existants');
+            
+            if (baseDonnees.depots.length > 0) {
+                section.style.display = 'block';
+                liste.innerHTML = baseDonnees.depots.map(depot => `
+                    <div class="depot-item" data-depot-id="${depot.id}">
+                        <div class="depot-item-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </div>
+                        <div class="depot-item-info">
+                            <p class="depot-item-nom">${depot.nom}</p>
+                            <p class="depot-item-date">${new Date(depot.dateCreation).toLocaleDateString('fr-CD')}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                liste.querySelectorAll('.depot-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const depot = baseDonnees.depots.find(d => d.id === item.dataset.depotId);
+                        if (depot) {
+                            depotActuel = depot;
+                            sauvegarderConfig();
+                            document.getElementById('nom-depot-actif').textContent = depotActuel.nom;
+                            afficherEcran('ecran-principal');
+                            afficherListeProduits();
+                        }
+                    });
+                });
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        function afficherListeDepotsModale() {
+            const liste = document.getElementById('liste-depots-modale');
+            liste.innerHTML = baseDonnees.depots.map(depot => `
+                <div class="parametres-item" data-depot-id="${depot.id}">
+                    <div class="parametres-item-gauche">
+                        <div class="parametres-item-icone">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </div>
+                        <p class="parametres-item-texte">${depot.nom}</p>
+                    </div>
+                    ${depot.id !== depotActuel.id ? `
+                        <div class="depot-item-action" data-supprimer-depot="${depot.id}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </div>
+                    ` : '<span style="color: var(--primaire); font-size: 12px;">Actif</span>'}
+                </div>
+            `).join('');
+            
+            liste.querySelectorAll('[data-depot-id]').forEach(item => {
+                if (!item.querySelector('[data-supprimer-depot]')) {
+                    item.addEventListener('click', () => {
+                        const depot = baseDonnees.depots.find(d => d.id === item.dataset.depotId);
+                        if (depot) {
+                            depotActuel = depot;
+                            sauvegarderConfig();
+                            document.getElementById('nom-depot-actif').textContent = depotActuel.nom;
+                            fermerModale('depots');
+                            afficherListeProduits();
+                        }
+                    });
+                }
+            });
+            
+            liste.querySelectorAll('[data-supprimer-depot]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.supprimerDepot;
+                    baseDonnees.depots = baseDonnees.depots.filter(d => d.id !== id);
+                    sauvegarderDonnees();
+                    afficherListeDepotsModale();
+                });
+            });
+        }
+
+        // ============================================
+        // GESTION PRODUITS
+        // ============================================
+        function afficherListeProduits(filtre = '') {
+            if (!depotActuel) return;
+            
+            const liste = document.getElementById('liste-produits');
+            let produits = depotActuel.produits || [];
+            
+            if (filtre) {
+                produits = produits.filter(p => 
+                    p.nom.toLowerCase().includes(filtre.toLowerCase()) ||
+                    p.reference.toLowerCase().includes(filtre.toLowerCase())
+                );
+            }
+            
+            if (produits.length === 0) {
+                liste.innerHTML = `
+                    <div class="vide">
+                        <div class="vide-icone">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </div>
+                        <p class="vide-texte" data-trad="aucun_produit">${traduire('aucun_produit')}</p>
+                        <p class="vide-texte" data-trad="ajouter_premier">${traduire('ajouter_premier')}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            liste.innerHTML = produits.map(produit => {
+                const etat = determinerEtatStock(produit);
+                const qteTotale = calculerQuantiteTotale(produit);
+                const valeurStock = qteTotale * produit.prix;
+                
+                return `
+                    <div class="produit-carte" data-produit-id="${produit.id}">
+                        <div class="produit-entete">
+                            <span class="produit-reference">${produit.reference}</span>
+                            <span class="produit-etat ${etat.classe}">${etat.texte}</span>
+                        </div>
+                        <h3 class="produit-nom">${produit.nom}</h3>
+                        <div class="produit-details">
+                            <div class="produit-detail">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                </svg>
+                                <span>${qteTotale}</span>
+                            </div>
+                            <div class="produit-detail">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"/>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                                <span>${formaterPrix(produit.prix, produit.monnaie)}</span>
+                            </div>
+                            <div class="produit-detail">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                    <line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                                <span>${formaterPrix(valeurStock, produit.monnaie)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            liste.querySelectorAll('.produit-carte').forEach(carte => {
+                carte.addEventListener('click', () => {
+                    produitSelectionne = depotActuel.produits.find(p => p.id === carte.dataset.produitId);
+                    document.getElementById('titre-actions-produit').textContent = produitSelectionne.nom;
+                    ouvrirModale('actions');
+                });
+            });
+        }
+
+        function ajouterEmplacement() {
+            const liste = document.getElementById('liste-emplacements');
+            const nouvelEmplacement = document.createElement('div');
+            nouvelEmplacement.className = 'emplacement-item';
+            nouvelEmplacement.innerHTML = `
+                <input type="text" class="form-saisie" style="flex:1" placeholder="Zone" data-emplacement="nom">
+                <input type="number" class="form-saisie" style="width:80px" placeholder="Qte" data-emplacement="qte" value="0" min="0">
+                <button class="btn btn-icone btn-secondaire btn-supprimer-emplacement" style="width:36px;height:36px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            `;
+            liste.appendChild(nouvelEmplacement);
+            
+            nouvelEmplacement.querySelector('.btn-supprimer-emplacement').addEventListener('click', () => {
+                nouvelEmplacement.remove();
+            });
+        }
+
+        function sauvegarderProduit() {
+            const reference = document.getElementById('input-reference').value.trim();
+            const nom = document.getElementById('input-nom-produit').value.trim();
+            const prix = parseFloat(document.getElementById('input-prix').value) || 0;
+            const monnaie = document.getElementById('selecteur-monnaie-valeur').dataset.valeur;
+            const qteMin = parseInt(document.getElementById('input-qte-min').value) || 0;
+            const qteMax = parseInt(document.getElementById('input-qte-max').value) || 0;
+            
+            // Récupérer les emplacements
+            const emplacements = [];
+            document.querySelectorAll('#liste-emplacements .emplacement-item').forEach(item => {
+                const nomEmp = item.querySelector('[data-emplacement="nom"]').value.trim();
+                const qteEmp = parseInt(item.querySelector('[data-emplacement="qte"]').value) || 0;
+                if (nomEmp) {
+                    emplacements.push({ nom: nomEmp, quantite: qteEmp });
+                }
+            });
+            
+            if (!nom || emplacements.length === 0) {
+                afficherToast('erreur_saisie');
+                return;
+            }
+            
+            if (modeModification && produitSelectionne) {
+                // Modification
+                produitSelectionne.reference = reference || genererReference();
+                produitSelectionne.nom = nom;
+                produitSelectionne.emplacements = emplacements;
+                produitSelectionne.prix = prix;
+                produitSelectionne.monnaie = monnaie;
+                produitSelectionne.qteMin = qteMin;
+                produitSelectionne.qteMax = qteMax;
+                produitSelectionne.derniereModif = {
+                    date: new Date().toISOString(),
+                    action: 'modifier',
+                    details: 'Modification des informations'
+                };
+                afficherToast('produit_modifie');
+            } else {
+                // Création
+                const nouveauProduit = {
+                    id: Date.now().toString(),
+                    reference: reference || genererReference(),
+                    nom: nom,
+                    emplacements: emplacements,
+                    prix: prix,
+                    monnaie: monnaie,
+                    qteMin: qteMin,
+                    qteMax: qteMax,
+                    derniereModif: {
+                        date: new Date().toISOString(),
+                        action: 'creer',
+                        details: 'Creation du produit'
+                    }
+                };
+                
+                if (!depotActuel.produits) depotActuel.produits = [];
+                depotActuel.produits.push(nouveauProduit);
+                afficherToast('produit_cree');
+            }
+            
+            sauvegarderDonnees();
+            fermerModale('produit');
+            reinitialiserFormulaireProduit();
+            afficherListeProduits();
+        }
+
+        function reinitialiserFormulaireProduit() {
+            document.getElementById('input-reference').value = '';
+            document.getElementById('input-nom-produit').value = '';
+            document.getElementById('input-prix').value = '';
+            document.getElementById('input-qte-min').value = '0';
+            document.getElementById('input-qte-max').value = '0';
+            document.getElementById('liste-emplacements').innerHTML = `
+                <div class="emplacement-item">
+                    <input type="text" class="form-saisie" style="flex:1" placeholder="Zone A" data-emplacement="nom">
+                    <input type="number" class="form-saisie" style="width:80px" placeholder="Qte" data-emplacement="qte" value="0" min="0">
+                    <button class="btn btn-icone btn-secondaire btn-supprimer-emplacement" style="width:36px;height:36px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            modeModification = false;
+        }
+
+        function genererReference() {
+            return 'REF-' + Date.now().toString(36).toUpperCase();
+        }
+
+        function mettreAJourEquivalentPrix() {
+            const prix = parseFloat(document.getElementById('input-prix').value) || 0;
+            const monnaie = document.getElementById('selecteur-monnaie-valeur').dataset.valeur;
+            const taux = baseDonnees.tauxChange;
+            
+            let equivalent = '';
+            if (monnaie === 'fc') {
+                equivalent = 'Equivalent: $' + (prix / taux).toFixed(2);
+            } else {
+                equivalent = 'Equivalent: ' + Math.round(prix * taux).toLocaleString('fr-CD') + ' FC';
+            }
+            document.getElementById('equivalent-prix').textContent = equivalent;
+        }
+
+        // ============================================
+        // ACTIONS PRODUIT
+        // ============================================
+        function configurerActionsProduit() {
+            // Entrée
+            document.getElementById('action-entree').addEventListener('click', () => {
+                fermerModale('actions');
+                preparerModaleMouvement('entree');
+                ouvrirModale('entree');
+            });
+            
+            // Sortie
+            document.getElementById('action-sortie').addEventListener('click', () => {
+                fermerModale('actions');
+                preparerModaleMouvement('sortie');
+                ouvrirModale('sortie');
+            });
+            
+            // Inventaire
+            document.getElementById('action-inventaire').addEventListener('click', () => {
+                fermerModale('actions');
+                preparerModaleInventaire();
+                ouvrirModale('inventaire');
+            });
+            
+            // Détail
+            document.getElementById('action-detail').addEventListener('click', () => {
+                fermerModale('actions');
+                afficherDetailsProduit();
+                ouvrirModale('detail');
+            });
+            
+            // Supprimer
+            document.getElementById('action-supprimer').addEventListener('click', () => {
+                fermerModale('actions');
+                if (confirm(traduire('supprimer') + ' ?')) {
+                    depotActuel.produits = depotActuel.produits.filter(p => p.id !== produitSelectionne.id);
+                    sauvegarderDonnees();
+                    afficherListeProduits();
+                    afficherToast('produit_supprime');
+                }
+            });
+        }
+
+        function preparerModaleMouvement(type) {
+            const nomProduit = document.getElementById(type + '-produit-nom');
+            nomProduit.textContent = produitSelectionne.nom;
+            
+            const emplacements = produitSelectionne.emplacements;
+            const groupeSelection = document.getElementById('groupe-selection-emplacement-' + type);
+            const selecteurOptions = document.getElementById('selecteur-emplacement-' + type + '-options');
+            const selecteurValeur = document.getElementById('selecteur-emplacement-' + type + '-valeur');
+            
+            if (emplacements.length === 1) {
+                groupeSelection.style.display = 'none';
+                selecteurValeur.dataset.valeur = emplacements[0].nom;
+                selecteurValeur.dataset.index = '0';
+            } else {
+                groupeSelection.style.display = 'block';
+                selecteurOptions.innerHTML = emplacements.map((emp, i) => 
+                    `<div class="selecteur-option" data-index="${i}">${emp.nom} (${emp.quantite})</div>`
+                ).join('');
+                
+                selecteurValeur.textContent = 'Choisir...';
+                selecteurValeur.dataset.index = '';
+                
+                selecteurOptions.querySelectorAll('.selecteur-option').forEach(opt => {
+                    opt.addEventListener('click', () => {
+                        selecteurOptions.querySelectorAll('.selecteur-option').forEach(o => o.classList.remove('actif'));
+                        opt.classList.add('actif');
+                        selecteurValeur.textContent = opt.textContent;
+                        selecteurValeur.dataset.index = opt.dataset.index;
+                        selecteurOptions.classList.remove('ouvert');
+                        
+                        if (type === 'entree') mettreAJourApercuEntree();
+                        if (type === 'sortie') mettreAJourApercuSortie();
+                    });
+                });
+                
+                selecteurValeur.addEventListener('click', () => {
+                    selecteurOptions.classList.toggle('ouvert');
+                });
+            }
+            
+            document.getElementById('input-qte-' + type).value = 1;
+            document.getElementById('apercu-' + type).style.display = 'none';
+        }
+
+        function mettreAJourApercuEntree() {
+            const selecteur = document.getElementById('selecteur-emplacement-entree-valeur');
+            const index = selecteur.dataset.index;
+            
+            if (index === '' && produitSelectionne.emplacements.length > 1) {
+                document.getElementById('apercu-entree').style.display = 'none';
+                return;
+            }
+            
+            const empIndex = index !== '' ? parseInt(index) : 0;
+            const qteActuelle = produitSelectionne.emplacements[empIndex].quantite;
+            const qteAjout = parseInt(document.getElementById('input-qte-entree').value) || 0;
+            
+            document.getElementById('qte-actuelle-entree').textContent = qteActuelle;
+            document.getElementById('qte-apres-entree').textContent = qteActuelle + qteAjout;
+            document.getElementById('apercu-entree').style.display = 'flex';
+        }
+
+        function mettreAJourApercuSortie() {
+            const selecteur = document.getElementById('selecteur-emplacement-sortie-valeur');
+            const index = selecteur.dataset.index;
+            
+            if (index === '' && produitSelectionne.emplacements.length > 1) {
+                document.getElementById('apercu-sortie').style.display = 'none';
+                return;
+            }
+            
+            const empIndex = index !== '' ? parseInt(index) : 0;
+            const qteActuelle = produitSelectionne.emplacements[empIndex].quantite;
+            const qteRetrait = parseInt(document.getElementById('input-qte-sortie').value) || 0;
+            
+            document.getElementById('qte-actuelle-sortie').textContent = qteActuelle;
+            document.getElementById('qte-apres-sortie').textContent = Math.max(0, qteActuelle - qteRetrait);
+            document.getElementById('apercu-sortie').style.display = 'flex';
+        }
+
+        function confirmerEntree() {
+            const selecteur = document.getElementById('selecteur-emplacement-entree-valeur');
+            const index = selecteur.dataset.index;
+            const empIndex = index !== '' ? parseInt(index) : 0;
+            const qteAjout = parseInt(document.getElementById('input-qte-entree').value) || 0;
+            
+            const ancienneQte = produitSelectionne.emplacements[empIndex].quantite;
+            produitSelectionne.emplacements[empIndex].quantite += qteAjout;
+            
+            produitSelectionne.derniereModif = {
+                date: new Date().toISOString(),
+                action: 'entree',
+                details: `${traduire('entree')} +${qteAjout} (${traduire('avant')}: ${ancienneQte}, ${traduire('apres')}: ${produitSelectionne.emplacements[empIndex].quantite})`
+            };
+            
+            sauvegarderDonnees();
+            fermerModale('entree');
+            afficherListeProduits();
+            afficherToast('entree_confirme');
+        }
+
+        function confirmerSortie() {
+            const selecteur = document.getElementById('selecteur-emplacement-sortie-valeur');
+            const index = selecteur.dataset.index;
+            const empIndex = index !== '' ? parseInt(index) : 0;
+            const qteRetrait = parseInt(document.getElementById('input-qte-sortie').value) || 0;
+            
+            if (qteRetrait > produitSelectionne.emplacements[empIndex].quantite) {
+                afficherToast('erreur_qte');
+                return;
+            }
+            
+            const ancienneQte = produitSelectionne.emplacements[empIndex].quantite;
+            produitSelectionne.emplacements[empIndex].quantite -= qteRetrait;
+            
+            produitSelectionne.derniereModif = {
+                date: new Date().toISOString(),
+                action: 'sortie',
+                details: `${traduire('sortie')} -${qteRetrait} (${traduire('avant')}: ${ancienneQte}, ${traduire('apres')}: ${produitSelectionne.emplacements[empIndex].quantite})`
+            };
+            
+            sauvegarderDonnees();
+            fermerModale('sortie');
+            afficherListeProduits();
+            afficherToast('sortie_confirme');
+        }
+
+        // ============================================
+        // INVENTAIRE
+        // ============================================
+        function preparerModaleInventaire() {
+            document.getElementById('inventaire-produit-nom').textContent = produitSelectionne.nom;
+            
+            const selecteurOptions = document.getElementById('selecteur-emplacement-inventaire-options');
+            const selecteurValeur = document.getElementById('selecteur-emplacement-inventaire-valeur');
+            
+            selecteurOptions.innerHTML = produitSelectionne.emplacements.map((emp, i) => 
+                `<div class="selecteur-option" data-index="${i}">${emp.nom}</div>`
+            ).join('');
+            
+            selecteurValeur.textContent = 'Choisir...';
+            selecteurValeur.dataset.index = '';
+            document.getElementById('input-stock-theorique').value = '';
+            document.getElementById('input-stock-reel').value = '';
+            document.getElementById('resultat-ecart').style.display = 'none';
+            
+            selecteurOptions.querySelectorAll('.selecteur-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    selecteurOptions.querySelectorAll('.selecteur-option').forEach(o => o.classList.remove('actif'));
+                    opt.classList.add('actif');
+                    selecteurValeur.textContent = opt.textContent;
+                    selecteurValeur.dataset.index = opt.dataset.index;
+                    selecteurOptions.classList.remove('ouvert');
+                    
+                    const index = parseInt(opt.dataset.index);
+                    document.getElementById('input-stock-theorique').value = produitSelectionne.emplacements[index].quantite;
+                });
+            });
+            
+            selecteurValeur.addEventListener('click', () => {
+                selecteurOptions.classList.toggle('ouvert');
+            });
+        }
+
+        function mettreAJourEcart() {
+            const theorique = parseInt(document.getElementById('input-stock-theorique').value) || 0;
+            const reel = parseInt(document.getElementById('input-stock-reel').value) || 0;
+            const ecart = reel - theorique;
+            
+            const resultatDiv = document.getElementById('resultat-ecart');
+            resultatDiv.style.display = 'flex';
+            
+            const valeurEcart = document.getElementById('valeur-ecart');
+            valeurEcart.textContent = (ecart >= 0 ? '+' : '') + ecart;
+            
+            if (ecart > 0) {
+                resultatDiv.className = 'alerte alerte-succes';
+            } else if (ecart < 0) {
+                resultatDiv.className = 'alerte alerte-erreur';
+            } else {
+                resultatDiv.className = 'alerte alerte-info';
+            }
+        }
+
+        function confirmerInventaire() {
+            const selecteur = document.getElementById('selecteur-emplacement-inventaire-valeur');
+            const index = selecteur.dataset.index;
+            
+            if (index === '') return;
+            
+            const empIndex = parseInt(index);
+            const theorique = parseInt(document.getElementById('input-stock-theorique').value) || 0;
+            const reel = parseInt(document.getElementById('input-stock-reel').value) || 0;
+            
+            produitSelectionne.emplacements[empIndex].quantite = reel;
+            
+            produitSelectionne.derniereModif = {
+                date: new Date().toISOString(),
+                action: 'inventaire',
+                details: `Inventaire: ${traduire('avant')} ${theorique}, ${traduire('apres')} ${reel}`
+            };
+            
+            sauvegarderDonnees();
+            fermerModale('inventaire');
+            afficherListeProduits();
+            afficherToast('inventaire_confirme');
+        }
+
+        // ============================================
+        // DÉTAILS PRODUIT
+        // ============================================
+        function afficherDetailsProduit() {
+            const qteTotale = calculerQuantiteTotale(produitSelectionne);
+            const etat = determinerEtatStock(produitSelectionne);
+            const valeurStock = qteTotale * produitSelectionne.prix;
+            
+            const contenu = document.getElementById('contenu-detail');
+            contenu.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="width: 80px; height: 80px; background: var(--fond-saisie); border-radius: 16px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style="color: var(--texte-tertiaire);">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="3" height="3"/>
+                            <rect x="18" y="14" width="3" height="3"/>
+                            <rect x="14" y="18" width="3" height="3"/>
+                            <rect x="18" y="18" width="3" height="3"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="alerte alerte-info" style="margin-bottom: 16px;">
+                    <span class="produit-etat ${etat.classe}" style="margin-left: auto;">${etat.texte}</span>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('reference')}</p>
+                    <p style="font-weight: 600;">${produitSelectionne.reference}</p>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('nom_produit')}</p>
+                    <p style="font-weight: 600; font-size: 18px;">${produitSelectionne.nom}</p>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('emplacements')}</p>
+                    ${produitSelectionne.emplacements.map(emp => `
+                        <div class="emplacement-item" style="margin-top: 8px;">
+                            <span>${emp.nom}</span>
+                            <span style="font-weight: 700; color: var(--primaire);">${emp.quantite}</span>
+                        </div>
+                    `).join('')}
+                    <div class="emplacement-item" style="margin-top: 8px; background: var(--primaire); color: white;">
+                        <span>${traduire('en_stock')}</span>
+                        <span style="font-weight: 700;">${qteTotale}</span>
+                    </div>
+                </div>
+                
+                <div class="form-ligne" style="margin-bottom: 16px;">
+                    <div>
+                        <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('qte_min')}</p>
+                        <p style="font-weight: 600;">${produitSelectionne.qteMin}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('qte_max')}</p>
+                        <p style="font-weight: 600;">${produitSelectionne.qteMax}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('prix_achat')}</p>
+                    <p style="font-weight: 700; font-size: 20px; color: var(--primaire);">${formaterPrix(produitSelectionne.prix, produitSelectionne.monnaie)}</p>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <p style="font-size: 12px; color: var(--texte-tertiaire);">Valeur du stock</p>
+                    <p style="font-weight: 700; font-size: 20px;">${formaterPrix(valeurStock, produitSelectionne.monnaie)}</p>
+                </div>
+                
+                <div style="padding: 12px; background: var(--fond-saisie); border-radius: var(--rayon-petit);">
+                    <p style="font-size: 12px; color: var(--texte-tertiaire);">${traduire('dernier_modif')}</p>
+                    <p style="font-size: 13px;">${new Date(produitSelectionne.derniereModif.date).toLocaleString('fr-CD')}</p>
+                    <p style="font-size: 13px; font-weight: 500;">${produitSelectionne.derniereModif.details}</p>
+                </div>
+            `;
+        }
+
+        function modifierProduit() {
+            fermerModale('detail');
+            modeModification = true;
+            
+            document.getElementById('input-reference').value = produitSelectionne.reference;
+            document.getElementById('input-nom-produit').value = produitSelectionne.nom;
+            document.getElementById('input-prix').value = produitSelectionne.prix;
+            document.getElementById('selecteur-monnaie-valeur').dataset.valeur = produitSelectionne.monnaie;
+            document.getElementById('selecteur-monnaie-valeur').textContent = produitSelectionne.monnaie === 'fc' ? 'FC' : '$ USD';
+            document.getElementById('input-qte-min').value = produitSelectionne.qteMin;
+            document.getElementById('input-qte-max').value = produitSelectionne.qteMax;
+            
+            // Charger les emplacements
+            const listeEmplacements = document.getElementById('liste-emplacements');
+            listeEmplacements.innerHTML = produitSelectionne.emplacements.map(emp => `
+                <div class="emplacement-item">
+                    <input type="text" class="form-saisie" style="flex:1" value="${emp.nom}" data-emplacement="nom">
+                    <input type="number" class="form-saisie" style="width:80px" value="${emp.quantite}" data-emplacement="qte" min="0">
+                    <button class="btn btn-icone btn-secondaire btn-supprimer-emplacement" style="width:36px;height:36px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+            
+            listeEmplacements.querySelectorAll('.btn-supprimer-emplacement').forEach(btn => {
+                btn.addEventListener('click', () => btn.closest('.emplacement-item').remove());
+            });
+            
+            document.getElementById('titre-modale-produit').textContent = traduire('modifier_produit');
+            mettreAJourEquivalentPrix();
+            ouvrirModale('produit');
+        }
+
+        // ============================================
+        // RAPPORTS
+        // ============================================
+        function mettreAJourRapports() {
+            if (!depotActuel || !depotActuel.produits) return;
+            
+            let valeurTotale = 0;
+            let nbArticles = 0;
+            let nbFaible = 0;
+            let nbRupture = 0;
+            let nbSurstock = 0;
+            
+            depotActuel.produits.forEach(produit => {
+                const qteTotale = calculerQuantiteTotale(produit);
+                valeurTotale += qteTotale * produit.prix;
+                nbArticles++;
+                
+                if (qteTotale === 0) nbRupture++;
+                else if (qteTotale <= produit.qteMin) nbFaible++;
+                else if (produit.qteMax > 0 && qteTotale >= produit.qteMax) nbSurstock++;
+            });
+            
+            document.getElementById('rapport-valeur-totale').textContent = formaterPrix(valeurTotale, 'fc');
+            document.getElementById('rapport-nb-articles').textContent = nbArticles;
+            document.getElementById('rapport-nb-faible').textContent = nbFaible;
+            document.getElementById('rapport-nb-rupture').textContent = nbRupture;
+            document.getElementById('rapport-nb-surstock').textContent = nbSurstock;
+        }
+
+        function exporterRapport() {
+            // Création d'un fichier CSV basique pour la démo
+            let csv = 'Reference,Article,Quantite,Prix unitaire,Valeur stock,Etat\n';
+            
+            depotActuel.produits.forEach(produit => {
+                const qteTotale = calculerQuantiteTotale(produit);
+                const etat = determinerEtatStock(produit);
+                csv += `${produit.reference},${produit.nom},${qteTotale},${produit.prix},${qteTotale * produit.prix},${etat.texte}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const fichier = new File([blob], `rapport_${depotActuel.nom}_${Date.now()}.csv`, { type: 'text/csv' });
+            
+            // Utilisation de l'API Web Share
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Rapport stock',
+                    text: 'Rapport du stock ' + depotActuel.nom
+                }).then(() => afficherToast('rapport_exporte'))
+                  .catch(() => {});
+            } else {
+                // Fallback: téléchargement
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                afficherToast('rapport_exporte');
+            }
+        }
+
+        // ============================================
+        // SAUVEGARDE / RESTAURATION
+        // ============================================
+        function exporterSauvegarde() {
+            const donnees = JSON.stringify(baseDonnees, null, 2);
+            const blob = new Blob([donnees], { type: 'application/json' });
+            const fichier = new File([blob], `sauvegarde_quincaillerie_${Date.now()}.json`, { type: 'application/json' });
+            
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'Sauvegarde',
+                    text: 'Sauvegarde des donnees'
+                }).then(() => afficherToast('sauvegarde_exportee'))
+                  .catch(() => {});
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                afficherToast('sauvegarde_exportee');
+            }
+        }
+
+        function importerSauvegarde(e) {
+            const fichier = e.target.files[0];
+            if (!fichier) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const donnees = JSON.parse(event.target.result);
+                    baseDonnees = donnees;
+                    sauvegarderDonnees();
+                    afficherToast('sauvegarde_importee');
+                    
+                    if (baseDonnees.depots.length > 0) {
+                        depotActuel = baseDonnees.depots[0];
+                        document.getElementById('nom-depot-actif').textContent = depotActuel.nom;
+                        afficherListeProduits();
+                    }
+                } catch (erreur) {
+                    console.error('Erreur import:', erreur);
+                }
+            };
+            reader.readAsText(fichier);
+        }
+
+        // ============================================
+        // EXPORT QR CODE
+        // ============================================
+        function exporterQR() {
+            // Création d'une image SVG basique pour simuler le QR code
+            const svgContent = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+                    <rect width="200" height="200" fill="white"/>
+                    <text x="100" y="30" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#006f78">${produitSelectionne.nom}</text>
+                    <g transform="translate(50, 50)">
+                        <rect x="0" y="0" width="30" height="30" fill="#006f78"/>
+                        <rect x="70" y="0" width="30" height="30" fill="#006f78"/>
+                        <rect x="0" y="70" width="30" height="30" fill="#006f78"/>
+                        <rect x="40" y="40" width="20" height="20" fill="#006f78"/>
+                        <rect x="70" y="70" width="10" height="10" fill="#006f78"/>
+                        <rect x="90" y="70" width="10" height="10" fill="#006f78"/>
+                        <rect x="70" y="90" width="10" height="10" fill="#006f78"/>
+                        <rect x="90" y="90" width="10" height="10" fill="#006f78"/>
+                    </g>
+                    <text x="100" y="180" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#333">${produitSelectionne.reference}</text>
+                </svg>
+            `;
+            
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const fichier = new File([blob], `qr_${produitSelectionne.reference}.svg`, { type: 'image/svg+xml' });
+            
+            if (navigator.share) {
+                navigator.share({
+                    files: [fichier],
+                    title: 'QR Code',
+                    text: 'QR Code - ' + produitSelectionne.nom
+                }).then(() => afficherToast('qr_exporte'))
+                  .catch(() => {});
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fichier.name;
+                a.click();
+                afficherToast('qr_exporte');
+            }
+        }
+
+        // ============================================
+        // FONCTIONS UTILITAIRES
+        // ============================================
+        function sauvegarderConfig() {
+            localStorage.setItem('quincaillerie_config', JSON.stringify({
+                langue: langueActuelle,
+                theme: themeActuel,
+                depotActuel: depotActuel ? depotActuel.id : null
+            }));
+        }
+
+        function mettreAJourDate() {
+            const maintenant = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date-actuelle').textContent = maintenant.toLocaleDateString('fr-CD', options);
+        }
+
+        function mettreAJourOnboarding() {
+            const slides = [
+                { titre: 'onboarding1_titre', texte: 'onboarding1_texte' },
+                { titre: 'onboarding2_titre', texte: 'onboarding2_texte' },
+                { titre: 'onboarding3_titre', texte: 'onboarding3_texte' }
+            ];
+            
+            const slide = slides[slideOnboarding];
+            document.querySelector('.onboarding-titre').textContent = traduire(slide.titre);
+            document.querySelector('.onboarding-texte').textContent = traduire(slide.texte);
+            
+            document.querySelectorAll('.onboarding-point').forEach((point, i) => {
+                point.classList.toggle('actif', i === slideOnboarding);
+            });
+            
+            if (slideOnboarding === 2) {
+                document.getElementById('btn-suivant-onboarding').textContent = traduire('continuer');
+            }
+        }
+
+        function afficherListeLangues() {
+            const liste = document.getElementById('liste-langues-modale');
+            const langues = [
+                { code: 'fr', drapeau: '🇫🇷', nom: 'Francais' },
+                { code: 'en', drapeau: '🇬🇧', nom: 'English' },
+                { code: 'hi', drapeau: '🇮🇳', nom: 'Hindi' },
+                { code: 'ln', drapeau: '🇨🇩', nom: 'Lingala' },
+                { code: 'sw', drapeau: '🇨🇩', nom: 'Swahili' }
+            ];
+            
+            liste.innerHTML = langues.map(lang => `
+                <div class="parametres-item" data-lang-choix="${lang.code}">
+                    <div class="parametres-item-gauche">
+                        <span style="font-size: 24px;">${lang.drapeau}</span>
+                        <p class="parametres-item-texte">${lang.nom}</p>
+                    </div>
+                    ${lang.code === langueActuelle ? '<span style="color: var(--primaire);">✓</span>' : ''}
+                </div>
+            `).join('');
+            
+            liste.querySelectorAll('[data-lang-choix]').forEach(item => {
+                item.addEventListener('click', () => {
+                    langueActuelle = item.dataset.langChoix;
+                    sauvegarderConfig();
+                    appliquerTraductions();
+                    fermerModale('langue');
+                    document.getElementById('param-langue-actuelle').textContent = langues.find(l => l.code === langueActuelle).nom;
+                });
+            });
+        }
+    </script>
+</body>
+</html>

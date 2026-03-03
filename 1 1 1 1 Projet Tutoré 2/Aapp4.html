@@ -1,0 +1,4584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quincaillerie TOTAL</title>
+    <style>
+        :root {
+            --primaire: #006f78;
+            --primaire-sombre: #005a61;
+            --secondaire: #e62311;
+            --blanc: #ffffff;
+            --gris-clair: #f5f5f5;
+            --gris: #e0e0e0;
+            --gris-moyen: #9e9e9e;
+            --gris-fonce: #424242;
+            --noir: #212121;
+            --succes: #2e7d32;
+            --alerte: #f57c00;
+            --danger: #c62828;
+            --fond: #ffffff;
+            --fond-carte: #ffffff;
+            --texte: #212121;
+            --texte-secondaire: #757575;
+            --bordure: #e0e0e0;
+            --ombre: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="sombre"] {
+            --fond: #121212;
+            --fond-carte: #1e1e1e;
+            --texte: #ffffff;
+            --texte-secondaire: #b0b0b0;
+            --bordure: #333333;
+            --gris-clair: #2a2a2a;
+            --ombre: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Écrans */
+        .ecran {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .ecran.actif {
+            display: block;
+            animation: fonduEntree 0.3s ease;
+        }
+
+        @keyframes fonduEntree {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* En-tête */
+        .entete {
+            background: var(--primaire);
+            color: var(--blanc);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .entete-titre {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .entete-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icone {
+            width: 36px;
+            height: 36px;
+            background: var(--blanc);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icone svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primaire);
+        }
+
+        .btn-entete {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: var(--blanc);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-entete:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn-retour {
+            background: none;
+            border: none;
+            color: var(--blanc);
+            padding: 8px;
+            margin-left: -8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Navigation basse */
+        .nav-basse {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--fond-carte);
+            border-top: 1px solid var(--bordure);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            color: var(--texte-secondaire);
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-item.actif {
+            color: var(--primaire);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-notif {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            background: var(--secondaire);
+            color: var(--blanc);
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        /* Contenu */
+        .contenu {
+            padding: 16px;
+        }
+
+        /* Cartes */
+        .carte {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px var(--ombre);
+            border: 1px solid var(--bordure);
+        }
+
+        .carte-titre {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .carte-titre svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primaire);
+        }
+
+        /* Stats */
+        .stats-grille {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-carte {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--bordure);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-carte:active {
+            transform: scale(0.98);
+        }
+
+        .stat-valeur {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+
+        .stat-carte.alerte .stat-valeur {
+            color: var(--alerte);
+        }
+
+        .stat-carte.danger .stat-valeur {
+            color: var(--danger);
+        }
+
+        .stat-carte.succes .stat-valeur {
+            color: var(--succes);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-top: 4px;
+        }
+
+        /* Recherche */
+        .barre-recherche {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .champ-recherche {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: var(--gris-clair);
+            border-radius: 10px;
+            padding: 0 12px;
+            border: 1px solid var(--bordure);
+        }
+
+        .champ-recherche svg {
+            width: 20px;
+            height: 20px;
+            color: var(--texte-secondaire);
+            flex-shrink: 0;
+        }
+
+        .champ-recherche input {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 12px;
+            font-size: 15px;
+            color: var(--texte);
+            outline: none;
+        }
+
+        .champ-recherche input::placeholder {
+            color: var(--texte-secondaire);
+        }
+
+        .btn-scan {
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: 10px;
+            width: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-scan:active {
+            background: var(--primaire-sombre);
+        }
+
+        .btn-scan svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Filtres */
+        .filtres {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filtres::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filtre-btn {
+            background: var(--gris-clair);
+            border: 1px solid var(--bordure);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--texte);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filtre-btn.actif {
+            background: var(--primaire);
+            color: var(--blanc);
+            border-color: var(--primaire);
+        }
+
+        /* Liste produits */
+        .liste-produits {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .produit-item {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            border: 1px solid var(--bordure);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .produit-item:active {
+            transform: scale(0.99);
+            box-shadow: 0 4px 12px var(--ombre);
+        }
+
+        .produit-img {
+            width: 64px;
+            height: 64px;
+            background: var(--gris-clair);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .produit-img svg {
+            width: 32px;
+            height: 32px;
+            color: var(--texte-secondaire);
+        }
+
+        .produit-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .produit-nom {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .produit-sku {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .produit-stock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stock-badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .stock-badge.normal {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--succes);
+        }
+
+        .stock-badge.faible {
+            background: rgba(245, 124, 0, 0.1);
+            color: var(--alerte);
+        }
+
+        .stock-badge.rupture {
+            background: rgba(198, 40, 40, 0.1);
+            color: var(--danger);
+        }
+
+        .stock-badge.surstock {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+
+        .produit-prix {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .prix-valeur {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+
+        .prix-unite {
+            font-size: 11px;
+            color: var(--texte-secondaire);
+        }
+
+        /* Bouton flottant */
+        .btn-flottant {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--secondaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(230, 35, 17, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 50;
+        }
+
+        .btn-flottant:active {
+            transform: scale(0.95);
+        }
+
+        .btn-flottant svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Formulaires */
+        .formulaire {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .champ-groupe {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .champ-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .champ-input {
+            background: var(--gris-clair);
+            border: 1px solid var(--bordure);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 15px;
+            color: var(--texte);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .champ-input:focus {
+            border-color: var(--primaire);
+        }
+
+        .champ-input::placeholder {
+            color: var(--texte-secondaire);
+        }
+
+        textarea.champ-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Zone upload photo */
+        .zone-photo {
+            background: var(--gris-clair);
+            border: 2px dashed var(--bordure);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .zone-photo:active {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .zone-photo svg {
+            width: 48px;
+            height: 48px;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+        }
+
+        .zone-photo-texte {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+
+        .photo-preview {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--gris-clair);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-suppr-photo {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--danger);
+            color: var(--blanc);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Zone emplacement */
+        .zone-emplacement {
+            background: var(--gris-clair);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .zone-emplacement-info {
+            flex: 1;
+        }
+
+        .zone-emplacement-nom {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .zone-emplacement-qte {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+
+        .btn-suppr-zone {
+            background: none;
+            border: none;
+            color: var(--danger);
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .btn-ajouter-zone {
+            background: none;
+            border: 1px dashed var(--primaire);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--primaire);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-ajouter-zone:active {
+            background: rgba(0, 111, 120, 0.1);
+        }
+
+        /* Boutons */
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primaire {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .btn-secondaire {
+            background: var(--secondaire);
+            color: var(--blanc);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primaire);
+            color: var(--primaire);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--blanc);
+        }
+
+        .btn-bloc {
+            width: 100%;
+        }
+
+        .btn-groupe {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-groupe .btn {
+            flex: 1;
+        }
+
+        /* Modale */
+        .modale-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modale-overlay.actif {
+            display: flex;
+            animation: fonduEntree 0.2s ease;
+        }
+
+        .modale {
+            background: var(--fond-carte);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: glisserHaut 0.3s ease;
+        }
+
+        @keyframes glisserHaut {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modale-entete {
+            padding: 20px;
+            border-bottom: 1px solid var(--bordure);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--fond-carte);
+            z-index: 10;
+        }
+
+        .modale-titre {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .btn-fermer-modale {
+            background: var(--gris-clair);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--texte);
+        }
+
+        .modale-corps {
+            padding: 20px;
+        }
+
+        .modale-actions {
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            border-top: 1px solid var(--bordure);
+        }
+
+        /* Messages / Notifications */
+        .liste-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .message-item {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid var(--bordure);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .message-item:active {
+            background: var(--gris-clair);
+        }
+
+        .message-item.non-lu {
+            border-left: 3px solid var(--primaire);
+        }
+
+        .message-entete {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .message-icone {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .message-icone.entree {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--succes);
+        }
+
+        .message-icone.sortie {
+            background: rgba(230, 35, 17, 0.1);
+            color: var(--secondaire);
+        }
+
+        .message-icone.alerte {
+            background: rgba(245, 124, 0, 0.1);
+            color: var(--alerte);
+        }
+
+        .message-icone.info {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+
+        .message-icone svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .message-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .message-type {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .message-date {
+            font-size: 11px;
+            color: var(--texte-secondaire);
+        }
+
+        .message-contenu {
+            font-size: 14px;
+            color: var(--texte);
+            line-height: 1.4;
+        }
+
+        .message-auteur {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .message-auteur svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Filtres messages */
+        .tabs-messages {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .tabs-messages::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-message {
+            background: var(--gris-clair);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--texte);
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-message.actif {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .tab-compteur {
+            background: rgba(255,255,255,0.2);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .tab-message:not(.actif) .tab-compteur {
+            background: var(--gris);
+            color: var(--texte-secondaire);
+        }
+
+        /* Profil */
+        .profil-header {
+            text-align: center;
+            padding: 24px 16px;
+        }
+
+        .profil-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primaire);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .profil-avatar svg {
+            width: 48px;
+            height: 48px;
+            color: var(--blanc);
+        }
+
+        .profil-avatar-badge {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: var(--fond-carte);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--fond);
+            cursor: pointer;
+        }
+
+        .profil-avatar-badge svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primaire);
+        }
+
+        .profil-nom {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 4px;
+        }
+
+        .profil-role {
+            font-size: 14px;
+            color: var(--primaire);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .profil-role svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Options profil */
+        .options-liste {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            border-bottom: 1px solid var(--bordure);
+            cursor: pointer;
+            background: var(--fond-carte);
+            transition: background 0.2s;
+        }
+
+        .option-item:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .option-item:last-child {
+            border-radius: 0 0 12px 12px;
+            border-bottom: none;
+        }
+
+        .option-item:only-child {
+            border-radius: 12px;
+        }
+
+        .option-item:active {
+            background: var(--gris-clair);
+        }
+
+        .option-icone {
+            width: 40px;
+            height: 40px;
+            background: var(--gris-clair);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .option-icone svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primaire);
+        }
+
+        .option-icone.danger svg {
+            color: var(--danger);
+        }
+
+        .option-info {
+            flex: 1;
+        }
+
+        .option-titre {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .option-desc {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+
+        .option-valeur {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .option-valeur svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .section-titre {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 24px 16px 8px;
+        }
+
+        /* QR Code */
+        .qr-container {
+            background: var(--blanc);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            background: var(--gris-clair);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .qr-code svg {
+            width: 140px;
+            height: 140px;
+            color: var(--noir);
+        }
+
+        .qr-label {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+
+        /* Équipe */
+        .membre-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--fond-carte);
+            border-bottom: 1px solid var(--bordure);
+            cursor: pointer;
+        }
+
+        .membre-item:active {
+            background: var(--gris-clair);
+        }
+
+        .membre-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--primaire);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .membre-avatar svg {
+            width: 24px;
+            height: 24px;
+            color: var(--blanc);
+        }
+
+        .membre-avatar.en-attente {
+            background: var(--gris);
+        }
+
+        .membre-info {
+            flex: 1;
+        }
+
+        .membre-nom {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .membre-statut {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .membre-statut.admin {
+            color: var(--primaire);
+        }
+
+        .membre-statut.attente {
+            color: var(--alerte);
+        }
+
+        .membre-badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .membre-badge.admin {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+
+        .membre-badge.principal {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .membre-badge.attente {
+            background: rgba(245, 124, 0, 0.1);
+            color: var(--alerte);
+        }
+
+        /* Scanner overlay */
+        .scanner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--noir);
+            z-index: 300;
+            display: none;
+        }
+
+        .scanner-overlay.actif {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scanner-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--blanc);
+        }
+
+        .scanner-titre {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-fermer-scanner {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: var(--blanc);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scanner-zone {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .scanner-cadre {
+            width: 250px;
+            height: 250px;
+            border: 3px solid var(--blanc);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scanner-cadre::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--secondaire);
+            animation: scanLigne 2s ease-in-out infinite;
+        }
+
+        @keyframes scanLigne {
+            0%, 100% { top: 10%; }
+            50% { top: 90%; }
+        }
+
+        .scanner-coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: var(--primaire);
+            border-style: solid;
+        }
+
+        .scanner-coin.hg { top: -3px; left: -3px; border-width: 4px 0 0 4px; border-radius: 12px 0 0 0; }
+        .scanner-coin.hd { top: -3px; right: -3px; border-width: 4px 4px 0 0; border-radius: 0 12px 0 0; }
+        .scanner-coin.bg { bottom: -3px; left: -3px; border-width: 0 0 4px 4px; border-radius: 0 0 0 12px; }
+        .scanner-coin.bd { bottom: -3px; right: -3px; border-width: 0 4px 4px 0; border-radius: 0 0 12px 0; }
+
+        .scanner-instructions {
+            text-align: center;
+            padding: 24px;
+            color: var(--blanc);
+        }
+
+        .scanner-instructions p {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 16px;
+        }
+
+        .scanner-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .btn-scanner-action {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: var(--blanc);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-scanner-action svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Détail produit */
+        .detail-header {
+            background: var(--primaire);
+            color: var(--blanc);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .detail-photo {
+            width: 120px;
+            height: 120px;
+            background: var(--blanc);
+            border-radius: 16px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .detail-photo svg {
+            width: 48px;
+            height: 48px;
+            color: var(--gris-moyen);
+        }
+
+        .detail-nom {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .detail-sku {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .detail-section {
+            padding: 16px;
+        }
+
+        .detail-section-titre {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-info-grille {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .detail-info-item {
+            background: var(--gris-clair);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .detail-info-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-bottom: 4px;
+        }
+
+        .detail-info-valeur {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .detail-info-item.plein {
+            grid-column: span 2;
+        }
+
+        .detail-emplacement {
+            background: var(--gris-clair);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .detail-emplacement-nom {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .detail-emplacement-qte {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: var(--fond-carte);
+            position: sticky;
+            bottom: 0;
+            border-top: 1px solid var(--bordure);
+        }
+
+        .btn-action-rapide {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s;
+        }
+
+        .btn-action-rapide:active {
+            transform: scale(0.98);
+        }
+
+        .btn-action-rapide svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .btn-action-rapide.entree {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--succes);
+        }
+
+        .btn-action-rapide.sortie {
+            background: rgba(230, 35, 17, 0.1);
+            color: var(--secondaire);
+        }
+
+        .btn-action-rapide.inventaire {
+            background: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+
+        /* Écran connexion */
+        .ecran-auth {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-sombre) 100%);
+        }
+
+        .auth-header {
+            flex: 0 0 auto;
+            padding: 48px 24px 32px;
+            text-align: center;
+            color: var(--blanc);
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--blanc);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .auth-logo svg {
+            width: 48px;
+            height: 48px;
+            color: var(--primaire);
+        }
+
+        .auth-titre {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .auth-soustitre {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .auth-form {
+            flex: 1;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+            padding: 32px 24px;
+        }
+
+        .auth-form-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .separateur {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--texte-secondaire);
+            font-size: 13px;
+        }
+
+        .separateur::before,
+        .separateur::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--bordure);
+        }
+
+        .auth-alternatives {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-auth-alt {
+            flex: 1;
+            background: var(--gris-clair);
+            border: 1px solid var(--bordure);
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-auth-alt:active {
+            background: var(--gris);
+        }
+
+        .btn-auth-alt svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primaire);
+        }
+
+        .btn-auth-alt span {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+
+        .auth-switch a {
+            color: var(--primaire);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Écran choix langue/thème */
+        .ecran-bienvenue {
+            min-height: 100vh;
+            background: var(--fond);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bienvenue-header {
+            padding: 48px 24px 32px;
+            text-align: center;
+        }
+
+        .bienvenue-logo {
+            width: 72px;
+            height: 72px;
+            background: var(--primaire);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .bienvenue-logo svg {
+            width: 40px;
+            height: 40px;
+            color: var(--blanc);
+        }
+
+        .bienvenue-titre {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+
+        .bienvenue-soustitre {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+
+        .bienvenue-contenu {
+            flex: 1;
+            padding: 0 24px 32px;
+        }
+
+        .choix-section {
+            margin-bottom: 32px;
+        }
+
+        .choix-titre {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 12px;
+        }
+
+        .choix-grille {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .choix-option {
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .choix-option:active {
+            background: var(--gris-clair);
+        }
+
+        .choix-option.selectionne {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .choix-option-icone {
+            width: 48px;
+            height: 48px;
+            background: var(--gris-clair);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .choix-option.selectionne .choix-option-icone {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .choix-option-icone svg {
+            width: 24px;
+            height: 24px;
+            color: var(--texte-secondaire);
+        }
+
+        .choix-option.selectionne .choix-option-icone svg {
+            color: var(--blanc);
+        }
+
+        .choix-option-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .choix-themes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .theme-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 2px solid var(--bordure);
+        }
+
+        .theme-preview.systeme {
+            background: linear-gradient(135deg, #fff 50%, #1e1e1e 50%);
+        }
+
+        .theme-preview.clair {
+            background: #ffffff;
+        }
+
+        .theme-preview.sombre {
+            background: #1e1e1e;
+        }
+
+        /* Inventaire */
+        .inventaire-item {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--bordure);
+        }
+
+        .inventaire-produit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .inventaire-img {
+            width: 48px;
+            height: 48px;
+            background: var(--gris-clair);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .inventaire-img svg {
+            width: 24px;
+            height: 24px;
+            color: var(--texte-secondaire);
+        }
+
+        .inventaire-info {
+            flex: 1;
+        }
+
+        .inventaire-nom {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .inventaire-zone {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+
+        .inventaire-stocks {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .inventaire-stock-item {
+            background: var(--gris-clair);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .inventaire-stock-label {
+            font-size: 11px;
+            color: var(--texte-secondaire);
+            margin-bottom: 4px;
+        }
+
+        .inventaire-stock-valeur {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .inventaire-stock-valeur.theorique {
+            color: var(--texte);
+        }
+
+        .inventaire-stock-valeur.reel {
+            color: var(--primaire);
+        }
+
+        .inventaire-ecart {
+            text-align: center;
+            padding: 8px;
+            background: rgba(245, 124, 0, 0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--alerte);
+        }
+
+        .inventaire-ecart.ok {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--succes);
+        }
+
+        /* Compteur quantité */
+        .compteur-qte {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .btn-compteur {
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            background: var(--gris-clair);
+            color: var(--texte);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-compteur:active {
+            background: var(--gris);
+        }
+
+        .btn-compteur.moins {
+            background: rgba(230, 35, 17, 0.1);
+            color: var(--secondaire);
+        }
+
+        .btn-compteur.plus {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--succes);
+        }
+
+        .compteur-valeur {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--texte);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* Synchronisation */
+        .sync-banner {
+            background: var(--alerte);
+            color: var(--blanc);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .sync-banner svg {
+            width: 18px;
+            height: 18px;
+            animation: rotation 2s linear infinite;
+        }
+
+        @keyframes rotation {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .sync-banner.hors-ligne {
+            background: var(--danger);
+        }
+
+        .sync-banner.hors-ligne svg {
+            animation: none;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 16px;
+            right: 16px;
+            background: var(--noir);
+            color: var(--blanc);
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 250;
+            animation: toastEntree 0.3s ease;
+        }
+
+        .toast.actif {
+            display: flex;
+        }
+
+        @keyframes toastEntree {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast.succes {
+            background: var(--succes);
+        }
+
+        .toast.erreur {
+            background: var(--danger);
+        }
+
+        /* Stockage local */
+        .stockage-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--fond-carte);
+            border-bottom: 1px solid var(--bordure);
+        }
+
+        .stockage-icone {
+            width: 44px;
+            height: 44px;
+            background: var(--gris-clair);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stockage-icone svg {
+            width: 22px;
+            height: 22px;
+            color: var(--primaire);
+        }
+
+        .stockage-info {
+            flex: 1;
+        }
+
+        .stockage-nom {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .stockage-chemin {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+
+        .stockage-taille {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+
+        /* Bot assistant */
+        .bot-zone {
+            padding: 16px;
+            background: var(--gris-clair);
+            min-height: 100%;
+        }
+
+        .bot-message {
+            max-width: 85%;
+            margin-bottom: 12px;
+            clear: both;
+        }
+
+        .bot-message.bot {
+            float: left;
+        }
+
+        .bot-message.utilisateur {
+            float: right;
+        }
+
+        .bot-bulle {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .bot-message.bot .bot-bulle {
+            background: var(--fond-carte);
+            color: var(--texte);
+            border-bottom-left-radius: 4px;
+        }
+
+        .bot-message.utilisateur .bot-bulle {
+            background: var(--primaire);
+            color: var(--blanc);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .bot-option {
+            background: var(--fond-carte);
+            border: 1px solid var(--primaire);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--primaire);
+            cursor: pointer;
+        }
+
+        .bot-option:active {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .bot-saisie {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            background: var(--fond-carte);
+            padding: 12px 16px;
+            border-top: 1px solid var(--bordure);
+            display: flex;
+            gap: 12px;
+        }
+
+        .bot-saisie input {
+            flex: 1;
+            background: var(--gris-clair);
+            border: none;
+            border-radius: 24px;
+            padding: 12px 20px;
+            font-size: 15px;
+            color: var(--texte);
+            outline: none;
+        }
+
+        .btn-envoyer {
+            width: 48px;
+            height: 48px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 50%;
+            color: var(--blanc);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-envoyer svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Utilitaires */
+        .masque {
+            display: none !important;
+        }
+
+        .texte-centre {
+            text-align: center;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .clearfix::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran Bienvenue (Choix langue/thème) -->
+    <div class="ecran ecran-bienvenue actif" id="ecranBienvenue">
+        <div class="bienvenue-header">
+            <div class="bienvenue-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+            </div>
+            <h1 class="bienvenue-titre">Quincaillerie TOTAL</h1>
+            <p class="bienvenue-soustitre">Configurez votre application</p>
+        </div>
+
+        <div class="bienvenue-contenu">
+            <div class="choix-section">
+                <h3 class="choix-titre">Choisissez votre langue</h3>
+                <div class="choix-grille">
+                    <div class="choix-option selectionne" data-langue="fr" onclick="selectionnerLangue(this)">
+                        <div class="choix-option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <span class="choix-option-label">Francais</span>
+                    </div>
+                    <div class="choix-option" data-langue="en" onclick="selectionnerLangue(this)">
+                        <div class="choix-option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <span class="choix-option-label">English</span>
+                    </div>
+                    <div class="choix-option" data-langue="hi" onclick="selectionnerLangue(this)">
+                        <div class="choix-option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <span class="choix-option-label">Hindi</span>
+                    </div>
+                    <div class="choix-option" data-langue="ln" onclick="selectionnerLangue(this)">
+                        <div class="choix-option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <span class="choix-option-label">Lingala</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="choix-section">
+                <h3 class="choix-titre">Choisissez votre theme</h3>
+                <div class="choix-themes">
+                    <div class="choix-option" data-theme="systeme" onclick="selectionnerTheme(this)">
+                        <div class="theme-preview systeme"></div>
+                        <span class="choix-option-label">Systeme</span>
+                    </div>
+                    <div class="choix-option selectionne" data-theme="clair" onclick="selectionnerTheme(this)">
+                        <div class="theme-preview clair"></div>
+                        <span class="choix-option-label">Clair</span>
+                    </div>
+                    <div class="choix-option" data-theme="sombre" onclick="selectionnerTheme(this)">
+                        <div class="theme-preview sombre"></div>
+                        <span class="choix-option-label">Sombre</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primaire btn-bloc mt-16" onclick="continuerVersConnexion()">
+                Continuer
+            </button>
+        </div>
+    </div>
+
+    <!-- Écran Connexion -->
+    <div class="ecran ecran-auth" id="ecranConnexion">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+            </div>
+            <h1 class="auth-titre">Quincaillerie TOTAL</h1>
+            <p class="auth-soustitre">Gestion de stock intelligente</p>
+        </div>
+
+        <div class="auth-form">
+            <h2 class="auth-form-titre">Connexion</h2>
+
+            <div class="formulaire">
+                <div class="champ-groupe">
+                    <label class="champ-label">Mot de passe</label>
+                    <input type="password" class="champ-input" placeholder="Entrez votre mot de passe" id="champMotDePasse">
+                </div>
+
+                <button class="btn btn-primaire btn-bloc" onclick="seConnecter()">
+                    Se connecter
+                </button>
+            </div>
+
+            <div class="separateur">ou connectez-vous avec</div>
+
+            <div class="auth-alternatives">
+                <button class="btn-auth-alt" onclick="ouvrirScanner('connexion')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span>Scanner QR</span>
+                </button>
+                <button class="btn-auth-alt" onclick="importerQR()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span>Importer image</span>
+                </button>
+                <button class="btn-auth-alt" onclick="ouvrirScanner('carte')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>
+                    <span>Carte ID</span>
+                </button>
+            </div>
+
+            <p class="auth-switch">
+                Pas encore de compte ? <a onclick="afficherInscription()">Creer un compte</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Écran Inscription -->
+    <div class="ecran ecran-auth" id="ecranInscription">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+            </div>
+            <h1 class="auth-titre">Quincaillerie TOTAL</h1>
+            <p class="auth-soustitre">Creez votre compte</p>
+        </div>
+
+        <div class="auth-form">
+            <h2 class="auth-form-titre">Inscription</h2>
+
+            <div class="formulaire">
+                <div class="champ-groupe">
+                    <label class="champ-label">Nom complet</label>
+                    <input type="text" class="champ-input" placeholder="Ex: Jean Mutombo" id="champNomComplet">
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Mot de passe</label>
+                    <input type="password" class="champ-input" placeholder="Choisissez un mot de passe" id="champNouveauMotDePasse">
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Confirmer le mot de passe</label>
+                    <input type="password" class="champ-input" placeholder="Confirmez votre mot de passe" id="champConfirmMotDePasse">
+                </div>
+
+                <button class="btn btn-primaire btn-bloc" onclick="sInscrire()">
+                    Creer mon compte
+                </button>
+            </div>
+
+            <p class="auth-switch">
+                Deja un compte ? <a onclick="afficherConnexion()">Se connecter</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Application principale -->
+    <div id="applicationPrincipale" class="masque">
+        <!-- Bannière sync -->
+        <div class="sync-banner masque" id="banniereSync">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"/>
+                <polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+            <span>Synchronisation en cours...</span>
+        </div>
+
+        <!-- Écran Tableau de bord -->
+        <div class="ecran actif" id="ecranTableauBord">
+            <div class="entete">
+                <div class="entete-logo">
+                    <div class="logo-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <span class="entete-titre">Quincaillerie TOTAL</span>
+                </div>
+                <button class="btn-entete" onclick="naviguerVers('ecranNotifications')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="contenu">
+                <div class="carte">
+                    <div class="carte-titre">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                        Resume du stock
+                    </div>
+                    <div class="stats-grille">
+                        <div class="stat-carte" onclick="filtrerProduits('tous')">
+                            <div class="stat-valeur">156</div>
+                            <div class="stat-label">Produits</div>
+                        </div>
+                        <div class="stat-carte succes" onclick="filtrerProduits('tous')">
+                            <div class="stat-valeur">12.5M</div>
+                            <div class="stat-label">Valeur (FC)</div>
+                        </div>
+                        <div class="stat-carte alerte" onclick="filtrerProduits('faible')">
+                            <div class="stat-valeur">8</div>
+                            <div class="stat-label">Stock faible</div>
+                        </div>
+                        <div class="stat-carte danger" onclick="filtrerProduits('rupture')">
+                            <div class="stat-valeur">3</div>
+                            <div class="stat-label">En rupture</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carte">
+                    <div class="carte-titre">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        Actions rapides
+                    </div>
+                    <div class="btn-groupe">
+                        <button class="btn btn-primaire" onclick="ouvrirModale('modaleEntree')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <polyline points="19 12 12 19 5 12"/>
+                            </svg>
+                            Entree
+                        </button>
+                        <button class="btn btn-secondaire" onclick="ouvrirModale('modaleSortie')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <line x1="12" y1="19" x2="12" y2="5"/>
+                                <polyline points="5 12 12 5 19 12"/>
+                            </svg>
+                            Sortie
+                        </button>
+                    </div>
+                    <button class="btn btn-outline btn-bloc mt-16" onclick="ouvrirModale('modaleInventaire')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M9 11l3 3L22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                        Faire un inventaire
+                    </button>
+                </div>
+
+                <div class="carte">
+                    <div class="carte-titre">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Derniers mouvements
+                    </div>
+                    <div class="liste-messages">
+                        <div class="message-item" onclick="naviguerVers('ecranMessages')">
+                            <div class="message-entete">
+                                <div class="message-icone entree">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <polyline points="19 12 12 19 5 12"/>
+                                    </svg>
+                                </div>
+                                <div class="message-meta">
+                                    <div class="message-type">Entree de stock</div>
+                                    <div class="message-date">Il y a 15 min</div>
+                                </div>
+                            </div>
+                            <div class="message-contenu">Ciment CIMAF: +50 sacs - Depot A</div>
+                        </div>
+                        <div class="message-item" onclick="naviguerVers('ecranMessages')">
+                            <div class="message-entete">
+                                <div class="message-icone sortie">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="19" x2="12" y2="5"/>
+                                        <polyline points="5 12 12 5 19 12"/>
+                                    </svg>
+                                </div>
+                                <div class="message-meta">
+                                    <div class="message-type">Sortie de stock</div>
+                                    <div class="message-date">Il y a 1h</div>
+                                </div>
+                            </div>
+                            <div class="message-contenu">Fer a beton 12mm: -20 barres</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran Produits -->
+        <div class="ecran" id="ecranProduits">
+            <div class="entete">
+                <span class="entete-titre">Produits</span>
+                <button class="btn-entete" onclick="ouvrirScanner('produit')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="contenu">
+                <div class="barre-recherche">
+                    <div class="champ-recherche">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" placeholder="Rechercher un produit..." id="champRechercheProduit" oninput="rechercherProduit()">
+                    </div>
+                    <button class="btn-scan" onclick="ouvrirScanner('produit')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="filtres" id="filtresProduits">
+                    <button class="filtre-btn actif" data-filtre="tous" onclick="filtrerProduits('tous')">Tous (156)</button>
+                    <button class="filtre-btn" data-filtre="faible" onclick="filtrerProduits('faible')">Stock faible (8)</button>
+                    <button class="filtre-btn" data-filtre="rupture" onclick="filtrerProduits('rupture')">Rupture (3)</button>
+                    <button class="filtre-btn" data-filtre="surstock" onclick="filtrerProduits('surstock')">Surstock (5)</button>
+                </div>
+
+                <div class="liste-produits" id="listeProduits">
+                    <div class="produit-item" onclick="voirDetailProduit(1)">
+                        <div class="produit-img">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                        </div>
+                        <div class="produit-info">
+                            <div class="produit-nom">Ciment CIMAF 50kg</div>
+                            <div class="produit-sku">SKU: CIM-001</div>
+                            <div class="produit-stock">
+                                <span class="stock-badge normal">250 unites</span>
+                            </div>
+                        </div>
+                        <div class="produit-prix">
+                            <div class="prix-valeur">18 500 FC</div>
+                            <div class="prix-unite">/unite</div>
+                        </div>
+                    </div>
+
+                    <div class="produit-item" onclick="voirDetailProduit(2)">
+                        <div class="produit-img">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="4" y1="21" x2="4" y2="14"/>
+                                <line x1="4" y1="10" x2="4" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12" y2="3"/>
+                                <line x1="20" y1="21" x2="20" y2="16"/>
+                                <line x1="20" y1="12" x2="20" y2="3"/>
+                            </svg>
+                        </div>
+                        <div class="produit-info">
+                            <div class="produit-nom">Fer a beton 12mm</div>
+                            <div class="produit-sku">SKU: FER-012</div>
+                            <div class="produit-stock">
+                                <span class="stock-badge faible">15 unites</span>
+                            </div>
+                        </div>
+                        <div class="produit-prix">
+                            <div class="prix-valeur">12 000 FC</div>
+                            <div class="prix-unite">/barre</div>
+                        </div>
+                    </div>
+
+                    <div class="produit-item" onclick="voirDetailProduit(3)">
+                        <div class="produit-img">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
+                        </div>
+                        <div class="produit-info">
+                            <div class="produit-nom">Marteau menuisier</div>
+                            <div class="produit-sku">SKU: OUT-045</div>
+                            <div class="produit-stock">
+                                <span class="stock-badge rupture">0 unite</span>
+                            </div>
+                        </div>
+                        <div class="produit-prix">
+                            <div class="prix-valeur">8 500 FC</div>
+                            <div class="prix-unite">/piece</div>
+                        </div>
+                    </div>
+
+                    <div class="produit-item" onclick="voirDetailProduit(4)">
+                        <div class="produit-img">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                                <line x1="6" y1="18" x2="6.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <div class="produit-info">
+                            <div class="produit-nom">Tole ondulee BG28</div>
+                            <div class="produit-sku">SKU: TOL-028</div>
+                            <div class="produit-stock">
+                                <span class="stock-badge surstock">520 unites</span>
+                            </div>
+                        </div>
+                        <div class="produit-prix">
+                            <div class="prix-valeur">45 000 FC</div>
+                            <div class="prix-unite">/feuille</div>
+                        </div>
+                    </div>
+
+                    <div class="produit-item" onclick="voirDetailProduit(5)">
+                        <div class="produit-img">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                        </div>
+                        <div class="produit-info">
+                            <div class="produit-nom">Tuyau PVC 110mm</div>
+                            <div class="produit-sku">SKU: TUY-110</div>
+                            <div class="produit-stock">
+                                <span class="stock-badge normal">85 unites</span>
+                            </div>
+                        </div>
+                        <div class="produit-prix">
+                            <div class="prix-valeur">32 000 FC</div>
+                            <div class="prix-unite">/tube</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-flottant" onclick="ouvrirModale('modaleAjoutProduit')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Écran Messages -->
+        <div class="ecran" id="ecranMessages">
+            <div class="entete">
+                <span class="entete-titre">Activites</span>
+                <button class="btn-entete" onclick="naviguerVers('ecranBot')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="contenu">
+                <div class="barre-recherche">
+                    <div class="champ-recherche">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" placeholder="Rechercher dans les activites...">
+                    </div>
+                </div>
+
+                <div class="tabs-messages">
+                    <button class="tab-message actif" onclick="filtrerMessages('tous')">
+                        Tous
+                        <span class="tab-compteur">24</span>
+                    </button>
+                    <button class="tab-message" onclick="filtrerMessages('entrees')">
+                        Entrees
+                        <span class="tab-compteur">8</span>
+                    </button>
+                    <button class="tab-message" onclick="filtrerMessages('sorties')">
+                        Sorties
+                        <span class="tab-compteur">12</span>
+                    </button>
+                    <button class="tab-message" onclick="filtrerMessages('alertes')">
+                        Alertes
+                        <span class="tab-compteur">4</span>
+                    </button>
+                </div>
+
+                <div class="liste-messages" id="listeMessages">
+                    <div class="message-item non-lu" onclick="voirDetailMessage(1)">
+                        <div class="message-entete">
+                            <div class="message-icone entree">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <polyline points="19 12 12 19 5 12"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Entree de stock</div>
+                                <div class="message-date">Aujourd'hui, 14:32</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Ciment CIMAF 50kg: +50 sacs dans Depot A</div>
+                        <div class="message-auteur">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Jean Mutombo
+                        </div>
+                    </div>
+
+                    <div class="message-item" onclick="voirDetailMessage(2)">
+                        <div class="message-entete">
+                            <div class="message-icone sortie">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="19" x2="12" y2="5"/>
+                                    <polyline points="5 12 12 5 19 12"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Sortie de stock</div>
+                                <div class="message-date">Aujourd'hui, 13:15</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Fer a beton 12mm: -20 barres - Vente client</div>
+                        <div class="message-auteur">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Patrick Kabongo
+                        </div>
+                    </div>
+
+                    <div class="message-item" onclick="voirDetailMessage(3)">
+                        <div class="message-entete">
+                            <div class="message-icone alerte">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Alerte stock faible</div>
+                                <div class="message-date">Aujourd'hui, 11:00</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Fer a beton 12mm a atteint le seuil critique (15 unites restantes)</div>
+                    </div>
+
+                    <div class="message-item" onclick="voirDetailMessage(4)">
+                        <div class="message-entete">
+                            <div class="message-icone info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"/>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Inventaire</div>
+                                <div class="message-date">Hier, 17:45</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Inventaire effectue: Tuyau PVC 110mm - Ecart: -2 unites</div>
+                        <div class="message-auteur">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Jean Mutombo
+                        </div>
+                    </div>
+
+                    <div class="message-item" onclick="voirDetailMessage(5)">
+                        <div class="message-entete">
+                            <div class="message-icone info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Produit ajoute</div>
+                                <div class="message-date">Hier, 09:20</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Nouveau produit ajoute: Clous 80mm - 500 unites</div>
+                        <div class="message-auteur">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Patrick Kabongo
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran Profil -->
+        <div class="ecran" id="ecranProfil">
+            <div class="entete">
+                <span class="entete-titre">Profil</span>
+                <button class="btn-entete" onclick="ouvrirModale('modaleParametres')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="profil-header">
+                <div class="profil-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <div class="profil-avatar-badge" onclick="changerPhoto()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="profil-nom">Jean Mutombo</h2>
+                <div class="profil-role">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Administrateur principal
+                </div>
+            </div>
+
+            <div class="contenu">
+                <div class="section-titre">Mon compte</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="options-liste">
+                        <div class="option-item" onclick="ouvrirModale('modaleQRUtilisateur')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"/>
+                                    <rect x="14" y="3" width="7" height="7"/>
+                                    <rect x="14" y="14" width="7" height="7"/>
+                                    <rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Mon QR Code</div>
+                                <div class="option-desc">Telecharger ou partager</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="option-item" onclick="ouvrirModale('modaleLierCarte')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                    <line x1="2" y1="10" x2="22" y2="10"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Carte d'identite</div>
+                                <div class="option-desc">Liee - Carte electeur</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="option-item" onclick="modifierProfil()">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Modifier le profil</div>
+                                <div class="option-desc">Nom, photo</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-titre">Preferences</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="options-liste">
+                        <div class="option-item" onclick="ouvrirModale('modaleLangue')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Langue</div>
+                            </div>
+                            <div class="option-valeur">
+                                Francais
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="option-item" onclick="ouvrirModale('modaleTheme')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="5"/>
+                                    <line x1="12" y1="1" x2="12" y2="3"/>
+                                    <line x1="12" y1="21" x2="12" y2="23"/>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                    <line x1="1" y1="12" x2="3" y2="12"/>
+                                    <line x1="21" y1="12" x2="23" y2="12"/>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Theme</div>
+                            </div>
+                            <div class="option-valeur">
+                                Clair
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-titre">Equipe</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="options-liste">
+                        <div class="option-item" onclick="naviguerVers('ecranEquipe')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Gestion des membres</div>
+                                <div class="option-desc">4 membres actifs</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="option-item" onclick="ouvrirModale('modaleVerrouillage')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Verrouillage application</div>
+                                <div class="option-desc">Securite admin</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-titre">Donnees</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="options-liste">
+                        <div class="option-item" onclick="naviguerVers('ecranStockage')">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Stockage local</div>
+                                <div class="option-desc">Fichiers et donnees hors-ligne</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="option-item" onclick="synchroniserDonnees()">
+                            <div class="option-icone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <polyline points="1 20 1 14 7 14"/>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre">Synchronisation</div>
+                                <div class="option-desc">Derniere sync: il y a 5 min</div>
+                            </div>
+                            <div class="option-valeur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-titre">Session</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="options-liste">
+                        <div class="option-item" onclick="seDeconnecter()">
+                            <div class="option-icone danger">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                            </div>
+                            <div class="option-info">
+                                <div class="option-titre" style="color: var(--danger);">Se deconnecter</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran Détail Produit -->
+        <div class="ecran" id="ecranDetailProduit">
+            <div class="entete">
+                <button class="btn-retour" onclick="retourListe()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+                <span class="entete-titre">Detail produit</span>
+                <button class="btn-entete" onclick="ouvrirMenuProduit()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <circle cx="12" cy="12" r="1"/>
+                        <circle cx="19" cy="12" r="1"/>
+                        <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="detail-header">
+                <div class="detail-photo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                </div>
+                <h1 class="detail-nom">Ciment CIMAF 50kg</h1>
+                <p class="detail-sku">SKU: CIM-001</p>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">Informations stock</div>
+                <div class="detail-info-grille">
+                    <div class="detail-info-item">
+                        <div class="detail-info-label">Stock total</div>
+                        <div class="detail-info-valeur">250 unites</div>
+                    </div>
+                    <div class="detail-info-item">
+                        <div class="detail-info-label">Valeur stock</div>
+                        <div class="detail-info-valeur">4 625 000 FC</div>
+                    </div>
+                    <div class="detail-info-item">
+                        <div class="detail-info-label">Seuil minimum</div>
+                        <div class="detail-info-valeur">50 unites</div>
+                    </div>
+                    <div class="detail-info-item">
+                        <div class="detail-info-label">Seuil maximum</div>
+                        <div class="detail-info-valeur">500 unites</div>
+                    </div>
+                    <div class="detail-info-item plein">
+                        <div class="detail-info-label">Prix d'achat unitaire</div>
+                        <div class="detail-info-valeur">18 500 FC</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">Emplacements</div>
+                <div class="detail-emplacement">
+                    <span class="detail-emplacement-nom">Depot A - Rayon 1</span>
+                    <span class="detail-emplacement-qte">150 unites</span>
+                </div>
+                <div class="detail-emplacement">
+                    <span class="detail-emplacement-nom">Depot B - Rayon 3</span>
+                    <span class="detail-emplacement-qte">100 unites</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">Historique</div>
+                <div class="detail-info-grille">
+                    <div class="detail-info-item">
+                        <div class="detail-info-label">Date creation</div>
+                        <div class="detail-info-valeur">15/01/2025</div>
+                    </div>
+                    <div class="detail-info-item">
+                        <div class="detail-info-label">Derniere modif.</div>
+                        <div class="detail-info-valeur">24/02/2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">QR Code produit</div>
+                <div class="qr-container">
+                    <div class="qr-code">
+                        <svg viewBox="0 0 100 100" fill="currentColor">
+                            <rect x="10" y="10" width="10" height="10"/>
+                            <rect x="20" y="10" width="10" height="10"/>
+                            <rect x="30" y="10" width="10" height="10"/>
+                            <rect x="10" y="20" width="10" height="10"/>
+                            <rect x="30" y="20" width="10" height="10"/>
+                            <rect x="10" y="30" width="10" height="10"/>
+                            <rect x="20" y="30" width="10" height="10"/>
+                            <rect x="30" y="30" width="10" height="10"/>
+                            <rect x="60" y="10" width="10" height="10"/>
+                            <rect x="70" y="10" width="10" height="10"/>
+                            <rect x="80" y="10" width="10" height="10"/>
+                            <rect x="60" y="20" width="10" height="10"/>
+                            <rect x="80" y="20" width="10" height="10"/>
+                            <rect x="60" y="30" width="10" height="10"/>
+                            <rect x="70" y="30" width="10" height="10"/>
+                            <rect x="80" y="30" width="10" height="10"/>
+                            <rect x="10" y="60" width="10" height="10"/>
+                            <rect x="20" y="60" width="10" height="10"/>
+                            <rect x="30" y="60" width="10" height="10"/>
+                            <rect x="10" y="70" width="10" height="10"/>
+                            <rect x="30" y="70" width="10" height="10"/>
+                            <rect x="10" y="80" width="10" height="10"/>
+                            <rect x="20" y="80" width="10" height="10"/>
+                            <rect x="30" y="80" width="10" height="10"/>
+                            <rect x="50" y="50" width="10" height="10"/>
+                            <rect x="60" y="60" width="10" height="10"/>
+                            <rect x="70" y="70" width="10" height="10"/>
+                            <rect x="80" y="80" width="10" height="10"/>
+                            <rect x="50" y="70" width="10" height="10"/>
+                            <rect x="70" y="50" width="10" height="10"/>
+                        </svg>
+                    </div>
+                    <button class="btn btn-outline" onclick="telechargerQR()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Telecharger QR Code
+                    </button>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <button class="btn-action-rapide entree" onclick="ouvrirModale('modaleEntree')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                    Entree
+                </button>
+                <button class="btn-action-rapide sortie" onclick="ouvrirModale('modaleSortie')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="19" x2="12" y2="5"/>
+                        <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                    Sortie
+                </button>
+                <button class="btn-action-rapide inventaire" onclick="ouvrirModale('modaleInventaire')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Inventaire
+                </button>
+            </div>
+        </div>
+
+        <!-- Écran Équipe -->
+        <div class="ecran" id="ecranEquipe">
+            <div class="entete">
+                <button class="btn-retour" onclick="naviguerVers('ecranProfil')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+                <span class="entete-titre">Equipe</span>
+                <button class="btn-entete" onclick="ouvrirModale('modaleAjoutMembre')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="contenu">
+                <div class="section-titre">Membres actifs (4)</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="membre-item" onclick="voirDetailMembre(1)">
+                        <div class="membre-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="membre-info">
+                            <div class="membre-nom">Jean Mutombo</div>
+                            <div class="membre-statut admin">Administrateur principal</div>
+                        </div>
+                        <span class="membre-badge principal">Principal</span>
+                    </div>
+                    <div class="membre-item" onclick="voirDetailMembre(2)">
+                        <div class="membre-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="membre-info">
+                            <div class="membre-nom">Patrick Kabongo</div>
+                            <div class="membre-statut admin">Administrateur</div>
+                        </div>
+                        <span class="membre-badge admin">Admin</span>
+                    </div>
+                    <div class="membre-item" onclick="voirDetailMembre(3)">
+                        <div class="membre-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="membre-info">
+                            <div class="membre-nom">Marie Kasongo</div>
+                            <div class="membre-statut">Membre</div>
+                        </div>
+                    </div>
+                    <div class="membre-item" onclick="voirDetailMembre(4)">
+                        <div class="membre-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="membre-info">
+                            <div class="membre-nom">David Mwamba</div>
+                            <div class="membre-statut">Membre</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-titre">En attente d'approbation (2)</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="membre-item" onclick="approuverMembre(5)">
+                        <div class="membre-avatar en-attente">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="membre-info">
+                            <div class="membre-nom">Sophie Lukusa</div>
+                            <div class="membre-statut attente">En attente</div>
+                        </div>
+                        <span class="membre-badge attente">Approuver</span>
+                    </div>
+                    <div class="membre-item" onclick="approuverMembre(6)">
+                        <div class="membre-avatar en-attente">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="membre-info">
+                            <div class="membre-nom">Robert Mukendi</div>
+                            <div class="membre-statut attente">En attente</div>
+                        </div>
+                        <span class="membre-badge attente">Approuver</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran Stockage -->
+        <div class="ecran" id="ecranStockage">
+            <div class="entete">
+                <button class="btn-retour" onclick="naviguerVers('ecranProfil')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+                <span class="entete-titre">Stockage local</span>
+            </div>
+
+            <div class="contenu">
+                <div class="carte">
+                    <div class="carte-titre">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                            <line x1="6" y1="6" x2="6.01" y2="6"/>
+                            <line x1="6" y1="18" x2="6.01" y2="18"/>
+                        </svg>
+                        Espace utilise
+                    </div>
+                    <div class="detail-info-grille">
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">Donnees locales</div>
+                            <div class="detail-info-valeur">45.2 MB</div>
+                        </div>
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">En attente sync</div>
+                            <div class="detail-info-valeur">12 elements</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-titre">Fichiers locaux</div>
+                <div class="carte" style="padding: 0; overflow: hidden;">
+                    <div class="stockage-item">
+                        <div class="stockage-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="stockage-info">
+                            <div class="stockage-nom">Rapports PDF</div>
+                            <div class="stockage-chemin">/Documents/QuincaillerieTotal/Rapports</div>
+                        </div>
+                        <div class="stockage-taille">8.5 MB</div>
+                    </div>
+                    <div class="stockage-item">
+                        <div class="stockage-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </div>
+                        <div class="stockage-info">
+                            <div class="stockage-nom">QR Codes</div>
+                            <div class="stockage-chemin">/Documents/QuincaillerieTotal/QRCodes</div>
+                        </div>
+                        <div class="stockage-taille">2.3 MB</div>
+                    </div>
+                    <div class="stockage-item">
+                        <div class="stockage-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                        <div class="stockage-info">
+                            <div class="stockage-nom">Photos produits</div>
+                            <div class="stockage-chemin">/Documents/QuincaillerieTotal/Photos</div>
+                        </div>
+                        <div class="stockage-taille">28.7 MB</div>
+                    </div>
+                    <div class="stockage-item">
+                        <div class="stockage-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                            </svg>
+                        </div>
+                        <div class="stockage-info">
+                            <div class="stockage-nom">Base de donnees</div>
+                            <div class="stockage-chemin">/Documents/QuincaillerieTotal/Data</div>
+                        </div>
+                        <div class="stockage-taille">5.7 MB</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline btn-bloc mt-16" onclick="viderCache()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Vider le cache
+                </button>
+            </div>
+        </div>
+
+        <!-- Écran Bot/Assistant -->
+        <div class="ecran" id="ecranBot">
+            <div class="entete">
+                <button class="btn-retour" onclick="naviguerVers('ecranMessages')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+                <span class="entete-titre">Assistant</span>
+            </div>
+
+            <div class="bot-zone clearfix" id="zoneBot">
+                <div class="bot-message bot">
+                    <div class="bot-bulle">
+                        Bonjour! Je suis votre assistant. Que puis-je faire pour vous?
+                    </div>
+                    <div class="bot-options">
+                        <button class="bot-option" onclick="commandeBot('1')">1 - Mon stock</button>
+                        <button class="bot-option" onclick="commandeBot('2')">2 - Alertes</button>
+                        <button class="bot-option" onclick="commandeBot('3')">3 - Rapport PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bot-saisie">
+                <input type="text" placeholder="Tapez votre message..." id="champBot" onkeypress="envoyerMessageBot(event)">
+                <button class="btn-envoyer" onclick="envoyerBot()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Écran Notifications -->
+        <div class="ecran" id="ecranNotifications">
+            <div class="entete">
+                <button class="btn-retour" onclick="naviguerVers('ecranTableauBord')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+                <span class="entete-titre">Notifications</span>
+                <button class="btn-entete" onclick="marquerToutLu()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="contenu">
+                <div class="liste-messages">
+                    <div class="message-item non-lu">
+                        <div class="message-entete">
+                            <div class="message-icone alerte">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Stock critique</div>
+                                <div class="message-date">Il y a 2 min</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Le produit "Marteau menuisier" est en rupture de stock!</div>
+                    </div>
+                    <div class="message-item non-lu">
+                        <div class="message-entete">
+                            <div class="message-icone info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="8.5" cy="7" r="4"/>
+                                    <line x1="20" y1="8" x2="20" y2="14"/>
+                                    <line x1="23" y1="11" x2="17" y2="11"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Nouveau membre</div>
+                                <div class="message-date">Il y a 30 min</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Sophie Lukusa souhaite rejoindre l'equipe</div>
+                    </div>
+                    <div class="message-item">
+                        <div class="message-entete">
+                            <div class="message-icone entree">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <polyline points="1 20 1 14 7 14"/>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                            </div>
+                            <div class="message-meta">
+                                <div class="message-type">Synchronisation</div>
+                                <div class="message-date">Il y a 1h</div>
+                            </div>
+                        </div>
+                        <div class="message-contenu">Toutes les donnees ont ete synchronisees avec succes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation basse -->
+        <nav class="nav-basse" id="navBasse">
+            <button class="nav-item actif" onclick="naviguerVers('ecranTableauBord')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Accueil</span>
+            </button>
+            <button class="nav-item" onclick="naviguerVers('ecranProduits')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                <span>Produits</span>
+            </button>
+            <button class="nav-item" onclick="naviguerVers('ecranMessages')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>Activites</span>
+                <span class="badge-notif">3</span>
+            </button>
+            <button class="nav-item" onclick="naviguerVers('ecranProfil')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Profil</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modales -->
+    <!-- Modale Entrée -->
+    <div class="modale-overlay" id="modaleEntree">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Entree de stock</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleEntree')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="formulaire">
+                    <div class="champ-groupe">
+                        <label class="champ-label">Produit</label>
+                        <div class="champ-recherche" style="background: var(--gris-clair); border-radius: 10px; border: 1px solid var(--bordure);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" placeholder="Rechercher ou scanner..." value="Ciment CIMAF 50kg">
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Quantite</label>
+                        <div class="compteur-qte">
+                            <button class="btn-compteur moins" onclick="modifierQuantite('entree', -1)">-</button>
+                            <span class="compteur-valeur" id="qteEntree">10</span>
+                            <button class="btn-compteur plus" onclick="modifierQuantite('entree', 1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Emplacement</label>
+                        <input type="text" class="champ-input" placeholder="Ex: Depot A - Rayon 1" value="Depot A - Rayon 1">
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Prix d'achat unitaire (FC)</label>
+                        <input type="number" class="champ-input" placeholder="Ex: 18500" value="18500">
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Commentaire (optionnel)</label>
+                        <textarea class="champ-input" placeholder="Raison de l'entree..."></textarea>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Photo justificative (optionnel)</label>
+                        <div class="zone-photo" onclick="prendrePhoto()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            <p class="zone-photo-texte">Appuyez pour prendre ou importer une photo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modale-actions">
+                <button class="btn btn-primaire btn-bloc" onclick="validerEntree()">
+                    Valider l'entree
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Sortie -->
+    <div class="modale-overlay" id="modaleSortie">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Sortie de stock</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleSortie')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="formulaire">
+                    <div class="champ-groupe">
+                        <label class="champ-label">Produit</label>
+                        <div class="champ-recherche" style="background: var(--gris-clair); border-radius: 10px; border: 1px solid var(--bordure);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" placeholder="Rechercher ou scanner...">
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Quantite</label>
+                        <div class="compteur-qte">
+                            <button class="btn-compteur moins" onclick="modifierQuantite('sortie', -1)">-</button>
+                            <span class="compteur-valeur" id="qteSortie">5</span>
+                            <button class="btn-compteur plus" onclick="modifierQuantite('sortie', 1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Motif</label>
+                        <input type="text" class="champ-input" placeholder="Ex: Vente, Usage interne...">
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Commentaire (optionnel)</label>
+                        <textarea class="champ-input" placeholder="Details supplementaires..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modale-actions">
+                <button class="btn btn-secondaire btn-bloc" onclick="validerSortie()">
+                    Valider la sortie
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Inventaire -->
+    <div class="modale-overlay" id="modaleInventaire">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Inventaire</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleInventaire')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="inventaire-item">
+                    <div class="inventaire-produit">
+                        <div class="inventaire-img">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                        </div>
+                        <div class="inventaire-info">
+                            <div class="inventaire-nom">Ciment CIMAF 50kg</div>
+                            <div class="inventaire-zone">Depot A - Rayon 1</div>
+                        </div>
+                    </div>
+
+                    <div class="inventaire-stocks">
+                        <div class="inventaire-stock-item">
+                            <div class="inventaire-stock-label">Stock theorique</div>
+                            <div class="inventaire-stock-valeur theorique">150</div>
+                        </div>
+                        <div class="inventaire-stock-item">
+                            <div class="inventaire-stock-label">Stock reel</div>
+                            <div class="compteur-qte" style="margin-top: 8px;">
+                                <button class="btn-compteur moins" style="width: 32px; height: 32px;" onclick="modifierQuantite('inventaire', -1)">-</button>
+                                <span class="compteur-valeur inventaire-stock-valeur reel" id="qteInventaire" style="font-size: 20px; min-width: 40px;">148</span>
+                                <button class="btn-compteur plus" style="width: 32px; height: 32px;" onclick="modifierQuantite('inventaire', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inventaire-ecart" id="ecartInventaire">
+                        Ecart: -2 unites
+                    </div>
+                </div>
+
+                <div class="champ-groupe mt-16">
+                    <label class="champ-label">Commentaire sur l'ecart</label>
+                    <textarea class="champ-input" placeholder="Explication de l'ecart..."></textarea>
+                </div>
+            </div>
+            <div class="modale-actions">
+                <button class="btn btn-primaire btn-bloc" onclick="validerInventaire()">
+                    Valider l'inventaire
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Ajout Produit -->
+    <div class="modale-overlay" id="modaleAjoutProduit">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Nouveau produit</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleAjoutProduit')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="formulaire">
+                    <div class="champ-groupe">
+                        <label class="champ-label">Photo du produit</label>
+                        <div class="zone-photo" onclick="prendrePhoto()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            <p class="zone-photo-texte">Appuyez pour ajouter une photo</p>
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Nom du produit</label>
+                        <input type="text" class="champ-input" placeholder="Ex: Ciment CIMAF 50kg">
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">SKU / Code-barres</label>
+                        <div class="champ-recherche" style="background: var(--gris-clair); border-radius: 10px; border: 1px solid var(--bordure);">
+                            <input type="text" placeholder="Ex: CIM-001" style="padding-left: 12px;">
+                            <button style="background: none; border: none; padding: 12px; cursor: pointer;" onclick="ouvrirScanner('sku')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="color: var(--primaire);">
+                                    <rect x="3" y="3" width="7" height="7"/>
+                                    <rect x="14" y="3" width="7" height="7"/>
+                                    <rect x="14" y="14" width="7" height="7"/>
+                                    <rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Emplacements</label>
+                        <div class="zone-emplacement">
+                            <div class="zone-emplacement-info">
+                                <div class="zone-emplacement-nom">Depot A - Rayon 1</div>
+                                <div class="zone-emplacement-qte">Quantite: 100</div>
+                            </div>
+                            <button class="btn-suppr-zone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <button class="btn-ajouter-zone" onclick="ajouterEmplacement()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Ajouter un emplacement
+                        </button>
+                    </div>
+
+                    <div class="btn-groupe">
+                        <div class="champ-groupe" style="flex: 1;">
+                            <label class="champ-label">Seuil minimum</label>
+                            <input type="number" class="champ-input" placeholder="50">
+                        </div>
+                        <div class="champ-groupe" style="flex: 1;">
+                            <label class="champ-label">Seuil maximum</label>
+                            <input type="number" class="champ-input" placeholder="500">
+                        </div>
+                    </div>
+
+                    <div class="champ-groupe">
+                        <label class="champ-label">Prix d'achat unitaire (FC)</label>
+                        <input type="number" class="champ-input" placeholder="Ex: 18500">
+                    </div>
+                </div>
+            </div>
+            <div class="modale-actions">
+                <button class="btn btn-primaire btn-bloc" onclick="ajouterProduit()">
+                    Ajouter le produit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale QR Utilisateur -->
+    <div class="modale-overlay" id="modaleQRUtilisateur">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Mon QR Code</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleQRUtilisateur')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="qr-container">
+                    <div class="qr-code">
+                        <svg viewBox="0 0 100 100" fill="currentColor">
+                            <rect x="10" y="10" width="10" height="10"/>
+                            <rect x="20" y="10" width="10" height="10"/>
+                            <rect x="30" y="10" width="10" height="10"/>
+                            <rect x="10" y="20" width="10" height="10"/>
+                            <rect x="30" y="20" width="10" height="10"/>
+                            <rect x="10" y="30" width="10" height="10"/>
+                            <rect x="20" y="30" width="10" height="10"/>
+                            <rect x="30" y="30" width="10" height="10"/>
+                            <rect x="60" y="10" width="10" height="10"/>
+                            <rect x="70" y="10" width="10" height="10"/>
+                            <rect x="80" y="10" width="10" height="10"/>
+                            <rect x="60" y="20" width="10" height="10"/>
+                            <rect x="80" y="20" width="10" height="10"/>
+                            <rect x="60" y="30" width="10" height="10"/>
+                            <rect x="70" y="30" width="10" height="10"/>
+                            <rect x="80" y="30" width="10" height="10"/>
+                            <rect x="10" y="60" width="10" height="10"/>
+                            <rect x="20" y="60" width="10" height="10"/>
+                            <rect x="30" y="60" width="10" height="10"/>
+                            <rect x="10" y="70" width="10" height="10"/>
+                            <rect x="30" y="70" width="10" height="10"/>
+                            <rect x="10" y="80" width="10" height="10"/>
+                            <rect x="20" y="80" width="10" height="10"/>
+                            <rect x="30" y="80" width="10" height="10"/>
+                            <rect x="50" y="50" width="10" height="10"/>
+                            <rect x="60" y="60" width="10" height="10"/>
+                            <rect x="70" y="70" width="10" height="10"/>
+                            <rect x="80" y="80" width="10" height="10"/>
+                            <rect x="50" y="70" width="10" height="10"/>
+                            <rect x="70" y="50" width="10" height="10"/>
+                        </svg>
+                    </div>
+                    <p class="qr-label">Jean Mutombo</p>
+                </div>
+                <p style="text-align: center; font-size: 13px; color: var(--texte-secondaire); margin-bottom: 16px;">
+                    Utilisez ce QR code pour vous connecter rapidement
+                </p>
+            </div>
+            <div class="modale-actions">
+                <button class="btn btn-primaire btn-bloc" onclick="telechargerQR()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Telecharger
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Langue -->
+    <div class="modale-overlay" id="modaleLangue">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Langue</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleLangue')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="options-liste" style="margin: -20px;">
+                    <div class="option-item" onclick="changerLangueApp('fr')">
+                        <div class="option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="option-info">
+                            <div class="option-titre">Francais</div>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2" width="20" height="20">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="option-item" onclick="changerLangueApp('en')">
+                        <div class="option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="option-info">
+                            <div class="option-titre">English</div>
+                        </div>
+                    </div>
+                    <div class="option-item" onclick="changerLangueApp('hi')">
+                        <div class="option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="option-info">
+                            <div class="option-titre">Hindi</div>
+                        </div>
+                    </div>
+                    <div class="option-item" onclick="changerLangueApp('ln')">
+                        <div class="option-icone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="option-info">
+                            <div class="option-titre">Lingala</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Thème -->
+    <div class="modale-overlay" id="modaleTheme">
+        <div class="modale">
+            <div class="modale-entete">
+                <h3 class="modale-titre">Theme</h3>
+                <button class="btn-fermer-modale" onclick="fermerModale('modaleTheme')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modale-corps">
+                <div class="options-liste" style="margin: -20px;">
+                    <div class="option-item" onclick="changerThemeApp('systeme')">
+                        <div class="theme-preview systeme" style="width: 40px; height: 40px; margin: 0;"></div>
+                        <div class="option-info">
+                            <div class="option-titre">Systeme</div>
+                            <div class="option-desc">Suivre les parametres du systeme</div>
+                        </div>
+                    </div>
+                    <div class="option-item" onclick="changerThemeApp('clair')">
+                        <div class="theme-preview clair" style="width: 40px; height: 40px; margin: 0;"></div>
+                        <div class="option-info">
+                            <div class="option-titre">Clair</div>
+                            <div class="option-desc">Theme lumineux</div>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2" width="20" height="20">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="option-item" onclick="changerThemeApp('sombre')">
+                        <div class="theme-preview sombre" style="width: 40px; height: 40px; margin: 0;"></div>
+                        <div class="option-info">
+                            <div class="option-titre">Sombre</div>
+                            <div class="option-desc">Theme fonce</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scanner Overlay -->
+    <div class="scanner-overlay" id="scannerOverlay">
+        <div class="scanner-header">
+            <span class="scanner-titre">Scanner QR Code</span>
+            <button class="btn-fermer-scanner" onclick="fermerScanner()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="scanner-zone">
+            <div class="scanner-cadre">
+                <div class="scanner-coin hg"></div>
+                <div class="scanner-coin hd"></div>
+                <div class="scanner-coin bg"></div>
+                <div class="scanner-coin bd"></div>
+            </div>
+        </div>
+        <div class="scanner-instructions">
+            <p>Placez le QR code dans le cadre pour le scanner</p>
+            <div class="scanner-actions">
+                <button class="btn-scanner-action" onclick="importerImage()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    Importer image
+                </button>
+                <button class="btn-scanner-action" onclick="activerFlash()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    Flash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span id="toastMessage">Action effectuee avec succes</span>
+    </div>
+
+    <script>
+        // ========== TRADUCTIONS ==========
+        const traductions = {
+            fr: {
+                // Application
+                nomApp: "Quincaillerie TOTAL",
+                soustitre: "Gestion de stock intelligente",
+                
+                // Navigation
+                accueil: "Accueil",
+                produits: "Produits",
+                activites: "Activites",
+                profil: "Profil",
+                
+                // Connexion/Inscription
+                connexion: "Connexion",
+                inscription: "Inscription",
+                motDePasse: "Mot de passe",
+                nomComplet: "Nom complet",
+                confirmerMotDePasse: "Confirmer le mot de passe",
+                seConnecter: "Se connecter",
+                creerCompte: "Creer mon compte",
+                pasDeCompte: "Pas encore de compte ?",
+                dejaUnCompte: "Deja un compte ?",
+                ouConnectezAvec: "ou connectez-vous avec",
+                scannerQR: "Scanner QR",
+                importerImage: "Importer image",
+                carteID: "Carte ID",
+                
+                // Tableau de bord
+                resumeStock: "Resume du stock",
+                produitsLabel: "Produits",
+                valeurFC: "Valeur (FC)",
+                stockFaible: "Stock faible",
+                enRupture: "En rupture",
+                actionsRapides: "Actions rapides",
+                entree: "Entree",
+                sortie: "Sortie",
+                faireInventaire: "Faire un inventaire",
+                derniersMouvements: "Derniers mouvements",
+                
+                // Produits
+                rechercherProduit: "Rechercher un produit...",
+                tous: "Tous",
+                surstock: "Surstock",
+                nouveauProduit: "Nouveau produit",
+                detailProduit: "Detail produit",
+                photoProduit: "Photo du produit",
+                nomProduit: "Nom du produit",
+                skuCodeBarres: "SKU / Code-barres",
+                emplacements: "Emplacements",
+                ajouterEmplacement: "Ajouter un emplacement",
+                seuilMinimum: "Seuil minimum",
+                seuilMaximum: "Seuil maximum",
+                prixAchat: "Prix d'achat unitaire (FC)",
+                ajouterProduit: "Ajouter le produit",
+                
+                // Stock
+                stockTotal: "Stock total",
+                valeurStock: "Valeur stock",
+                unites: "unites",
+                
+                // Mouvements
+                entreeStock: "Entree de stock",
+                sortieStock: "Sortie de stock",
+                quantite: "Quantite",
+                emplacement: "Emplacement",
+                commentaire: "Commentaire (optionnel)",
+                photoJustificative: "Photo justificative (optionnel)",
+                validerEntree: "Valider l'entree",
+                validerSortie: "Valider la sortie",
+                motif: "Motif",
+                
+                // Inventaire
+                inventaire: "Inventaire",
+                stockTheorique: "Stock theorique",
+                stockReel: "Stock reel",
+                ecart: "Ecart",
+                commentaireEcart: "Commentaire sur l'ecart",
+                validerInventaire: "Valider l'inventaire",
+                
+                // Activites/Messages
+                rechercherActivites: "Rechercher dans les activites...",
+                entrees: "Entrees",
+                sorties: "Sorties",
+                alertes: "Alertes",
+                alerteStockFaible: "Alerte stock faible",
+                produitAjoute: "Produit ajoute",
+                ilYA: "Il y a",
+                aujourdhui: "Aujourd'hui",
+                hier: "Hier",
+                
+                // Profil
+                monCompte: "Mon compte",
+                monQRCode: "Mon QR Code",
+                telechargerPartager: "Telecharger ou partager",
+                carteIdentite: "Carte d'identite",
+                modifierProfil: "Modifier le profil",
+                nomPhoto: "Nom, photo",
+                preferences: "Preferences",
+                langue: "Langue",
+                theme: "Theme",
+                equipe: "Equipe",
+                gestionMembres: "Gestion des membres",
+                membresActifs: "membres actifs",
+                verrouillageApp: "Verrouillage application",
+                securiteAdmin: "Securite admin",
+                donnees: "Donnees",
+                stockageLocal: "Stockage local",
+                fichiersHorsLigne: "Fichiers et donnees hors-ligne",
+                synchronisation: "Synchronisation",
+                derniereSync: "Derniere sync",
+                session: "Session",
+                seDeconnecter: "Se deconnecter",
+                
+                // Thèmes
+                systeme: "Systeme",
+                clair: "Clair",
+                sombre: "Sombre",
+                suivreSysteme: "Suivre les parametres du systeme",
+                themeLumineux: "Theme lumineux",
+                themeFonce: "Theme fonce",
+                
+                // Équipe
+                administrateur: "Administrateur",
+                adminPrincipal: "Administrateur principal",
+                membre: "Membre",
+                enAttente: "En attente",
+                approuver: "Approuver",
+                attenteApprobation: "En attente d'approbation",
+                
+                // Stockage
+                espaceUtilise: "Espace utilise",
+                donneesLocales: "Donnees locales",
+                enAttenteSync: "En attente sync",
+                elements: "elements",
+                fichiersLocaux: "Fichiers locaux",
+                rapportsPDF: "Rapports PDF",
+                qrCodes: "QR Codes",
+                photosProduits: "Photos produits",
+                baseDonnees: "Base de donnees",
+                viderCache: "Vider le cache",
+                
+                // Bot
+                assistant: "Assistant",
+                bonjour: "Bonjour! Je suis votre assistant. Que puis-je faire pour vous?",
+                monStock: "Mon stock",
+                rapport: "Rapport PDF",
+                tapezMessage: "Tapez votre message...",
+                
+                // Notifications
+                notifications: "Notifications",
+                stockCritique: "Stock critique",
+                nouveauMembre: "Nouveau membre",
+                synchronisationReussie: "Toutes les donnees ont ete synchronisees avec succes",
+                
+                // Actions
+                telecharger: "Telecharger",
+                telechargerQRCode: "Telecharger QR Code",
+                continuer: "Continuer",
+                
+                // Messages
+                actionReussie: "Action effectuee avec succes",
+                entreeEnregistree: "Entree enregistree avec succes",
+                sortieEnregistree: "Sortie enregistree avec succes",
+                inventaireValide: "Inventaire valide avec succes",
+                produitAjouteSucces: "Produit ajoute avec succes",
+                synchronisationEnCours: "Synchronisation en cours...",
+                qrTelecharge: "QR Code telecharge",
+                
+                // Bienvenue
+                configurezApp: "Configurez votre application",
+                choisissezLangue: "Choisissez votre langue",
+                choisissezTheme: "Choisissez votre theme",
+                
+                // Dates
+                dateCreation: "Date creation",
+                derniereModif: "Derniere modif.",
+                qrCodeProduit: "QR Code produit",
+                informationsStock: "Informations stock",
+                historique: "Historique"
+            }
+        };
+
+        // ========== VARIABLES GLOBALES ==========
+        let langueActuelle = 'fr';
+        let themeActuel = 'clair';
+        let utilisateurConnecte = false;
+        let quantites = {
+            entree: 10,
+            sortie: 5,
+            inventaire: 148
+        };
+
+        // ========== FONCTIONS UTILITAIRES ==========
+        function t(cle) {
+            return traductions[langueActuelle][cle] || cle;
+        }
+
+        function afficherToast(message, type = 'succes') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.className = 'toast actif ' + type;
+            setTimeout(() => {
+                toast.classList.remove('actif');
+            }, 3000);
+        }
+
+        // ========== NAVIGATION ==========
+        function naviguerVers(ecranId) {
+            // Masquer tous les écrans
+            document.querySelectorAll('#applicationPrincipale .ecran').forEach(ecran => {
+                ecran.classList.remove('actif');
+            });
+            
+            // Afficher l'écran cible
+            document.getElementById(ecranId).classList.add('actif');
+            
+            // Mettre à jour la navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('actif');
+            });
+            
+            // Trouver et activer le bon item de nav
+            const navMap = {
+                'ecranTableauBord': 0,
+                'ecranProduits': 1,
+                'ecranMessages': 2,
+                'ecranProfil': 3
+            };
+            
+            if (navMap[ecranId] !== undefined) {
+                document.querySelectorAll('.nav-item')[navMap[ecranId]].classList.add('actif');
+            }
+        }
+
+        function retourListe() {
+            naviguerVers('ecranProduits');
+        }
+
+        // ========== BIENVENUE / CONFIG INITIALE ==========
+        function selectionnerLangue(element) {
+            document.querySelectorAll('[data-langue]').forEach(el => {
+                el.classList.remove('selectionne');
+            });
+            element.classList.add('selectionne');
+            langueActuelle = element.dataset.langue;
+        }
+
+        function selectionnerTheme(element) {
+            document.querySelectorAll('[data-theme]').forEach(el => {
+                el.classList.remove('selectionne');
+            });
+            element.classList.add('selectionne');
+            themeActuel = element.dataset.theme;
+            appliquerTheme(themeActuel);
+        }
+
+        function appliquerTheme(theme) {
+            if (theme === 'sombre') {
+                document.body.setAttribute('data-theme', 'sombre');
+            } else if (theme === 'systeme') {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.setAttribute('data-theme', 'sombre');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        }
+
+        function continuerVersConnexion() {
+            document.getElementById('ecranBienvenue').classList.remove('actif');
+            document.getElementById('ecranConnexion').classList.add('actif');
+        }
+
+        // ========== AUTHENTIFICATION ==========
+        function afficherConnexion() {
+            document.getElementById('ecranInscription').classList.remove('actif');
+            document.getElementById('ecranConnexion').classList.add('actif');
+        }
+
+        function afficherInscription() {
+            document.getElementById('ecranConnexion').classList.remove('actif');
+            document.getElementById('ecranInscription').classList.add('actif');
+        }
+
+        function seConnecter() {
+            utilisateurConnecte = true;
+            document.getElementById('ecranConnexion').classList.remove('actif');
+            document.getElementById('applicationPrincipale').classList.remove('masque');
+            afficherToast(t('actionReussie'));
+        }
+
+        function sInscrire() {
+            utilisateurConnecte = true;
+            document.getElementById('ecranInscription').classList.remove('actif');
+            document.getElementById('applicationPrincipale').classList.remove('masque');
+            afficherToast(t('actionReussie'));
+        }
+
+        function seDeconnecter() {
+            utilisateurConnecte = false;
+            document.getElementById('applicationPrincipale').classList.add('masque');
+            document.getElementById('ecranConnexion').classList.add('actif');
+            naviguerVers('ecranTableauBord');
+        }
+
+        // ========== MODALES ==========
+        function ouvrirModale(modaleId) {
+            document.getElementById(modaleId).classList.add('actif');
+        }
+
+        function fermerModale(modaleId) {
+            document.getElementById(modaleId).classList.remove('actif');
+        }
+
+        // Fermer modale en cliquant sur l'overlay
+        document.querySelectorAll('.modale-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('actif');
+                }
+            });
+        });
+
+        // ========== SCANNER ==========
+        function ouvrirScanner(contexte) {
+            document.getElementById('scannerOverlay').classList.add('actif');
+            setTimeout(() => {
+                // Simuler un scan réussi
+                fermerScanner();
+                if (contexte === 'produit') {
+                    voirDetailProduit(1);
+                } else if (contexte === 'connexion') {
+                    seConnecter();
+                } else {
+                    afficherToast('QR Code scanne');
+                }
+            }, 2000);
+        }
+
+        function fermerScanner() {
+            document.getElementById('scannerOverlay').classList.remove('actif');
+        }
+
+        function importerImage() {
+            fermerScanner();
+            afficherToast('Image importee avec succes');
+        }
+
+        function activerFlash() {
+            afficherToast('Flash active');
+        }
+
+        function importerQR() {
+            afficherToast('Selectionnez une image...');
+        }
+
+        // ========== PRODUITS ==========
+        function filtrerProduits(filtre) {
+            document.querySelectorAll('.filtre-btn').forEach(btn => {
+                btn.classList.remove('actif');
+                if (btn.dataset.filtre === filtre) {
+                    btn.classList.add('actif');
+                }
+            });
+            
+            // Simuler le filtrage
+            naviguerVers('ecranProduits');
+            afficherToast('Filtre applique: ' + filtre);
+        }
+
+        function rechercherProduit() {
+            const terme = document.getElementById('champRechercheProduit').value;
+            // Simulation de recherche
+            console.log('Recherche:', terme);
+        }
+
+        function voirDetailProduit(id) {
+            naviguerVers('ecranDetailProduit');
+        }
+
+        function ouvrirMenuProduit() {
+            afficherToast('Menu produit');
+        }
+
+        function ajouterProduit() {
+            fermerModale('modaleAjoutProduit');
+            afficherToast(t('produitAjouteSucces'));
+        }
+
+        function ajouterEmplacement() {
+            afficherToast('Nouvel emplacement ajoute');
+        }
+
+        // ========== MOUVEMENTS ==========
+        function modifierQuantite(type, delta) {
+            quantites[type] = Math.max(0, quantites[type] + delta);
+            document.getElementById('qte' + type.charAt(0).toUpperCase() + type.slice(1)).textContent = quantites[type];
+            
+            if (type === 'inventaire') {
+                const ecart = quantites.inventaire - 150;
+                const ecartElement = document.getElementById('ecartInventaire');
+                ecartElement.textContent = 'Ecart: ' + (ecart >= 0 ? '+' : '') + ecart + ' unites';
+                ecartElement.className = 'inventaire-ecart' + (ecart === 0 ? ' ok' : '');
+            }
+        }
+
+        function validerEntree() {
+            fermerModale('modaleEntree');
+            afficherToast(t('entreeEnregistree'));
+        }
+
+        function validerSortie() {
+            fermerModale('modaleSortie');
+            afficherToast(t('sortieEnregistree'));
+        }
+
+        function validerInventaire() {
+            fermerModale('modaleInventaire');
+            afficherToast(t('inventaireValide'));
+        }
+
+        // ========== MESSAGES ==========
+        function filtrerMessages(filtre) {
+            document.querySelectorAll('.tab-message').forEach(tab => {
+                tab.classList.remove('actif');
+            });
+            event.target.closest('.tab-message').classList.add('actif');
+        }
+
+        function voirDetailMessage(id) {
+            afficherToast('Detail du message #' + id);
+        }
+
+        // ========== PROFIL ==========
+        function changerPhoto() {
+            afficherToast('Selectionnez une photo...');
+        }
+
+        function modifierProfil() {
+            afficherToast('Modification du profil');
+        }
+
+        function changerLangueApp(langue) {
+            langueActuelle = langue;
+            fermerModale('modaleLangue');
+            afficherToast('Langue changee');
+        }
+
+        function changerThemeApp(theme) {
+            themeActuel = theme;
+            appliquerTheme(theme);
+            fermerModale('modaleTheme');
+            afficherToast('Theme applique');
+        }
+
+        function telechargerQR() {
+            afficherToast(t('qrTelecharge'));
+        }
+
+        // ========== ÉQUIPE ==========
+        function voirDetailMembre(id) {
+            afficherToast('Detail membre #' + id);
+        }
+
+        function approuverMembre(id) {
+            afficherToast('Membre approuve');
+        }
+
+        // ========== DONNÉES ==========
+        function synchroniserDonnees() {
+            const banniere = document.getElementById('banniereSync');
+            banniere.classList.remove('masque');
+            setTimeout(() => {
+                banniere.classList.add('masque');
+                afficherToast('Synchronisation terminee');
+            }, 2000);
+        }
+
+        function viderCache() {
+            afficherToast('Cache vide');
+        }
+
+        // ========== BOT ==========
+        function commandeBot(commande) {
+            const zoneBot = document.getElementById('zoneBot');
+            
+            // Message utilisateur
+            const msgUtilisateur = document.createElement('div');
+            msgUtilisateur.className = 'bot-message utilisateur';
+            msgUtilisateur.innerHTML = '<div class="bot-bulle">' + commande + '</div>';
+            zoneBot.appendChild(msgUtilisateur);
+            
+            // Réponse bot
+            setTimeout(() => {
+                const msgBot = document.createElement('div');
+                msgBot.className = 'bot-message bot';
+                
+                let reponse = '';
+                if (commande === '1' || commande.toLowerCase().includes('stock')) {
+                    reponse = 'Voici le resume de votre stock: 156 produits, valeur totale: 12.5M FC. 8 produits en stock faible, 3 en rupture.';
+                } else if (commande === '2' || commande.toLowerCase().includes('alerte')) {
+                    reponse = 'Vous avez 3 alertes: Marteau menuisier (rupture), Fer a beton 12mm (stock faible), Clous 80mm (stock faible).';
+                } else if (commande === '3' || commande.toLowerCase().includes('rapport')) {
+                    reponse = 'Rapport PDF genere: Stock_24-02-2026_15h30.pdf - Telecharge dans /Documents/QuincaillerieTotal/Rapports';
+                } else {
+                    reponse = 'Je n\'ai pas compris. Tapez 1 pour le stock, 2 pour les alertes, ou 3 pour un rapport PDF.';
+                }
+                
+                msgBot.innerHTML = '<div class="bot-bulle">' + reponse + '</div>';
+                zoneBot.appendChild(msgBot);
+                zoneBot.scrollTop = zoneBot.scrollHeight;
+            }, 500);
+        }
+
+        function envoyerBot() {
+            const champ = document.getElementById('champBot');
+            if (champ.value.trim()) {
+                commandeBot(champ.value);
+                champ.value = '';
+            }
+        }
+
+        function envoyerMessageBot(e) {
+            if (e.key === 'Enter') {
+                envoyerBot();
+            }
+        }
+
+        // ========== NOTIFICATIONS ==========
+        function marquerToutLu() {
+            document.querySelectorAll('.message-item.non-lu').forEach(item => {
+                item.classList.remove('non-lu');
+            });
+            afficherToast('Tout marque comme lu');
+        }
+
+        // ========== AUTRES ==========
+        function prendrePhoto() {
+            afficherToast('Ouverture de la camera...');
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Écouter les changements de thème système
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                    if (themeActuel === 'systeme') {
+                        appliquerTheme('systeme');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

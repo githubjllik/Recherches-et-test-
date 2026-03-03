@@ -1,0 +1,2771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quincaillerie TOTAL</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Variables CSS pour les thèmes */
+        :root {
+            --primaire: #006f78;
+            --primaire-clair: #008a96;
+            --primaire-fonce: #00545b;
+            --secondaire: #e62311;
+            --secondaire-clair: #ff3b28;
+            --secondaire-fonce: #b81c0d;
+            --fond: #f8fafb;
+            --fond-carte: #ffffff;
+            --texte: #1a1a1a;
+            --texte-secondaire: #6b7280;
+            --bordure: #e5e7eb;
+            --succes: #10b981;
+            --attention: #f59e0b;
+            --erreur: #ef4444;
+        }
+        
+        /* Thème sombre */
+        [data-theme="sombre"] {
+            --fond: #121212;
+            --fond-carte: #1e1e1e;
+            --texte: #f5f5f5;
+            --texte-secondaire: #9ca3af;
+            --bordure: #374151;
+        }
+        
+        /* Thème clair (blanc) */
+        [data-theme="blanc"] {
+            --fond: #ffffff;
+            --fond-carte: #ffffff;
+            --texte: #1a1a1a;
+            --texte-secondaire: #6b7280;
+            --bordure: #e5e7eb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Conteneur principal mobile */
+        .conteneur-app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            min-height: 100dvh;
+            position: relative;
+            background-color: var(--fond);
+        }
+        
+        /* Écrans */
+        .ecran {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
+            animation: fonduEntree 0.3s ease;
+        }
+        
+        .ecran.actif {
+            display: flex;
+        }
+        
+        @keyframes fonduEntree {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* En-tête */
+        .en-tete {
+            background-color: var(--primaire);
+            color: white;
+            padding: 16px 20px;
+            padding-top: max(16px, env(safe-area-inset-top));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .en-tete-simple {
+            background-color: transparent;
+            color: var(--texte);
+            padding: 16px 20px;
+            padding-top: max(16px, env(safe-area-inset-top));
+        }
+        
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-primaire {
+            background-color: var(--primaire);
+            color: white;
+        }
+        
+        .btn-primaire:active {
+            background-color: var(--primaire-fonce);
+        }
+        
+        .btn-secondaire {
+            background-color: var(--secondaire);
+            color: white;
+        }
+        
+        .btn-secondaire:active {
+            background-color: var(--secondaire-fonce);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primaire);
+            color: var(--primaire);
+        }
+        
+        .btn-outline:active {
+            background-color: var(--primaire);
+            color: white;
+        }
+        
+        .btn-icone {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 50%;
+        }
+        
+        .btn-petit {
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+        
+        /* Cartes */
+        .carte {
+            background-color: var(--fond-carte);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--bordure);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .carte-cliquable {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .carte-cliquable:active {
+            transform: scale(0.98);
+        }
+        
+        /* Champs de saisie */
+        .groupe-saisie {
+            margin-bottom: 16px;
+        }
+        
+        .label-saisie {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+        
+        .champ-saisie {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: var(--fond-carte);
+            color: var(--texte);
+            transition: border-color 0.2s ease, background-color 0.3s ease;
+            outline: none;
+        }
+        
+        .champ-saisie:focus {
+            border-color: var(--primaire);
+        }
+        
+        .champ-saisie::placeholder {
+            color: var(--texte-secondaire);
+        }
+        
+        /* Sélecteur personnalisé */
+        .selecteur-personnalise {
+            position: relative;
+        }
+        
+        .selecteur-valeur {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: var(--fond-carte);
+            color: var(--texte);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.2s ease;
+        }
+        
+        .selecteur-valeur:focus {
+            border-color: var(--primaire);
+            outline: none;
+        }
+        
+        .selecteur-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background-color: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            z-index: 200;
+            display: none;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        
+        .selecteur-options.ouvert {
+            display: block;
+            animation: glisseHaut 0.2s ease;
+        }
+        
+        @keyframes glisseHaut {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .selecteur-option {
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background-color 0.15s ease;
+        }
+        
+        .selecteur-option:active {
+            background-color: var(--bordure);
+        }
+        
+        .selecteur-option.selectionne {
+            background-color: rgba(0, 111, 120, 0.1);
+            color: var(--primaire);
+        }
+        
+        /* Navigation du bas */
+        .navigation-bas {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--fond-carte);
+            border-top: 1px solid var(--bordure);
+            padding: 8px 16px;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--texte-secondaire);
+            transition: all 0.2s ease;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 12px;
+        }
+        
+        .nav-item.actif {
+            color: var(--primaire);
+            background-color: rgba(0, 111, 120, 0.1);
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Bouton flottant */
+        .btn-flottant {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primaire);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 111, 120, 0.4);
+            z-index: 99;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-flottant:active {
+            transform: scale(0.95);
+            background-color: var(--primaire-fonce);
+        }
+        
+        /* Menu flottant */
+        .menu-flottant {
+            position: fixed;
+            bottom: 160px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 99;
+        }
+        
+        .menu-flottant.ouvert {
+            display: flex;
+            animation: fonduEntree 0.2s ease;
+        }
+        
+        .menu-flottant-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--fond-carte);
+            padding: 12px 16px;
+            border-radius: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 500;
+            color: var(--texte);
+            transition: transform 0.2s ease;
+        }
+        
+        .menu-flottant-item:active {
+            transform: scale(0.97);
+        }
+        
+        /* Badges d'état */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-stock {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #059669;
+        }
+        
+        .badge-faible {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+        }
+        
+        .badge-rupture {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+        }
+        
+        .badge-surstock {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #2563eb;
+        }
+        
+        /* Indicateur de quantité */
+        .indicateur-quantite {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: rgba(0, 111, 120, 0.08);
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+        
+        .indicateur-quantite-valeur {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+        
+        .indicateur-quantite-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* Modales */
+        .fond-modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            animation: fondu 0.2s ease;
+        }
+        
+        .fond-modal.ouvert {
+            display: flex;
+        }
+        
+        @keyframes fondu {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .contenu-modal {
+            background-color: var(--fond-carte);
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            max-height: 90dvh;
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
+            overflow-y: auto;
+            animation: glisseHaut 0.3s ease;
+        }
+        
+        .poignee-modal {
+            width: 40px;
+            height: 4px;
+            background-color: var(--bordure);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+        
+        /* Toast / Notifications */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--texte);
+            color: var(--fond);
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 400;
+            display: none;
+            animation: glisseHaut 0.3s ease;
+        }
+        
+        .toast.visible {
+            display: block;
+        }
+        
+        /* Tableaux */
+        .tableau-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--bordure);
+        }
+        
+        .tableau {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .tableau th,
+        .tableau td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--bordure);
+        }
+        
+        .tableau th {
+            background-color: rgba(0, 111, 120, 0.08);
+            font-weight: 600;
+            color: var(--texte);
+            white-space: nowrap;
+        }
+        
+        .tableau tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Barre de progression */
+        .barre-progression {
+            height: 8px;
+            background-color: var(--bordure);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .barre-progression-remplissage {
+            height: 100%;
+            background-color: var(--primaire);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Dots d'onboarding */
+        .dots-onboarding {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        .dot-onboarding {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--bordure);
+            transition: all 0.3s ease;
+        }
+        
+        .dot-onboarding.actif {
+            width: 24px;
+            border-radius: 4px;
+            background-color: var(--primaire);
+        }
+        
+        /* Liste de produits */
+        .liste-produits {
+            padding-bottom: 100px;
+        }
+        
+        .produit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background-color: var(--fond-carte);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            border: 1px solid var(--bordure);
+            transition: all 0.2s ease;
+        }
+        
+        .produit-item:active {
+            transform: scale(0.99);
+            background-color: rgba(0, 111, 120, 0.05);
+        }
+        
+        .produit-icone {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(0, 111, 120, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primaire);
+        }
+        
+        .produit-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .produit-nom {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--texte);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .produit-ref {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            margin-top: 2px;
+        }
+        
+        .produit-quantite {
+            text-align: right;
+        }
+        
+        .produit-qte-valeur {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--texte);
+        }
+        
+        .produit-qte-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+        
+        /* Zone de contenu avec padding pour navigation */
+        .contenu-avec-nav {
+            padding-bottom: 90px;
+        }
+        
+        /* Animation de chargement */
+        .chargement {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chargement-point {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primaire);
+            border-radius: 50%;
+            animation: rebond 0.6s ease-in-out infinite;
+        }
+        
+        .chargement-point:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .chargement-point:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        @keyframes rebond {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        /* Toggle/Switch */
+        .toggle {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            background-color: var(--bordure);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .toggle.actif {
+            background-color: var(--primaire);
+        }
+        
+        .toggle-curseur {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle.actif .toggle-curseur {
+            transform: translateX(24px);
+        }
+        
+        /* Respect reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="conteneur-app" id="application">
+        
+        <!-- Écran de sélection de langue -->
+        <div class="ecran actif" id="ecran-langue">
+            <div class="flex-1 flex flex-col justify-center px-6 py-12">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center" style="background-color: var(--primaire);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold mb-2" style="color: var(--texte);" data-traduction="bienvenue">Bienvenue</h1>
+                    <p class="text-base" style="color: var(--texte-secondaire);" data-traduction="choisir_langue">Choisissez votre langue</p>
+                </div>
+                
+                <div class="space-y-3" id="liste-langues">
+                    <!-- Les langues sont générées par JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Écran d'onboarding -->
+        <div class="ecran" id="ecran-onboarding">
+            <div class="flex-1 flex flex-col px-6 py-12">
+                <div class="flex justify-between items-center mb-8">
+                    <span class="text-sm font-medium" style="color: var(--texte-secondaire);" id="onboarding-compteur">1/4</span>
+                    <button class="text-sm font-medium" style="color: var(--primaire);" data-traduction="passer" onclick="passerOnboarding()">Passer</button>
+                </div>
+                
+                <div class="flex-1 flex flex-col justify-center" id="onboarding-slides">
+                    <!-- Les slides sont générées par JavaScript -->
+                </div>
+                
+                <div class="dots-onboarding" id="onboarding-dots">
+                    <!-- Les dots sont générés par JavaScript -->
+                </div>
+                
+                <button class="btn btn-primaire w-full mt-8" data-traduction="continuer" onclick="onboardingSuivant()">Continuer</button>
+            </div>
+        </div>
+        
+        <!-- Écran de configuration initiale -->
+        <div class="ecran" id="ecran-config">
+            <div class="flex-1 flex flex-col px-6 py-12">
+                <h1 class="text-2xl font-bold mb-2" style="color: var(--texte);" data-traduction="configuration">Configuration</h1>
+                <p class="text-base mb-8" style="color: var(--texte-secondaire);" data-traduction="config_description">Personnalisez votre application</p>
+                
+                <!-- Choix du thème -->
+                <div class="carte mb-4">
+                    <h3 class="font-semibold mb-4" style="color: var(--texte);" data-traduction="theme">Theme</h3>
+                    <div class="space-y-3" id="liste-themes">
+                        <!-- Les thèmes sont générés par JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Taux de change -->
+                <div class="carte mb-6">
+                    <h3 class="font-semibold mb-4" style="color: var(--texte);" data-traduction="taux_change">Taux de change</h3>
+                    <p class="text-sm mb-4" style="color: var(--texte-secondaire);" data-traduction="taux_description">Entrez la valeur actuelle du dollar en francs congolais</p>
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg font-bold" style="color: var(--texte);">1 $ =</span>
+                        <input type="number" class="champ-saisie flex-1" id="taux-dollar" placeholder="2800" value="2800">
+                        <span class="text-lg font-bold" style="color: var(--texte);">FC</span>
+                    </div>
+                </div>
+                
+                <div class="flex-1"></div>
+                
+                <button class="btn btn-primaire w-full" data-traduction="commencer" onclick="demarrerApplication()">Commencer</button>
+            </div>
+        </div>
+        
+        <!-- Écran principal (Liste des produits) -->
+        <div class="ecran" id="ecran-accueil">
+            <header class="en-tete">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-lg font-bold" data-traduction="quincaillerie_total">Quincaillerie TOTAL</h1>
+                        <p class="text-sm opacity-80" data-traduction="gestion_stock">Gestion de stock</p>
+                    </div>
+                    <button class="btn-icone bg-white/20" onclick="ouvrirEcran('ecran-parametres')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Barre de recherche -->
+                <div class="mt-4 flex gap-2">
+                    <div class="flex-1 relative">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" class="champ-saisie pl-10" style="background-color: white; color: var(--texte);" placeholder="Rechercher..." data-traduction-placeholder="rechercher" id="recherche-produit" oninput="rechercherProduit(this.value)">
+                    </div>
+                    <button class="btn-icone bg-white/20" onclick="ouvrirModal('modal-scanner')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                            <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                            <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                            <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                            <line x1="7" y1="12" x2="17" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Contenu principal -->
+            <div class="flex-1 px-4 py-4 contenu-avec-nav">
+                <!-- Résumé rapide -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="carte">
+                        <p class="text-xs font-medium" style="color: var(--texte-secondaire);" data-traduction="valeur_stock">Valeur stock</p>
+                        <p class="text-lg font-bold" style="color: var(--primaire);">2 450 000 FC</p>
+                    </div>
+                    <div class="carte">
+                        <p class="text-xs font-medium" style="color: var(--texte-secondaire);" data-traduction="articles">Articles</p>
+                        <p class="text-lg font-bold" style="color: var(--texte);">156</p>
+                    </div>
+                </div>
+                
+                <!-- Liste des produits -->
+                <div class="liste-produits" id="liste-produits">
+                    <!-- Les produits sont générés par JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Bouton flottant -->
+            <button class="btn-flottant" onclick="basculerMenuFlottant()" id="btn-flottant-add">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </button>
+            
+            <!-- Menu flottant -->
+            <div class="menu-flottant" id="menu-flottant">
+                <div class="menu-flottant-item" onclick="ouvrirModal('modal-ajout-produit')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span data-traduction="nouveau_produit">Nouveau produit</span>
+                </div>
+                <div class="menu-flottant-item" onclick="ouvrirModal('modal-scanner')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span data-traduction="scanner_code">Scanner un code</span>
+                </div>
+            </div>
+            
+            <!-- Navigation du bas -->
+            <nav class="navigation-bas">
+                <button class="nav-item actif" onclick="changerOnglet('accueil')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span data-traduction="accueil">Accueil</span>
+                </button>
+                <button class="nav-item" onclick="changerOnglet('rapport')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span data-traduction="rapport">Rapport</span>
+                </button>
+                <button class="nav-item" onclick="changerOnglet('parametres')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span data-traduction="parametres">Parametres</span>
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Écran de rapport -->
+        <div class="ecran" id="ecran-rapport">
+            <header class="en-tete">
+                <h1 class="text-lg font-bold" data-traduction="rapport_stock">Rapport de stock</h1>
+                <p class="text-sm opacity-80" data-traduction="vue_ensemble">Vue d'ensemble</p>
+            </header>
+            
+            <div class="flex-1 px-4 py-4 contenu-avec-nav">
+                <!-- Résumé -->
+                <div class="carte mb-4">
+                    <h3 class="font-semibold mb-4" style="color: var(--texte);" data-traduction="resume">Resume</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs" style="color: var(--texte-secondaire);" data-traduction="valeur_totale">Valeur totale</p>
+                            <p class="text-xl font-bold" style="color: var(--primaire);">2 450 000 FC</p>
+                            <p class="text-sm" style="color: var(--texte-secondaire);">875 $</p>
+                        </div>
+                        <div>
+                            <p class="text-xs" style="color: var(--texte-secondaire);" data-traduction="nombre_articles">Nombre d'articles</p>
+                            <p class="text-xl font-bold" style="color: var(--texte);">156</p>
+                        </div>
+                    </div>
+                    <p class="text-xs mt-4" style="color: var(--texte-secondaire);">
+                        <span data-traduction="derniere_mise_a_jour">Derniere mise a jour</span> : 15/01/2025 14:30
+                    </p>
+                </div>
+                
+                <!-- Actions d'export -->
+                <div class="carte mb-4">
+                    <h3 class="font-semibold mb-4" style="color: var(--texte);" data-traduction="exporter_rapport">Exporter le rapport</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="btn btn-outline btn-petit" onclick="afficherToast('Export PDF')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            PDF
+                        </button>
+                        <button class="btn btn-outline btn-petit" onclick="afficherToast('Export CSV')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            CSV
+                        </button>
+                        <button class="btn btn-outline btn-petit" onclick="afficherToast('Export Excel')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            Excel
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Tableau récapitulatif -->
+                <div class="carte">
+                    <h3 class="font-semibold mb-4" style="color: var(--texte);" data-traduction="liste_articles">Liste des articles</h3>
+                    <div class="tableau-container">
+                        <table class="tableau">
+                            <thead>
+                                <tr>
+                                    <th data-traduction="ref">Ref</th>
+                                    <th data-traduction="article">Article</th>
+                                    <th data-traduction="qte">Qte</th>
+                                    <th data-traduction="pu">PU</th>
+                                    <th data-traduction="etat">Etat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableau-rapport">
+                                <!-- Généré par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation du bas -->
+            <nav class="navigation-bas">
+                <button class="nav-item" onclick="changerOnglet('accueil')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span data-traduction="accueil">Accueil</span>
+                </button>
+                <button class="nav-item actif" onclick="changerOnglet('rapport')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span data-traduction="rapport">Rapport</span>
+                </button>
+                <button class="nav-item" onclick="changerOnglet('parametres')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span data-traduction="parametres">Parametres</span>
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Écran des paramètres -->
+        <div class="ecran" id="ecran-parametres">
+            <header class="en-tete-simple" style="background-color: var(--fond);">
+                <div class="flex items-center gap-4">
+                    <button class="btn-icone" style="background-color: var(--fond-carte); border: 1px solid var(--bordure);" onclick="changerOnglet('accueil')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                            <line x1="19" y1="12" x2="5" y2="12"/>
+                            <polyline points="12 19 5 12 12 5"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 class="text-lg font-bold" style="color: var(--texte);" data-traduction="parametres">Parametres</h1>
+                        <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="configuration_app">Configuration de l'application</p>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="flex-1 px-4 py-4 contenu-avec-nav">
+                <!-- Langue -->
+                <div class="carte mb-3">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="ouvrirModal('modal-langue')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-medium" style="color: var(--texte);" data-traduction="langue">Langue</p>
+                                <p class="text-sm" style="color: var(--texte-secondaire);" id="langue-actuelle">Francais</p>
+                            </div>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Theme -->
+                <div class="carte mb-3">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="ouvrirModal('modal-theme')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                                    <circle cx="12" cy="12" r="5"/>
+                                    <line x1="12" y1="1" x2="12" y2="3"/>
+                                    <line x1="12" y1="21" x2="12" y2="23"/>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                    <line x1="1" y1="12" x2="3" y2="12"/>
+                                    <line x1="21" y1="12" x2="23" y2="12"/>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-medium" style="color: var(--texte);" data-traduction="theme">Theme</p>
+                                <p class="text-sm" style="color: var(--texte-secondaire);" id="theme-actuel">Systeme</p>
+                            </div>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Taux de change -->
+                <div class="carte mb-3">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="ouvrirModal('modal-taux')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                                    <line x1="12" y1="1" x2="12" y2="23"/>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-medium" style="color: var(--texte);" data-traduction="taux_change">Taux de change</p>
+                                <p class="text-sm" style="color: var(--texte-secondaire);">1 $ = <span id="taux-affiche">2800</span> FC</p>
+                            </div>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Sécurité -->
+                <div class="carte mb-3">
+                    <h3 class="font-semibold mb-4" style="color: var(--texte);" data-traduction="securite">Securite</h3>
+                    
+                    <!-- Mot de passe -->
+                    <div class="flex items-center justify-between py-3 border-b" style="border-color: var(--bordure);">
+                        <div class="flex items-center gap-3">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <span data-traduction="mot_de_passe">Mot de passe</span>
+                        </div>
+                        <div class="toggle" onclick="basculerToggle(this)" data-option="mot-de-passe">
+                            <div class="toggle-curseur"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Empreinte -->
+                    <div class="flex items-center justify-between py-3 border-b" style="border-color: var(--bordure);">
+                        <div class="flex items-center gap-3">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                                <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/>
+                                <path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/>
+                                <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                                <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                                <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                                <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                                <path d="M2 16h.01"/>
+                                <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                                <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/>
+                            </svg>
+                            <span data-traduction="empreinte">Empreinte digitale</span>
+                        </div>
+                        <div class="toggle" onclick="basculerToggle(this)" data-option="empreinte">
+                            <div class="toggle-curseur"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte identité -->
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex items-center gap-3">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <line x1="2" y1="10" x2="22" y2="10"/>
+                            </svg>
+                            <span data-traduction="carte_identite">Carte d'identite (QR)</span>
+                        </div>
+                        <button class="btn btn-petit btn-outline" onclick="ouvrirModal('modal-carte-id')" data-traduction="configurer">Configurer</button>
+                    </div>
+                </div>
+                
+                <!-- Stockage Cloud -->
+                <div class="carte mb-3">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="ouvrirModal('modal-cloud')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);">
+                                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-medium" style="color: var(--texte);" data-traduction="stockage_cloud">Stockage cloud</p>
+                                <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="non_configure">Non configure</p>
+                            </div>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Informations -->
+                <div class="carte">
+                    <p class="text-sm" style="color: var(--texte-secondaire);">
+                        <span data-traduction="version">Version</span> : 1.0.0
+                    </p>
+                    <p class="text-sm mt-1" style="color: var(--texte-secondaire);">
+                        <span data-traduction="developpe_par">Developpe par</span> : Quincaillerie TOTAL
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Navigation du bas -->
+            <nav class="navigation-bas">
+                <button class="nav-item" onclick="changerOnglet('accueil')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span data-traduction="accueil">Accueil</span>
+                </button>
+                <button class="nav-item" onclick="changerOnglet('rapport')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span data-traduction="rapport">Rapport</span>
+                </button>
+                <button class="nav-item actif" onclick="changerOnglet('parametres')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span data-traduction="parametres">Parametres</span>
+                </button>
+            </nav>
+        </div>
+        
+        <!-- MODALES -->
+        
+        <!-- Modal de sélection de langue -->
+        <div class="fond-modal" id="modal-langue">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="choisir_langue">Choisir une langue</h2>
+                <div class="space-y-2" id="liste-langues-modal">
+                    <!-- Généré par JavaScript -->
+                </div>
+                <button class="btn btn-outline w-full mt-4" onclick="fermerModal('modal-langue')" data-traduction="annuler">Annuler</button>
+            </div>
+        </div>
+        
+        <!-- Modal de sélection de thème -->
+        <div class="fond-modal" id="modal-theme">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="choisir_theme">Choisir un theme</h2>
+                <div class="space-y-2" id="liste-themes-modal">
+                    <!-- Généré par JavaScript -->
+                </div>
+                <button class="btn btn-outline w-full mt-4" onclick="fermerModal('modal-theme')" data-traduction="annuler">Annuler</button>
+            </div>
+        </div>
+        
+        <!-- Modal taux de change -->
+        <div class="fond-modal" id="modal-taux">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="modifier_taux">Modifier le taux</h2>
+                <p class="text-sm mb-4" style="color: var(--texte-secondaire);" data-traduction="taux_description">Entrez la valeur actuelle du dollar en francs congolais</p>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-lg font-bold" style="color: var(--texte);">1 $ =</span>
+                    <input type="number" class="champ-saisie flex-1" id="nouveau-taux" placeholder="2800" value="2800">
+                    <span class="text-lg font-bold" style="color: var(--texte);">FC</span>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-taux')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="sauvegarderTaux()" data-traduction="sauvegarder">Sauvegarder</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal d'ajout de produit -->
+        <div class="fond-modal" id="modal-ajout-produit">
+            <div class="contenu-modal" style="max-height: 95vh;">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="nouveau_produit">Nouveau produit</h2>
+                
+                <div class="overflow-y-auto" style="max-height: 70vh;">
+                    <!-- Référence -->
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="reference">Reference / Code-barres</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="champ-saisie flex-1" id="produit-reference" placeholder="Entrez ou scannez">
+                            <button class="btn-icone" style="background-color: var(--primaire); color: white;" onclick="afficherToast('Scanner code-barres')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                    <circle cx="12" cy="13" r="4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Nom -->
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="nom_produit">Nom du produit</label>
+                        <input type="text" class="champ-saisie" id="produit-nom" placeholder="Ex: Marteau 500g">
+                    </div>
+                    
+                    <!-- Emplacement -->
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="emplacement">Emplacement</label>
+                        <input type="text" class="champ-saisie" id="produit-emplacement" placeholder="Ex: Rayon A, Etagere 2">
+                    </div>
+                    
+                    <!-- Quantité -->
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="quantite">Quantite initiale</label>
+                        <input type="number" class="champ-saisie" id="produit-quantite" placeholder="0" value="0">
+                    </div>
+                    
+                    <!-- Quantités min/max -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="groupe-saisie">
+                            <label class="label-saisie" data-traduction="qte_min">Quantite min.</label>
+                            <input type="number" class="champ-saisie" id="produit-qte-min" placeholder="0" value="0">
+                        </div>
+                        <div class="groupe-saisie">
+                            <label class="label-saisie" data-traduction="qte_max">Quantite max.</label>
+                            <input type="number" class="champ-saisie" id="produit-qte-max" placeholder="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <!-- Prix unitaire -->
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="prix_unitaire">Prix unitaire</label>
+                        <div class="flex gap-2 mb-2">
+                            <button class="btn btn-petit btn-primaire flex-1" id="btn-monnaie-fc" onclick="choisirMonnaie('fc')">FC</button>
+                            <button class="btn btn-petit btn-outline flex-1" id="btn-monnaie-usd" onclick="choisirMonnaie('usd')">$ USD</button>
+                        </div>
+                        <input type="number" class="champ-saisie" id="produit-prix" placeholder="0" oninput="convertirPrix()">
+                        <p class="text-sm mt-2" style="color: var(--texte-secondaire);" id="prix-converti">Equivalent : 0 $</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-4">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-ajout-produit')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="ajouterProduit()" data-traduction="ajouter">Ajouter</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal scanner -->
+        <div class="fond-modal" id="modal-scanner">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="scanner">Scanner un code</h2>
+                <div class="aspect-square rounded-2xl flex items-center justify-center mb-4" style="background-color: var(--bordure);">
+                    <div class="text-center">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                        <p class="mt-2" style="color: var(--texte-secondaire);" data-traduction="zone_scanner">Zone du scanner</p>
+                    </div>
+                </div>
+                <button class="btn btn-outline w-full" onclick="fermerModal('modal-scanner')" data-traduction="annuler">Annuler</button>
+            </div>
+        </div>
+        
+        <!-- Modal actions produit -->
+        <div class="fond-modal" id="modal-actions-produit">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-2" style="color: var(--texte);" id="modal-produit-nom">Nom du produit</h2>
+                <p class="text-sm mb-4" style="color: var(--texte-secondaire);" id="modal-produit-ref">REF-001</p>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="carte carte-cliquable flex flex-col items-center py-4" onclick="ouvrirEntree()">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background-color: rgba(16, 185, 129, 0.15);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold" style="color: var(--texte);" data-traduction="entree">Entree</span>
+                    </button>
+                    
+                    <button class="carte carte-cliquable flex flex-col items-center py-4" onclick="ouvrirSortie()">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background-color: rgba(239, 68, 68, 0.15);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold" style="color: var(--texte);" data-traduction="sortie">Sortie</span>
+                    </button>
+                    
+                    <button class="carte carte-cliquable flex flex-col items-center py-4" onclick="ouvrirInventaire()">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background-color: rgba(59, 130, 246, 0.15);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold" style="color: var(--texte);" data-traduction="inventaire">Inventaire</span>
+                    </button>
+                    
+                    <button class="carte carte-cliquable flex flex-col items-center py-4" onclick="ouvrirDetail()">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background-color: rgba(0, 111, 120, 0.15);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold" style="color: var(--texte);" data-traduction="detail">Detail</span>
+                    </button>
+                </div>
+                
+                <button class="btn btn-outline w-full mt-4" style="border-color: var(--secondaire); color: var(--secondaire);" onclick="confirmerSuppression()" data-traduction="supprimer">Supprimer</button>
+                <button class="btn btn-outline w-full mt-2" onclick="fermerModal('modal-actions-produit')" data-traduction="annuler">Annuler</button>
+            </div>
+        </div>
+        
+        <!-- Modal entrée -->
+        <div class="fond-modal" id="modal-entree">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="entree_stock">Entree en stock</h2>
+                
+                <div class="carte mb-4" style="background-color: rgba(0, 111, 120, 0.05);">
+                    <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="produit">Produit</p>
+                    <p class="font-semibold" style="color: var(--texte);" id="entree-produit-nom">Marteau 500g</p>
+                </div>
+                
+                <!-- Sélection emplacement -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="emplacement">Emplacement</label>
+                    <div class="selecteur-personnalise" id="selecteur-emplacement-entree">
+                        <div class="selecteur-valeur" onclick="basculerSelecteur('selecteur-emplacement-entree')">
+                            <span id="emplacement-selectionne">Rayon A, Etagere 2</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="selecteur-options" id="options-emplacement-entree">
+                            <div class="selecteur-option selectionne" onclick="selectionnerOption('selecteur-emplacement-entree', 'Rayon A, Etagere 2')">Rayon A, Etagere 2</div>
+                            <div class="selecteur-option" onclick="selectionnerOption('selecteur-emplacement-entree', 'Rayon B, Etagere 1')">Rayon B, Etagere 1</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prix unitaire -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="prix_unitaire">Prix unitaire (FC)</label>
+                    <input type="number" class="champ-saisie" id="entree-prix" placeholder="0" value="15000">
+                </div>
+                
+                <!-- Quantité -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="quantite_entree">Quantite a entrer</label>
+                    <input type="number" class="champ-saisie" id="entree-quantite" placeholder="0" value="0" oninput="mettreAJourApercu('entree')">
+                </div>
+                
+                <!-- Aperçu -->
+                <div class="indicateur-quantite">
+                    <div class="flex-1">
+                        <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="quantite_actuelle">Quantite actuelle</p>
+                        <p class="indicateur-quantite-valeur" id="entree-qte-actuelle">25</p>
+                    </div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--succes)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <div class="flex-1 text-right">
+                        <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="nouvelle_quantite">Nouvelle quantite</p>
+                        <p class="indicateur-quantite-valeur" style="color: var(--succes);" id="entree-qte-nouvelle">25</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-4">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-entree')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="validerEntree()" data-traduction="valider">Valider</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal sortie -->
+        <div class="fond-modal" id="modal-sortie">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="sortie_stock">Sortie de stock</h2>
+                
+                <div class="carte mb-4" style="background-color: rgba(239, 68, 68, 0.05);">
+                    <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="produit">Produit</p>
+                    <p class="font-semibold" style="color: var(--texte);" id="sortie-produit-nom">Marteau 500g</p>
+                </div>
+                
+                <!-- Sélection emplacement -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="emplacement">Emplacement</label>
+                    <div class="selecteur-personnalise" id="selecteur-emplacement-sortie">
+                        <div class="selecteur-valeur" onclick="basculerSelecteur('selecteur-emplacement-sortie')">
+                            <span id="emplacement-selectionne-sortie">Rayon A, Etagere 2</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="selecteur-options" id="options-emplacement-sortie">
+                            <div class="selecteur-option selectionne" onclick="selectionnerOption('selecteur-emplacement-sortie', 'Rayon A, Etagere 2')">Rayon A, Etagere 2</div>
+                            <div class="selecteur-option" onclick="selectionnerOption('selecteur-emplacement-sortie', 'Rayon B, Etagere 1')">Rayon B, Etagere 1</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quantité -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="quantite_sortie">Quantite a sortir</label>
+                    <input type="number" class="champ-saisie" id="sortie-quantite" placeholder="0" value="0" oninput="mettreAJourApercu('sortie')">
+                </div>
+                
+                <!-- Aperçu -->
+                <div class="indicateur-quantite">
+                    <div class="flex-1">
+                        <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="quantite_actuelle">Quantite actuelle</p>
+                        <p class="indicateur-quantite-valeur" id="sortie-qte-actuelle">25</p>
+                    </div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondaire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <div class="flex-1 text-right">
+                        <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="nouvelle_quantite">Nouvelle quantite</p>
+                        <p class="indicateur-quantite-valeur" style="color: var(--secondaire);" id="sortie-qte-nouvelle">25</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-4">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-sortie')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-secondaire flex-1" onclick="validerSortie()" data-traduction="valider">Valider</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal inventaire -->
+        <div class="fond-modal" id="modal-inventaire">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="inventaire">Inventaire</h2>
+                
+                <div class="carte mb-4">
+                    <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="produit">Produit</p>
+                    <p class="font-semibold" style="color: var(--texte);" id="inventaire-produit-nom">Marteau 500g</p>
+                </div>
+                
+                <!-- Emplacement -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="emplacement">Emplacement</label>
+                    <div class="selecteur-personnalise" id="selecteur-emplacement-inventaire">
+                        <div class="selecteur-valeur" onclick="basculerSelecteur('selecteur-emplacement-inventaire')">
+                            <span id="emplacement-selectionne-inventaire">Rayon A, Etagere 2</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="selecteur-options" id="options-emplacement-inventaire">
+                            <div class="selecteur-option selectionne" onclick="selectionnerOption('selecteur-emplacement-inventaire', 'Rayon A, Etagere 2')">Rayon A, Etagere 2</div>
+                            <div class="selecteur-option" onclick="selectionnerOption('selecteur-emplacement-inventaire', 'Rayon B, Etagere 1')">Rayon B, Etagere 1</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stock théorique -->
+                <div class="carte mb-3" style="background-color: rgba(59, 130, 246, 0.08);">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="stock_theorique">Stock theorique</p>
+                            <p class="text-2xl font-bold" style="color: #2563eb;" id="inventaire-theorique">25</p>
+                        </div>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Stock réel -->
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="stock_reel">Stock reel compte</label>
+                    <input type="number" class="champ-saisie" id="inventaire-reel" placeholder="0" value="25" oninput="calculerEcart()">
+                </div>
+                
+                <!-- Écart -->
+                <div class="carte mb-3" id="carte-ecart">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="ecart">Ecart</p>
+                            <p class="text-2xl font-bold" id="inventaire-ecart" style="color: var(--texte);">0</p>
+                        </div>
+                        <span class="badge badge-stock" id="badge-ecart" data-traduction="conforme">Conforme</span>
+                    </div>
+                </div>
+                
+                <!-- Régulariser -->
+                <div class="flex items-center justify-between py-3 px-4 rounded-xl mb-4" style="background-color: var(--bordure);">
+                    <span data-traduction="regulariser">Regulariser le stock</span>
+                    <div class="toggle" id="toggle-regulariser" onclick="basculerToggle(this)">
+                        <div class="toggle-curseur"></div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-inventaire')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="validerInventaire()" data-traduction="valider">Valider</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal détail produit -->
+        <div class="fond-modal" id="modal-detail">
+            <div class="contenu-modal" style="max-height: 95vh;">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="detail_produit">Detail du produit</h2>
+                
+                <div class="overflow-y-auto" style="max-height: 70vh;">
+                    <!-- QR Code du produit -->
+                    <div class="carte mb-4 text-center">
+                        <p class="text-sm mb-3" style="color: var(--texte-secondaire);" data-traduction="qr_code">QR Code du produit</p>
+                        <div class="w-40 h-40 mx-auto rounded-xl flex items-center justify-center" style="background-color: var(--bordure);">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte);">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                            </svg>
+                        </div>
+                        <button class="btn btn-outline btn-petit mt-3" onclick="afficherToast('Export QR Code')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span data-traduction="exporter">Exporter</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Informations -->
+                    <div class="carte mb-4">
+                        <h3 class="font-semibold mb-3" style="color: var(--texte);" data-traduction="informations">Informations</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="reference">Reference</span>
+                                <span class="font-medium" style="color: var(--texte);" id="detail-ref">REF-001</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="nom">Nom</span>
+                                <span class="font-medium" style="color: var(--texte);" id="detail-nom">Marteau 500g</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="prix_unitaire">Prix unitaire</span>
+                                <span class="font-medium" style="color: var(--texte);" id="detail-prix">15 000 FC</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Emplacements -->
+                    <div class="carte mb-4">
+                        <h3 class="font-semibold mb-3" style="color: var(--texte);" data-traduction="emplacements">Emplacements</h3>
+                        <div class="space-y-2" id="detail-emplacements">
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg" style="background-color: var(--bordure);">
+                                <span style="color: var(--texte);">Rayon A, Etagere 2</span>
+                                <span class="font-bold" style="color: var(--primaire);">25</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg" style="background-color: var(--bordure);">
+                                <span style="color: var(--texte);">Rayon B, Etagere 1</span>
+                                <span class="font-bold" style="color: var(--primaire);">10</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alertes -->
+                    <div class="carte">
+                        <h3 class="font-semibold mb-3" style="color: var(--texte);" data-traduction="alertes">Alertes</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="qte_min">Quantite min.</span>
+                                <span class="font-medium" style="color: var(--texte);">5</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--texte-secondaire);" data-traduction="qte_max">Quantite max.</span>
+                                <span class="font-medium" style="color: var(--texte);">100</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span style="color: var(--texte-secondaire);" data-traduction="niveau_stock">Niveau de stock</span>
+                                <span style="color: var(--texte);">35 / 100</span>
+                            </div>
+                            <div class="barre-progression">
+                                <div class="barre-progression-remplissage" style="width: 35%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primaire w-full mt-4" onclick="ouvrirModal('modal-modifier-produit')" data-traduction="modifier">Modifier</button>
+                <button class="btn btn-outline w-full mt-2" onclick="fermerModal('modal-detail')" data-traduction="fermer">Fermer</button>
+            </div>
+        </div>
+        
+        <!-- Modal modifier produit -->
+        <div class="fond-modal" id="modal-modifier-produit">
+            <div class="contenu-modal" style="max-height: 95vh;">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="modifier_produit">Modifier le produit</h2>
+                
+                <div class="overflow-y-auto" style="max-height: 70vh;">
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="nom_produit">Nom du produit</label>
+                        <input type="text" class="champ-saisie" value="Marteau 500g">
+                    </div>
+                    
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="reference">Reference</label>
+                        <input type="text" class="champ-saisie" value="REF-001">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="groupe-saisie">
+                            <label class="label-saisie" data-traduction="qte_min">Quantite min.</label>
+                            <input type="number" class="champ-saisie" value="5">
+                        </div>
+                        <div class="groupe-saisie">
+                            <label class="label-saisie" data-traduction="qte_max">Quantite max.</label>
+                            <input type="number" class="champ-saisie" value="100">
+                        </div>
+                    </div>
+                    
+                    <div class="groupe-saisie">
+                        <label class="label-saisie" data-traduction="prix_unitaire">Prix unitaire (FC)</label>
+                        <input type="number" class="champ-saisie" value="15000">
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-4">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-modifier-produit')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="sauvegarderModification()" data-traduction="sauvegarder">Sauvegarder</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal carte identité -->
+        <div class="fond-modal" id="modal-carte-id">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="carte_identite">Carte d'identite</h2>
+                <p class="text-sm mb-4" style="color: var(--texte-secondaire);" data-traduction="carte_description">Scannez le QR code de votre carte d'identite ou electeur pour l'utiliser comme methode de recuperation</p>
+                
+                <div class="aspect-square rounded-2xl flex items-center justify-center mb-4" style="background-color: var(--bordure);">
+                    <div class="text-center">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--texte-secondaire);">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <line x1="2" y1="10" x2="22" y2="10"/>
+                        </svg>
+                        <p class="mt-2" style="color: var(--texte-secondaire);" data-traduction="scanner_carte">Scanner votre carte</p>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline w-full" onclick="fermerModal('modal-carte-id')" data-traduction="annuler">Annuler</button>
+            </div>
+        </div>
+        
+        <!-- Modal stockage cloud -->
+        <div class="fond-modal" id="modal-cloud">
+            <div class="contenu-modal">
+                <div class="poignee-modal"></div>
+                <h2 class="text-xl font-bold mb-4" style="color: var(--texte);" data-traduction="stockage_cloud">Stockage cloud</h2>
+                
+                <div class="carte mb-4 text-center" style="background-color: rgba(0, 111, 120, 0.05);">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primaire);" class="mx-auto mb-2">
+                        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                    </svg>
+                    <p class="font-medium" style="color: var(--texte);" data-traduction="sauvegarde_automatique">Sauvegarde automatique</p>
+                    <p class="text-sm" style="color: var(--texte-secondaire);" data-traduction="cloud_description">Protegez vos donnees avec une sauvegarde en ligne</p>
+                </div>
+                
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="nom_entreprise">Nom ou entreprise</label>
+                    <input type="text" class="champ-saisie" placeholder="Quincaillerie TOTAL">
+                </div>
+                
+                <div class="groupe-saisie">
+                    <label class="label-saisie" data-traduction="mot_de_passe">Mot de passe</label>
+                    <input type="password" class="champ-saisie" placeholder="Votre mot de passe">
+                </div>
+                
+                <div class="flex gap-3 mt-4">
+                    <button class="btn btn-outline flex-1" onclick="fermerModal('modal-cloud')" data-traduction="annuler">Annuler</button>
+                    <button class="btn btn-primaire flex-1" onclick="creerCompteCloud()" data-traduction="creer_compte">Creer un compte</button>
+                </div>
+                
+                <div class="mt-4 pt-4" style="border-top: 1px solid var(--bordure);">
+                    <p class="text-sm text-center" style="color: var(--texte-secondaire);" data-traduction="deja_compte">Deja un compte ?</p>
+                    <button class="btn btn-outline w-full mt-2" onclick="afficherToast('Connexion cloud')" data-traduction="se_connecter">Se connecter</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // =============================================
+        // FICHIER DE TRADUCTION - FRANCAIS
+        // Ce fichier contient toutes les traductions de l'application
+        // Il sera duplique pour les autres langues
+        // =============================================
+        const traductions = {
+            // Langues
+            "francais": "Francais",
+            "anglais": "Anglais",
+            "hindi": "Hindi",
+            "lingala": "Lingala (RDC)",
+            "swahili": "Swahili (RDC)",
+            
+            // General
+            "bienvenue": "Bienvenue",
+            "choisir_langue": "Choisissez votre langue",
+            "passer": "Passer",
+            "continuer": "Continuer",
+            "commencer": "Commencer",
+            "annuler": "Annuler",
+            "valider": "Valider",
+            "sauvegarder": "Sauvegarder",
+            "fermer": "Fermer",
+            "modifier": "Modifier",
+            "supprimer": "Supprimer",
+            "exporter": "Exporter",
+            "rechercher": "Rechercher...",
+            
+            // Onboarding
+            "onboarding_1_titre": "Gerez votre stock",
+            "onboarding_1_texte": "Suivez facilement vos entrees et sorties de marchandises",
+            "onboarding_2_titre": "Scannez rapidement",
+            "onboarding_2_texte": "Utilisez le scanner pour trouver un produit en un instant",
+            "onboarding_3_titre": "Exportez vos rapports",
+            "onboarding_3_texte": "Generez des rapports en PDF, CSV ou Excel",
+            "onboarding_4_titre": "Sauvegardez en ligne",
+            "onboarding_4_texte": "Protegez vos donnees avec le stockage cloud",
+            
+            // Configuration
+            "configuration": "Configuration",
+            "config_description": "Personnalisez votre application",
+            "theme": "Theme",
+            "taux_change": "Taux de change",
+            "taux_description": "Entrez la valeur actuelle du dollar en francs congolais",
+            
+            // Themes
+            "theme_systeme": "Systeme",
+            "theme_sombre": "Sombre",
+            "theme_blanc": "Blanc",
+            
+            // Navigation
+            "accueil": "Accueil",
+            "rapport": "Rapport",
+            "parametres": "Parametres",
+            
+            // En-tete
+            "quincaillerie_total": "Quincaillerie TOTAL",
+            "gestion_stock": "Gestion de stock",
+            
+            // Produits
+            "nouveau_produit": "Nouveau produit",
+            "scanner_code": "Scanner un code",
+            "valeur_stock": "Valeur stock",
+            "articles": "Articles",
+            "reference": "Reference",
+            "nom_produit": "Nom du produit",
+            "emplacement": "Emplacement",
+            "quantite": "Quantite",
+            "qte_min": "Quantite min.",
+            "qte_max": "Quantite max.",
+            "prix_unitaire": "Prix unitaire",
+            "ajouter": "Ajouter",
+            
+            // Actions produit
+            "entree": "Entree",
+            "sortie": "Sortie",
+            "inventaire": "Inventaire",
+            "detail": "Detail",
+            "entree_stock": "Entree en stock",
+            "sortie_stock": "Sortie de stock",
+            "produit": "Produit",
+            "quantite_entree": "Quantite a entrer",
+            "quantite_sortie": "Quantite a sortir",
+            "quantite_actuelle": "Quantite actuelle",
+            "nouvelle_quantite": "Nouvelle quantite",
+            
+            // Inventaire
+            "stock_theorique": "Stock theorique",
+            "stock_reel": "Stock reel compte",
+            "ecart": "Ecart",
+            "conforme": "Conforme",
+            "surplus": "Surplus",
+            "manquant": "Manquant",
+            "regulariser": "Regulariser le stock",
+            
+            // Detail produit
+            "detail_produit": "Detail du produit",
+            "qr_code": "QR Code du produit",
+            "informations": "Informations",
+            "nom": "Nom",
+            "emplacements": "Emplacements",
+            "alertes": "Alertes",
+            "niveau_stock": "Niveau de stock",
+            "modifier_produit": "Modifier le produit",
+            
+            // Rapport
+            "rapport_stock": "Rapport de stock",
+            "vue_ensemble": "Vue d'ensemble",
+            "resume": "Resume",
+            "valeur_totale": "Valeur totale",
+            "nombre_articles": "Nombre d'articles",
+            "derniere_mise_a_jour": "Derniere mise a jour",
+            "exporter_rapport": "Exporter le rapport",
+            "liste_articles": "Liste des articles",
+            "ref": "Ref",
+            "article": "Article",
+            "qte": "Qte",
+            "pu": "PU",
+            "etat": "Etat",
+            
+            // Etats
+            "en_stock": "En stock",
+            "stock_faible": "Stock faible",
+            "rupture_stock": "Rupture",
+            "surstock": "Surstock",
+            
+            // Parametres
+            "configuration_app": "Configuration de l'application",
+            "langue": "Langue",
+            "modifier_taux": "Modifier le taux",
+            "securite": "Securite",
+            "mot_de_passe": "Mot de passe",
+            "empreinte": "Empreinte digitale",
+            "carte_identite": "Carte d'identite (QR)",
+            "configurer": "Configurer",
+            "stockage_cloud": "Stockage cloud",
+            "non_configure": "Non configure",
+            "version": "Version",
+            "developpe_par": "Developpe par",
+            
+            // Cloud
+            "sauvegarde_automatique": "Sauvegarde automatique",
+            "cloud_description": "Protegez vos donnees avec une sauvegarde en ligne",
+            "nom_entreprise": "Nom ou entreprise",
+            "creer_compte": "Creer un compte",
+            "deja_compte": "Deja un compte ?",
+            "se_connecter": "Se connecter",
+            
+            // Scanner
+            "scanner": "Scanner un code",
+            "zone_scanner": "Zone du scanner",
+            "scanner_carte": "Scanner votre carte",
+            "carte_description": "Scannez le QR code de votre carte d'identite ou electeur pour l'utiliser comme methode de recuperation",
+            
+            // Messages
+            "produit_ajoute": "Produit ajoute avec succes",
+            "entree_validee": "Entree validee",
+            "sortie_validee": "Sortie validee",
+            "inventaire_valide": "Inventaire valide",
+            "modification_sauvegardee": "Modification sauvegardee",
+            "confirmer_suppression": "Voulez-vous vraiment supprimer ce produit ?",
+            
+            // Monnaie
+            "equivalent": "Equivalent"
+        };
+
+        // =============================================
+        // DONNEES DE L'APPLICATION
+        // Simulation des donnees pour l'interface
+        // =============================================
+        
+        // Liste des langues disponibles
+        const languesDisponibles = [
+            { code: 'fr', nom: 'Francais', drapeau: '🇫🇷' },
+            { code: 'en', nom: 'Anglais', drapeau: '🇬🇧' },
+            { code: 'hi', nom: 'Hindi', drapeau: '🇮🇳' },
+            { code: 'ln', nom: 'Lingala (RDC)', drapeau: '🇨🇩' },
+            { code: 'sw', nom: 'Swahili (RDC)', drapeau: '🇨🇩' }
+        ];
+        
+        // Liste des themes disponibles
+        const themesDisponibles = [
+            { code: 'systeme', nom: 'Systeme', icone: 'systeme' },
+            { code: 'sombre', nom: 'Sombre', icone: 'sombre' },
+            { code: 'blanc', nom: 'Blanc', icone: 'blanc' }
+        ];
+        
+        // Produits de demonstration
+        const produitsDemo = [
+            { id: 1, ref: 'REF-001', nom: 'Marteau 500g', emplacement: 'Rayon A, Etagere 2', quantite: 25, prix: 15000, etat: 'en_stock' },
+            { id: 2, ref: 'REF-002', nom: 'Tournevis plat', emplacement: 'Rayon A, Etagere 1', quantite: 50, prix: 5000, etat: 'en_stock' },
+            { id: 3, ref: 'REF-003', nom: 'Pince coupante', emplacement: 'Rayon B, Etagere 3', quantite: 3, prix: 12000, etat: 'stock_faible' },
+            { id: 4, ref: 'REF-004', nom: 'Clef a molette', emplacement: 'Rayon B, Etagere 2', quantite: 0, prix: 8500, etat: 'rupture_stock' },
+            { id: 5, ref: 'REF-005', nom: 'Scie metallique', emplacement: 'Rayon C, Etagere 1', quantite: 150, prix: 25000, etat: 'surstock' },
+            { id: 6, ref: 'REF-006', nom: 'Ciseaux a bois', emplacement: 'Rayon A, Etagere 3', quantite: 18, prix: 18000, etat: 'en_stock' }
+        ];
+        
+        // Slides d'onboarding
+        const slidesOnboarding = [
+            {
+                titre: "onboarding_1_titre",
+                texte: "onboarding_1_texte",
+                icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>`
+            },
+            {
+                titre: "onboarding_2_titre",
+                texte: "onboarding_2_texte",
+                icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>`
+            },
+            {
+                titre: "onboarding_3_titre",
+                texte: "onboarding_3_texte",
+                icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>`
+            },
+            {
+                titre: "onboarding_4_titre",
+                texte: "onboarding_4_texte",
+                icone: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                </svg>`
+            }
+        ];
+
+        // =============================================
+        // VARIABLES GLOBALES
+        // Etat de l'application
+        // =============================================
+        let langueActuelle = 'fr';
+        let themeActuel = 'systeme';
+        let slideActuel = 0;
+        let tauxChange = 2800;
+        let monnaieChoisie = 'fc';
+        let produitSelectionne = null;
+        let menuFlottantOuvert = false;
+
+        // =============================================
+        // INITIALISATION
+        // Ce code s'execute au chargement de la page
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generation de la liste des langues
+            genererListeLangues();
+            // Generation des slides d'onboarding
+            genererSlidesOnboarding();
+            // Generation des themes
+            genererListeThemes();
+            // Generation des produits
+            genererListeProduits();
+            // Generation du tableau de rapport
+            genererTableauRapport();
+            // Application du theme systeme
+            appliquerThemeSysteme();
+            // Fermeture des selecteurs au clic externe
+            document.addEventListener('click', gererClicExterne);
+        });
+
+        // =============================================
+        // GENERATION DES ELEMENTS DYNAMIQUES
+        // =============================================
+        
+        // Genere la liste des langues pour l'ecran de selection
+        function genererListeLangues() {
+            const conteneur = document.getElementById('liste-langues');
+            if (!conteneur) return;
+            
+            let html = '';
+            languesDisponibles.forEach(function(langue) {
+                html += `
+                    <button class="carte carte-cliquable flex items-center gap-4 w-full" onclick="selectionnerLangue('${langue.code}')">
+                        <span class="text-3xl">${langue.drapeau}</span>
+                        <span class="font-medium" style="color: var(--texte);">${langue.nom}</span>
+                    </button>
+                `;
+            });
+            conteneur.innerHTML = html;
+        }
+        
+        // Genere les slides d'onboarding
+        function genererSlidesOnboarding() {
+            const conteneur = document.getElementById('onboarding-slides');
+            const dots = document.getElementById('onboarding-dots');
+            if (!conteneur || !dots) return;
+            
+            let htmlSlides = '';
+            let htmlDots = '';
+            
+            slidesOnboarding.forEach(function(slide, index) {
+                htmlSlides += `
+                    <div class="text-center ${index !== 0 ? 'hidden' : ''}" id="slide-${index}">
+                        <div class="w-32 h-32 rounded-3xl mx-auto mb-8 flex items-center justify-center" style="background-color: rgba(0, 111, 120, 0.1); color: var(--primaire);">
+                            ${slide.icone}
+                        </div>
+                        <h2 class="text-xl font-bold mb-3" style="color: var(--texte);" data-traduction="${slide.titre}">${traductions[slide.titre]}</h2>
+                        <p class="text-base" style="color: var(--texte-secondaire);" data-traduction="${slide.texte}">${traductions[slide.texte]}</p>
+                    </div>
+                `;
+                htmlDots += `<div class="dot-onboarding ${index === 0 ? 'actif' : ''}" data-index="${index}"></div>`;
+            });
+            
+            conteneur.innerHTML = htmlSlides;
+            dots.innerHTML = htmlDots;
+        }
+        
+        // Genere la liste des themes
+        function genererListeThemes() {
+            const conteneur = document.getElementById('liste-themes');
+            const conteneurModal = document.getElementById('liste-themes-modal');
+            if (!conteneur) return;
+            
+            let html = '';
+            themesDisponibles.forEach(function(theme) {
+                html += `
+                    <div class="flex items-center justify-between py-3 px-4 rounded-xl cursor-pointer ${themeActuel === theme.code ? 'border-2' : 'border'}" 
+                         style="border-color: ${themeActuel === theme.code ? 'var(--primaire)' : 'var(--bordure)'}; background-color: ${themeActuel === theme.code ? 'rgba(0, 111, 120, 0.05)' : 'transparent'};"
+                         onclick="selectionnerTheme('${theme.code}')">
+                        <span class="font-medium" style="color: var(--texte);">${theme.nom}</span>
+                        ${themeActuel === theme.code ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                    </div>
+                `;
+            });
+            conteneur.innerHTML = html;
+            
+            // Generation pour le modal
+            if (conteneurModal) {
+                let htmlModal = '';
+                themesDisponibles.forEach(function(theme) {
+                    htmlModal += `
+                        <div class="selecteur-option ${themeActuel === theme.code ? 'selectionne' : ''}" onclick="selectionnerTheme('${theme.code}'); fermerModal('modal-theme');">
+                            <span class="font-medium">${theme.nom}</span>
+                            ${themeActuel === theme.code ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                        </div>
+                    `;
+                });
+                conteneurModal.innerHTML = htmlModal;
+            }
+        }
+        
+        // Genere la liste des produits
+        function genererListeProduits(produits) {
+            const conteneur = document.getElementById('liste-produits');
+            if (!conteneur) return;
+            
+            const listeProduits = produits || produitsDemo;
+            
+            let html = '';
+            listeProduits.forEach(function(produit) {
+                const badgeClass = obtenirBadgeEtat(produit.etat);
+                html += `
+                    <div class="produit-item" onclick="ouvrirActionsProduit(${produit.id})">
+                        <div class="produit-icone">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
+                        <div class="produit-info">
+                            <p class="produit-nom">${produit.nom}</p>
+                            <p class="produit-ref">${produit.ref} - ${produit.emplacement}</p>
+                        </div>
+                        <div class="produit-quantite">
+                            <p class="produit-qte-valeur">${produit.quantite}</p>
+                            <span class="badge ${badgeClass.class}">${badgeClass.texte}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            conteneur.innerHTML = html;
+        }
+        
+        // Genere le tableau de rapport
+        function genererTableauRapport() {
+            const conteneur = document.getElementById('tableau-rapport');
+            if (!conteneur) return;
+            
+            let html = '';
+            produitsDemo.forEach(function(produit) {
+                const badgeClass = obtenirBadgeEtat(produit.etat);
+                html += `
+                    <tr>
+                        <td style="color: var(--texte-secondaire);">${produit.ref}</td>
+                        <td style="color: var(--texte);">${produit.nom}</td>
+                        <td style="color: var(--texte);">${produit.quantite}</td>
+                        <td style="color: var(--texte);">${formaterNombre(produit.prix)} FC</td>
+                        <td><span class="badge ${badgeClass.class}">${badgeClass.texte}</span></td>
+                    </tr>
+                `;
+            });
+            conteneur.innerHTML = html;
+        }
+        
+        // Genere la liste des langues pour le modal
+        function genererListeLanguesModal() {
+            const conteneur = document.getElementById('liste-langues-modal');
+            if (!conteneur) return;
+            
+            let html = '';
+            languesDisponibles.forEach(function(langue) {
+                html += `
+                    <div class="selecteur-option ${langueActuelle === langue.code ? 'selectionne' : ''}" onclick="selectionnerLangue('${langue.code}'); fermerModal('modal-langue');">
+                        <span class="text-2xl">${langue.drapeau}</span>
+                        <span class="font-medium">${langue.nom}</span>
+                        ${langueActuelle === langue.code ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primaire)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                    </div>
+                `;
+            });
+            conteneur.innerHTML = html;
+        }
+
+        // =============================================
+        // NAVIGATION ET CHANGEMENT D'ECRANS
+        // =============================================
+        
+        // Change l'ecran affiche
+        function ouvrirEcran(idEcran) {
+            // Masque tous les ecrans
+            document.querySelectorAll('.ecran').forEach(function(ecran) {
+                ecran.classList.remove('actif');
+            });
+            // Affiche l'ecran demande
+            const ecran = document.getElementById(idEcran);
+            if (ecran) {
+                ecran.classList.add('actif');
+            }
+        }
+        
+        // Change l'onglet de navigation
+        function changerOnglet(onglet) {
+            // Met a jour les boutons de navigation
+            document.querySelectorAll('.nav-item').forEach(function(item) {
+                item.classList.remove('actif');
+            });
+            // Affiche l'ecran correspondant
+            if (onglet === 'accueil') {
+                ouvrirEcran('ecran-accueil');
+            } else if (onglet === 'rapport') {
+                ouvrirEcran('ecran-rapport');
+            } else if (onglet === 'parametres') {
+                ouvrirEcran('ecran-parametres');
+            }
+        }
+
+        // =============================================
+        // SELECTION DE LANGUE
+        // =============================================
+        
+        function selectionnerLangue(code) {
+            langueActuelle = code;
+            // Passe a l'ecran d'onboarding
+            ouvrirEcran('ecran-onboarding');
+            // Met a jour l'affichage de la langue actuelle
+            const langue = languesDisponibles.find(function(l) { return l.code === code; });
+            const elementLangue = document.getElementById('langue-actuelle');
+            if (elementLangue && langue) {
+                elementLangue.textContent = langue.nom;
+            }
+            // Met a jour le modal des langues
+            genererListeLanguesModal();
+        }
+
+        // =============================================
+        // ONBOARDING
+        // =============================================
+        
+        // Passe au slide suivant
+        function onboardingSuivant() {
+            if (slideActuel < slidesOnboarding.length - 1) {
+                // Masque le slide actuel
+                const slideActuelEl = document.getElementById('slide-' + slideActuel);
+                if (slideActuelEl) {
+                    slideActuelEl.classList.add('hidden');
+                }
+                // Affiche le slide suivant
+                slideActuel++;
+                const slideSuivant = document.getElementById('slide-' + slideActuel);
+                if (slideSuivant) {
+                    slideSuivant.classList.remove('hidden');
+                }
+                // Met a jour les dots
+                mettreAJourDotsOnboarding();
+                // Met a jour le compteur
+                const compteur = document.getElementById('onboarding-compteur');
+                if (compteur) {
+                    compteur.textContent = (slideActuel + 1) + '/' + slidesOnboarding.length;
+                }
+            } else {
+                // Passe a la configuration
+                ouvrirEcran('ecran-config');
+            }
+        }
+        
+        // Met a jour les indicateurs de progression
+        function mettreAJourDotsOnboarding() {
+            document.querySelectorAll('.dot-onboarding').forEach(function(dot, index) {
+                if (index === slideActuel) {
+                    dot.classList.add('actif');
+                } else {
+                    dot.classList.remove('actif');
+                }
+            });
+        }
+        
+        // Passe l'onboarding
+        function passerOnboarding() {
+            ouvrirEcran('ecran-config');
+        }
+
+        // =============================================
+        // DEMARRAGE DE L'APPLICATION
+        // =============================================
+        
+        function demarrerApplication() {
+            // Recupere le taux de change
+            const tauxInput = document.getElementById('taux-dollar');
+            if (tauxInput) {
+                tauxChange = parseInt(tauxInput.value) || 2800;
+            }
+            ouvrirEcran('ecran-accueil');
+        }
+
+        // =============================================
+        // GESTION DES THEMES
+        // =============================================
+        
+        // Applique le theme systeme
+        function appliquerThemeSysteme() {
+            if (themeActuel === 'systeme') {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'sombre');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            }
+        }
+        
+        // Selectionne un theme
+        function selectionnerTheme(code) {
+            themeActuel = code;
+            // Applique le theme
+            if (code === 'systeme') {
+                appliquerThemeSysteme();
+            } else {
+                document.documentElement.setAttribute('data-theme', code);
+            }
+            // Met a jour l'affichage
+            const theme = themesDisponibles.find(function(t) { return t.code === code; });
+            const elementTheme = document.getElementById('theme-actuel');
+            if (elementTheme && theme) {
+                elementTheme.textContent = theme.nom;
+            }
+            // Regenerere la liste des themes
+            genererListeThemes();
+        }
+
+        // =============================================
+        // GESTION DES MODALES
+        // =============================================
+        
+        // Ouvre une modale
+        function ouvrirModal(idModal) {
+            const modal = document.getElementById(idModal);
+            if (modal) {
+                modal.classList.add('ouvert');
+            }
+            // Ferme le menu flottant si ouvert
+            fermerMenuFlottant();
+            // Generation specifique pour le modal langue
+            if (idModal === 'modal-langue') {
+                genererListeLanguesModal();
+            }
+        }
+        
+        // Ferme une modale
+        function fermerModal(idModal) {
+            const modal = document.getElementById(idModal);
+            if (modal) {
+                modal.classList.remove('ouvert');
+            }
+        }
+
+        // =============================================
+        // MENU FLOTTANT
+        // =============================================
+        
+        // Bascule l'etat du menu flottant
+        function basculerMenuFlottant() {
+            const menu = document.getElementById('menu-flottant');
+            const bouton = document.getElementById('btn-flottant-add');
+            if (!menu || !bouton) return;
+            
+            menuFlottantOuvert = !menuFlottantOuvert;
+            
+            if (menuFlottantOuvert) {
+                menu.classList.add('ouvert');
+                bouton.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                `;
+            } else {
+                fermerMenuFlottant();
+            }
+        }
+        
+        // Ferme le menu flottant
+        function fermerMenuFlottant() {
+            const menu = document.getElementById('menu-flottant');
+            const bouton = document.getElementById('btn-flottant-add');
+            if (!menu || !bouton) return;
+            
+            menuFlottantOuvert = false;
+            menu.classList.remove('ouvert');
+            bouton.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            `;
+        }
+
+        // =============================================
+        // ACTIONS SUR LES PRODUITS
+        // =============================================
+        
+        // Ouvre le menu d'actions d'un produit
+        function ouvrirActionsProduit(id) {
+            produitSelectionne = produitsDemo.find(function(p) { return p.id === id; });
+            if (produitSelectionne) {
+                document.getElementById('modal-produit-nom').textContent = produitSelectionne.nom;
+                document.getElementById('modal-produit-ref').textContent = produitSelectionne.ref;
+                ouvrirModal('modal-actions-produit');
+            }
+        }
+        
+        // Ouvre la modal d'entree
+        function ouvrirEntree() {
+            fermerModal('modal-actions-produit');
+            if (produitSelectionne) {
+                document.getElementById('entree-produit-nom').textContent = produitSelectionne.nom;
+                document.getElementById('entree-qte-actuelle').textContent = produitSelectionne.quantite;
+                document.getElementById('entree-qte-nouvelle').textContent = produitSelectionne.quantite;
+                document.getElementById('entree-quantite').value = 0;
+            }
+            ouvrirModal('modal-entree');
+        }
+        
+        // Ouvre la modal de sortie
+        function ouvrirSortie() {
+            fermerModal('modal-actions-produit');
+            if (produitSelectionne) {
+                document.getElementById('sortie-produit-nom').textContent = produitSelectionne.nom;
+                document.getElementById('sortie-qte-actuelle').textContent = produitSelectionne.quantite;
+                document.getElementById('sortie-qte-nouvelle').textContent = produitSelectionne.quantite;
+                document.getElementById('sortie-quantite').value = 0;
+            }
+            ouvrirModal('modal-sortie');
+        }
+        
+        // Ouvre la modal d'inventaire
+        function ouvrirInventaire() {
+            fermerModal('modal-actions-produit');
+            if (produitSelectionne) {
+                document.getElementById('inventaire-produit-nom').textContent = produitSelectionne.nom;
+                document.getElementById('inventaire-theorique').textContent = produitSelectionne.quantite;
+                document.getElementById('inventaire-reel').value = produitSelectionne.quantite;
+                calculerEcart();
+            }
+            ouvrirModal('modal-inventaire');
+        }
+        
+        // Ouvre la modal de detail
+        function ouvrirDetail() {
+            fermerModal('modal-actions-produit');
+            if (produitSelectionne) {
+                document.getElementById('detail-ref').textContent = produitSelectionne.ref;
+                document.getElementById('detail-nom').textContent = produitSelectionne.nom;
+                document.getElementById('detail-prix').textContent = formaterNombre(produitSelectionne.prix) + ' FC';
+            }
+            ouvrirModal('modal-detail');
+        }
+        
+        // Confirmation de suppression
+        function confirmerSuppression() {
+            if (confirm(traductions['confirmer_suppression'])) {
+                fermerModal('modal-actions-produit');
+                afficherToast('Produit supprime');
+            }
+        }
+
+        // =============================================
+        // MISE A JOUR DES APERCUS
+        // =============================================
+        
+        // Met a jour l'apercu de quantite
+        function mettreAJourApercu(type) {
+            if (!produitSelectionne) return;
+            
+            const inputQuantite = document.getElementById(type + '-quantite');
+            const qteNouvelle = document.getElementById(type + '-qte-nouvelle');
+            
+            if (inputQuantite && qteNouvelle) {
+                const quantite = parseInt(inputQuantite.value) || 0;
+                const nouvelleQte = type === 'entree' 
+                    ? produitSelectionne.quantite + quantite 
+                    : produitSelectionne.quantite - quantite;
+                qteNouvelle.textContent = Math.max(0, nouvelleQte);
+            }
+        }
+        
+        // Calcule l'ecart d'inventaire
+        function calculerEcart() {
+            const stockTheorique = parseInt(document.getElementById('inventaire-theorique').textContent) || 0;
+            const stockReel = parseInt(document.getElementById('inventaire-reel').value) || 0;
+            const ecart = stockReel - stockTheorique;
+            
+            const elementEcart = document.getElementById('inventaire-ecart');
+            const badgeEcart = document.getElementById('badge-ecart');
+            
+            if (elementEcart) {
+                elementEcart.textContent = ecart > 0 ? '+' + ecart : ecart;
+            }
+            
+            if (badgeEcart) {
+                if (ecart === 0) {
+                    badgeEcart.className = 'badge badge-stock';
+                    badgeEcart.textContent = traductions['conforme'];
+                    elementEcart.style.color = 'var(--texte)';
+                } else if (ecart > 0) {
+                    badgeEcart.className = 'badge badge-surstock';
+                    badgeEcart.textContent = traductions['surplus'];
+                    elementEcart.style.color = '#2563eb';
+                } else {
+                    badgeEcart.className = 'badge badge-rupture';
+                    badgeEcart.textContent = traductions['manquant'];
+                    elementEcart.style.color = '#dc2626';
+                }
+            }
+        }
+
+        // =============================================
+        // VALIDATION DES OPERATIONS
+        // =============================================
+        
+        function validerEntree() {
+            fermerModal('modal-entree');
+            afficherToast(traductions['entree_validee']);
+        }
+        
+        function validerSortie() {
+            fermerModal('modal-sortie');
+            afficherToast(traductions['sortie_validee']);
+        }
+        
+        function validerInventaire() {
+            fermerModal('modal-inventaire');
+            afficherToast(traductions['inventaire_valide']);
+        }
+
+        // =============================================
+        // AJOUT ET MODIFICATION DE PRODUITS
+        // =============================================
+        
+        // Ajoute un nouveau produit
+        function ajouterProduit() {
+            fermerModal('modal-ajout-produit');
+            afficherToast(traductions['produit_ajoute']);
+        }
+        
+        // Sauvegarde les modifications
+        function sauvegarderModification() {
+            fermerModal('modal-modifier-produit');
+            fermerModal('modal-detail');
+            afficherToast(traductions['modification_sauvegardee']);
+        }
+        
+        // Sauvegarde le taux de change
+        function sauvegarderTaux() {
+            const nouveauTaux = document.getElementById('nouveau-taux');
+            if (nouveauTaux) {
+                tauxChange = parseInt(nouveauTaux.value) || 2800;
+                document.getElementById('taux-affiche').textContent = tauxChange;
+            }
+            fermerModal('modal-taux');
+            afficherToast('Taux mis a jour');
+        }
+
+        // =============================================
+        // CONVERSION DE MONNAIE
+        // =============================================
+        
+        // Choisit la monnaie pour le prix
+        function choisirMonnaie(monnaie) {
+            monnaieChoisie = monnaie;
+            const btnFc = document.getElementById('btn-monnaie-fc');
+            const btnUsd = document.getElementById('btn-monnaie-usd');
+            
+            if (monnaie === 'fc') {
+                btnFc.classList.remove('btn-outline');
+                btnFc.classList.add('btn-primaire');
+                btnUsd.classList.remove('btn-primaire');
+                btnUsd.classList.add('btn-outline');
+            } else {
+                btnUsd.classList.remove('btn-outline');
+                btnUsd.classList.add('btn-primaire');
+                btnFc.classList.remove('btn-primaire');
+                btnFc.classList.add('btn-outline');
+            }
+            convertirPrix();
+        }
+        
+        // Convertit le prix entre FC et USD
+        function convertirPrix() {
+            const inputPrix = document.getElementById('produit-prix');
+            const prixConverti = document.getElementById('prix-converti');
+            
+            if (inputPrix && prixConverti) {
+                const prix = parseFloat(inputPrix.value) || 0;
+                if (monnaieChoisie === 'fc') {
+                    const usd = (prix / tauxChange).toFixed(2);
+                    prixConverti.textContent = traductions['equivalent'] + ' : ' + usd + ' $';
+                } else {
+                    const fc = Math.round(prix * tauxChange);
+                    prixConverti.textContent = traductions['equivalent'] + ' : ' + formaterNombre(fc) + ' FC';
+                }
+            }
+        }
+
+        // =============================================
+        // SELECTEURS PERSONNALISES
+        // =============================================
+        
+        // Bascule l'ouverture d'un selecteur
+        function basculerSelecteur(idSelecteur) {
+            const options = document.querySelector('#' + idSelecteur + ' .selecteur-options');
+            if (options) {
+                options.classList.toggle('ouvert');
+            }
+        }
+        
+        // Selectionne une option
+        function selectionnerOption(idSelecteur, valeur) {
+            const selecteur = document.getElementById(idSelecteur);
+            if (!selecteur) return;
+            
+            // Trouve l'element qui affiche la valeur selectionnee
+            let elementValeur = null;
+            if (idSelecteur === 'selecteur-emplacement-entree') {
+                elementValeur = document.getElementById('emplacement-selectionne');
+            } else if (idSelecteur === 'selecteur-emplacement-sortie') {
+                elementValeur = document.getElementById('emplacement-selectionne-sortie');
+            } else if (idSelecteur === 'selecteur-emplacement-inventaire') {
+                elementValeur = document.getElementById('emplacement-selectionne-inventaire');
+            }
+            
+            if (elementValeur) {
+                elementValeur.textContent = valeur;
+            }
+            
+            // Ferme les options
+            const options = selecteur.querySelector('.selecteur-options');
+            if (options) {
+                options.classList.remove('ouvert');
+            }
+        }
+        
+        // Gere les clics externes pour fermer les selecteurs
+        function gererClicExterne(evenement) {
+            // Ferme les selecteurs ouverts si on clique en dehors
+            if (!evenement.target.closest('.selecteur-personnalise')) {
+                document.querySelectorAll('.selecteur-options.ouvert').forEach(function(options) {
+                    options.classList.remove('ouvert');
+                });
+            }
+        }
+
+        // =============================================
+        // TOGGLES
+        // =============================================
+        
+        // Bascule l'etat d'un toggle
+        function basculerToggle(element) {
+            element.classList.toggle('actif');
+        }
+
+        // =============================================
+        // RECHERCHE DE PRODUITS
+        // =============================================
+        
+        function rechercherProduit(recherche) {
+            const terme = recherche.toLowerCase().trim();
+            if (terme === '') {
+                genererListeProduits();
+            } else {
+                const produitsFiltres = produitsDemo.filter(function(produit) {
+                    return produit.nom.toLowerCase().includes(terme) || 
+                           produit.ref.toLowerCase().includes(terme);
+                });
+                genererListeProduits(produitsFiltres);
+            }
+        }
+
+        // =============================================
+        // STOCKAGE CLOUD
+        // =============================================
+        
+        function creerCompteCloud() {
+            fermerModal('modal-cloud');
+            afficherToast('Compte cloud cree');
+        }
+
+        // =============================================
+        // UTILITAIRES
+        // =============================================
+        
+        // Formate un nombre avec des espaces
+        function formaterNombre(nombre) {
+            return nombre.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+        
+        // Obtient la classe CSS du badge selon l'etat
+        function obtenirBadgeEtat(etat) {
+            const badges = {
+                'en_stock': { class: 'badge-stock', texte: traductions['en_stock'] },
+                'stock_faible': { class: 'badge-faible', texte: traductions['stock_faible'] },
+                'rupture_stock': { class: 'badge-rupture', texte: traductions['rupture_stock'] },
+                'surstock': { class: 'badge-surstock', texte: traductions['surstock'] }
+            };
+            return badges[etat] || badges['en_stock'];
+        }
+        
+        // Affiche un message toast
+        function afficherToast(message) {
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.textContent = message;
+                toast.classList.add('visible');
+                setTimeout(function() {
+                    toast.classList.remove('visible');
+                }, 3000);
+            }
+        }
+
+        // =============================================
+        // ECOUTEUR D'EVENT SYSTEME
+        // Pour le changement de theme systeme
+        // =============================================
+        
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+                if (themeActuel === 'systeme') {
+                    appliquerThemeSysteme();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

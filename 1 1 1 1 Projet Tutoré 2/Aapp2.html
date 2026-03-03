@@ -1,0 +1,4118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StockTrace - Gestion de Stock</title>
+    <style>
+        :root {
+            --primaire: #006f78;
+            --primaire-clair: #008a94;
+            --primaire-fonce: #005a61;
+            --secondaire: #e62311;
+            --secondaire-clair: #ff3d2e;
+            --blanc: #ffffff;
+            --gris-clair: #f5f5f5;
+            --gris: #e0e0e0;
+            --gris-moyen: #9e9e9e;
+            --gris-fonce: #616161;
+            --noir: #212121;
+            --succes: #4caf50;
+            --attention: #ff9800;
+            --erreur: #f44336;
+            --fond: #ffffff;
+            --fond-carte: #ffffff;
+            --fond-secondaire: #f5f5f5;
+            --texte: #212121;
+            --texte-secondaire: #616161;
+            --bordure: #e0e0e0;
+            --ombre: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="sombre"] {
+            --fond: #121212;
+            --fond-carte: #1e1e1e;
+            --fond-secondaire: #2d2d2d;
+            --texte: #ffffff;
+            --texte-secondaire: #b0b0b0;
+            --bordure: #404040;
+            --ombre: rgba(0, 0, 0, 0.3);
+            --gris-clair: #2d2d2d;
+            --gris: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Écrans */
+        .ecran {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            animation: fonduEntree 0.3s ease;
+        }
+
+        .ecran.actif {
+            display: block;
+        }
+
+        @keyframes fonduEntree {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Configuration initiale */
+        .ecran-config {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+        }
+
+        .ecran-config .logo {
+            width: 80px;
+            height: 80px;
+            background: var(--blanc);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .ecran-config .logo svg {
+            width: 50px;
+            height: 50px;
+            color: var(--primaire);
+        }
+
+        .ecran-config h1 {
+            color: var(--blanc);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .ecran-config p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 40px;
+        }
+
+        .config-carte {
+            background: var(--blanc);
+            border-radius: 20px;
+            padding: 30px 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .config-titre {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--noir);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .options-grille {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-bouton {
+            padding: 16px 12px;
+            border: 2px solid var(--gris);
+            border-radius: 12px;
+            background: var(--blanc);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .option-bouton:hover {
+            border-color: var(--primaire);
+        }
+
+        .option-bouton.selectionne {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.1);
+        }
+
+        .option-bouton .icone {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .option-bouton .label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--noir);
+        }
+
+        .themes-ligne {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .theme-bouton {
+            flex: 1;
+            padding: 16px 8px;
+            border: 2px solid var(--gris);
+            border-radius: 12px;
+            background: var(--blanc);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .theme-bouton:hover {
+            border-color: var(--primaire);
+        }
+
+        .theme-bouton.selectionne {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.1);
+        }
+
+        .theme-apercu {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            border: 2px solid var(--gris);
+        }
+
+        .theme-apercu.systeme {
+            background: linear-gradient(135deg, #fff 50%, #1e1e1e 50%);
+        }
+
+        .theme-apercu.clair {
+            background: #ffffff;
+        }
+
+        .theme-apercu.sombre {
+            background: #1e1e1e;
+        }
+
+        .bouton-principal {
+            width: 100%;
+            padding: 16px;
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .bouton-principal:hover {
+            background: var(--primaire-clair);
+        }
+
+        .bouton-principal:disabled {
+            background: var(--gris-moyen);
+            cursor: not-allowed;
+        }
+
+        /* Connexion / Inscription */
+        .ecran-auth {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 0;
+            background: var(--fond);
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .auth-header .logo {
+            width: 70px;
+            height: 70px;
+            background: var(--blanc);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .auth-header .logo svg {
+            width: 40px;
+            height: 40px;
+            color: var(--primaire);
+        }
+
+        .auth-header h1 {
+            color: var(--blanc);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .auth-header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .auth-contenu {
+            flex: 1;
+            padding: 30px 20px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--gris-clair);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte-secondaire);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.actif {
+            background: var(--blanc);
+            color: var(--primaire);
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.actif {
+            display: block;
+        }
+
+        .champ-groupe {
+            margin-bottom: 20px;
+        }
+
+        .champ-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .champ-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--fond-carte);
+            color: var(--texte);
+            transition: border-color 0.2s;
+        }
+
+        .champ-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+
+        .champ-input::placeholder {
+            color: var(--gris-moyen);
+        }
+
+        .separateur {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .separateur-ligne {
+            flex: 1;
+            height: 1px;
+            background: var(--bordure);
+        }
+
+        .separateur-texte {
+            padding: 0 16px;
+            color: var(--texte-secondaire);
+            font-size: 14px;
+        }
+
+        .boutons-alternatifs {
+            display: flex;
+            gap: 12px;
+        }
+
+        .bouton-alternatif {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            background: var(--fond-carte);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bouton-alternatif:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .bouton-alternatif svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primaire);
+        }
+
+        .bouton-alternatif span {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        /* En-tête principal */
+        .entete {
+            background: var(--fond-carte);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--bordure);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .entete-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+
+        .entete-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .bouton-icone {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--gris-clair);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .bouton-icone:hover {
+            background: var(--gris);
+        }
+
+        .bouton-icone svg {
+            width: 22px;
+            height: 22px;
+            color: var(--texte);
+        }
+
+        .badge-notification {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--secondaire);
+            color: var(--blanc);
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Barre de recherche */
+        .barre-recherche {
+            padding: 16px 20px;
+            background: var(--fond);
+        }
+
+        .recherche-conteneur {
+            display: flex;
+            gap: 12px;
+        }
+
+        .recherche-input-groupe {
+            flex: 1;
+            position: relative;
+        }
+
+        .recherche-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 15px;
+            background: var(--fond-carte);
+            color: var(--texte);
+            transition: border-color 0.2s;
+        }
+
+        .recherche-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+
+        .recherche-icone {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gris-moyen);
+        }
+
+        .bouton-scanner {
+            width: 48px;
+            height: 48px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .bouton-scanner:hover {
+            background: var(--primaire-clair);
+        }
+
+        .bouton-scanner svg {
+            width: 24px;
+            height: 24px;
+            color: var(--blanc);
+        }
+
+        /* Filtres */
+        .filtres-scroll {
+            padding: 0 20px 16px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filtres-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filtre-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+            cursor: pointer;
+            margin-right: 8px;
+            transition: all 0.2s;
+        }
+
+        .filtre-chip:hover {
+            border-color: var(--primaire);
+        }
+
+        .filtre-chip.actif {
+            background: var(--primaire);
+            border-color: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .filtre-chip .compteur {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .filtre-chip.actif .compteur {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Liste des produits */
+        .liste-produits {
+            padding: 0 20px;
+        }
+
+        .produit-carte {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 14px;
+            box-shadow: 0 2px 8px var(--ombre);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .produit-carte:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--ombre);
+        }
+
+        .produit-carte.selectionne {
+            border-color: var(--primaire);
+        }
+
+        .produit-image {
+            width: 70px;
+            height: 70px;
+            background: var(--gris-clair);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .produit-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .produit-image svg {
+            width: 32px;
+            height: 32px;
+            color: var(--gris-moyen);
+        }
+
+        .produit-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .produit-nom {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .produit-sku {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .produit-stock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stock-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stock-badge.normal {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--succes);
+        }
+
+        .stock-badge.faible {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--attention);
+        }
+
+        .stock-badge.rupture {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--erreur);
+        }
+
+        .stock-badge.surstock {
+            background: rgba(33, 150, 243, 0.15);
+            color: #2196f3;
+        }
+
+        .produit-quantite {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+        }
+
+        .produit-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .mini-bouton {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .mini-bouton.entree {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--succes);
+        }
+
+        .mini-bouton.sortie {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--erreur);
+        }
+
+        .mini-bouton:hover {
+            transform: scale(1.1);
+        }
+
+        .mini-bouton svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Statistiques rapides */
+        .stats-rapides {
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-carte {
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .stat-carte.large {
+            grid-column: span 2;
+        }
+
+        .stat-icone {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-icone.primaire {
+            background: rgba(0, 111, 120, 0.15);
+            color: var(--primaire);
+        }
+
+        .stat-icone.succes {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--succes);
+        }
+
+        .stat-icone.attention {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--attention);
+        }
+
+        .stat-icone.erreur {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--erreur);
+        }
+
+        .stat-valeur {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--fond-carte);
+            border-top: 1px solid var(--bordure);
+            padding: 8px 16px;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--gris-clair);
+        }
+
+        .nav-item.actif {
+            background: rgba(0, 111, 120, 0.1);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            color: var(--gris-moyen);
+            transition: color 0.2s;
+        }
+
+        .nav-item.actif svg {
+            color: var(--primaire);
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--gris-moyen);
+            transition: color 0.2s;
+        }
+
+        .nav-item.actif span {
+            color: var(--primaire);
+        }
+
+        /* Bouton flottant */
+        .bouton-flottant {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 111, 120, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 100;
+        }
+
+        .bouton-flottant:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 111, 120, 0.5);
+        }
+
+        .bouton-flottant svg {
+            width: 28px;
+            height: 28px;
+            color: var(--blanc);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+            animation: fonduOverlay 0.3s ease;
+        }
+
+        @keyframes fonduOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--fond-carte);
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: glisserHaut 0.3s ease;
+        }
+
+        @keyframes glisserHaut {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-poignee {
+            width: 40px;
+            height: 4px;
+            background: var(--gris);
+            border-radius: 2px;
+            margin: 12px auto;
+        }
+
+        .modal-entete {
+            padding: 8px 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-titre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+
+        .modal-fermer {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--gris-clair);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-fermer svg {
+            width: 20px;
+            height: 20px;
+            color: var(--texte);
+        }
+
+        .modal-contenu {
+            padding: 0 20px 30px;
+        }
+
+        /* Formulaire ajout produit */
+        .photo-upload {
+            width: 100%;
+            height: 160px;
+            border: 2px dashed var(--bordure);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+            background: var(--gris-clair);
+        }
+
+        .photo-upload:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .photo-upload svg {
+            width: 40px;
+            height: 40px;
+            color: var(--gris-moyen);
+        }
+
+        .photo-upload span {
+            color: var(--texte-secondaire);
+            font-size: 14px;
+        }
+
+        .zones-conteneur {
+            margin-bottom: 20px;
+        }
+
+        .zone-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .zone-item .champ-input {
+            flex: 1;
+        }
+
+        .zone-item .champ-input.petit {
+            flex: 0.4;
+        }
+
+        .bouton-ajouter-zone {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 2px dashed var(--bordure);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--primaire);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .bouton-ajouter-zone:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .ligne-double {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ligne-double .champ-groupe {
+            flex: 1;
+        }
+
+        /* Détail produit */
+        .detail-header {
+            position: relative;
+            height: 250px;
+            background: var(--gris-clair);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-retour {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            background: var(--fond-carte);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .detail-actions-top {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-contenu {
+            padding: 20px;
+            margin-top: -30px;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+            position: relative;
+        }
+
+        .detail-nom {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+
+        .detail-sku {
+            font-size: 14px;
+            color: var(--texte-secondaire);
+            margin-bottom: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .section-titre {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+            margin-bottom: 12px;
+        }
+
+        .info-grille {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-item {
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .info-item.large {
+            grid-column: span 2;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-bottom: 4px;
+        }
+
+        .info-valeur {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .zones-liste {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .zone-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--fond-carte);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .zone-nom {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .zone-qte {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primaire);
+        }
+
+        .qr-conteneur {
+            background: var(--blanc);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: var(--blanc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .qr-code svg {
+            width: 140px;
+            height: 140px;
+        }
+
+        .bouton-telecharger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primaire);
+            color: var(--blanc);
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .detail-boutons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .bouton-action {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bouton-action.entree {
+            background: var(--succes);
+            color: var(--blanc);
+        }
+
+        .bouton-action.sortie {
+            background: var(--secondaire);
+            color: var(--blanc);
+        }
+
+        /* Messages */
+        .messages-filtres {
+            padding: 16px 20px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .message-filtre {
+            padding: 8px 14px;
+            background: var(--fond-carte);
+            border: 2px solid var(--bordure);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--texte);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .message-filtre.actif {
+            background: var(--primaire);
+            border-color: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .messages-liste {
+            padding: 0 20px;
+        }
+
+        .message-carte {
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .message-entete {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primaire);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanc);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .message-meta {
+            flex: 1;
+        }
+
+        .message-auteur {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .message-date {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+        }
+
+        .message-type {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .message-type.entree {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--succes);
+        }
+
+        .message-type.sortie {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--erreur);
+        }
+
+        .message-type.inventaire {
+            background: rgba(33, 150, 243, 0.15);
+            color: #2196f3;
+        }
+
+        .message-type.alerte {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--attention);
+        }
+
+        .message-corps {
+            font-size: 14px;
+            color: var(--texte);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .message-produit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--gris-clair);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .message-produit-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--gris);
+        }
+
+        .message-produit-nom {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .message-commentaire {
+            background: var(--gris-clair);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            font-style: italic;
+        }
+
+        /* Bot / Assistant */
+        .bot-section {
+            padding: 20px;
+            border-top: 1px solid var(--bordure);
+            margin-top: 20px;
+        }
+
+        .bot-input-groupe {
+            display: flex;
+            gap: 12px;
+        }
+
+        .bot-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 24px;
+            font-size: 15px;
+            background: var(--fond-carte);
+            color: var(--texte);
+        }
+
+        .bot-envoyer {
+            width: 48px;
+            height: 48px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bot-envoyer svg {
+            width: 22px;
+            height: 22px;
+            color: var(--blanc);
+        }
+
+        .bot-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .bot-suggestion {
+            padding: 8px 14px;
+            background: var(--gris-clair);
+            border: none;
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--texte);
+            cursor: pointer;
+        }
+
+        /* Équipe */
+        .equipe-section {
+            padding: 20px;
+        }
+
+        .membre-carte {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .membre-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primaire);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanc);
+            font-weight: 600;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .membre-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .membre-info {
+            flex: 1;
+        }
+
+        .membre-nom {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .membre-role {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            margin-top: 2px;
+        }
+
+        .membre-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .membre-badge.admin {
+            background: rgba(0, 111, 120, 0.15);
+            color: var(--primaire);
+        }
+
+        .membre-badge.attente {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--attention);
+        }
+
+        .membres-attente {
+            margin-top: 24px;
+        }
+
+        .section-sous-titre {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Profil */
+        .profil-header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+        }
+
+        .profil-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--blanc);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .profil-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profil-avatar-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--primaire);
+            border: 3px solid var(--blanc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .profil-avatar-edit svg {
+            width: 14px;
+            height: 14px;
+            color: var(--blanc);
+        }
+
+        .profil-nom {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--blanc);
+            margin-bottom: 4px;
+        }
+
+        .profil-role {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .profil-contenu {
+            padding: 20px;
+            margin-top: -20px;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .profil-section {
+            background: var(--fond-carte);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .profil-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--bordure);
+        }
+
+        .profil-item:last-child {
+            border-bottom: none;
+        }
+
+        .profil-item:hover {
+            background: var(--gris-clair);
+        }
+
+        .profil-item-icone {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profil-item-icone.primaire {
+            background: rgba(0, 111, 120, 0.15);
+            color: var(--primaire);
+        }
+
+        .profil-item-icone.secondaire {
+            background: rgba(230, 35, 17, 0.15);
+            color: var(--secondaire);
+        }
+
+        .profil-item-info {
+            flex: 1;
+        }
+
+        .profil-item-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texte);
+        }
+
+        .profil-item-valeur {
+            font-size: 13px;
+            color: var(--texte-secondaire);
+            margin-top: 2px;
+        }
+
+        .profil-item svg.chevron {
+            width: 20px;
+            height: 20px;
+            color: var(--gris-moyen);
+        }
+
+        .bouton-deconnexion {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            border: 2px solid var(--secondaire);
+            border-radius: 12px;
+            color: var(--secondaire);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .bouton-deconnexion:hover {
+            background: var(--secondaire);
+            color: var(--blanc);
+        }
+
+        /* Inventaire */
+        .inventaire-form {
+            padding: 20px;
+        }
+
+        .inventaire-produit-select {
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .inventaire-comparaison {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .comparaison-bloc {
+            flex: 1;
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .comparaison-label {
+            font-size: 12px;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .comparaison-valeur {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--texte);
+        }
+
+        .comparaison-valeur.input {
+            font-size: 24px;
+        }
+
+        .ecart-indicateur {
+            background: var(--fond-carte);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .ecart-valeur {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .ecart-valeur.positif {
+            color: var(--succes);
+        }
+
+        .ecart-valeur.negatif {
+            color: var(--erreur);
+        }
+
+        .ecart-valeur.nul {
+            color: var(--texte-secondaire);
+        }
+
+        /* Scanner */
+        .scanner-zone {
+            background: var(--noir);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .scanner-cadre {
+            width: 250px;
+            height: 250px;
+            border: 3px solid var(--blanc);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scanner-coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: var(--primaire);
+            border-style: solid;
+        }
+
+        .scanner-coin.haut-gauche {
+            top: -3px;
+            left: -3px;
+            border-width: 4px 0 0 4px;
+            border-radius: 20px 0 0 0;
+        }
+
+        .scanner-coin.haut-droite {
+            top: -3px;
+            right: -3px;
+            border-width: 4px 4px 0 0;
+            border-radius: 0 20px 0 0;
+        }
+
+        .scanner-coin.bas-gauche {
+            bottom: -3px;
+            left: -3px;
+            border-width: 0 0 4px 4px;
+            border-radius: 0 0 0 20px;
+        }
+
+        .scanner-coin.bas-droite {
+            bottom: -3px;
+            right: -3px;
+            border-width: 0 4px 4px 0;
+            border-radius: 0 0 20px 0;
+        }
+
+        .scanner-ligne {
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            height: 2px;
+            background: var(--primaire);
+            animation: scanLigne 2s infinite;
+        }
+
+        @keyframes scanLigne {
+            0%, 100% { top: 10px; }
+            50% { top: calc(100% - 12px); }
+        }
+
+        .scanner-texte {
+            color: var(--blanc);
+            margin-top: 30px;
+            font-size: 16px;
+        }
+
+        .scanner-fermer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scanner-fermer svg {
+            width: 24px;
+            height: 24px;
+            color: var(--blanc);
+        }
+
+        .scanner-import {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .scanner-import-btn {
+            padding: 14px 28px;
+            background: var(--blanc);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--noir);
+            cursor: pointer;
+        }
+
+        /* Verrouillage */
+        .verrou-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--fond);
+            z-index: 3000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .verrou-overlay.visible {
+            display: flex;
+        }
+
+        .verrou-icone {
+            width: 80px;
+            height: 80px;
+            background: rgba(230, 35, 17, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .verrou-icone svg {
+            width: 40px;
+            height: 40px;
+            color: var(--secondaire);
+        }
+
+        .verrou-titre {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--texte);
+            margin-bottom: 8px;
+        }
+
+        .verrou-texte {
+            font-size: 15px;
+            color: var(--texte-secondaire);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Mode sélection */
+        .selection-barre {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            left: 20px;
+            right: 20px;
+            background: var(--fond-carte);
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 20px var(--ombre);
+            z-index: 100;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .selection-barre.visible {
+            display: flex;
+            animation: glisserHaut 0.3s ease;
+        }
+
+        .selection-compte {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--texte);
+        }
+
+        .selection-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .selection-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .selection-btn.supprimer {
+            background: var(--secondaire);
+            color: var(--blanc);
+        }
+
+        .selection-btn.annuler {
+            background: var(--gris-clair);
+            color: var(--texte);
+        }
+
+        /* Toast notification */
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--noir);
+            color: var(--blanc);
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 4000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .toast.visible {
+            display: block;
+            animation: toastEntree 0.3s ease;
+        }
+
+        @keyframes toastEntree {
+            from { 
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Checkbox personnalisé */
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--bordure);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .checkbox-custom.checked {
+            background: var(--primaire);
+            border-color: var(--primaire);
+        }
+
+        .checkbox-custom svg {
+            width: 16px;
+            height: 16px;
+            color: var(--blanc);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .checkbox-custom.checked svg {
+            opacity: 1;
+        }
+
+        /* Toggle */
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--gris);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle.actif {
+            background: var(--primaire);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: var(--blanc);
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle.actif::after {
+            transform: translateX(22px);
+        }
+
+        /* Responsive tablette */
+        @media (min-width: 768px) {
+            .modal {
+                max-width: 500px;
+                border-radius: 24px;
+                margin: auto;
+            }
+
+            .liste-produits {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .produit-carte {
+                margin-bottom: 0;
+            }
+
+            .stats-rapides {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .stat-carte.large {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran de configuration initiale -->
+    <div class="ecran ecran-config actif" id="ecranConfig">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+        </div>
+        <h1>StockTrace</h1>
+        <p>Gestion intelligente de stock</p>
+        
+        <div class="config-carte">
+            <div class="config-titre">Choisissez votre langue</div>
+            <div class="options-grille">
+                <div class="option-bouton selectionne" data-langue="fr">
+                    <div class="icone">🇫🇷</div>
+                    <div class="label">Français</div>
+                </div>
+                <div class="option-bouton" data-langue="en">
+                    <div class="icone">🇬🇧</div>
+                    <div class="label">English</div>
+                </div>
+                <div class="option-bouton" data-langue="hi">
+                    <div class="icone">🇮🇳</div>
+                    <div class="label">हिन्दी</div>
+                </div>
+                <div class="option-bouton" data-langue="ln">
+                    <div class="icone">🇨🇩</div>
+                    <div class="label">Lingála</div>
+                </div>
+            </div>
+            
+            <div class="config-titre">Choisissez votre thème</div>
+            <div class="themes-ligne">
+                <div class="theme-bouton selectionne" data-theme="systeme">
+                    <div class="theme-apercu systeme"></div>
+                    <div class="label">Système</div>
+                </div>
+                <div class="theme-bouton" data-theme="clair">
+                    <div class="theme-apercu clair"></div>
+                    <div class="label">Clair</div>
+                </div>
+                <div class="theme-bouton" data-theme="sombre">
+                    <div class="theme-apercu sombre"></div>
+                    <div class="label">Sombre</div>
+                </div>
+            </div>
+            
+            <button class="bouton-principal" id="btnContinuerConfig">Continuer</button>
+        </div>
+    </div>
+
+    <!-- Écran de connexion/inscription -->
+    <div class="ecran ecran-auth" id="ecranAuth">
+        <div class="auth-header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+            </div>
+            <h1>StockTrace</h1>
+            <p>Bienvenue</p>
+        </div>
+        
+        <div class="auth-contenu">
+            <div class="auth-tabs">
+                <button class="auth-tab actif" data-tab="connexion">Connexion</button>
+                <button class="auth-tab" data-tab="inscription">Inscription</button>
+            </div>
+            
+            <!-- Formulaire connexion -->
+            <form class="auth-form actif" id="formConnexion">
+                <div class="champ-groupe">
+                    <label class="champ-label">Nom complet</label>
+                    <input type="text" class="champ-input" placeholder="Entrez votre nom">
+                </div>
+                <div class="champ-groupe">
+                    <label class="champ-label">Mot de passe</label>
+                    <input type="password" class="champ-input" placeholder="Entrez votre mot de passe">
+                </div>
+                <button type="submit" class="bouton-principal">Se connecter</button>
+                
+                <div class="separateur">
+                    <div class="separateur-ligne"></div>
+                    <span class="separateur-texte">ou</span>
+                    <div class="separateur-ligne"></div>
+                </div>
+                
+                <div class="boutons-alternatifs">
+                    <div class="bouton-alternatif" id="btnScannerQR">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                        </svg>
+                        <span>Scanner QR</span>
+                    </div>
+                    <div class="bouton-alternatif" id="btnImporterQR">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <span>Importer QR</span>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Formulaire inscription -->
+            <form class="auth-form" id="formInscription">
+                <div class="champ-groupe">
+                    <label class="champ-label">Nom complet</label>
+                    <input type="text" class="champ-input" placeholder="Entrez votre nom complet">
+                </div>
+                <div class="champ-groupe">
+                    <label class="champ-label">Mot de passe</label>
+                    <input type="password" class="champ-input" placeholder="Créez un mot de passe">
+                </div>
+                <div class="champ-groupe">
+                    <label class="champ-label">Confirmer le mot de passe</label>
+                    <input type="password" class="champ-input" placeholder="Confirmez votre mot de passe">
+                </div>
+                <button type="submit" class="bouton-principal">Créer mon compte</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Écran principal - Tableau de bord -->
+    <div class="ecran" id="ecranTableauBord">
+        <div class="entete">
+            <h1 class="entete-titre">Tableau de bord</h1>
+            <div class="entete-actions">
+                <button class="bouton-icone" id="btnNotifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="badge-notification">3</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="stats-rapides">
+            <div class="stat-carte">
+                <div class="stat-icone primaire">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="stat-valeur">156</div>
+                <div class="stat-label">Produits total</div>
+            </div>
+            <div class="stat-carte">
+                <div class="stat-icone succes">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                </div>
+                <div class="stat-valeur">24</div>
+                <div class="stat-label">Entrées ce mois</div>
+            </div>
+            <div class="stat-carte">
+                <div class="stat-icone attention">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div class="stat-valeur">8</div>
+                <div class="stat-label">Stock faible</div>
+            </div>
+            <div class="stat-carte">
+                <div class="stat-icone erreur">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="stat-valeur">3</div>
+                <div class="stat-label">Ruptures</div>
+            </div>
+        </div>
+        
+        <div class="barre-recherche">
+            <div class="recherche-conteneur">
+                <div class="recherche-input-groupe">
+                    <svg class="recherche-icone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" class="recherche-input" placeholder="Rechercher un produit...">
+                </div>
+                <button class="bouton-scanner" id="btnScannerProduit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="filtres-scroll">
+            <div class="filtre-chip actif" data-filtre="tous">Tous <span class="compteur">156</span></div>
+            <div class="filtre-chip" data-filtre="faible">Stock faible <span class="compteur">8</span></div>
+            <div class="filtre-chip" data-filtre="rupture">Rupture <span class="compteur">3</span></div>
+            <div class="filtre-chip" data-filtre="surstock">Surstock <span class="compteur">5</span></div>
+            <div class="filtre-chip" data-filtre="normal">Normal <span class="compteur">140</span></div>
+        </div>
+        
+        <div class="liste-produits" id="listeProduits">
+            <!-- Produit 1 -->
+            <div class="produit-carte" data-id="1">
+                <div class="checkbox-custom" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Câble USB-C 2m</div>
+                    <div class="produit-sku">SKU: CUSB-2M-001</div>
+                    <div class="produit-stock">
+                        <span class="stock-badge normal">En stock</span>
+                        <span class="produit-quantite">245 unités</span>
+                    </div>
+                </div>
+                <div class="produit-actions">
+                    <button class="mini-bouton entree" title="Entrée">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <button class="mini-bouton sortie" title="Sortie">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Produit 2 -->
+            <div class="produit-carte" data-id="2">
+                <div class="checkbox-custom" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Souris sans fil</div>
+                    <div class="produit-sku">SKU: SOURIS-WL-002</div>
+                    <div class="produit-stock">
+                        <span class="stock-badge faible">Stock faible</span>
+                        <span class="produit-quantite">12 unités</span>
+                    </div>
+                </div>
+                <div class="produit-actions">
+                    <button class="mini-bouton entree">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <button class="mini-bouton sortie">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Produit 3 -->
+            <div class="produit-carte" data-id="3">
+                <div class="checkbox-custom" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Clavier mécanique</div>
+                    <div class="produit-sku">SKU: CLAV-MEC-003</div>
+                    <div class="produit-stock">
+                        <span class="stock-badge rupture">Rupture</span>
+                        <span class="produit-quantite">0 unité</span>
+                    </div>
+                </div>
+                <div class="produit-actions">
+                    <button class="mini-bouton entree">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <button class="mini-bouton sortie">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Produit 4 -->
+            <div class="produit-carte" data-id="4">
+                <div class="checkbox-custom" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Écran 27 pouces</div>
+                    <div class="produit-sku">SKU: ECR-27-004</div>
+                    <div class="produit-stock">
+                        <span class="stock-badge surstock">Surstock</span>
+                        <span class="produit-quantite">520 unités</span>
+                    </div>
+                </div>
+                <div class="produit-actions">
+                    <button class="mini-bouton entree">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <button class="mini-bouton sortie">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <button class="bouton-flottant" id="btnAjouterProduit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        </button>
+        
+        <div class="selection-barre" id="barreSelection">
+            <span class="selection-compte">0 sélectionné(s)</span>
+            <div class="selection-actions">
+                <button class="selection-btn annuler" id="btnAnnulerSelection">Annuler</button>
+                <button class="selection-btn supprimer" id="btnSupprimerSelection">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Messages -->
+    <div class="ecran" id="ecranMessages">
+        <div class="entete">
+            <h1 class="entete-titre">Historique</h1>
+            <div class="entete-actions">
+                <button class="bouton-icone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="barre-recherche">
+            <div class="recherche-conteneur">
+                <div class="recherche-input-groupe">
+                    <svg class="recherche-icone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" class="recherche-input" placeholder="Rechercher dans l'historique...">
+                </div>
+            </div>
+        </div>
+        
+        <div class="messages-filtres">
+            <div class="message-filtre actif" data-filtre="tous">Tous</div>
+            <div class="message-filtre" data-filtre="entree">Entrées</div>
+            <div class="message-filtre" data-filtre="sortie">Sorties</div>
+            <div class="message-filtre" data-filtre="inventaire">Inventaire</div>
+            <div class="message-filtre" data-filtre="alerte">Alertes</div>
+        </div>
+        
+        <div class="messages-liste">
+            <!-- Message 1 -->
+            <div class="message-carte">
+                <div class="message-entete">
+                    <div class="message-avatar">JD</div>
+                    <div class="message-meta">
+                        <div class="message-auteur">Jean Dupont</div>
+                        <div class="message-date">Aujourd'hui à 14:32</div>
+                    </div>
+                    <span class="message-type entree">Entrée</span>
+                </div>
+                <div class="message-corps">
+                    A enregistré une entrée de <strong>50 unités</strong>
+                </div>
+                <div class="message-produit">
+                    <div class="message-produit-img"></div>
+                    <div class="message-produit-nom">Câble USB-C 2m</div>
+                </div>
+                <div class="message-commentaire">
+                    "Réception commande fournisseur #2458"
+                </div>
+            </div>
+            
+            <!-- Message 2 -->
+            <div class="message-carte">
+                <div class="message-entete">
+                    <div class="message-avatar">MK</div>
+                    <div class="message-meta">
+                        <div class="message-auteur">Marie Koné</div>
+                        <div class="message-date">Aujourd'hui à 11:15</div>
+                    </div>
+                    <span class="message-type sortie">Sortie</span>
+                </div>
+                <div class="message-corps">
+                    A enregistré une sortie de <strong>25 unités</strong>
+                </div>
+                <div class="message-produit">
+                    <div class="message-produit-img"></div>
+                    <div class="message-produit-nom">Souris sans fil</div>
+                </div>
+            </div>
+            
+            <!-- Message 3 -->
+            <div class="message-carte">
+                <div class="message-entete">
+                    <div class="message-avatar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="message-meta">
+                        <div class="message-auteur">Système</div>
+                        <div class="message-date">Aujourd'hui à 10:00</div>
+                    </div>
+                    <span class="message-type alerte">Alerte</span>
+                </div>
+                <div class="message-corps">
+                    ⚠️ <strong>Stock faible</strong> - Le seuil minimum a été atteint
+                </div>
+                <div class="message-produit">
+                    <div class="message-produit-img"></div>
+                    <div class="message-produit-nom">Souris sans fil</div>
+                </div>
+            </div>
+            
+            <!-- Message 4 -->
+            <div class="message-carte">
+                <div class="message-entete">
+                    <div class="message-avatar">JD</div>
+                    <div class="message-meta">
+                        <div class="message-auteur">Jean Dupont</div>
+                        <div class="message-date">Hier à 16:45</div>
+                    </div>
+                    <span class="message-type inventaire">Inventaire</span>
+                </div>
+                <div class="message-corps">
+                    A effectué un inventaire - Écart de <strong>-3 unités</strong>
+                </div>
+                <div class="message-produit">
+                    <div class="message-produit-img"></div>
+                    <div class="message-produit-nom">Écran 27 pouces</div>
+                </div>
+                <div class="message-commentaire">
+                    "Ajustement suite à casse constatée"
+                </div>
+            </div>
+        </div>
+        
+        <div class="bot-section">
+            <div class="bot-input-groupe">
+                <input type="text" class="bot-input" placeholder="Demandez un rapport...">
+                <button class="bot-envoyer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="bot-suggestions">
+                <button class="bot-suggestion">📊 Mon stock</button>
+                <button class="bot-suggestion">📉 Alertes</button>
+                <button class="bot-suggestion">📋 Rapport mensuel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Inventaire -->
+    <div class="ecran" id="ecranInventaire">
+        <div class="entete">
+            <h1 class="entete-titre">Inventaire</h1>
+        </div>
+        
+        <div class="inventaire-form">
+            <div class="inventaire-produit-select" id="selectProduitInventaire">
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Sélectionner un produit</div>
+                    <div class="produit-sku">Touchez pour choisir ou scanner</div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </div>
+            
+            <div class="champ-groupe">
+                <label class="champ-label">Emplacement</label>
+                <select class="champ-input">
+                    <option value="">Sélectionner un emplacement</option>
+                    <option value="entrepot-a">Entrepôt A - Étagère 1</option>
+                    <option value="entrepot-a2">Entrepôt A - Étagère 2</option>
+                    <option value="entrepot-b">Entrepôt B</option>
+                    <option value="magasin">Magasin principal</option>
+                </select>
+            </div>
+            
+            <div class="inventaire-comparaison">
+                <div class="comparaison-bloc">
+                    <div class="comparaison-label">Stock théorique</div>
+                    <div class="comparaison-valeur">245</div>
+                </div>
+                <div class="comparaison-bloc">
+                    <div class="comparaison-label">Stock réel compté</div>
+                    <input type="number" class="champ-input comparaison-valeur input" value="242" style="text-align: center; font-weight: 700;">
+                </div>
+            </div>
+            
+            <div class="ecart-indicateur">
+                <div class="comparaison-label">Écart constaté</div>
+                <div class="ecart-valeur negatif">-3</div>
+            </div>
+            
+            <div class="champ-groupe">
+                <label class="champ-label">Commentaire (optionnel)</label>
+                <textarea class="champ-input" rows="3" placeholder="Expliquez l'écart si nécessaire..."></textarea>
+            </div>
+            
+            <div class="photo-upload" id="uploadPhotoInventaire">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span>Ajouter une photo justificative</span>
+            </div>
+            
+            <button class="bouton-principal">Valider l'inventaire</button>
+        </div>
+    </div>
+
+    <!-- Écran Équipe -->
+    <div class="ecran" id="ecranEquipe">
+        <div class="entete">
+            <h1 class="entete-titre">Équipe</h1>
+            <div class="entete-actions">
+                <button class="bouton-icone" id="btnVerrouiller">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="equipe-section">
+            <div class="section-sous-titre">Membres actifs (3)</div>
+            
+            <!-- Admin principal -->
+            <div class="membre-carte">
+                <div class="membre-avatar">JD</div>
+                <div class="membre-info">
+                    <div class="membre-nom">Jean Dupont</div>
+                    <div class="membre-role">Administrateur principal</div>
+                </div>
+                <span class="membre-badge admin">Admin</span>
+            </div>
+            
+            <!-- Membre 2 -->
+            <div class="membre-carte">
+                <div class="membre-avatar">MK</div>
+                <div class="membre-info">
+                    <div class="membre-nom">Marie Koné</div>
+                    <div class="membre-role">Gestionnaire</div>
+                </div>
+                <span class="membre-badge admin">Admin</span>
+            </div>
+            
+            <!-- Membre 3 -->
+            <div class="membre-carte">
+                <div class="membre-avatar">PL</div>
+                <div class="membre-info">
+                    <div class="membre-nom">Pierre Lumumba</div>
+                    <div class="membre-role">Membre</div>
+                </div>
+            </div>
+            
+            <div class="membres-attente">
+                <div class="section-sous-titre">En attente d'approbation (2)</div>
+                
+                <!-- En attente 1 -->
+                <div class="membre-carte">
+                    <div class="membre-avatar" style="background: var(--gris-moyen);">AM</div>
+                    <div class="membre-info">
+                        <div class="membre-nom">Alice Mbombo</div>
+                        <div class="membre-role">Compte créé le 22/02/2026</div>
+                    </div>
+                    <span class="membre-badge attente">En attente</span>
+                </div>
+                
+                <!-- En attente 2 -->
+                <div class="membre-carte">
+                    <div class="membre-avatar" style="background: var(--gris-moyen);">TN</div>
+                    <div class="membre-info">
+                        <div class="membre-nom">Thomas Nguema</div>
+                        <div class="membre-role">Compte créé le 21/02/2026</div>
+                    </div>
+                    <span class="membre-badge attente">En attente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Profil -->
+    <div class="ecran" id="ecranProfil">
+        <div class="profil-header">
+            <div class="profil-avatar">
+                <span style="font-size: 36px; font-weight: 700; color: var(--primaire);">JD</span>
+                <div class="profil-avatar-edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="profil-nom">Jean Dupont</div>
+            <div class="profil-role">Administrateur principal</div>
+        </div>
+        
+        <div class="profil-contenu">
+            <div class="profil-section">
+                <div class="profil-item" id="itemModifierNom">
+                    <div class="profil-item-icone primaire">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="profil-item-info">
+                        <div class="profil-item-label">Nom complet</div>
+                        <div class="profil-item-valeur">Jean Dupont</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+                
+                <div class="profil-item" id="itemModifierMotDePasse">
+                    <div class="profil-item-icone primaire">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                    <div class="profil-item-info">
+                        <div class="profil-item-label">Mot de passe</div>
+                        <div class="profil-item-valeur">••••••••</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="profil-section">
+                <div class="profil-item" id="itemChangerLangue">
+                    <div class="profil-item-icone primaire">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="profil-item-info">
+                        <div class="profil-item-label">Langue</div>
+                        <div class="profil-item-valeur">Français</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+                
+                <div class="profil-item" id="itemChangerTheme">
+                    <div class="profil-item-icone primaire">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </div>
+                    <div class="profil-item-info">
+                        <div class="profil-item-label">Thème</div>
+                        <div class="profil-item-valeur">Système</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="profil-section">
+                <div class="profil-item" id="itemVoirQRCode">
+                    <div class="profil-item-icone primaire">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                        </svg>
+                    </div>
+                    <div class="profil-item-info">
+                        <div class="profil-item-label">Mon QR Code</div>
+                        <div class="profil-item-valeur">Télécharger ou partager</div>
+                    </div>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <button class="bouton-deconnexion" id="btnDeconnexion">Se déconnecter</button>
+        </div>
+    </div>
+
+    <!-- Écran Détail Produit -->
+    <div class="ecran" id="ecranDetailProduit">
+        <div class="detail-header">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" stroke-width="1.5">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <button class="detail-retour" id="btnRetourDetail">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+            <div class="detail-actions-top">
+                <button class="bouton-icone" style="background: var(--fond-carte);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </button>
+                <button class="bouton-icone" style="background: var(--fond-carte);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondaire)" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="detail-contenu">
+            <div class="produit-stock" style="margin-bottom: 12px;">
+                <span class="stock-badge normal">En stock</span>
+            </div>
+            <h1 class="detail-nom">Câble USB-C 2m</h1>
+            <p class="detail-sku">SKU: CUSB-2M-001</p>
+            
+            <div class="detail-section">
+                <h3 class="section-titre">Informations</h3>
+                <div class="info-grille">
+                    <div class="info-item">
+                        <div class="info-label">Quantité totale</div>
+                        <div class="info-valeur">245 unités</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Valeur stock</div>
+                        <div class="info-valeur">2 450 €</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Seuil minimum</div>
+                        <div class="info-valeur">50 unités</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Seuil maximum</div>
+                        <div class="info-valeur">500 unités</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Prix d'achat unitaire</div>
+                        <div class="info-valeur">10,00 €</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Dernière modification</div>
+                        <div class="info-valeur">23/02/2026</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3 class="section-titre">Emplacements</h3>
+                <div class="zones-liste">
+                    <div class="zone-badge">
+                        <span class="zone-nom">Entrepôt A - Étagère 1</span>
+                        <span class="zone-qte">150 unités</span>
+                    </div>
+                    <div class="zone-badge">
+                        <span class="zone-nom">Entrepôt A - Étagère 2</span>
+                        <span class="zone-qte">65 unités</span>
+                    </div>
+                    <div class="zone-badge">
+                        <span class="zone-nom">Magasin principal</span>
+                        <span class="zone-qte">30 unités</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3 class="section-titre">QR Code</h3>
+                <div class="qr-conteneur">
+                    <div class="qr-code">
+                        <svg viewBox="0 0 100 100">
+                            <!-- QR Code simplifié -->
+                            <rect x="0" y="0" width="100" height="100" fill="white"/>
+                            <rect x="5" y="5" width="25" height="25" fill="black"/>
+                            <rect x="10" y="10" width="15" height="15" fill="white"/>
+                            <rect x="13" y="13" width="9" height="9" fill="black"/>
+                            <rect x="70" y="5" width="25" height="25" fill="black"/>
+                            <rect x="75" y="10" width="15" height="15" fill="white"/>
+                            <rect x="78" y="13" width="9" height="9" fill="black"/>
+                            <rect x="5" y="70" width="25" height="25" fill="black"/>
+                            <rect x="10" y="75" width="15" height="15" fill="white"/>
+                            <rect x="13" y="78" width="9" height="9" fill="black"/>
+                            <rect x="35" y="5" width="5" height="5" fill="black"/>
+                            <rect x="45" y="5" width="5" height="5" fill="black"/>
+                            <rect x="55" y="5" width="5" height="5" fill="black"/>
+                            <rect x="35" y="15" width="5" height="5" fill="black"/>
+                            <rect x="50" y="15" width="5" height="5" fill="black"/>
+                            <rect x="35" y="35" width="30" height="30" fill="black"/>
+                            <rect x="40" y="40" width="20" height="20" fill="white"/>
+                            <rect x="45" y="45" width="10" height="10" fill="black"/>
+                            <rect x="5" y="35" width="5" height="5" fill="black"/>
+                            <rect x="15" y="40" width="5" height="5" fill="black"/>
+                            <rect x="5" y="50" width="5" height="5" fill="black"/>
+                            <rect x="20" y="55" width="5" height="5" fill="black"/>
+                            <rect x="70" y="35" width="5" height="5" fill="black"/>
+                            <rect x="80" y="45" width="5" height="5" fill="black"/>
+                            <rect x="90" y="40" width="5" height="5" fill="black"/>
+                            <rect x="75" y="55" width="5" height="5" fill="black"/>
+                            <rect x="35" y="70" width="5" height="5" fill="black"/>
+                            <rect x="45" y="75" width="5" height="5" fill="black"/>
+                            <rect x="55" y="70" width="5" height="5" fill="black"/>
+                            <rect x="70" y="70" width="25" height="25" fill="black"/>
+                            <rect x="75" y="75" width="15" height="15" fill="white"/>
+                            <rect x="78" y="78" width="9" height="9" fill="black"/>
+                        </svg>
+                    </div>
+                    <button class="bouton-telecharger">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Télécharger
+                    </button>
+                </div>
+            </div>
+            
+            <div class="detail-boutons">
+                <button class="bouton-action entree">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Entrée
+                </button>
+                <button class="bouton-action sortie">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Sortie
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Scanner -->
+    <div class="ecran" id="ecranScanner">
+        <div class="scanner-zone">
+            <button class="scanner-fermer" id="btnFermerScanner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            
+            <div class="scanner-cadre">
+                <div class="scanner-coin haut-gauche"></div>
+                <div class="scanner-coin haut-droite"></div>
+                <div class="scanner-coin bas-gauche"></div>
+                <div class="scanner-coin bas-droite"></div>
+                <div class="scanner-ligne"></div>
+            </div>
+            
+            <p class="scanner-texte">Positionnez le QR code dans le cadre</p>
+            
+            <div class="scanner-import">
+                <button class="scanner-import-btn">📷 Importer une image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navigation" id="navigationPrincipale" style="display: none;">
+        <button class="nav-item actif" data-ecran="ecranTableauBord">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>Accueil</span>
+        </button>
+        <button class="nav-item" data-ecran="ecranMessages">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Historique</span>
+        </button>
+        <button class="nav-item" data-ecran="ecranInventaire">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                <line x1="9" y1="12" x2="15" y2="12"/>
+                <line x1="9" y1="16" x2="15" y2="16"/>
+            </svg>
+            <span>Inventaire</span>
+        </button>
+        <button class="nav-item" data-ecran="ecranEquipe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>Équipe</span>
+        </button>
+        <button class="nav-item" data-ecran="ecranProfil">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Profil</span>
+        </button>
+    </nav>
+
+    <!-- Modals -->
+    <!-- Modal Ajouter Produit -->
+    <div class="modal-overlay" id="modalAjouterProduit">
+        <div class="modal">
+            <div class="modal-poignee"></div>
+            <div class="modal-entete">
+                <h2 class="modal-titre">Nouveau produit</h2>
+                <button class="modal-fermer" data-fermer="modalAjouterProduit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-contenu">
+                <div class="photo-upload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span>Ajouter une photo</span>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Nom du produit *</label>
+                    <input type="text" class="champ-input" placeholder="Ex: Câble USB-C 2m">
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">SKU / Code-barres</label>
+                    <input type="text" class="champ-input" placeholder="Ex: CUSB-2M-001">
+                </div>
+                
+                <div class="zones-conteneur">
+                    <label class="champ-label">Emplacements et quantités</label>
+                    <div class="zone-item">
+                        <input type="text" class="champ-input" placeholder="Zone / Emplacement">
+                        <input type="number" class="champ-input petit" placeholder="Qté">
+                    </div>
+                    <button class="bouton-ajouter-zone">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Ajouter un emplacement
+                    </button>
+                </div>
+                
+                <div class="ligne-double">
+                    <div class="champ-groupe">
+                        <label class="champ-label">Quantité minimum</label>
+                        <input type="number" class="champ-input" placeholder="50">
+                    </div>
+                    <div class="champ-groupe">
+                        <label class="champ-label">Quantité maximum</label>
+                        <input type="number" class="champ-input" placeholder="500">
+                    </div>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Prix d'achat unitaire (€)</label>
+                    <input type="number" class="champ-input" placeholder="10.00" step="0.01">
+                </div>
+                
+                <button class="bouton-principal">Créer le produit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Entrée Stock -->
+    <div class="modal-overlay" id="modalEntreeStock">
+        <div class="modal">
+            <div class="modal-poignee"></div>
+            <div class="modal-entete">
+                <h2 class="modal-titre">Entrée de stock</h2>
+                <button class="modal-fermer" data-fermer="modalEntreeStock">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-contenu">
+                <div class="inventaire-produit-select">
+                    <div class="produit-image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <div class="produit-info">
+                        <div class="produit-nom">Câble USB-C 2m</div>
+                        <div class="produit-sku">Stock actuel: 245 unités</div>
+                    </div>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Quantité à ajouter *</label>
+                    <input type="number" class="champ-input" placeholder="0" min="1">
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Emplacement</label>
+                    <select class="champ-input">
+                        <option value="entrepot-a">Entrepôt A - Étagère 1</option>
+                        <option value="entrepot-a2">Entrepôt A - Étagère 2</option>
+                        <option value="magasin">Magasin principal</option>
+                    </select>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Prix d'achat unitaire (€)</label>
+                    <input type="number" class="champ-input" value="10.00" step="0.01">
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Commentaire (optionnel)</label>
+                    <textarea class="champ-input" rows="2" placeholder="Ex: Réception commande #1234"></textarea>
+                </div>
+                
+                <div class="photo-upload" style="height: 100px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span>Photo justificative (optionnel)</span>
+                </div>
+                
+                <button class="bouton-principal" style="background: var(--succes);">Confirmer l'entrée</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sortie Stock -->
+    <div class="modal-overlay" id="modalSortieStock">
+        <div class="modal">
+            <div class="modal-poignee"></div>
+            <div class="modal-entete">
+                <h2 class="modal-titre">Sortie de stock</h2>
+                <button class="modal-fermer" data-fermer="modalSortieStock">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-contenu">
+                <div class="inventaire-produit-select">
+                    <div class="produit-image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <div class="produit-info">
+                        <div class="produit-nom">Câble USB-C 2m</div>
+                        <div class="produit-sku">Stock actuel: 245 unités</div>
+                    </div>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Quantité à retirer *</label>
+                    <input type="number" class="champ-input" placeholder="0" min="1">
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Depuis l'emplacement</label>
+                    <select class="champ-input">
+                        <option value="entrepot-a">Entrepôt A - Étagère 1 (150)</option>
+                        <option value="entrepot-a2">Entrepôt A - Étagère 2 (65)</option>
+                        <option value="magasin">Magasin principal (30)</option>
+                    </select>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Motif de sortie</label>
+                    <select class="champ-input">
+                        <option value="vente">Vente</option>
+                        <option value="transfert">Transfert</option>
+                        <option value="perte">Perte / Casse</option>
+                        <option value="retour">Retour fournisseur</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                
+                <div class="champ-groupe">
+                    <label class="champ-label">Commentaire (optionnel)</label>
+                    <textarea class="champ-input" rows="2" placeholder="Ex: Vente client #5678"></textarea>
+                </div>
+                
+                <button class="bouton-principal" style="background: var(--secondaire);">Confirmer la sortie</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal QR Code Profil -->
+    <div class="modal-overlay" id="modalQRCodeProfil">
+        <div class="modal">
+            <div class="modal-poignee"></div>
+            <div class="modal-entete">
+                <h2 class="modal-titre">Mon QR Code</h2>
+                <button class="modal-fermer" data-fermer="modalQRCodeProfil">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-contenu">
+                <div class="qr-conteneur">
+                    <div class="qr-code">
+                        <svg viewBox="0 0 100 100">
+                            <rect x="0" y="0" width="100" height="100" fill="white"/>
+                            <rect x="5" y="5" width="25" height="25" fill="black"/>
+                            <rect x="10" y="10" width="15" height="15" fill="white"/>
+                            <rect x="13" y="13" width="9" height="9" fill="black"/>
+                            <rect x="70" y="5" width="25" height="25" fill="black"/>
+                            <rect x="75" y="10" width="15" height="15" fill="white"/>
+                            <rect x="78" y="13" width="9" height="9" fill="black"/>
+                            <rect x="5" y="70" width="25" height="25" fill="black"/>
+                            <rect x="10" y="75" width="15" height="15" fill="white"/>
+                            <rect x="13" y="78" width="9" height="9" fill="black"/>
+                            <rect x="35" y="5" width="5" height="5" fill="black"/>
+                            <rect x="45" y="5" width="5" height="5" fill="black"/>
+                            <rect x="55" y="5" width="5" height="5" fill="black"/>
+                            <rect x="35" y="15" width="5" height="5" fill="black"/>
+                            <rect x="50" y="15" width="5" height="5" fill="black"/>
+                            <rect x="35" y="35" width="30" height="30" fill="black"/>
+                            <rect x="40" y="40" width="20" height="20" fill="white"/>
+                            <rect x="45" y="45" width="10" height="10" fill="black"/>
+                            <rect x="70" y="70" width="25" height="25" fill="black"/>
+                            <rect x="75" y="75" width="15" height="15" fill="white"/>
+                            <rect x="78" y="78" width="9" height="9" fill="black"/>
+                        </svg>
+                    </div>
+                    <p style="text-align: center; color: var(--texte-secondaire); margin-bottom: 16px; font-size: 14px;">
+                        Scannez ce code pour vous connecter rapidement
+                    </p>
+                    <button class="bouton-telecharger">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Télécharger
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Changer Langue -->
+    <div class="modal-overlay" id="modalChangerLangue">
+        <div class="modal">
+            <div class="modal-poignee"></div>
+            <div class="modal-entete">
+                <h2 class="modal-titre">Changer la langue</h2>
+                <button class="modal-fermer" data-fermer="modalChangerLangue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-contenu">
+                <div class="options-grille">
+                    <div class="option-bouton selectionne" data-langue="fr">
+                        <div class="icone">🇫🇷</div>
+                        <div class="label">Français</div>
+                    </div>
+                    <div class="option-bouton" data-langue="en">
+                        <div class="icone">🇬🇧</div>
+                        <div class="label">English</div>
+                    </div>
+                    <div class="option-bouton" data-langue="hi">
+                        <div class="icone">🇮🇳</div>
+                        <div class="label">हिन्दी</div>
+                    </div>
+                    <div class="option-bouton" data-langue="ln">
+                        <div class="icone">🇨🇩</div>
+                        <div class="label">Lingála</div>
+                    </div>
+                </div>
+                <button class="bouton-principal" style="margin-top: 20px;">Appliquer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Changer Thème -->
+    <div class="modal-overlay" id="modalChangerTheme">
+        <div class="modal">
+            <div class="modal-poignee"></div>
+            <div class="modal-entete">
+                <h2 class="modal-titre">Changer le thème</h2>
+                <button class="modal-fermer" data-fermer="modalChangerTheme">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-contenu">
+                <div class="themes-ligne">
+                    <div class="theme-bouton selectionne" data-theme="systeme">
+                        <div class="theme-apercu systeme"></div>
+                        <div class="label">Système</div>
+                    </div>
+                    <div class="theme-bouton" data-theme="clair">
+                        <div class="theme-apercu clair"></div>
+                        <div class="label">Clair</div>
+                    </div>
+                    <div class="theme-bouton" data-theme="sombre">
+                        <div class="theme-apercu sombre"></div>
+                        <div class="label">Sombre</div>
+                    </div>
+                </div>
+                <button class="bouton-principal" style="margin-top: 20px;">Appliquer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de verrouillage -->
+    <div class="verrou-overlay" id="verrouOverlay">
+        <div class="verrou-icone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        </div>
+        <h2 class="verrou-titre">Application verrouillée</h2>
+        <p class="verrou-texte">Seuls les administrateurs peuvent déverrouiller l'application. Contactez votre administrateur.</p>
+        <div class="champ-groupe" style="width: 100%; max-width: 300px;">
+            <input type="password" class="champ-input" placeholder="Mot de passe administrateur">
+        </div>
+        <button class="bouton-principal" style="width: 100%; max-width: 300px; margin-top: 12px;">Déverrouiller</button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Action effectuée avec succès</div>
+
+    <script>
+        // ========================================
+        // TRADUCTIONS - FRANÇAIS
+        // ========================================
+        const traductions = {
+            fr: {
+                // Configuration
+                app_nom: "StockTrace",
+                app_slogan: "Gestion intelligente de stock",
+                choisir_langue: "Choisissez votre langue",
+                choisir_theme: "Choisissez votre thème",
+                continuer: "Continuer",
+                
+                // Langues
+                langue_francais: "Français",
+                langue_anglais: "English",
+                langue_hindi: "हिन्दी",
+                langue_lingala: "Lingála",
+                
+                // Thèmes
+                theme_systeme: "Système",
+                theme_clair: "Clair",
+                theme_sombre: "Sombre",
+                
+                // Auth
+                bienvenue: "Bienvenue",
+                connexion: "Connexion",
+                inscription: "Inscription",
+                nom_complet: "Nom complet",
+                mot_de_passe: "Mot de passe",
+                confirmer_mot_de_passe: "Confirmer le mot de passe",
+                se_connecter: "Se connecter",
+                creer_compte: "Créer mon compte",
+                ou: "ou",
+                scanner_qr: "Scanner QR",
+                importer_qr: "Importer QR",
+                entrez_nom: "Entrez votre nom",
+                entrez_mot_de_passe: "Entrez votre mot de passe",
+                creez_mot_de_passe: "Créez un mot de passe",
+                confirmez_mot_de_passe: "Confirmez votre mot de passe",
+                entrez_nom_complet: "Entrez votre nom complet",
+                
+                // Navigation
+                accueil: "Accueil",
+                historique: "Historique",
+                inventaire: "Inventaire",
+                equipe: "Équipe",
+                profil: "Profil",
+                
+                // Tableau de bord
+                tableau_de_bord: "Tableau de bord",
+                produits_total: "Produits total",
+                entrees_ce_mois: "Entrées ce mois",
+                stock_faible: "Stock faible",
+                ruptures: "Ruptures",
+                rechercher_produit: "Rechercher un produit...",
+                tous: "Tous",
+                rupture: "Rupture",
+                surstock: "Surstock",
+                normal: "Normal",
+                en_stock: "En stock",
+                unites: "unités",
+                unite: "unité",
+                
+                // Produit
+                nouveau_produit: "Nouveau produit",
+                nom_produit: "Nom du produit",
+                sku_code_barres: "SKU / Code-barres",
+                emplacements_quantites: "Emplacements et quantités",
+                zone_emplacement: "Zone / Emplacement",
+                quantite: "Qté",
+                ajouter_emplacement: "Ajouter un emplacement",
+                quantite_minimum: "Quantité minimum",
+                quantite_maximum: "Quantité maximum",
+                prix_achat_unitaire: "Prix d'achat unitaire",
+                creer_produit: "Créer le produit",
+                ajouter_photo: "Ajouter une photo",
+                
+                // Détail produit
+                informations: "Informations",
+                quantite_totale: "Quantité totale",
+                valeur_stock: "Valeur stock",
+                seuil_minimum: "Seuil minimum",
+                seuil_maximum: "Seuil maximum",
+                derniere_modification: "Dernière modification",
+                emplacements: "Emplacements",
+                qr_code: "QR Code",
+                telecharger: "Télécharger",
+                entree: "Entrée",
+                sortie: "Sortie",
+                
+                // Entrée / Sortie
+                entree_stock: "Entrée de stock",
+                sortie_stock: "Sortie de stock",
+                stock_actuel: "Stock actuel",
+                quantite_ajouter: "Quantité à ajouter",
+                quantite_retirer: "Quantité à retirer",
+                depuis_emplacement: "Depuis l'emplacement",
+                emplacement: "Emplacement",
+                motif_sortie: "Motif de sortie",
+                vente: "Vente",
+                transfert: "Transfert",
+                perte_casse: "Perte / Casse",
+                retour_fournisseur: "Retour fournisseur",
+                autre: "Autre",
+                commentaire: "Commentaire",
+                commentaire_optionnel: "Commentaire (optionnel)",
+                photo_justificative: "Photo justificative (optionnel)",
+                confirmer_entree: "Confirmer l'entrée",
+                confirmer_sortie: "Confirmer la sortie",
+                
+                // Inventaire
+                selectionner_produit: "Sélectionner un produit",
+                toucher_choisir_scanner: "Touchez pour choisir ou scanner",
+                selectionner_emplacement: "Sélectionner un emplacement",
+                stock_theorique: "Stock théorique",
+                stock_reel: "Stock réel compté",
+                ecart_constate: "Écart constaté",
+                expliquer_ecart: "Expliquez l'écart si nécessaire...",
+                ajouter_photo_justificative: "Ajouter une photo justificative",
+                valider_inventaire: "Valider l'inventaire",
+                
+                // Historique / Messages
+                rechercher_historique: "Rechercher dans l'historique...",
+                entrees: "Entrées",
+                sorties: "Sorties",
+                alertes: "Alertes",
+                aujourdhui: "Aujourd'hui",
+                hier: "Hier",
+                a: "à",
+                enregistre_entree: "A enregistré une entrée de",
+                enregistre_sortie: "A enregistré une sortie de",
+                effectue_inventaire: "A effectué un inventaire",
+                ecart_de: "Écart de",
+                seuil_minimum_atteint: "Le seuil minimum a été atteint",
+                systeme: "Système",
+                demander_rapport: "Demandez un rapport...",
+                mon_stock: "Mon stock",
+                rapport_mensuel: "Rapport mensuel",
+                
+                // Équipe
+                membres_actifs: "Membres actifs",
+                en_attente_approbation: "En attente d'approbation",
+                administrateur_principal: "Administrateur principal",
+                gestionnaire: "Gestionnaire",
+                membre: "Membre",
+                admin: "Admin",
+                en_attente: "En attente",
+                compte_cree_le: "Compte créé le",
+                
+                // Profil
+                modifier: "Modifier",
+                langue: "Langue",
+                theme: "Thème",
+                mon_qr_code: "Mon QR Code",
+                telecharger_partager: "Télécharger ou partager",
+                se_deconnecter: "Se déconnecter",
+                changer_langue: "Changer la langue",
+                changer_theme: "Changer le thème",
+                appliquer: "Appliquer",
+                scannez_code_connexion: "Scannez ce code pour vous connecter rapidement",
+                
+                // Scanner
+                positionner_qr: "Positionnez le QR code dans le cadre",
+                importer_image: "Importer une image",
+                
+                // Verrouillage
+                application_verrouillee: "Application verrouillée",
+                seuls_admins_deverrouiller: "Seuls les administrateurs peuvent déverrouiller l'application. Contactez votre administrateur.",
+                mot_de_passe_admin: "Mot de passe administrateur",
+                deverrouiller: "Déverrouiller",
+                
+                // Sélection
+                selectionnes: "sélectionné(s)",
+                annuler: "Annuler",
+                supprimer: "Supprimer",
+                
+                // Toast
+                action_effectuee: "Action effectuée avec succès",
+                produit_ajoute: "Produit ajouté avec succès",
+                entree_enregistree: "Entrée enregistrée avec succès",
+                sortie_enregistree: "Sortie enregistrée avec succès",
+                inventaire_valide: "Inventaire validé avec succès",
+                membre_ajoute: "Membre ajouté à l'équipe",
+                membre_retire: "Membre retiré de l'équipe",
+                profil_modifie: "Profil modifié avec succès",
+                langue_changee: "Langue changée avec succès",
+                theme_change: "Thème changé avec succès",
+                
+                // Divers
+                reception_commande: "Réception commande fournisseur",
+                ajustement_casse: "Ajustement suite à casse constatée",
+                ex: "Ex:",
+            }
+        };
+
+        // ========================================
+        // ÉTAT DE L'APPLICATION
+        // ========================================
+        let etatApplication = {
+            langueActuelle: 'fr',
+            themeActuel: 'systeme',
+            utilisateurConnecte: null,
+            estAdmin: false,
+            modeSelection: false,
+            produitsSelectionnes: [],
+            ecranActuel: 'ecranConfig'
+        };
+
+        // ========================================
+        // FONCTIONS UTILITAIRES
+        // ========================================
+        
+        // Afficher un écran
+        function afficherEcran(idEcran) {
+            document.querySelectorAll('.ecran').forEach(ecran => {
+                ecran.classList.remove('actif');
+            });
+            const ecran = document.getElementById(idEcran);
+            if (ecran) {
+                ecran.classList.add('actif');
+                etatApplication.ecranActuel = idEcran;
+            }
+            
+            // Afficher/masquer la navigation
+            const navigation = document.getElementById('navigationPrincipale');
+            const ecransAvecNav = ['ecranTableauBord', 'ecranMessages', 'ecranInventaire', 'ecranEquipe', 'ecranProfil'];
+            if (ecransAvecNav.includes(idEcran)) {
+                navigation.style.display = 'flex';
+            } else {
+                navigation.style.display = 'none';
+            }
+
+            // Masquer le bouton flottant selon l'écran
+            const boutonFlottant = document.querySelector('.bouton-flottant');
+            if (boutonFlottant) {
+                boutonFlottant.style.display = idEcran === 'ecranTableauBord' ? 'flex' : 'none';
+            }
+        }
+
+        // Afficher un modal
+        function afficherModal(idModal) {
+            const modal = document.getElementById(idModal);
+            if (modal) {
+                modal.classList.add('visible');
+            }
+        }
+
+        // Fermer un modal
+        function fermerModal(idModal) {
+            const modal = document.getElementById(idModal);
+            if (modal) {
+                modal.classList.remove('visible');
+            }
+        }
+
+        // Afficher un toast
+        function afficherToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Appliquer le thème
+        function appliquerTheme(theme) {
+            etatApplication.themeActuel = theme;
+            
+            if (theme === 'systeme') {
+                const prefereSombre = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.setAttribute('data-theme', prefereSombre ? 'sombre' : '');
+            } else if (theme === 'sombre') {
+                document.body.setAttribute('data-theme', 'sombre');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        }
+
+        // ========================================
+        // GESTIONNAIRES D'ÉVÉNEMENTS
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Configuration initiale - Sélection de langue
+            document.querySelectorAll('#ecranConfig .option-bouton').forEach(bouton => {
+                bouton.addEventListener('click', function() {
+                    document.querySelectorAll('#ecranConfig .option-bouton').forEach(b => b.classList.remove('selectionne'));
+                    this.classList.add('selectionne');
+                    etatApplication.langueActuelle = this.dataset.langue;
+                });
+            });
+
+            // Configuration initiale - Sélection de thème
+            document.querySelectorAll('#ecranConfig .theme-bouton').forEach(bouton => {
+                bouton.addEventListener('click', function() {
+                    document.querySelectorAll('#ecranConfig .theme-bouton').forEach(b => b.classList.remove('selectionne'));
+                    this.classList.add('selectionne');
+                    appliquerTheme(this.dataset.theme);
+                });
+            });
+
+            // Bouton continuer configuration
+            document.getElementById('btnContinuerConfig').addEventListener('click', function() {
+                afficherEcran('ecranAuth');
+            });
+
+            // Tabs authentification
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('actif'));
+                    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('actif'));
+                    this.classList.add('actif');
+                    const formId = this.dataset.tab === 'connexion' ? 'formConnexion' : 'formInscription';
+                    document.getElementById(formId).classList.add('actif');
+                });
+            });
+
+            // Formulaire connexion
+            document.getElementById('formConnexion').addEventListener('submit', function(e) {
+                e.preventDefault();
+                etatApplication.utilisateurConnecte = {
+                    nom: 'Jean Dupont',
+                    role: 'admin_principal'
+                };
+                etatApplication.estAdmin = true;
+                afficherEcran('ecranTableauBord');
+                afficherToast('Connexion réussie !');
+            });
+
+            // Formulaire inscription
+            document.getElementById('formInscription').addEventListener('submit', function(e) {
+                e.preventDefault();
+                etatApplication.utilisateurConnecte = {
+                    nom: 'Nouveau Utilisateur',
+                    role: 'en_attente'
+                };
+                afficherEcran('ecranTableauBord');
+                afficherToast('Compte créé ! En attente d\'approbation.');
+            });
+
+            // Scanner QR (connexion)
+            document.getElementById('btnScannerQR').addEventListener('click', function() {
+                afficherEcran('ecranScanner');
+            });
+
+            // Importer QR
+            document.getElementById('btnImporterQR').addEventListener('click', function() {
+                afficherToast('Sélection d\'image...');
+            });
+
+            // Navigation principale
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('actif'));
+                    this.classList.add('actif');
+                    afficherEcran(this.dataset.ecran);
+                });
+            });
+
+            // Bouton ajouter produit
+            document.getElementById('btnAjouterProduit').addEventListener('click', function() {
+                afficherModal('modalAjouterProduit');
+            });
+
+            // Scanner produit
+            document.getElementById('btnScannerProduit').addEventListener('click', function() {
+                afficherEcran('ecranScanner');
+            });
+
+            // Fermer scanner
+            document.getElementById('btnFermerScanner').addEventListener('click', function() {
+                afficherEcran(etatApplication.ecranActuel === 'ecranScanner' ? 'ecranTableauBord' : etatApplication.ecranActuel);
+            });
+
+            // Filtres produits
+            document.querySelectorAll('.filtre-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    document.querySelectorAll('.filtre-chip').forEach(c => c.classList.remove('actif'));
+                    this.classList.add('actif');
+                });
+            });
+
+            // Filtres messages
+            document.querySelectorAll('.message-filtre').forEach(filtre => {
+                filtre.addEventListener('click', function() {
+                    document.querySelectorAll('.message-filtre').forEach(f => f.classList.remove('actif'));
+                    this.classList.add('actif');
+                });
+            });
+
+            // Clic sur produit (ouvrir détail)
+            document.querySelectorAll('.produit-carte').forEach(carte => {
+                carte.addEventListener('click', function(e) {
+                    // Ne pas ouvrir si on clique sur les boutons d'action
+                    if (e.target.closest('.mini-bouton') || e.target.closest('.checkbox-custom')) {
+                        return;
+                    }
+                    
+                    if (etatApplication.modeSelection) {
+                        // Mode sélection
+                        this.classList.toggle('selectionne');
+                        const checkbox = this.querySelector('.checkbox-custom');
+                        checkbox.classList.toggle('checked');
+                        mettreAJourSelection();
+                    } else {
+                        // Mode normal - ouvrir détail
+                        afficherEcran('ecranDetailProduit');
+                    }
+                });
+
+                // Long press pour mode sélection
+                let pressTimer;
+                carte.addEventListener('mousedown', function() {
+                    pressTimer = setTimeout(() => {
+                        activerModeSelection();
+                        this.classList.add('selectionne');
+                        this.querySelector('.checkbox-custom').classList.add('checked');
+                        mettreAJourSelection();
+                    }, 500);
+                });
+                carte.addEventListener('mouseup', () => clearTimeout(pressTimer));
+                carte.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+            });
+
+            // Boutons entrée/sortie rapide
+            document.querySelectorAll('.mini-bouton.entree').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    afficherModal('modalEntreeStock');
+                });
+            });
+
+            document.querySelectorAll('.mini-bouton.sortie').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    afficherModal('modalSortieStock');
+                });
+            });
+
+            // Retour depuis détail produit
+            document.getElementById('btnRetourDetail').addEventListener('click', function() {
+                afficherEcran('ecranTableauBord');
+            });
+
+            // Boutons action détail produit
+            document.querySelectorAll('.bouton-action.entree').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    afficherModal('modalEntreeStock');
+                });
+            });
+
+            document.querySelectorAll('.bouton-action.sortie').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    afficherModal('modalSortieStock');
+                });
+            });
+
+            // Profil - QR Code
+            document.getElementById('itemVoirQRCode').addEventListener('click', function() {
+                afficherModal('modalQRCodeProfil');
+            });
+
+            // Profil - Changer langue
+            document.getElementById('itemChangerLangue').addEventListener('click', function() {
+                afficherModal('modalChangerLangue');
+            });
+
+            // Profil - Changer thème
+            document.getElementById('itemChangerTheme').addEventListener('click', function() {
+                afficherModal('modalChangerTheme');
+            });
+
+            // Profil - Déconnexion
+            document.getElementById('btnDeconnexion').addEventListener('click', function() {
+                etatApplication.utilisateurConnecte = null;
+                afficherEcran('ecranAuth');
+                afficherToast('Déconnexion réussie');
+            });
+
+            // Verrouillage
+            document.getElementById('btnVerrouiller').addEventListener('click', function() {
+                document.getElementById('verrouOverlay').classList.add('visible');
+            });
+
+            // Déverrouillage (simulé)
+            document.querySelector('#verrouOverlay .bouton-principal').addEventListener('click', function() {
+                document.getElementById('verrouOverlay').classList.remove('visible');
+                afficherToast('Application déverrouillée');
+            });
+
+            // Fermer modals
+            document.querySelectorAll('.modal-fermer').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    fermerModal(this.dataset.fermer);
+                });
+            });
+
+            // Fermer modal en cliquant sur l'overlay
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('visible');
+                    }
+                });
+            });
+
+            // Modal langue - sélection
+            document.querySelectorAll('#modalChangerLangue .option-bouton').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#modalChangerLangue .option-bouton').forEach(b => b.classList.remove('selectionne'));
+                    this.classList.add('selectionne');
+                });
+            });
+
+            // Modal thème - sélection
+            document.querySelectorAll('#modalChangerTheme .theme-bouton').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#modalChangerTheme .theme-bouton').forEach(b => b.classList.remove('selectionne'));
+                    this.classList.add('selectionne');
+                });
+            });
+
+            // Appliquer langue
+            document.querySelector('#modalChangerLangue .bouton-principal').addEventListener('click', function() {
+                const langueSelectionnee = document.querySelector('#modalChangerLangue .option-bouton.selectionne').dataset.langue;
+                etatApplication.langueActuelle = langueSelectionnee;
+                fermerModal('modalChangerLangue');
+                afficherToast('Langue changée avec succès');
+            });
+
+            // Appliquer thème
+            document.querySelector('#modalChangerTheme .bouton-principal').addEventListener('click', function() {
+                const themeSelectionne = document.querySelector('#modalChangerTheme .theme-bouton.selectionne').dataset.theme;
+                appliquerTheme(themeSelectionne);
+                fermerModal('modalChangerTheme');
+                afficherToast('Thème changé avec succès');
+            });
+
+            // Boutons dans modals (simuler actions)
+            document.querySelectorAll('#modalAjouterProduit .bouton-principal').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fermerModal('modalAjouterProduit');
+                    afficherToast('Produit créé avec succès');
+                });
+            });
+
+            document.querySelectorAll('#modalEntreeStock .bouton-principal').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fermerModal('modalEntreeStock');
+                    afficherToast('Entrée enregistrée avec succès');
+                });
+            });
+
+            document.querySelectorAll('#modalSortieStock .bouton-principal').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fermerModal('modalSortieStock');
+                    afficherToast('Sortie enregistrée avec succès');
+                });
+            });
+
+            // Inventaire - Valider
+            document.querySelector('#ecranInventaire .bouton-principal').addEventListener('click', function() {
+                afficherToast('Inventaire validé avec succès');
+            });
+
+            // Bot suggestions
+            document.querySelectorAll('.bot-suggestion').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    afficherToast('Génération du rapport en cours...');
+                });
+            });
+
+            // Bot envoyer
+            document.querySelector('.bot-envoyer').addEventListener('click', function() {
+                const input = document.querySelector('.bot-input');
+                if (input.value.trim()) {
+                    afficherToast('Traitement de votre demande...');
+                    input.value = '';
+                }
+            });
+
+            // Annuler sélection
+            document.getElementById('btnAnnulerSelection').addEventListener('click', function() {
+                desactiverModeSelection();
+            });
+
+            // Supprimer sélection
+            document.getElementById('btnSupprimerSelection').addEventListener('click', function() {
+                afficherToast('Produits supprimés');
+                desactiverModeSelection();
+            });
+
+            // Notifications
+            document.getElementById('btnNotifications').addEventListener('click', function() {
+                afficherEcran('ecranMessages');
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('actif'));
+                document.querySelector('.nav-item[data-ecran="ecranMessages"]').classList.add('actif');
+            });
+
+            // Ajouter zone
+            document.querySelectorAll('.bouton-ajouter-zone').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const conteneur = this.closest('.zones-conteneur');
+                    const nouvelleZone = document.createElement('div');
+                    nouvelleZone.className = 'zone-item';
+                    nouvelleZone.innerHTML = `
+                        <input type="text" class="champ-input" placeholder="Zone / Emplacement">
+                        <input type="number" class="champ-input petit" placeholder="Qté">
+                    `;
+                    conteneur.insertBefore(nouvelleZone, this);
+                });
+            });
+
+            // Membres carte - interactions
+            document.querySelectorAll('.membre-carte').forEach(carte => {
+                carte.addEventListener('click', function() {
+                    if (this.querySelector('.membre-badge.attente')) {
+                        afficherToast('Options: Accepter / Refuser');
+                    } else {
+                        afficherToast('Options: Promouvoir / Retirer');
+                    }
+                });
+            });
+
+            // Télécharger QR
+            document.querySelectorAll('.bouton-telecharger').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    afficherToast('Téléchargement du QR code...');
+                });
+            });
+
+            // Photo upload
+            document.querySelectorAll('.photo-upload').forEach(upload => {
+                upload.addEventListener('click', function() {
+                    afficherToast('Sélection de photo...');
+                });
+            });
+
+            // Écouter les changements de thème système
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+                if (etatApplication.themeActuel === 'systeme') {
+                    appliquerTheme('systeme');
+                }
+            });
+
+        });
+
+        // Activer mode sélection
+        function activerModeSelection() {
+            etatApplication.modeSelection = true;
+            document.querySelectorAll('.produit-carte .checkbox-custom').forEach(cb => {
+                cb.style.display = 'flex';
+            });
+            document.getElementById('barreSelection').classList.add('visible');
+        }
+
+        // Désactiver mode sélection
+        function desactiverModeSelection() {
+            etatApplication.modeSelection = false;
+            document.querySelectorAll('.produit-carte').forEach(carte => {
+                carte.classList.remove('selectionne');
+                carte.querySelector('.checkbox-custom').classList.remove('checked');
+                carte.querySelector('.checkbox-custom').style.display = 'none';
+            });
+            document.getElementById('barreSelection').classList.remove('visible');
+            etatApplication.produitsSelectionnes = [];
+        }
+
+        // Mettre à jour le compteur de sélection
+        function mettreAJourSelection() {
+            const selectionnes = document.querySelectorAll('.produit-carte.selectionne').length;
+            document.querySelector('.selection-compte').textContent = `${selectionnes} sélectionné(s)`;
+            
+            if (selectionnes === 0) {
+                desactiverModeSelection();
+            }
+        }
+    </script>
+</body>
+</html>
