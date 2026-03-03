@@ -1,0 +1,3984 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockTrace - Gestion de Stock</title>
+    <style>
+        :root {
+            --primaire: #006f78;
+            --primaire-clair: #008a94;
+            --primaire-fonce: #005a61;
+            --secondaire: #e62311;
+            --secondaire-clair: #ff3d2e;
+            --blanc: #ffffff;
+            --noir: #1a1a1a;
+            --gris-clair: #f5f5f5;
+            --gris: #e0e0e0;
+            --gris-moyen: #9e9e9e;
+            --gris-fonce: #616161;
+            --fond: #f5f5f5;
+            --carte: #ffffff;
+            --texte: #1a1a1a;
+            --texte-secondaire: #616161;
+            --bordure: #e0e0e0;
+            --ombre: rgba(0, 0, 0, 0.1);
+            --succes: #4caf50;
+            --avertissement: #ff9800;
+            --erreur: #f44336;
+            --info: #2196f3;
+        }
+
+        [data-theme="sombre"] {
+            --fond: #121212;
+            --carte: #1e1e1e;
+            --texte: #ffffff;
+            --texte-secondaire: #b0b0b0;
+            --bordure: #333333;
+            --ombre: rgba(0, 0, 0, 0.3);
+            --gris-clair: #2a2a2a;
+            --gris: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--fond);
+            color: var(--texte);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Écrans */
+        .ecran {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .ecran.actif {
+            display: block;
+        }
+
+        .ecran-complet {
+            padding-bottom: 0;
+        }
+
+        /* En-tête */
+        .entete {
+            background: var(--primaire);
+            color: var(--blanc);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .entete-titre {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .entete-icone {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .entete-icone:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .entete-icone svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--blanc);
+        }
+
+        /* Navigation inférieure */
+        .navigation-bas {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--carte);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px var(--ombre);
+            z-index: 100;
+            border-top: 1px solid var(--bordure);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+            color: var(--texte-secondaire);
+            transition: color 0.2s;
+            border-radius: 12px;
+        }
+
+        .nav-item.actif {
+            color: var(--primaire);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            fill: currentColor;
+        }
+
+        .nav-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Cartes */
+        .carte {
+            background: var(--carte);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .carte-titre {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--texte);
+        }
+
+        /* Boutons */
+        .bouton {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            width: 100%;
+        }
+
+        .bouton-primaire {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .bouton-primaire:hover {
+            background: var(--primaire-clair);
+        }
+
+        .bouton-secondaire {
+            background: var(--secondaire);
+            color: var(--blanc);
+        }
+
+        .bouton-secondaire:hover {
+            background: var(--secondaire-clair);
+        }
+
+        .bouton-outline {
+            background: transparent;
+            border: 2px solid var(--primaire);
+            color: var(--primaire);
+        }
+
+        .bouton-outline:hover {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .bouton-ghost {
+            background: transparent;
+            color: var(--texte-secondaire);
+        }
+
+        .bouton-ghost:hover {
+            background: var(--gris-clair);
+        }
+
+        .bouton-petit {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
+        .bouton-icone {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        /* Champs de formulaire */
+        .champ-groupe {
+            margin-bottom: 20px;
+        }
+
+        .champ-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .champ-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--carte);
+            color: var(--texte);
+            transition: border-color 0.2s;
+        }
+
+        .champ-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+
+        .champ-input::placeholder {
+            color: var(--gris-moyen);
+        }
+
+        /* Liste des produits */
+        .liste-produits {
+            padding: 0 16px;
+        }
+
+        .produit-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--carte);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px var(--ombre);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .produit-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .produit-item.selectionne {
+            border: 2px solid var(--primaire);
+        }
+
+        .produit-image {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: var(--gris-clair);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .produit-image svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--gris-moyen);
+        }
+
+        .produit-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .produit-nom {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .produit-sku {
+            font-size: 0.75rem;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .produit-stock {
+            display: flex;
+            gap: 8px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-succes {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--succes);
+        }
+
+        .badge-avertissement {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--avertissement);
+        }
+
+        .badge-erreur {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--erreur);
+        }
+
+        .badge-info {
+            background: rgba(33, 150, 243, 0.15);
+            color: var(--info);
+        }
+
+        /* Checkbox personnalisé */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--bordure);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkbox-custom.coche {
+            background: var(--primaire);
+            border-color: var(--primaire);
+        }
+
+        .checkbox-custom svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--blanc);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .checkbox-custom.coche svg {
+            opacity: 1;
+        }
+
+        /* Barre de recherche */
+        .barre-recherche {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: var(--fond);
+            position: sticky;
+            top: 72px;
+            z-index: 50;
+        }
+
+        .recherche-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .recherche-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--carte);
+            color: var(--texte);
+        }
+
+        .recherche-input:focus {
+            outline: none;
+            border-color: var(--primaire);
+        }
+
+        .recherche-icone {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: var(--gris-moyen);
+        }
+
+        .bouton-scanner {
+            width: 48px;
+            height: 48px;
+            background: var(--primaire);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .bouton-scanner:hover {
+            background: var(--primaire-clair);
+        }
+
+        .bouton-scanner svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--blanc);
+        }
+
+        /* Filtres */
+        .filtres-container {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filtre-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--carte);
+            color: var(--texte-secondaire);
+            border: 1px solid var(--bordure);
+        }
+
+        .filtre-chip.actif {
+            background: var(--primaire);
+            color: var(--blanc);
+            border-color: var(--primaire);
+        }
+
+        /* Statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .stat-card {
+            background: var(--carte);
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .stat-valeur {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primaire);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+            margin-top: 4px;
+        }
+
+        .stat-variation {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        .stat-variation.positif {
+            color: var(--succes);
+        }
+
+        .stat-variation.negatif {
+            color: var(--erreur);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.actif {
+            display: flex;
+        }
+
+        .modal-contenu {
+            background: var(--carte);
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid var(--bordure);
+        }
+
+        .modal-titre {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-fermer {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-fermer:hover {
+            background: var(--gris-clair);
+        }
+
+        .modal-fermer svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--texte-secondaire);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Page de connexion */
+        .page-connexion {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--primaire) 0%, var(--primaire-fonce) 100%);
+        }
+
+        .connexion-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .connexion-logo svg {
+            width: 80px;
+            height: 80px;
+            fill: var(--blanc);
+        }
+
+        .connexion-logo h1 {
+            color: var(--blanc);
+            font-size: 2rem;
+            margin-top: 16px;
+        }
+
+        .connexion-logo p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 8px;
+        }
+
+        .connexion-carte {
+            background: var(--carte);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .connexion-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .connexion-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--texte-secondaire);
+            background: var(--gris-clair);
+        }
+
+        .connexion-tab.actif {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .connexion-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--texte-secondaire);
+            font-size: 0.875rem;
+        }
+
+        .connexion-divider::before,
+        .connexion-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--bordure);
+        }
+
+        .connexion-qr-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .qr-option {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            border: 2px solid var(--bordure);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .qr-option:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .qr-option svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--primaire);
+        }
+
+        .qr-option span {
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Page de configuration initiale */
+        .config-initiale {
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-etape {
+            display: none;
+        }
+
+        .config-etape.actif {
+            display: block;
+            flex: 1;
+        }
+
+        .config-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .config-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .config-header p {
+            color: var(--texte-secondaire);
+        }
+
+        .config-progress {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gris);
+            transition: background 0.2s;
+        }
+
+        .progress-dot.actif {
+            background: var(--primaire);
+        }
+
+        .progress-dot.complete {
+            background: var(--succes);
+        }
+
+        .langue-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .langue-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid var(--bordure);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .langue-option:hover,
+        .langue-option.selectionnee {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .langue-option.selectionnee {
+            border-width: 3px;
+        }
+
+        .langue-drapeau {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .langue-nom {
+            font-weight: 500;
+        }
+
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-option:hover,
+        .theme-option.selectionnee {
+            border-color: var(--primaire);
+        }
+
+        .theme-option.selectionnee {
+            border-width: 3px;
+        }
+
+        .theme-preview {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-preview.systeme {
+            background: linear-gradient(135deg, #ffffff 50%, #1a1a1a 50%);
+            border: 1px solid var(--bordure);
+        }
+
+        .theme-preview.clair {
+            background: #ffffff;
+            border: 1px solid var(--bordure);
+        }
+
+        .theme-preview.sombre {
+            background: #1a1a1a;
+        }
+
+        .theme-info {
+            flex: 1;
+        }
+
+        .theme-nom {
+            font-weight: 600;
+        }
+
+        .theme-description {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+        }
+
+        /* Profil */
+        .profil-header {
+            background: var(--primaire);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--blanc);
+        }
+
+        .profil-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--blanc);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profil-avatar svg {
+            width: 50px;
+            height: 50px;
+            fill: var(--primaire);
+        }
+
+        .profil-avatar-edit {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .profil-avatar-edit svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--blanc);
+        }
+
+        .profil-nom {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .profil-role {
+            opacity: 0.8;
+        }
+
+        .profil-menu {
+            padding: 16px;
+        }
+
+        .profil-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--carte);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .profil-menu-item:hover {
+            transform: translateX(4px);
+        }
+
+        .profil-menu-item svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primaire);
+        }
+
+        .profil-menu-item-info {
+            flex: 1;
+        }
+
+        .profil-menu-item-titre {
+            font-weight: 500;
+        }
+
+        .profil-menu-item-valeur {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+        }
+
+        .profil-menu-item-fleche {
+            width: 20px;
+            height: 20px;
+            fill: var(--gris-moyen);
+        }
+
+        .profil-qr {
+            background: var(--carte);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px;
+            text-align: center;
+        }
+
+        .profil-qr-code {
+            width: 160px;
+            height: 160px;
+            background: var(--blanc);
+            margin: 0 auto 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid var(--primaire);
+        }
+
+        .profil-qr-code svg {
+            width: 120px;
+            height: 120px;
+        }
+
+        /* Détail produit */
+        .detail-header {
+            position: relative;
+            height: 250px;
+            background: var(--gris-clair);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-header svg {
+            width: 80px;
+            height: 80px;
+            fill: var(--gris-moyen);
+        }
+
+        .detail-back {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .detail-back svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--blanc);
+        }
+
+        .detail-actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-action {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .detail-action svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--blanc);
+        }
+
+        .detail-contenu {
+            margin-top: -24px;
+            background: var(--fond);
+            border-radius: 24px 24px 0 0;
+            padding: 24px 16px 100px;
+            position: relative;
+        }
+
+        .detail-titre {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .detail-sku {
+            color: var(--texte-secondaire);
+            margin-bottom: 16px;
+        }
+
+        .detail-section {
+            background: var(--carte);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .detail-section-titre {
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-section-titre svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primaire);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--bordure);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row-label {
+            color: var(--texte-secondaire);
+        }
+
+        .detail-row-valeur {
+            font-weight: 500;
+        }
+
+        .detail-emplacements {
+            margin-top: 12px;
+        }
+
+        .emplacement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--gris-clair);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .emplacement-nom {
+            font-weight: 500;
+        }
+
+        .emplacement-quantite {
+            background: var(--primaire);
+            color: var(--blanc);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .detail-qr {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .detail-qr-code {
+            width: 200px;
+            height: 200px;
+            background: var(--blanc);
+            margin: 0 auto 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid var(--primaire);
+        }
+
+        .detail-qr-code svg {
+            width: 160px;
+            height: 160px;
+        }
+
+        /* Actions flottantes */
+        .fab-container {
+            position: fixed;
+            bottom: 96px;
+            right: 20px;
+            z-index: 90;
+        }
+
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--secondaire);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(230, 35, 17, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        .fab svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--blanc);
+        }
+
+        .fab-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .fab-menu.actif {
+            display: flex;
+        }
+
+        .fab-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .fab-menu-label {
+            background: var(--carte);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px var(--ombre);
+            white-space: nowrap;
+        }
+
+        .fab-menu-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primaire);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--ombre);
+        }
+
+        .fab-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--blanc);
+        }
+
+        /* Notifications */
+        .notification-liste {
+            padding: 16px;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--carte);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .notification-item.non-lu {
+            border-left: 4px solid var(--primaire);
+        }
+
+        .notification-icone {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icone.entree {
+            background: rgba(76, 175, 80, 0.15);
+        }
+
+        .notification-icone.entree svg {
+            fill: var(--succes);
+        }
+
+        .notification-icone.sortie {
+            background: rgba(244, 67, 54, 0.15);
+        }
+
+        .notification-icone.sortie svg {
+            fill: var(--erreur);
+        }
+
+        .notification-icone.alerte {
+            background: rgba(255, 152, 0, 0.15);
+        }
+
+        .notification-icone.alerte svg {
+            fill: var(--avertissement);
+        }
+
+        .notification-icone svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .notification-contenu {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-titre {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+            margin-bottom: 8px;
+        }
+
+        .notification-temps {
+            font-size: 0.75rem;
+            color: var(--gris-moyen);
+        }
+
+        /* Rapports */
+        .rapport-grid {
+            display: grid;
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .rapport-card {
+            background: var(--carte);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .rapport-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .rapport-icone {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: rgba(0, 111, 120, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rapport-icone svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--primaire);
+        }
+
+        .rapport-info {
+            flex: 1;
+        }
+
+        .rapport-titre {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .rapport-description {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+        }
+
+        /* Membres */
+        .membre-liste {
+            padding: 16px;
+        }
+
+        .membre-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--carte);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .membre-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gris-clair);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .membre-avatar svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--gris-moyen);
+        }
+
+        .membre-info {
+            flex: 1;
+        }
+
+        .membre-nom {
+            font-weight: 600;
+        }
+
+        .membre-statut {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+        }
+
+        .membre-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .membre-badge.admin {
+            background: rgba(0, 111, 120, 0.15);
+            color: var(--primaire);
+        }
+
+        .membre-badge.admin-principal {
+            background: var(--primaire);
+            color: var(--blanc);
+        }
+
+        .membre-badge.en-attente {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--avertissement);
+        }
+
+        /* Historique */
+        .historique-liste {
+            padding: 16px;
+        }
+
+        .historique-date {
+            font-weight: 600;
+            color: var(--texte-secondaire);
+            margin-bottom: 12px;
+            font-size: 0.875rem;
+        }
+
+        .historique-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .historique-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 24px;
+            bottom: -16px;
+            width: 2px;
+            background: var(--bordure);
+        }
+
+        .historique-item:last-child::before {
+            display: none;
+        }
+
+        .historique-point {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primaire);
+            border: 3px solid var(--fond);
+        }
+
+        .historique-contenu {
+            flex: 1;
+            background: var(--carte);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .historique-action {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .historique-detail {
+            font-size: 0.875rem;
+            color: var(--texte-secondaire);
+        }
+
+        .historique-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--gris-moyen);
+        }
+
+        /* Scanner */
+        .scanner-container {
+            position: relative;
+            background: #000;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scanner-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 16px;
+            z-index: 10;
+        }
+
+        .scanner-close {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .scanner-close svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--blanc);
+        }
+
+        .scanner-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scanner-cadre {
+            width: 250px;
+            height: 250px;
+            position: relative;
+        }
+
+        .scanner-coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 4px solid var(--blanc);
+        }
+
+        .scanner-coin.haut-gauche {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scanner-coin.haut-droite {
+            top: 0;
+            right: 0;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .scanner-coin.bas-gauche {
+            bottom: 0;
+            left: 0;
+            border-right: none;
+            border-top: none;
+        }
+
+        .scanner-coin.bas-droite {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        .scanner-ligne {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--secondaire);
+            box-shadow: 0 0 10px var(--secondaire);
+            animation: scan 2s infinite;
+        }
+
+        @keyframes scan {
+            0%, 100% {
+                top: 0;
+            }
+            50% {
+                top: calc(100% - 3px);
+            }
+        }
+
+        .scanner-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .scanner-instruction {
+            color: var(--blanc);
+            margin-bottom: 16px;
+        }
+
+        .scanner-flash {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 auto;
+        }
+
+        .scanner-flash svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--blanc);
+        }
+
+        /* Actions produit */
+        .actions-produit {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--carte);
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 -4px 12px var(--ombre);
+            z-index: 50;
+        }
+
+        .actions-produit .bouton {
+            flex: 1;
+        }
+
+        /* Formulaire entrée/sortie */
+        .mouvement-type {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .mouvement-option {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid var(--bordure);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mouvement-option.actif.entree {
+            border-color: var(--succes);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .mouvement-option.actif.sortie {
+            border-color: var(--erreur);
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        .mouvement-option svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+        }
+
+        .mouvement-option.entree svg {
+            fill: var(--succes);
+        }
+
+        .mouvement-option.sortie svg {
+            fill: var(--erreur);
+        }
+
+        .quantite-stepper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .stepper-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--primaire);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .stepper-btn:hover {
+            background: var(--primaire);
+        }
+
+        .stepper-btn:hover svg {
+            fill: var(--blanc);
+        }
+
+        .stepper-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primaire);
+        }
+
+        .stepper-valeur {
+            font-size: 2.5rem;
+            font-weight: 700;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        /* Upload photo */
+        .upload-zone {
+            border: 2px dashed var(--bordure);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primaire);
+            background: rgba(0, 111, 120, 0.05);
+        }
+
+        .upload-zone svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--gris-moyen);
+            margin-bottom: 12px;
+        }
+
+        .upload-zone p {
+            color: var(--texte-secondaire);
+        }
+
+        /* Inventaire */
+        .inventaire-item {
+            background: var(--carte);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .inventaire-produit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .inventaire-produit-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--gris-clair);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .inventaire-produit-img svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--gris-moyen);
+        }
+
+        .inventaire-comparaison {
+            display: flex;
+            gap: 12px;
+        }
+
+        .inventaire-stock {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .inventaire-stock.theorique {
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .inventaire-stock.reel {
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .inventaire-stock-label {
+            font-size: 0.75rem;
+            color: var(--texte-secondaire);
+            margin-bottom: 4px;
+        }
+
+        .inventaire-stock-valeur {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .inventaire-stock.theorique .inventaire-stock-valeur {
+            color: var(--info);
+        }
+
+        .inventaire-stock.reel .inventaire-stock-valeur {
+            color: var(--succes);
+        }
+
+        .inventaire-ecart {
+            text-align: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--bordure);
+            margin-top: 16px;
+        }
+
+        .inventaire-ecart-valeur {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .inventaire-ecart-valeur.positif {
+            color: var(--succes);
+        }
+
+        .inventaire-ecart-valeur.negatif {
+            color: var(--erreur);
+        }
+
+        /* Barre d'actions multiples */
+        .barre-selection {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            background: var(--primaire);
+            border-radius: 16px;
+            padding: 16px;
+            color: var(--blanc);
+            z-index: 80;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px var(--ombre);
+        }
+
+        .barre-selection.actif {
+            display: flex;
+        }
+
+        .selection-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .selection-count {
+            font-weight: 600;
+        }
+
+        .selection-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .selection-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .selection-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--blanc);
+        }
+
+        /* Toast notification */
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--noir);
+            color: var(--blanc);
+            padding: 14px 24px;
+            border-radius: 12px;
+            z-index: 300;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.actif {
+            display: block;
+            animation: toastIn 0.3s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Responsive tablette */
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .liste-produits {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .produit-item {
+                margin-bottom: 0;
+            }
+
+            .rapport-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-contenu {
+                border-radius: 24px;
+                margin: 20px;
+                max-width: 500px;
+            }
+
+            .langue-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran de connexion -->
+    <div class="ecran ecran-complet actif" id="ecran-connexion">
+        <div class="page-connexion">
+            <div class="connexion-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"/>
+                </svg>
+                <h1>StockTrace</h1>
+                <p>Gestion intelligente de votre stock</p>
+            </div>
+
+            <div class="connexion-carte">
+                <div class="connexion-tabs">
+                    <div class="connexion-tab actif" data-tab="connexion">Connexion</div>
+                    <div class="connexion-tab" data-tab="inscription">Inscription</div>
+                </div>
+
+                <div id="form-connexion">
+                    <div class="champ-groupe">
+                        <label class="champ-label">Adresse email</label>
+                        <input type="email" class="champ-input" placeholder="votre@email.com">
+                    </div>
+                    <div class="champ-groupe">
+                        <label class="champ-label">Mot de passe</label>
+                        <input type="password" class="champ-input" placeholder="••••••••">
+                    </div>
+                    <button class="bouton bouton-primaire" onclick="afficherEcran('ecran-accueil')">Se connecter</button>
+                </div>
+
+                <div id="form-inscription" style="display: none;">
+                    <div class="champ-groupe">
+                        <label class="champ-label">Nom complet</label>
+                        <input type="text" class="champ-input" placeholder="Jean Dupont">
+                    </div>
+                    <div class="champ-groupe">
+                        <label class="champ-label">Adresse email</label>
+                        <input type="email" class="champ-input" placeholder="votre@email.com">
+                    </div>
+                    <div class="champ-groupe">
+                        <label class="champ-label">Mot de passe</label>
+                        <input type="password" class="champ-input" placeholder="••••••••">
+                    </div>
+                    <div class="champ-groupe">
+                        <label class="champ-label">Confirmer le mot de passe</label>
+                        <input type="password" class="champ-input" placeholder="••••••••">
+                    </div>
+                    <button class="bouton bouton-primaire" onclick="afficherEcran('ecran-config')">Créer mon compte</button>
+                </div>
+
+                <div class="connexion-divider">ou</div>
+
+                <div class="connexion-qr-options">
+                    <div class="qr-option" onclick="afficherEcran('ecran-scanner')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm6.5-6.5v3h-3v-3h3M19 5h-6v6h6V5zm-6 8h1.5v1.5H13V13zm1.5 1.5H16V16h-1.5v-1.5zm1.5 0h1.5V16H16v-1.5zm0 1.5v1.5h-1.5V16H16zm1.5 0H19v1.5h-1.5V16zm0-3H19v1.5h-1.5V13zm1.5 3v3h-3v-1.5h1.5V16H19zm-1.5 1.5V19H16v-1.5h1.5zM13 16h1.5v3H13v-3z"/>
+                        </svg>
+                        <span>Scanner mon QR</span>
+                    </div>
+                    <div class="qr-option" onclick="afficherToast('Sélectionnez une image')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"/>
+                        </svg>
+                        <span>Importer mon QR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran de configuration initiale -->
+    <div class="ecran ecran-complet" id="ecran-config">
+        <div class="config-initiale">
+            <div class="config-progress">
+                <div class="progress-dot actif" id="progress-1"></div>
+                <div class="progress-dot" id="progress-2"></div>
+            </div>
+
+            <!-- Étape 1 : Langue -->
+            <div class="config-etape actif" id="etape-langue">
+                <div class="config-header">
+                    <h2>Choisissez votre langue</h2>
+                    <p>Vous pourrez la modifier plus tard dans les paramètres</p>
+                </div>
+
+                <div class="langue-grid">
+                    <div class="langue-option selectionnee" data-langue="fr">
+                        <span class="langue-drapeau">🇫🇷</span>
+                        <span class="langue-nom">Français</span>
+                    </div>
+                    <div class="langue-option" data-langue="en">
+                        <span class="langue-drapeau">🇬🇧</span>
+                        <span class="langue-nom">English</span>
+                    </div>
+                    <div class="langue-option" data-langue="hi">
+                        <span class="langue-drapeau">🇮🇳</span>
+                        <span class="langue-nom">हिन्दी</span>
+                    </div>
+                    <div class="langue-option" data-langue="ln">
+                        <span class="langue-drapeau">🇨🇩</span>
+                        <span class="langue-nom">Lingala</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <button class="bouton bouton-primaire" onclick="etapeSuivante()">Continuer</button>
+                </div>
+            </div>
+
+            <!-- Étape 2 : Thème -->
+            <div class="config-etape" id="etape-theme">
+                <div class="config-header">
+                    <h2>Choisissez votre thème</h2>
+                    <p>Personnalisez l'apparence de l'application</p>
+                </div>
+
+                <div class="theme-options">
+                    <div class="theme-option selectionnee" data-theme="systeme">
+                        <div class="theme-preview systeme"></div>
+                        <div class="theme-info">
+                            <div class="theme-nom">Système</div>
+                            <div class="theme-description">Suit les préférences de votre appareil</div>
+                        </div>
+                    </div>
+                    <div class="theme-option" data-theme="clair">
+                        <div class="theme-preview clair"></div>
+                        <div class="theme-info">
+                            <div class="theme-nom">Clair</div>
+                            <div class="theme-description">Interface lumineuse et aérée</div>
+                        </div>
+                    </div>
+                    <div class="theme-option" data-theme="sombre">
+                        <div class="theme-preview sombre"></div>
+                        <div class="theme-info">
+                            <div class="theme-nom">Sombre</div>
+                            <div class="theme-description">Économise la batterie, repose les yeux</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <button class="bouton bouton-primaire" onclick="afficherEcran('ecran-accueil')">Terminer</button>
+                    <button class="bouton bouton-ghost" style="margin-top: 12px;" onclick="etapePrecedente()">Retour</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Scanner -->
+    <div class="ecran ecran-complet" id="ecran-scanner">
+        <div class="scanner-container">
+            <div class="scanner-header">
+                <div class="scanner-close" onclick="fermerScanner()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="scanner-viewport">
+                <div class="scanner-cadre">
+                    <div class="scanner-coin haut-gauche"></div>
+                    <div class="scanner-coin haut-droite"></div>
+                    <div class="scanner-coin bas-gauche"></div>
+                    <div class="scanner-coin bas-droite"></div>
+                    <div class="scanner-ligne"></div>
+                </div>
+            </div>
+            <div class="scanner-footer">
+                <p class="scanner-instruction">Placez le QR code dans le cadre</p>
+                <div class="scanner-flash">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Accueil / Tableau de bord -->
+    <div class="ecran" id="ecran-accueil">
+        <div class="entete">
+            <span class="entete-titre">StockTrace</span>
+            <div style="display: flex; gap: 8px;">
+                <div class="entete-icone" onclick="afficherEcran('ecran-notifications')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-valeur">847</div>
+                <div class="stat-label">Produits total</div>
+                <div class="stat-variation positif">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 14l5-5 5 5z"/>
+                    </svg>
+                    +12 ce mois
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-valeur" style="color: var(--avertissement);">23</div>
+                <div class="stat-label">Stock faible</div>
+                <div class="stat-variation negatif">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                    +5 cette semaine
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-valeur" style="color: var(--erreur);">8</div>
+                <div class="stat-label">En rupture</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-valeur" style="color: var(--succes);">156K€</div>
+                <div class="stat-label">Valeur stock</div>
+            </div>
+        </div>
+
+        <div class="carte">
+            <div class="carte-titre">Activité récente</div>
+            <div class="historique-item" style="margin-bottom: 12px;">
+                <div class="historique-point" style="background: var(--succes);"></div>
+                <div class="historique-contenu">
+                    <div class="historique-action">Entrée de stock</div>
+                    <div class="historique-detail">+50 unités de "Câble USB-C" par Marie Dupont</div>
+                    <div class="historique-meta">
+                        <span>Il y a 15 minutes</span>
+                    </div>
+                </div>
+            </div>
+            <div class="historique-item" style="margin-bottom: 12px;">
+                <div class="historique-point" style="background: var(--erreur);"></div>
+                <div class="historique-contenu">
+                    <div class="historique-action">Sortie de stock</div>
+                    <div class="historique-detail">-12 unités de "Écouteurs Bluetooth" par Jean Martin</div>
+                    <div class="historique-meta">
+                        <span>Il y a 1 heure</span>
+                    </div>
+                </div>
+            </div>
+            <div class="historique-item">
+                <div class="historique-point" style="background: var(--avertissement);"></div>
+                <div class="historique-contenu">
+                    <div class="historique-action">Alerte stock faible</div>
+                    <div class="historique-detail">"Chargeur sans fil" atteint le seuil critique (5 unités)</div>
+                    <div class="historique-meta">
+                        <span>Il y a 2 heures</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fab-container">
+            <div class="fab-menu" id="fab-menu-accueil">
+                <div class="fab-menu-item" onclick="ouvrirModal('modal-mouvement')">
+                    <span class="fab-menu-label">Mouvement de stock</span>
+                    <div class="fab-menu-btn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="fab-menu-item" onclick="ouvrirModal('modal-ajout-produit')">
+                    <span class="fab-menu-label">Nouveau produit</span>
+                    <div class="fab-menu-btn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="fab-menu-item" onclick="afficherEcran('ecran-scanner')">
+                    <span class="fab-menu-label">Scanner</span>
+                    <div class="fab-menu-btn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm6.5-6.5v3h-3v-3h3M19 5h-6v6h6V5zm-6 8h1.5v1.5H13V13zm1.5 1.5H16V16h-1.5v-1.5zm1.5 0h1.5V16H16v-1.5zm-3 3H13v1.5h1.5V16zm1.5 0h1.5v3h-3v-1.5h1.5V16zm1.5 1.5V19h1.5v-1.5H16zm1.5-1.5h1.5v1.5H17.5V16zm0-1.5V13h1.5v1.5h-1.5z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <button class="fab" onclick="toggleFabMenu('fab-menu-accueil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="navigation-bas">
+            <div class="nav-item actif" onclick="afficherEcran('ecran-accueil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>Accueil</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-produits')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                </svg>
+                <span>Produits</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-rapports')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                <span>Rapports</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-profil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <span>Profil</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Écran Produits -->
+    <div class="ecran" id="ecran-produits">
+        <div class="entete">
+            <span class="entete-titre">Produits</span>
+            <div style="display: flex; gap: 8px;">
+                <div class="entete-icone" onclick="toggleModeSelection()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 5h2V3c-1.1 0-2 .9-2 2zm0 8h2v-2H3v2zm4 8h2v-2H7v2zM3 9h2V7H3v2zm10-6h-2v2h2V3zm6 0v2h2c0-1.1-.9-2-2-2zM5 21v-2H3c0 1.1.9 2 2 2zm-2-4h2v-2H3v2zM9 3H7v2h2V3zm2 18h2v-2h-2v2zm8-8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2zm0-12h2V7h-2v2zm0 8h2v-2h-2v2zm-4 4h2v-2h-2v2zm0-16h2V3h-2v2z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="barre-recherche">
+            <div class="recherche-container">
+                <svg class="recherche-icone" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="recherche-input" placeholder="Rechercher un produit...">
+            </div>
+            <button class="bouton-scanner" onclick="afficherEcran('ecran-scanner')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm6.5-6.5v3h-3v-3h3M19 5h-6v6h6V5zm-6 8h1.5v1.5H13V13zm1.5 1.5H16V16h-1.5v-1.5zm1.5 0h1.5V16H16v-1.5z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="filtres-container">
+            <div class="filtre-chip actif" data-filtre="tous">Tous (847)</div>
+            <div class="filtre-chip" data-filtre="faible">Stock faible (23)</div>
+            <div class="filtre-chip" data-filtre="rupture">En rupture (8)</div>
+            <div class="filtre-chip" data-filtre="surstock">Surstock (15)</div>
+        </div>
+
+        <div class="liste-produits">
+            <div class="produit-item" onclick="afficherEcran('ecran-detail-produit')">
+                <div class="checkbox-container" style="display: none;" onclick="event.stopPropagation(); toggleSelection(this)">
+                    <div class="checkbox-custom">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Câble USB-C Premium</div>
+                    <div class="produit-sku">SKU: USB-C-001</div>
+                    <div class="produit-stock">
+                        <span class="badge badge-succes">En stock: 156</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="produit-item" onclick="afficherEcran('ecran-detail-produit')">
+                <div class="checkbox-container" style="display: none;" onclick="event.stopPropagation(); toggleSelection(this)">
+                    <div class="checkbox-custom">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 1a9 9 0 00-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7a9 9 0 00-9-9z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Écouteurs Bluetooth Pro</div>
+                    <div class="produit-sku">SKU: BT-AUDIO-042</div>
+                    <div class="produit-stock">
+                        <span class="badge badge-avertissement">Stock faible: 8</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="produit-item" onclick="afficherEcran('ecran-detail-produit')">
+                <div class="checkbox-container" style="display: none;" onclick="event.stopPropagation(); toggleSelection(this)">
+                    <div class="checkbox-custom">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Chargeur sans fil 15W</div>
+                    <div class="produit-sku">SKU: CHRG-WL-015</div>
+                    <div class="produit-stock">
+                        <span class="badge badge-erreur">Rupture: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="produit-item" onclick="afficherEcran('ecran-detail-produit')">
+                <div class="checkbox-container" style="display: none;" onclick="event.stopPropagation(); toggleSelection(this)">
+                    <div class="checkbox-custom">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Coque iPhone 15 Pro</div>
+                    <div class="produit-sku">SKU: CASE-IP15-BK</div>
+                    <div class="produit-stock">
+                        <span class="badge badge-info">Surstock: 450</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="produit-item" onclick="afficherEcran('ecran-detail-produit')">
+                <div class="checkbox-container" style="display: none;" onclick="event.stopPropagation(); toggleSelection(this)">
+                    <div class="checkbox-custom">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="produit-image">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/>
+                    </svg>
+                </div>
+                <div class="produit-info">
+                    <div class="produit-nom">Support Laptop Aluminium</div>
+                    <div class="produit-sku">SKU: STAND-LP-AL</div>
+                    <div class="produit-stock">
+                        <span class="badge badge-succes">En stock: 89</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="barre-selection" id="barre-selection">
+            <div class="selection-info">
+                <span class="selection-count">0 sélectionné(s)</span>
+            </div>
+            <div class="selection-actions">
+                <button class="selection-btn" onclick="supprimerSelection()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                </button>
+                <button class="selection-btn" onclick="annulerSelection()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="fab-container">
+            <button class="fab" onclick="ouvrirModal('modal-ajout-produit')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="navigation-bas">
+            <div class="nav-item" onclick="afficherEcran('ecran-accueil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>Accueil</span>
+            </div>
+            <div class="nav-item actif" onclick="afficherEcran('ecran-produits')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                </svg>
+                <span>Produits</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-rapports')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                <span>Rapports</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-profil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <span>Profil</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Écran Détail Produit -->
+    <div class="ecran ecran-complet" id="ecran-detail-produit">
+        <div class="detail-header">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+            </svg>
+            <div class="detail-back" onclick="afficherEcran('ecran-produits')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </div>
+            <div class="detail-actions">
+                <div class="detail-action" onclick="ouvrirModal('modal-modifier-produit')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                </div>
+                <div class="detail-action" onclick="afficherToast('Produit supprimé')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-contenu">
+            <h1 class="detail-titre">Câble USB-C Premium</h1>
+            <p class="detail-sku">SKU: USB-C-001</p>
+            <span class="badge badge-succes">En stock</span>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                    </svg>
+                    Informations générales
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Quantité totale</span>
+                    <span class="detail-row-valeur">156 unités</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Quantité minimum</span>
+                    <span class="detail-row-valeur">20 unités</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Quantité maximum</span>
+                    <span class="detail-row-valeur">500 unités</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Prix d'achat unitaire</span>
+                    <span class="detail-row-valeur">12,50 €</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Valeur du stock</span>
+                    <span class="detail-row-valeur">1 950,00 €</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Emplacements
+                </div>
+                <div class="detail-emplacements">
+                    <div class="emplacement-item">
+                        <span class="emplacement-nom">Entrepôt A - Rayon 3</span>
+                        <span class="emplacement-quantite">100</span>
+                    </div>
+                    <div class="emplacement-item">
+                        <span class="emplacement-nom">Magasin Principal</span>
+                        <span class="emplacement-quantite">36</span>
+                    </div>
+                    <div class="emplacement-item">
+                        <span class="emplacement-nom">Stock de réserve</span>
+                        <span class="emplacement-quantite">20</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    Historique
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Date de création</span>
+                    <span class="detail-row-valeur">15 Jan 2026</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Dernière modification</span>
+                    <span class="detail-row-valeur">23 Fév 2026</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-label">Dernier mouvement</span>
+                    <span class="detail-row-valeur">Entrée +50 (Marie D.)</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-titre">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/>
+                    </svg>
+                    QR Code du produit
+                </div>
+                <div class="detail-qr">
+                    <div class="detail-qr-code">
+                        <svg viewBox="0 0 100 100">
+                            <rect x="10" y="10" width="20" height="20" fill="currentColor"/>
+                            <rect x="35" y="10" width="5" height="5" fill="currentColor"/>
+                            <rect x="45" y="10" width="5" height="5" fill="currentColor"/>
+                            <rect x="55" y="10" width="5" height="5" fill="currentColor"/>
+                            <rect x="70" y="10" width="20" height="20" fill="currentColor"/>
+                            <rect x="15" y="15" width="10" height="10" fill="var(--blanc)"/>
+                            <rect x="75" y="15" width="10" height="10" fill="var(--blanc)"/>
+                            <rect x="17" y="17" width="6" height="6" fill="currentColor"/>
+                            <rect x="77" y="17" width="6" height="6" fill="currentColor"/>
+                            <rect x="10" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="20" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="30" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="45" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="60" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="70" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="85" y="35" width="5" height="5" fill="currentColor"/>
+                            <rect x="10" y="45" width="5" height="5" fill="currentColor"/>
+                            <rect x="25" y="45" width="5" height="5" fill="currentColor"/>
+                            <rect x="40" y="45" width="5" height="5" fill="currentColor"/>
+                            <rect x="50" y="45" width="5" height="5" fill="currentColor"/>
+                            <rect x="65" y="45" width="5" height="5" fill="currentColor"/>
+                            <rect x="80" y="45" width="5" height="5" fill="currentColor"/>
+                            <rect x="10" y="55" width="5" height="5" fill="currentColor"/>
+                            <rect x="30" y="55" width="5" height="5" fill="currentColor"/>
+                            <rect x="45" y="55" width="5" height="5" fill="currentColor"/>
+                            <rect x="55" y="55" width="5" height="5" fill="currentColor"/>
+                            <rect x="70" y="55" width="5" height="5" fill="currentColor"/>
+                            <rect x="85" y="55" width="5" height="5" fill="currentColor"/>
+                            <rect x="10" y="70" width="20" height="20" fill="currentColor"/>
+                            <rect x="15" y="75" width="10" height="10" fill="var(--blanc)"/>
+                            <rect x="17" y="77" width="6" height="6" fill="currentColor"/>
+                            <rect x="35" y="70" width="5" height="5" fill="currentColor"/>
+                            <rect x="50" y="70" width="5" height="5" fill="currentColor"/>
+                            <rect x="65" y="70" width="5" height="5" fill="currentColor"/>
+                            <rect x="75" y="70" width="5" height="5" fill="currentColor"/>
+                            <rect x="85" y="70" width="5" height="5" fill="currentColor"/>
+                            <rect x="40" y="80" width="5" height="5" fill="currentColor"/>
+                            <rect x="55" y="80" width="5" height="5" fill="currentColor"/>
+                            <rect x="70" y="80" width="5" height="5" fill="currentColor"/>
+                            <rect x="35" y="85" width="5" height="5" fill="currentColor"/>
+                            <rect x="45" y="85" width="5" height="5" fill="currentColor"/>
+                            <rect x="60" y="85" width="5" height="5" fill="currentColor"/>
+                            <rect x="80" y="85" width="5" height="5" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <button class="bouton bouton-outline bouton-petit">Télécharger le QR Code</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-produit">
+            <button class="bouton bouton-primaire" onclick="ouvrirModal('modal-mouvement')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"/>
+                </svg>
+                Mouvement
+            </button>
+            <button class="bouton bouton-outline" onclick="ouvrirModal('modal-inventaire')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                Inventaire
+            </button>
+        </div>
+    </div>
+
+    <!-- Écran Rapports -->
+    <div class="ecran" id="ecran-rapports">
+        <div class="entete">
+            <span class="entete-titre">Rapports</span>
+        </div>
+
+        <div class="rapport-grid">
+            <div class="rapport-card" onclick="afficherToast('Génération du PDF...')">
+                <div class="rapport-icone">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                    </svg>
+                </div>
+                <div class="rapport-info">
+                    <div class="rapport-titre">Stock actuel</div>
+                    <div class="rapport-description">État complet de votre inventaire</div>
+                </div>
+            </div>
+
+            <div class="rapport-card" onclick="afficherToast('Génération du PDF...')">
+                <div class="rapport-icone">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/>
+                    </svg>
+                </div>
+                <div class="rapport-info">
+                    <div class="rapport-titre">À commander</div>
+                    <div class="rapport-description">Produits sous le seuil minimum</div>
+                </div>
+            </div>
+
+            <div class="rapport-card" onclick="afficherToast('Génération du PDF...')">
+                <div class="rapport-icone">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                </div>
+                <div class="rapport-info">
+                    <div class="rapport-titre">Inventaire</div>
+                    <div class="rapport-description">Dernier inventaire réalisé</div>
+                </div>
+            </div>
+
+            <div class="rapport-card" onclick="afficherToast('Génération du PDF...')">
+                <div class="rapport-icone">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                </div>
+                <div class="rapport-info">
+                    <div class="rapport-titre">Mouvements</div>
+                    <div class="rapport-description">Historique des entrées/sorties</div>
+                </div>
+            </div>
+
+            <div class="rapport-card" onclick="afficherToast('Génération du PDF...')">
+                <div class="rapport-icone" style="background: rgba(255, 152, 0, 0.1);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--avertissement);">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                </div>
+                <div class="rapport-info">
+                    <div class="rapport-titre">Alertes</div>
+                    <div class="rapport-description">Stock faible et ruptures</div>
+                </div>
+            </div>
+
+            <div class="rapport-card" onclick="afficherToast('Génération du PDF...')">
+                <div class="rapport-icone" style="background: rgba(76, 175, 80, 0.1);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--succes);">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                    </svg>
+                </div>
+                <div class="rapport-info">
+                    <div class="rapport-titre">Valorisation</div>
+                    <div class="rapport-description">Valeur totale du stock</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="carte">
+            <div class="carte-titre">Inventaires récents</div>
+            <div class="inventaire-item" style="margin: 0;">
+                <div class="inventaire-produit">
+                    <div class="inventaire-produit-img">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="produit-nom">Inventaire Février 2026</div>
+                        <div class="produit-sku">23/02/2026 - 847 produits</div>
+                    </div>
+                </div>
+                <div class="inventaire-comparaison">
+                    <div class="inventaire-stock theorique">
+                        <div class="inventaire-stock-label">Théorique</div>
+                        <div class="inventaire-stock-valeur">12,450</div>
+                    </div>
+                    <div class="inventaire-stock reel">
+                        <div class="inventaire-stock-label">Réel</div>
+                        <div class="inventaire-stock-valeur">12,438</div>
+                    </div>
+                </div>
+                <div class="inventaire-ecart">
+                    <span>Écart: </span>
+                    <span class="inventaire-ecart-valeur negatif">-12 unités</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navigation-bas">
+            <div class="nav-item" onclick="afficherEcran('ecran-accueil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>Accueil</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-produits')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                </svg>
+                <span>Produits</span>
+            </div>
+            <div class="nav-item actif" onclick="afficherEcran('ecran-rapports')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                <span>Rapports</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-profil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <span>Profil</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Écran Profil -->
+    <div class="ecran" id="ecran-profil">
+        <div class="profil-header">
+            <div class="profil-avatar">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <div class="profil-avatar-edit">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="profil-nom">Marie Dupont</h2>
+            <p class="profil-role">Administrateur principal</p>
+        </div>
+
+        <div class="profil-menu">
+            <div class="profil-menu-item" onclick="ouvrirModal('modal-modifier-nom')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <div class="profil-menu-item-info">
+                    <div class="profil-menu-item-titre">Nom</div>
+                    <div class="profil-menu-item-valeur">Marie Dupont</div>
+                </div>
+                <svg class="profil-menu-item-fleche" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </div>
+
+            <div class="profil-menu-item" onclick="ouvrirModal('modal-langue')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/>
+                </svg>
+                <div class="profil-menu-item-info">
+                    <div class="profil-menu-item-titre">Langue</div>
+                    <div class="profil-menu-item-valeur">Français</div>
+                </div>
+                <svg class="profil-menu-item-fleche" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </div>
+
+            <div class="profil-menu-item" onclick="ouvrirModal('modal-theme')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                <div class="profil-menu-item-info">
+                    <div class="profil-menu-item-titre">Thème</div>
+                    <div class="profil-menu-item-valeur">Système</div>
+                </div>
+                <svg class="profil-menu-item-fleche" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </div>
+
+            <div class="profil-menu-item" onclick="afficherEcran('ecran-membres')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                <div class="profil-menu-item-info">
+                    <div class="profil-menu-item-titre">Membres</div>
+                    <div class="profil-menu-item-valeur">Gérer l'équipe</div>
+                </div>
+                <svg class="profil-menu-item-fleche" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="profil-qr">
+            <h3 style="margin-bottom: 16px;">Mon QR Code</h3>
+            <div class="profil-qr-code">
+                <svg viewBox="0 0 100 100">
+                    <rect x="10" y="10" width="20" height="20" fill="currentColor"/>
+                    <rect x="35" y="10" width="5" height="5" fill="currentColor"/>
+                    <rect x="45" y="10" width="5" height="5" fill="currentColor"/>
+                    <rect x="55" y="10" width="5" height="5" fill="currentColor"/>
+                    <rect x="70" y="10" width="20" height="20" fill="currentColor"/>
+                    <rect x="15" y="15" width="10" height="10" fill="var(--blanc)"/>
+                    <rect x="75" y="15" width="10" height="10" fill="var(--blanc)"/>
+                    <rect x="17" y="17" width="6" height="6" fill="currentColor"/>
+                    <rect x="77" y="17" width="6" height="6" fill="currentColor"/>
+                    <rect x="10" y="35" width="5" height="5" fill="currentColor"/>
+                    <rect x="25" y="35" width="5" height="5" fill="currentColor"/>
+                    <rect x="40" y="35" width="5" height="5" fill="currentColor"/>
+                    <rect x="55" y="35" width="5" height="5" fill="currentColor"/>
+                    <rect x="70" y="35" width="5" height="5" fill="currentColor"/>
+                    <rect x="85" y="35" width="5" height="5" fill="currentColor"/>
+                    <rect x="10" y="45" width="5" height="5" fill="currentColor"/>
+                    <rect x="20" y="45" width="5" height="5" fill="currentColor"/>
+                    <rect x="35" y="45" width="5" height="5" fill="currentColor"/>
+                    <rect x="50" y="45" width="5" height="5" fill="currentColor"/>
+                    <rect x="60" y="45" width="5" height="5" fill="currentColor"/>
+                    <rect x="75" y="45" width="5" height="5" fill="currentColor"/>
+                    <rect x="10" y="55" width="5" height="5" fill="currentColor"/>
+                    <rect x="30" y="55" width="5" height="5" fill="currentColor"/>
+                    <rect x="45" y="55" width="5" height="5" fill="currentColor"/>
+                    <rect x="60" y="55" width="5" height="5" fill="currentColor"/>
+                    <rect x="80" y="55" width="5" height="5" fill="currentColor"/>
+                    <rect x="10" y="70" width="20" height="20" fill="currentColor"/>
+                    <rect x="15" y="75" width="10" height="10" fill="var(--blanc)"/>
+                    <rect x="17" y="77" width="6" height="6" fill="currentColor"/>
+                    <rect x="35" y="70" width="5" height="5" fill="currentColor"/>
+                    <rect x="45" y="70" width="5" height="5" fill="currentColor"/>
+                    <rect x="60" y="70" width="5" height="5" fill="currentColor"/>
+                    <rect x="75" y="70" width="5" height="5" fill="currentColor"/>
+                    <rect x="40" y="80" width="5" height="5" fill="currentColor"/>
+                    <rect x="55" y="80" width="5" height="5" fill="currentColor"/>
+                    <rect x="70" y="80" width="5" height="5" fill="currentColor"/>
+                    <rect x="85" y="80" width="5" height="5" fill="currentColor"/>
+                    <rect x="35" y="85" width="5" height="5" fill="currentColor"/>
+                    <rect x="50" y="85" width="5" height="5" fill="currentColor"/>
+                    <rect x="65" y="85" width="5" height="5" fill="currentColor"/>
+                    <rect x="80" y="85" width="5" height="5" fill="currentColor"/>
+                </svg>
+            </div>
+            <button class="bouton bouton-outline bouton-petit" onclick="afficherToast('QR Code téléchargé')">Télécharger mon QR Code</button>
+        </div>
+
+        <div class="profil-menu" style="padding-top: 0;">
+            <div class="profil-menu-item" onclick="afficherEcran('ecran-connexion')" style="background: rgba(244, 67, 54, 0.1);">
+                <svg viewBox="0 0 24 24" style="fill: var(--erreur);">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                <div class="profil-menu-item-info">
+                    <div class="profil-menu-item-titre" style="color: var(--erreur);">Déconnexion</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navigation-bas">
+            <div class="nav-item" onclick="afficherEcran('ecran-accueil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>Accueil</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-produits')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
+                </svg>
+                <span>Produits</span>
+            </div>
+            <div class="nav-item" onclick="afficherEcran('ecran-rapports')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                <span>Rapports</span>
+            </div>
+            <div class="nav-item actif" onclick="afficherEcran('ecran-profil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <span>Profil</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Écran Notifications -->
+    <div class="ecran" id="ecran-notifications">
+        <div class="entete">
+            <div class="entete-icone" onclick="afficherEcran('ecran-accueil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </div>
+            <span class="entete-titre">Notifications</span>
+            <div class="entete-icone" onclick="afficherToast('Tout marquer comme lu')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="notification-liste">
+            <div class="notification-item non-lu">
+                <div class="notification-icone entree">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </div>
+                <div class="notification-contenu">
+                    <div class="notification-titre">Entrée de stock</div>
+                    <div class="notification-message">Marie Dupont a ajouté 50 unités de "Câble USB-C Premium"</div>
+                    <div class="notification-temps">Il y a 15 minutes</div>
+                </div>
+            </div>
+
+            <div class="notification-item non-lu">
+                <div class="notification-icone alerte">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                </div>
+                <div class="notification-contenu">
+                    <div class="notification-titre">Stock faible</div>
+                    <div class="notification-message">"Écouteurs Bluetooth Pro" atteint le seuil minimum (8 unités)</div>
+                    <div class="notification-temps">Il y a 1 heure</div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icone sortie">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 13H5v-2h14v2z"/>
+                    </svg>
+                </div>
+                <div class="notification-contenu">
+                    <div class="notification-titre">Sortie de stock</div>
+                    <div class="notification-message">Jean Martin a retiré 12 unités de "Écouteurs Bluetooth Pro"</div>
+                    <div class="notification-temps">Il y a 2 heures</div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icone alerte">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <div class="notification-contenu">
+                    <div class="notification-titre">Inventaire terminé</div>
+                    <div class="notification-message">L'inventaire mensuel a été complété avec succès. Écart: -12 unités</div>
+                    <div class="notification-temps">Hier à 18:30</div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icone entree">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="notification-contenu">
+                    <div class="notification-titre">Nouveau membre</div>
+                    <div class="notification-message">Pierre Lambert a demandé à rejoindre l'équipe</div>
+                    <div class="notification-temps">Il y a 2 jours</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Membres -->
+    <div class="ecran" id="ecran-membres">
+        <div class="entete">
+            <div class="entete-icone" onclick="afficherEcran('ecran-profil')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </div>
+            <span class="entete-titre">Membres</span>
+            <div class="entete-icone" onclick="ouvrirModal('modal-ajouter-membre')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="membre-liste">
+            <div class="membre-item">
+                <div class="membre-avatar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="membre-info">
+                    <div class="membre-nom">Marie Dupont</div>
+                    <div class="membre-statut">marie.dupont@email.com</div>
+                </div>
+                <span class="membre-badge admin-principal">Admin principal</span>
+            </div>
+
+            <div class="membre-item">
+                <div class="membre-avatar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="membre-info">
+                    <div class="membre-nom">Jean Martin</div>
+                    <div class="membre-statut">jean.martin@email.com</div>
+                </div>
+                <span class="membre-badge admin">Admin</span>
+            </div>
+
+            <div class="membre-item">
+                <div class="membre-avatar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="membre-info">
+                    <div class="membre-nom">Sophie Bernard</div>
+                    <div class="membre-statut">sophie.bernard@email.com</div>
+                </div>
+            </div>
+
+            <div class="membre-item" style="opacity: 0.7;">
+                <div class="membre-avatar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="membre-info">
+                    <div class="membre-nom">Pierre Lambert</div>
+                    <div class="membre-statut">pierre.lambert@email.com</div>
+                </div>
+                <span class="membre-badge en-attente">En attente</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Mouvement de stock -->
+    <div class="modal-overlay" id="modal-mouvement">
+        <div class="modal-contenu">
+            <div class="modal-header">
+                <h2 class="modal-titre">Mouvement de stock</h2>
+                <div class="modal-fermer" onclick="fermerModal('modal-mouvement')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="mouvement-type">
+                    <div class="mouvement-option entree actif" onclick="selectionnerMouvement(this, 'entree')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        <div>Entrée</div>
+                    </div>
+                    <div class="mouvement-option sortie" onclick="selectionnerMouvement(this, 'sortie')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13H5v-2h14v2z"/>
+                        </svg>
+                        <div>Sortie</div>
+                    </div>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Produit</label>
+                    <input type="text" class="champ-input" value="Câble USB-C Premium" readonly>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Emplacement</label>
+                    <select class="champ-input">
+                        <option>Entrepôt A - Rayon 3</option>
+                        <option>Magasin Principal</option>
+                        <option>Stock de réserve</option>
+                    </select>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Quantité</label>
+                    <div class="quantite-stepper">
+                        <button class="stepper-btn" onclick="modifierQuantite(-1)">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 13H5v-2h14v2z"/>
+                            </svg>
+                        </button>
+                        <span class="stepper-valeur" id="quantite-mouvement">1</span>
+                        <button class="stepper-btn" onclick="modifierQuantite(1)">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="champ-groupe" id="champ-prix" style="display: block;">
+                    <label class="champ-label">Prix d'achat unitaire (€)</label>
+                    <input type="number" class="champ-input" value="12.50" step="0.01">
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Commentaire (optionnel)</label>
+                    <textarea class="champ-input" rows="3" placeholder="Raison du mouvement..."></textarea>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Photo justificative (optionnel)</label>
+                    <div class="upload-zone">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"/>
+                        </svg>
+                        <p>Appuyez pour ajouter une photo</p>
+                    </div>
+                </div>
+
+                <button class="bouton bouton-primaire" onclick="fermerModal('modal-mouvement'); afficherToast('Mouvement enregistré')">
+                    Valider le mouvement
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ajout produit -->
+    <div class="modal-overlay" id="modal-ajout-produit">
+        <div class="modal-contenu">
+            <div class="modal-header">
+                <h2 class="modal-titre">Nouveau produit</h2>
+                <div class="modal-fermer" onclick="fermerModal('modal-ajout-produit')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="champ-groupe">
+                    <label class="champ-label">Photo du produit</label>
+                    <div class="upload-zone">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"/>
+                        </svg>
+                        <p>Appuyez pour ajouter une photo</p>
+                    </div>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Nom du produit *</label>
+                    <input type="text" class="champ-input" placeholder="Ex: Câble USB-C Premium">
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">SKU / Code-barres</label>
+                    <input type="text" class="champ-input" placeholder="Ex: USB-C-001 (généré automatiquement si vide)">
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Emplacement et quantité initiale</label>
+                    <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+                        <input type="text" class="champ-input" style="flex: 2;" placeholder="Zone / Emplacement">
+                        <input type="number" class="champ-input" style="flex: 1;" placeholder="Qté" value="0">
+                    </div>
+                    <button class="bouton bouton-ghost bouton-petit" style="width: auto;">+ Ajouter un emplacement</button>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <div class="champ-groupe" style="flex: 1;">
+                        <label class="champ-label">Quantité min.</label>
+                        <input type="number" class="champ-input" placeholder="10">
+                    </div>
+                    <div class="champ-groupe" style="flex: 1;">
+                        <label class="champ-label">Quantité max.</label>
+                        <input type="number" class="champ-input" placeholder="500">
+                    </div>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Prix d'achat unitaire (€)</label>
+                    <input type="number" class="champ-input" placeholder="0.00" step="0.01">
+                </div>
+
+                <button class="bouton bouton-primaire" onclick="fermerModal('modal-ajout-produit'); afficherToast('Produit créé avec succès')">
+                    Créer le produit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Inventaire -->
+    <div class="modal-overlay" id="modal-inventaire">
+        <div class="modal-contenu">
+            <div class="modal-header">
+                <h2 class="modal-titre">Inventaire</h2>
+                <div class="modal-fermer" onclick="fermerModal('modal-inventaire')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="champ-groupe">
+                    <label class="champ-label">Produit</label>
+                    <input type="text" class="champ-input" value="Câble USB-C Premium" readonly>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Emplacement à inventorier</label>
+                    <select class="champ-input">
+                        <option>Entrepôt A - Rayon 3 (100 unités)</option>
+                        <option>Magasin Principal (36 unités)</option>
+                        <option>Stock de réserve (20 unités)</option>
+                    </select>
+                </div>
+
+                <div class="inventaire-comparaison" style="margin: 24px 0;">
+                    <div class="inventaire-stock theorique">
+                        <div class="inventaire-stock-label">Stock théorique</div>
+                        <div class="inventaire-stock-valeur">100</div>
+                    </div>
+                    <div class="inventaire-stock reel">
+                        <div class="inventaire-stock-label">Stock réel</div>
+                        <input type="number" class="champ-input" style="font-size: 1.5rem; font-weight: 700; text-align: center; color: var(--succes);" value="100">
+                    </div>
+                </div>
+
+                <div class="champ-groupe">
+                    <label class="champ-label">Commentaire (optionnel)</label>
+                    <textarea class="champ-input" rows="3" placeholder="Notes sur l'inventaire..."></textarea>
+                </div>
+
+                <button class="bouton bouton-primaire" onclick="fermerModal('modal-inventaire'); afficherToast('Inventaire enregistré')">
+                    Valider l'inventaire
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thème -->
+    <div class="modal-overlay" id="modal-theme">
+        <div class="modal-contenu">
+            <div class="modal-header">
+                <h2 class="modal-titre">Choisir un thème</h2>
+                <div class="modal-fermer" onclick="fermerModal('modal-theme')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="theme-options">
+                    <div class="theme-option selectionnee" onclick="changerTheme('systeme')">
+                        <div class="theme-preview systeme"></div>
+                        <div class="theme-info">
+                            <div class="theme-nom">Système</div>
+                            <div class="theme-description">Suit les préférences de votre appareil</div>
+                        </div>
+                    </div>
+                    <div class="theme-option" onclick="changerTheme('clair')">
+                        <div class="theme-preview clair"></div>
+                        <div class="theme-info">
+                            <div class="theme-nom">Clair</div>
+                            <div class="theme-description">Interface lumineuse et aérée</div>
+                        </div>
+                    </div>
+                    <div class="theme-option" onclick="changerTheme('sombre')">
+                        <div class="theme-preview sombre"></div>
+                        <div class="theme-info">
+                            <div class="theme-nom">Sombre</div>
+                            <div class="theme-description">Économise la batterie, repose les yeux</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Langue -->
+    <div class="modal-overlay" id="modal-langue">
+        <div class="modal-contenu">
+            <div class="modal-header">
+                <h2 class="modal-titre">Choisir une langue</h2>
+                <div class="modal-fermer" onclick="fermerModal('modal-langue')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="langue-grid">
+                    <div class="langue-option selectionnee" onclick="changerLangue('fr')">
+                        <span class="langue-drapeau">🇫🇷</span>
+                        <span class="langue-nom">Français</span>
+                    </div>
+                    <div class="langue-option" onclick="changerLangue('en')">
+                        <span class="langue-drapeau">🇬🇧</span>
+                        <span class="langue-nom">English</span>
+                    </div>
+                    <div class="langue-option" onclick="changerLangue('hi')">
+                        <span class="langue-drapeau">🇮🇳</span>
+                        <span class="langue-nom">हिन्दी</span>
+                    </div>
+                    <div class="langue-option" onclick="changerLangue('ln')">
+                        <span class="langue-drapeau">🇨🇩</span>
+                        <span class="langue-nom">Lingala</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ajouter membre -->
+    <div class="modal-overlay" id="modal-ajouter-membre">
+        <div class="modal-contenu">
+            <div class="modal-header">
+                <h2 class="modal-titre">Ajouter un membre</h2>
+                <div class="modal-fermer" onclick="fermerModal('modal-ajouter-membre')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--texte-secondaire); margin-bottom: 20px;">Sélectionnez les membres en attente pour leur donner accès à l'application.</p>
+                
+                <div class="membre-item" style="cursor: pointer; margin-bottom: 16px;" onclick="this.classList.toggle('selectionne'); this.querySelector('.checkbox-custom').classList.toggle('coche')">
+                    <div class="checkbox-custom">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <div class="membre-avatar">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <div class="membre-info">
+                        <div class="membre-nom">Pierre Lambert</div>
+                        <div class="membre-statut">pierre.lambert@email.com</div>
+                    </div>
+                </div>
+
+                <button class="bouton bouton-primaire" onclick="fermerModal('modal-ajouter-membre'); afficherToast('Membre ajouté')">
+                    Ajouter les membres sélectionnés
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Message</div>
+
+    <script>
+        // Traductions - Fichier de langues (Français)
+        const traductions = {
+            fr: {
+                // Navigation
+                nav_accueil: "Accueil",
+                nav_produits: "Produits",
+                nav_rapports: "Rapports",
+                nav_profil: "Profil",
+                
+                // Connexion
+                connexion_titre: "StockTrace",
+                connexion_soustitre: "Gestion intelligente de votre stock",
+                connexion_tab_connexion: "Connexion",
+                connexion_tab_inscription: "Inscription",
+                connexion_email: "Adresse email",
+                connexion_email_placeholder: "votre@email.com",
+                connexion_motdepasse: "Mot de passe",
+                connexion_motdepasse_placeholder: "••••••••",
+                connexion_bouton: "Se connecter",
+                connexion_ou: "ou",
+                connexion_scanner_qr: "Scanner mon QR",
+                connexion_importer_qr: "Importer mon QR",
+                inscription_nom: "Nom complet",
+                inscription_nom_placeholder: "Jean Dupont",
+                inscription_confirmer_mdp: "Confirmer le mot de passe",
+                inscription_bouton: "Créer mon compte",
+                
+                // Configuration initiale
+                config_langue_titre: "Choisissez votre langue",
+                config_langue_soustitre: "Vous pourrez la modifier plus tard dans les paramètres",
+                config_theme_titre: "Choisissez votre thème",
+                config_theme_soustitre: "Personnalisez l'apparence de l'application",
+                config_continuer: "Continuer",
+                config_terminer: "Terminer",
+                config_retour: "Retour",
+                
+                // Langues
+                langue_francais: "Français",
+                langue_anglais: "English",
+                langue_hindi: "हिन्दी",
+                langue_lingala: "Lingala",
+                
+                // Thèmes
+                theme_systeme: "Système",
+                theme_systeme_desc: "Suit les préférences de votre appareil",
+                theme_clair: "Clair",
+                theme_clair_desc: "Interface lumineuse et aérée",
+                theme_sombre: "Sombre",
+                theme_sombre_desc: "Économise la batterie, repose les yeux",
+                
+                // Accueil / Tableau de bord
+                accueil_titre: "StockTrace",
+                accueil_produits_total: "Produits total",
+                accueil_stock_faible: "Stock faible",
+                accueil_en_rupture: "En rupture",
+                accueil_valeur_stock: "Valeur stock",
+                accueil_ce_mois: "ce mois",
+                accueil_cette_semaine: "cette semaine",
+                accueil_activite_recente: "Activité récente",
+                accueil_entree_stock: "Entrée de stock",
+                accueil_sortie_stock: "Sortie de stock",
+                accueil_alerte_stock_faible: "Alerte stock faible",
+                accueil_il_y_a: "Il y a",
+                accueil_minutes: "minutes",
+                accueil_heure: "heure",
+                accueil_heures: "heures",
+                accueil_unites_de: "unités de",
+                accueil_par: "par",
+                accueil_atteint_seuil: "atteint le seuil critique",
+                
+                // Produits
+                produits_titre: "Produits",
+                produits_rechercher: "Rechercher un produit...",
+                produits_tous: "Tous",
+                produits_stock_faible: "Stock faible",
+                produits_en_rupture: "En rupture",
+                produits_surstock: "Surstock",
+                produits_en_stock: "En stock",
+                produits_selectionnes: "sélectionné(s)",
+                
+                // Détail produit
+                detail_informations: "Informations générales",
+                detail_quantite_totale: "Quantité totale",
+                detail_quantite_min: "Quantité minimum",
+                detail_quantite_max: "Quantité maximum",
+                detail_prix_achat: "Prix d'achat unitaire",
+                detail_valeur_stock: "Valeur du stock",
+                detail_emplacements: "Emplacements",
+                detail_historique: "Historique",
+                detail_date_creation: "Date de création",
+                detail_derniere_modif: "Dernière modification",
+                detail_dernier_mouvement: "Dernier mouvement",
+                detail_qr_code: "QR Code du produit",
+                detail_telecharger_qr: "Télécharger le QR Code",
+                detail_mouvement: "Mouvement",
+                detail_inventaire: "Inventaire",
+                detail_unites: "unités",
+                
+                // Mouvement de stock
+                mouvement_titre: "Mouvement de stock",
+                mouvement_entree: "Entrée",
+                mouvement_sortie: "Sortie",
+                mouvement_produit: "Produit",
+                mouvement_emplacement: "Emplacement",
+                mouvement_quantite: "Quantité",
+                mouvement_prix: "Prix d'achat unitaire (€)",
+                mouvement_commentaire: "Commentaire (optionnel)",
+                mouvement_commentaire_placeholder: "Raison du mouvement...",
+                mouvement_photo: "Photo justificative (optionnel)",
+                mouvement_photo_ajouter: "Appuyez pour ajouter une photo",
+                mouvement_valider: "Valider le mouvement",
+                mouvement_enregistre: "Mouvement enregistré",
+                
+                // Ajout produit
+                ajout_titre: "Nouveau produit",
+                ajout_photo: "Photo du produit",
+                ajout_nom: "Nom du produit *",
+                ajout_nom_placeholder: "Ex: Câble USB-C Premium",
+                ajout_sku: "SKU / Code-barres",
+                ajout_sku_placeholder: "Ex: USB-C-001 (généré automatiquement si vide)",
+                ajout_emplacement: "Emplacement et quantité initiale",
+                ajout_zone_placeholder: "Zone / Emplacement",
+                ajout_qte_placeholder: "Qté",
+                ajout_ajouter_emplacement: "+ Ajouter un emplacement",
+                ajout_qte_min: "Quantité min.",
+                ajout_qte_max: "Quantité max.",
+                ajout_prix: "Prix d'achat unitaire (€)",
+                ajout_creer: "Créer le produit",
+                ajout_succes: "Produit créé avec succès",
+                
+                // Inventaire
+                inventaire_titre: "Inventaire",
+                inventaire_produit: "Produit",
+                inventaire_emplacement: "Emplacement à inventorier",
+                inventaire_theorique: "Stock théorique",
+                inventaire_reel: "Stock réel",
+                inventaire_commentaire: "Commentaire (optionnel)",
+                inventaire_commentaire_placeholder: "Notes sur l'inventaire...",
+                inventaire_valider: "Valider l'inventaire",
+                inventaire_enregistre: "Inventaire enregistré",
+                inventaire_ecart: "Écart",
+                
+                // Rapports
+                rapports_titre: "Rapports",
+                rapport_stock_actuel: "Stock actuel",
+                rapport_stock_actuel_desc: "État complet de votre inventaire",
+                rapport_a_commander: "À commander",
+                rapport_a_commander_desc: "Produits sous le seuil minimum",
+                rapport_inventaire: "Inventaire",
+                rapport_inventaire_desc: "Dernier inventaire réalisé",
+                rapport_mouvements: "Mouvements",
+                rapport_mouvements_desc: "Historique des entrées/sorties",
+                rapport_alertes: "Alertes",
+                rapport_alertes_desc: "Stock faible et ruptures",
+                rapport_valorisation: "Valorisation",
+                rapport_valorisation_desc: "Valeur totale du stock",
+                rapport_inventaires_recents: "Inventaires récents",
+                rapport_generation: "Génération du PDF...",
+                
+                // Profil
+                profil_nom: "Nom",
+                profil_langue: "Langue",
+                profil_theme: "Thème",
+                profil_membres: "Membres",
+                profil_membres_desc: "Gérer l'équipe",
+                profil_mon_qr: "Mon QR Code",
+                profil_telecharger_qr: "Télécharger mon QR Code",
+                profil_qr_telecharge: "QR Code téléchargé",
+                profil_deconnexion: "Déconnexion",
+                profil_admin_principal: "Administrateur principal",
+                profil_admin: "Admin",
+                
+                // Membres
+                membres_titre: "Membres",
+                membres_ajouter: "Ajouter un membre",
+                membres_en_attente: "En attente",
+                membres_ajouter_desc: "Sélectionnez les membres en attente pour leur donner accès à l'application.",
+                membres_ajouter_bouton: "Ajouter les membres sélectionnés",
+                membres_ajoute: "Membre ajouté",
+                
+                // Notifications
+                notifications_titre: "Notifications",
+                notifications_tout_lu: "Tout marquer comme lu",
+                notifications_nouveau_membre: "Nouveau membre",
+                notifications_demande_rejoindre: "a demandé à rejoindre l'équipe",
+                notifications_inventaire_termine: "Inventaire terminé",
+                notifications_inventaire_complete: "L'inventaire mensuel a été complété avec succès.",
+                notifications_hier: "Hier à",
+                notifications_jours: "jours",
+                
+                // Scanner
+                scanner_instruction: "Placez le QR code dans le cadre",
+                scanner_selectionnez: "Sélectionnez une image",
+                
+                // Actions
+                action_supprimer: "Supprimer",
+                action_modifier: "Modifier",
+                action_annuler: "Annuler",
+                action_confirmer: "Confirmer",
+                action_fermer: "Fermer",
+                
+                // Messages
+                message_produit_supprime: "Produit supprimé",
+                message_selection_supprimee: "Sélection supprimée",
+                
+                // Divers
+                choisir_langue: "Choisir une langue",
+                choisir_theme: "Choisir un thème"
+            }
+        };
+
+        // Variables globales
+        let quantiteMouvement = 1;
+        let modeSelection = false;
+        let produitsSelectionnes = [];
+        let etapeActuelle = 1;
+
+        // Fonction pour afficher un écran
+        function afficherEcran(idEcran) {
+            // Masquer tous les écrans
+            document.querySelectorAll('.ecran').forEach(ecran => {
+                ecran.classList.remove('actif');
+            });
+            
+            // Afficher l'écran demandé
+            const ecran = document.getElementById(idEcran);
+            if (ecran) {
+                ecran.classList.add('actif');
+            }
+            
+            // Mettre à jour la navigation
+            mettreAJourNavigation(idEcran);
+            
+            // Fermer les menus FAB
+            document.querySelectorAll('.fab-menu').forEach(menu => {
+                menu.classList.remove('actif');
+            });
+        }
+
+        // Mettre à jour la navigation active
+        function mettreAJourNavigation(idEcran) {
+            const mapNavigation = {
+                'ecran-accueil': 0,
+                'ecran-produits': 1,
+                'ecran-detail-produit': 1,
+                'ecran-rapports': 2,
+                'ecran-profil': 3,
+                'ecran-membres': 3,
+                'ecran-notifications': 0
+            };
+            
+            document.querySelectorAll('.navigation-bas').forEach(nav => {
+                const items = nav.querySelectorAll('.nav-item');
+                items.forEach((item, index) => {
+                    item.classList.remove('actif');
+                    if (index === mapNavigation[idEcran]) {
+                        item.classList.add('actif');
+                    }
+                });
+            });
+        }
+
+        // Fermer le scanner
+        function fermerScanner() {
+            // Retourner à l'écran précédent (connexion ou produits)
+            const ecranConnexion = document.getElementById('ecran-connexion');
+            if (ecranConnexion.classList.contains('actif-precedent')) {
+                afficherEcran('ecran-connexion');
+            } else {
+                afficherEcran('ecran-produits');
+            }
+        }
+
+        // Ouvrir un modal
+        function ouvrirModal(idModal) {
+            const modal = document.getElementById(idModal);
+            if (modal) {
+                modal.classList.add('actif');
+            }
+            // Fermer les menus FAB
+            document.querySelectorAll('.fab-menu').forEach(menu => {
+                menu.classList.remove('actif');
+            });
+        }
+
+        // Fermer un modal
+        function fermerModal(idModal) {
+            const modal = document.getElementById(idModal);
+            if (modal) {
+                modal.classList.remove('actif');
+            }
+        }
+
+        // Afficher un toast
+        function afficherToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('actif');
+            
+            setTimeout(() => {
+                toast.classList.remove('actif');
+            }, 3000);
+        }
+
+        // Toggle menu FAB
+        function toggleFabMenu(idMenu) {
+            const menu = document.getElementById(idMenu);
+            if (menu) {
+                menu.classList.toggle('actif');
+            }
+        }
+
+        // Sélectionner type de mouvement
+        function selectionnerMouvement(element, type) {
+            document.querySelectorAll('.mouvement-option').forEach(opt => {
+                opt.classList.remove('actif');
+            });
+            element.classList.add('actif');
+            
+            // Afficher/masquer le champ prix selon le type
+            const champPrix = document.getElementById('champ-prix');
+            if (champPrix) {
+                champPrix.style.display = type === 'entree' ? 'block' : 'none';
+            }
+        }
+
+        // Modifier quantité dans le stepper
+        function modifierQuantite(delta) {
+            quantiteMouvement = Math.max(1, quantiteMouvement + delta);
+            const affichage = document.getElementById('quantite-mouvement');
+            if (affichage) {
+                affichage.textContent = quantiteMouvement;
+            }
+        }
+
+        // Mode sélection multiple
+        function toggleModeSelection() {
+            modeSelection = !modeSelection;
+            const checkboxes = document.querySelectorAll('.produit-item .checkbox-container');
+            const barre = document.getElementById('barre-selection');
+            
+            checkboxes.forEach(cb => {
+                cb.style.display = modeSelection ? 'flex' : 'none';
+            });
+            
+            if (!modeSelection) {
+                annulerSelection();
+            }
+        }
+
+        // Toggle sélection d'un produit
+        function toggleSelection(element) {
+            const checkbox = element.querySelector('.checkbox-custom');
+            const produitItem = element.closest('.produit-item');
+            
+            checkbox.classList.toggle('coche');
+            produitItem.classList.toggle('selectionne');
+            
+            mettreAJourBarreSelection();
+        }
+
+        // Mettre à jour la barre de sélection
+        function mettreAJourBarreSelection() {
+            const selectionnes = document.querySelectorAll('.produit-item.selectionne');
+            const barre = document.getElementById('barre-selection');
+            const compteur = barre.querySelector('.selection-count');
+            
+            if (selectionnes.length > 0) {
+                barre.classList.add('actif');
+                compteur.textContent = `${selectionnes.length} ${traductions.fr.produits_selectionnes}`;
+            } else {
+                barre.classList.remove('actif');
+            }
+        }
+
+        // Annuler la sélection
+        function annulerSelection() {
+            document.querySelectorAll('.produit-item.selectionne').forEach(item => {
+                item.classList.remove('selectionne');
+                item.querySelector('.checkbox-custom').classList.remove('coche');
+            });
+            mettreAJourBarreSelection();
+        }
+
+        // Supprimer la sélection
+        function supprimerSelection() {
+            const selectionnes = document.querySelectorAll('.produit-item.selectionne');
+            afficherToast(`${selectionnes.length} produit(s) supprimé(s)`);
+            annulerSelection();
+            toggleModeSelection();
+        }
+
+        // Changer le thème
+        function changerTheme(theme) {
+            // Mettre à jour la sélection visuelle dans le modal
+            document.querySelectorAll('#modal-theme .theme-option').forEach(opt => {
+                opt.classList.remove('selectionnee');
+                if (opt.getAttribute('data-theme') === theme || opt.onclick.toString().includes(theme)) {
+                    opt.classList.add('selectionnee');
+                }
+            });
+            
+            // Appliquer le thème
+            if (theme === 'sombre') {
+                document.body.setAttribute('data-theme', 'sombre');
+            } else if (theme === 'clair') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                // Système - détecter préférence
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.setAttribute('data-theme', 'sombre');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+            
+            fermerModal('modal-theme');
+            afficherToast('Thème modifié');
+        }
+
+        // Changer la langue
+        function changerLangue(langue) {
+            document.querySelectorAll('#modal-langue .langue-option').forEach(opt => {
+                opt.classList.remove('selectionnee');
+                if (opt.getAttribute('data-langue') === langue) {
+                    opt.classList.add('selectionnee');
+                }
+            });
+            
+            fermerModal('modal-langue');
+            afficherToast('Langue modifiée');
+            // Ici on appliquerait les traductions
+        }
+
+        // Navigation configuration initiale
+        function etapeSuivante() {
+            const etapeLangue = document.getElementById('etape-langue');
+            const etapeTheme = document.getElementById('etape-theme');
+            const progress1 = document.getElementById('progress-1');
+            const progress2 = document.getElementById('progress-2');
+            
+            if (etapeActuelle === 1) {
+                etapeLangue.classList.remove('actif');
+                etapeTheme.classList.add('actif');
+                progress1.classList.add('complete');
+                progress2.classList.add('actif');
+                etapeActuelle = 2;
+            }
+        }
+
+        function etapePrecedente() {
+            const etapeLangue = document.getElementById('etape-langue');
+            const etapeTheme = document.getElementById('etape-theme');
+            const progress1 = document.getElementById('progress-1');
+            const progress2 = document.getElementById('progress-2');
+            
+            if (etapeActuelle === 2) {
+                etapeTheme.classList.remove('actif');
+                etapeLangue.classList.add('actif');
+                progress1.classList.remove('complete');
+                progress2.classList.remove('actif');
+                etapeActuelle = 1;
+            }
+        }
+
+        // Gestion des tabs de connexion
+        document.querySelectorAll('.connexion-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.connexion-tab').forEach(t => t.classList.remove('actif'));
+                this.classList.add('actif');
+                
+                const tabType = this.getAttribute('data-tab');
+                if (tabType === 'connexion') {
+                    document.getElementById('form-connexion').style.display = 'block';
+                    document.getElementById('form-inscription').style.display = 'none';
+                } else {
+                    document.getElementById('form-connexion').style.display = 'none';
+                    document.getElementById('form-inscription').style.display = 'block';
+                }
+            });
+        });
+
+        // Gestion des filtres
+        document.querySelectorAll('.filtre-chip').forEach(filtre => {
+            filtre.addEventListener('click', function() {
+                document.querySelectorAll('.filtre-chip').forEach(f => f.classList.remove('actif'));
+                this.classList.add('actif');
+            });
+        });
+
+        // Gestion des options de langue dans la configuration
+        document.querySelectorAll('#etape-langue .langue-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('#etape-langue .langue-option').forEach(o => o.classList.remove('selectionnee'));
+                this.classList.add('selectionnee');
+            });
+        });
+
+        // Gestion des options de thème dans la configuration
+        document.querySelectorAll('#etape-theme .theme-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('#etape-theme .theme-option').forEach(o => o.classList.remove('selectionnee'));
+                this.classList.add('selectionnee');
+            });
+        });
+
+        // Fermer modal en cliquant à l'extérieur
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('actif');
+                }
+            });
+        });
+
+        // Détecter préférence système pour le thème
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                // Vérifier si le thème est sur "système"
+                const themeActuel = document.body.getAttribute('data-theme-preference') || 'systeme';
+                if (themeActuel === 'systeme') {
+                    if (e.matches) {
+                        document.body.setAttribute('data-theme', 'sombre');
+                    } else {
+                        document.body.removeAttribute('data-theme');
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
